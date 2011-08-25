@@ -1,8 +1,6 @@
 #ifndef COMCHANGEPROGRAM_H
 #define COMCHANGEPROGRAM_H
 
-#include "precomp.h"
-
 class ProgramsModel;
 class ComChangeProgram : public QUndoCommand
 {

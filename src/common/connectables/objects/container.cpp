@@ -131,16 +131,12 @@ bool Container::Close()
     }
     listStaticObjects.clear();
 
+    mutexCurrentProg.lock();
     if(currentContainerProgram) {
         currentContainerProgram->Unload();
         currentContainerProgram->ParkAllObj();
-        mutexCurrentProg.lock();
         delete currentContainerProgram;
-        mutexCurrentProg.unlock();
-        currentContainerProgram=0;
     }
-
-    mutexCurrentProg.lock();
     qDeleteAll(listContainerPrograms);
     mutexCurrentProg.unlock();
 
@@ -188,16 +184,24 @@ void Container::Hide()
   Will change program on the next render loop
   \param prg a program model index
   */
-void Container::SetProgram(const QModelIndex &idx)
+void Container::SetProgram(const QModelIndex &idx, bool fromCommand)
 {
+//    if(!fromCommand)
+//        if(!mutexProgChange.tryLock())
+//            return;
+
     progToSet=idx.data(ProgramsModel::ProgramId).toInt();
     if(progToSet == currentProgId) {
         progToSet=-1;
+//        if(!fromCommand)
+//            mutexProgChange.unlock();
         return;
     }
 
     LoadProgram(progToSet);
     progToSet=-1;
+//    if(!fromCommand)
+//        mutexProgChange.unlock();
 }
 
 void Container::NewRenderLoop()
@@ -231,15 +235,23 @@ void Container::LoadProgram(int prog)
         return;
     }
 
-    SetLoadingMode(true);
+    LOG("prog"<<prog);
 
-    if(!listContainerPrograms.contains(prog))
-        listContainerPrograms.insert(prog,new ContainerProgram(myHost,this));
-
+//    QMutexLocker l(&mutexCurrentProg);
 
     ContainerProgram *oldProg = currentContainerProgram;
-    ContainerProgram *newProg = listContainerPrograms.value(prog);
+    ContainerProgram *newProg  = 0;
 
+    if(prog==TEMP_PROGRAM || prog==EMPTY_PROGRAM) {
+        newProg = new ContainerProgram(myHost,this);
+    } else {
+        if(listContainerPrograms.contains(prog)) {
+            newProg = listContainerPrograms.value(prog);
+        } else {
+            newProg = new ContainerProgram(myHost,this);
+            listContainerPrograms.insert(prog,newProg);
+        }
+    }
 
     if(oldProg) {
         //update the saved rendering map
@@ -277,8 +289,6 @@ void Container::LoadProgram(int prog)
 
     currentContainerProgram->Load(prog);
 
-    SetLoadingMode(false);
-
     if(optimizerFlag)
         currentContainerProgram->LoadRendererState();
 
@@ -307,6 +317,8 @@ const QTime Container::GetLastModificationTime() {
 
 void Container::SaveProgram()
 {
+    LOG("saveprog"<<currentProgId);
+
     if(!currentContainerProgram && currentProgId==TEMP_PROGRAM)
         return;
 
@@ -435,6 +447,7 @@ void Container::UserAddObject(const QSharedPointer<Object> &objPtr,
                               QList< QPair<MetaInfo,MetaInfo> > *listOfRemovedCables,
                               const QSharedPointer<Object> &targetPtr)
 {
+    LOG("useradd"<<currentProgId<<objPtr->Name());
     AddObject(objPtr);
 
     if(targetPtr) {
@@ -564,6 +577,7 @@ void Container::AddChildObject(QSharedPointer<Object> objPtr)
     objPtr->parked=false;
     objPtr->Resume();
     objPtr->SetParent(this);
+    LOG("addchild"<<currentProgId<<objPtr->Name());
     objPtr->AddToView();
 }
 
@@ -573,6 +587,7 @@ void Container::AddChildObject(QSharedPointer<Object> objPtr)
   */
 void Container::ParkChildObject(QSharedPointer<Object> objPtr)
 {
+    LOG("parkchild"<<currentProgId<<objPtr->Name());
     if(objPtr.isNull())
         return;
 
@@ -933,12 +948,12 @@ void Container::ProgramFromStream (int progId, QDataStream &in)
     in >> *prog;
 
     if(progId==currentProgId) {
+        mutexCurrentProg.lock();
         if(listContainerPrograms.contains(TEMP_PROGRAM)) {
-            mutexCurrentProg.lock();
             delete listContainerPrograms.take(TEMP_PROGRAM);
-            mutexCurrentProg.unlock();
         }
         listContainerPrograms.insert(TEMP_PROGRAM,prog);
+        mutexCurrentProg.unlock();
 
         LoadProgram(TEMP_PROGRAM);
         currentProgId=progId;
@@ -946,13 +961,12 @@ void Container::ProgramFromStream (int progId, QDataStream &in)
             currentContainerProgram->SetDirty();
 
     } else {
-
+        mutexCurrentProg.lock();
         if(listContainerPrograms.contains(progId)) {
-            mutexCurrentProg.lock();
             delete listContainerPrograms.take(progId);
-            mutexCurrentProg.unlock();
         }
         listContainerPrograms.insert(progId,prog);
+        mutexCurrentProg.unlock();
     }
 
     MetaInfo::ResetSavedIds();

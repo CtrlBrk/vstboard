@@ -67,8 +67,6 @@ ContainerProgram::ContainerProgram(const ContainerProgram& c) :
 
 ContainerProgram::~ContainerProgram()
 {
-    LOG("delete prog"<<hex<<(long)this<<QThread::currentThreadId());
-
     foreach(Cable *c, listCables) {
         delete c;
     }
@@ -206,7 +204,6 @@ bool ContainerProgram::IsDirty()
 
 void ContainerProgram::Save(bool saveChildPrograms)
 {
-
     if(saveChildPrograms) {
         foreach(QSharedPointer<Object> objPtr, listObjects) {
             objPtr->SaveProgram();

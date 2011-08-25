@@ -75,7 +75,9 @@ bool SceneModel::event(QEvent *event)
         case Events::typeNewObj : {
             Events::sendObj *e = static_cast<Events::sendObj*>(event);
             e->objInfo.SetTransporter(this);
-//            LOG("add" << e->objInfo.toStringFull());
+//            if(e->objInfo.ObjId()==1022) {
+//                LOG("add" << e->objInfo.toStringFull());
+//            }
             mySceneView->AddObj(e->objInfo);
 
             if(e->objInfo.Type()==MetaTypes::object) {
@@ -91,8 +93,9 @@ bool SceneModel::event(QEvent *event)
         case Events::typeParkObj : {
             Events::sendObj *e = static_cast<Events::sendObj*>(event);
 //            e->objInfo.SetTransporter(this);
-    //            LOG("park" << e->objInfo.toStringFull());
-
+//            if(e->objInfo.ObjId()==1022) {
+//                LOG("park" << e->objInfo.toStringFull());
+//            }
             if(e->objInfo.Type()==MetaTypes::object) {
                 mySceneView->DelObj(e->objInfo.ObjId());
 
@@ -109,7 +112,9 @@ bool SceneModel::event(QEvent *event)
         }
         case Events::typeDelObj : {
             Events::delObj *e = static_cast<Events::delObj*>(event);
-//            LOG("del" << e->objId);
+//            if(e->objId==1022) {
+//                LOG("del" << e->objId);
+//            }
             mySceneView->DelObj(e->objId);
             removeFromParking(e->objId, &myHost->mainWindow->programParkModel);
             removeFromParking(e->objId, &myHost->mainWindow->groupParkModel);
@@ -118,7 +123,9 @@ bool SceneModel::event(QEvent *event)
         case Events::typeUpdateObj : {
             Events::sendObj *e = static_cast<Events::sendObj*>(event);
             e->objInfo.SetTransporter(this);
-//            LOG("update" << e->objInfo.toStringFull());
+//            if(e->objInfo.ObjId()==1022) {
+//                LOG("update" << e->objInfo.toStringFull());
+//            }
             mySceneView->UpdateObj(e->objInfo);
             return true;
         }

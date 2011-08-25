@@ -138,10 +138,6 @@ void ObjectInfo::AddToView()
 
 void ObjectInfo::AddToParkView()
 {
-    foreach(ObjectInfo *info, childrenInfo) {
-        info->AddToParkView();
-    }
-
     Events::sendObj *event = new Events::sendObj(info(), Events::typeParkObj);
     if(transporter)
         transporter->PostEvent(event);
@@ -152,16 +148,12 @@ void ObjectInfo::AddToParkView()
 
 void ObjectInfo::RemoveFromView()
 {
-    foreach(ObjectInfo *info, childrenInfo) {
-        info->RemoveFromView();
-    }
-
     Events::delObj *event = new Events::delObj(ObjId());
     if(transporter)
         transporter->PostEvent(event);
-    else {
-        LOG("transporter not set"<<toStringFull());
-    }
+//    else {
+//        LOG("transporter not set"<<toStringFull());
+//    }
 }
 
 void ObjectInfo::UpdateView()

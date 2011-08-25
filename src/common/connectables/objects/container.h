@@ -85,6 +85,10 @@ namespace Connectables {
         QWeakPointer<Container>parentContainer;
 
         void SetLoadingMode(bool active=true) {
+
+            if(active && loadingMode) {
+                LOG("already loading ?");
+            }
             loadingMode = active;
 
             //end of loading mode, update renderer map if needed
@@ -111,6 +115,9 @@ namespace Connectables {
         inline ContainerProgram * GetCurrentProgram() {return currentContainerProgram;}
 
         void NewRenderLoop();
+
+        DMutex mutexCurrentProg;
+//        DMutex mutexProgChange;
 
     protected:
         void AddChildObject(QSharedPointer<Object> objPtr);
@@ -149,8 +156,6 @@ namespace Connectables {
 
         QList<int> listProgToRemove;
 
-        DMutex mutexCurrentProg;
-
     public slots:
         void UserAddObject(const QSharedPointer<Object> &objPtr,
                            InsertionType::Enum insertType = InsertionType::NoInsertion,
@@ -175,7 +180,7 @@ namespace Connectables {
         void UnloadProgram();
         void LoadProgram(int prog);
 
-        void SetProgram(const QModelIndex &idx);
+        void SetProgram(const QModelIndex &idx, bool fromCommand=false);
         void RemoveProgram(int progId=-1);
 
         void SetBufferSize(unsigned long size);

@@ -153,11 +153,6 @@ void SceneView::UpdateObj(const MetaInfo &info)
 
 void SceneView::DelObj(quint32 objId)
 {
-    if(objId==1022 && !mapMetaInfos.contains(objId)) {
-        LOG("obj not found")
-        return;
-    }
-
     const MetaInfo info = mapMetaInfos.value(objId);
 
     switch(info.Type()) {

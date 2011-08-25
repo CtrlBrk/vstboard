@@ -554,8 +554,9 @@ void ProgramsModel::UserChangeGroup(int grp)
     UserChangeGroup( index(grp,0) );
 }
 
-bool ProgramsModel::ValidateProgChange(const QModelIndex &newPrg)
+bool ProgramsModel::ValidateProgChange(const QModelIndex &newPrg, bool fromCommand)
 {
+
 //    LOG(newPrg.parent().row()<<newPrg.row()<<newPrg.data(ProgramId));
 
     if(!newPrg.isValid()) {
@@ -566,8 +567,17 @@ bool ProgramsModel::ValidateProgChange(const QModelIndex &newPrg)
     if(newPrg==currentPrg)
         return false;
 
+    if(!fromCommand) {
+        if(!mutexProgChange.tryLock()) {
+            LOG("PROG CHANGE REJECTED")
+            return false;
+        }
+        mutexProgChange.unlock();
+    }
+
     if(!userWantsToUnloadProgram()) {
-        emit ProgChanged( currentPrg );
+        if(!fromCommand)
+            emit ProgChanged( currentPrg );
         return false;
     }
 
@@ -576,7 +586,8 @@ bool ProgramsModel::ValidateProgChange(const QModelIndex &newPrg)
 
 
         if(!userWantsToUnloadGroup()) {
-            emit ProgChanged( currentPrg );
+            if(!fromCommand)
+                emit ProgChanged( currentPrg);
             return false;
         }
 
@@ -591,7 +602,8 @@ bool ProgramsModel::ValidateProgChange(const QModelIndex &newPrg)
             newGrpItem->setBackground(currentProgColor);
         }
 
-        emit GroupChanged( currentGrp );
+        if(!fromCommand)
+            emit GroupChanged( currentGrp);
     }
 
 
@@ -602,7 +614,8 @@ bool ProgramsModel::ValidateProgChange(const QModelIndex &newPrg)
     itemFromIndex(newPrg)->setBackground(currentProgColor);
 
     currentPrg = newPrg;
-    emit ProgChanged( currentPrg );
+    if(!fromCommand)
+        emit ProgChanged( currentPrg);
 
     SetDirty();
     return true;
@@ -617,12 +630,12 @@ bool ProgramsModel::ChangeProgNow(int midiGroupNum, int midiProgNum)
         return false;
 
     //if the program has not been changed, just return
-    if( !ValidateProgChange( index(midiGroupNum,0).child(midiProgNum,0) ) )
+    if( !ValidateProgChange( index(midiGroupNum,0).child(midiProgNum,0), true) )
         return false;
 
     //if program changed, force a prog change now
-    myHost->programContainer->SetProgram(currentPrg);
-    myHost->groupContainer->SetProgram(currentGrp);
+    myHost->programContainer->SetProgram(currentPrg,true);
+    myHost->groupContainer->SetProgram(currentGrp,true);
 
     return true;
 }

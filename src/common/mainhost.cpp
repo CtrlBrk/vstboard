@@ -230,7 +230,7 @@ void MainHost::SetupMainContainer()
 
     mainContainer->SetLoadingMode(true);
 
-    mainContainer->LoadProgram(0);
+//    mainContainer->LoadProgram(0);
 //    QStandardItem *item = mainContainer->GetFullItem();
 //    model->invisibleRootItem()->appendRow(item);
 //    mainContainer->modelIndex=item->index();
@@ -267,7 +267,7 @@ void MainHost::SetupHostContainer()
 
     hostContainer->SetLoadingMode(true);
 
-    hostContainer->LoadProgram(0);
+//    hostContainer->LoadProgram(0);
     mainContainer->AddObject(hostContainer);
 
     QSharedPointer<Connectables::Object> bridge;
@@ -364,7 +364,7 @@ void MainHost::SetupProjectContainer()
 
     projectContainer->SetLoadingMode(true);
 
-    projectContainer->LoadProgram(0);
+//    projectContainer->LoadProgram(0);
     mainContainer->AddObject(projectContainer);
 
     QSharedPointer<Connectables::Object> bridge;
@@ -467,7 +467,7 @@ void MainHost::SetupProgramContainer()
     programContainer->SetLoadingMode(true);
 
     programContainer->SetOptimizerFlag(true);
-    programContainer->LoadProgram(0);
+//    programContainer->LoadProgram(0);
     mainContainer->AddObject(programContainer);
 
     QSharedPointer<Connectables::Object> bridge;
@@ -533,8 +533,8 @@ void MainHost::SetupProgramContainer()
         mainContainer->ConnectObjects(groupContainer->bridgeOut, programContainer->bridgeReturn,true);
     }
 
-    connect(programsModel, SIGNAL(ProgChanged(QModelIndex)),
-            programContainer.data(), SLOT(SetProgram(QModelIndex)));
+    connect(programsModel, SIGNAL(ProgChanged(QModelIndex,bool)),
+            programContainer.data(), SLOT(SetProgram(QModelIndex,bool)));
     connect(programsModel, SIGNAL(ProgDelete(int)),
             programContainer.data(), SLOT(RemoveProgram(int)));
 
@@ -570,7 +570,7 @@ void MainHost::SetupGroupContainer()
 
     groupContainer->SetLoadingMode(true);
 
-    groupContainer->LoadProgram(0);
+//    groupContainer->LoadProgram(0);
     mainContainer->AddObject(groupContainer);
 
     QSharedPointer<Connectables::Object> bridge;
@@ -635,8 +635,8 @@ void MainHost::SetupGroupContainer()
         mainContainer->ConnectObjects(hostContainer->bridgeOut, groupContainer->bridgeReturn,true);
     }
 
-    connect(programsModel, SIGNAL(GroupChanged(QModelIndex)),
-            groupContainer.data(), SLOT(SetProgram(QModelIndex)));
+    connect(programsModel, SIGNAL(GroupChanged(QModelIndex,bool)),
+            groupContainer.data(), SLOT(SetProgram(QModelIndex,bool)));
     connect(programsModel, SIGNAL(GroupDelete(int)),
             groupContainer.data(), SLOT(RemoveProgram(int)));
 

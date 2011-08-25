@@ -222,6 +222,8 @@ void ObjectView::UpdateModelIndex(const MetaInfo &info)
 {
     *(MetaInfo*)this=info;
 
+    setToolTip(info.toStringFull());
+
     if(Meta(MetaInfos::Position).isValid())
         setPos( Meta(MetaInfos::Position).toPointF() );
 

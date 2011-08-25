@@ -22,6 +22,7 @@
 #define PROGRAMSMODEL_H
 #include "precomp.h"
 #include "viewconfig.h"
+#include "debugmutex.h"
 
 class MainHost;
 class ProgramsModel : public QStandardItemModel
@@ -71,6 +72,8 @@ public:
     Qt::CheckState GetGroupAutosaveState() const {return groupAutosaveState;}
     const QModelIndex &GetCurrentProg() const {return currentPrg;}
 
+    DMutex mutexProgChange;
+
 private:
     bool AddGroup(QModelIndex &index=QModelIndex(), int row=-1);
     bool AddProgram(int groupNum, QModelIndex &index=QModelIndex(), int row=-1);
@@ -91,7 +94,7 @@ private:
     bool FindAValidProgramInGroup( const QModelIndex &group, int progRow, const QModelIndexList &listToAvoid, QModelIndex &target );
     bool FindAValidProgram( const QModelIndex &prog, const QModelIndexList &listToAvoid, QModelIndex &target = QModelIndex() );
 
-    bool ValidateProgChange(const QModelIndex &newPrg);
+    bool ValidateProgChange(const QModelIndex &newPrg, bool fromCommand=false);
     bool ChangeProgNow(int midiGroupNum, int midiProgNum);
 
     QDataStream & toStream (QDataStream &);
@@ -151,8 +154,8 @@ private:
 signals:
     void UndoStackPush(QUndoCommand *cmd);
 
-    void ProgChanged(const QModelIndex &prgIndex);
-    void GroupChanged(const QModelIndex &grpIndex);
+    void ProgChanged(const QModelIndex &prgIndex, bool fromCom=false);
+    void GroupChanged(const QModelIndex &grpIndex, bool fromCom=false);
     void ProgDelete(int progId);
     void GroupDelete(int groupId);
 

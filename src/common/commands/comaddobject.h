@@ -1,7 +1,6 @@
 #ifndef COMADDOBJECT_H
 #define COMADDOBJECT_H
 
-#include "precomp.h"
 #include "connectables/objects/container.h"
 
 class MainHost;

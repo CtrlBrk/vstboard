@@ -66,7 +66,7 @@ public:
 
         if(!QMutex::tryLock()) {
             ++countLocked;
-            qDebug()<<name<<"wait locked";
+//            qDebug()<<name<<"wait locked";
 
             elapsed.restart();
             QMutex::lock();

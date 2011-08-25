@@ -92,7 +92,8 @@ SOURCES += \
     commands/comchangeautosave.cpp \
     commands/comremovepin.cpp \
     commands/comaddpin.cpp \
-    models/scenemodel.cpp
+    models/scenemodel.cpp \
+    commands/threadsafecom.cpp
 
 SOURCES += \
     views/configdialog.cpp \
@@ -186,7 +187,8 @@ HEADERS += \
     connectables/mididefines.h \
     debugmutex.h \
     debugreadwritelock.h \
-    debugsemaphore.h
+    debugsemaphore.h \
+    commands/threadsafecom.h
 
 HEADERS += \
     views/configdialog.h \
@@ -234,3 +236,9 @@ TRANSLATIONS = ../resources/translations/common_fr.ts
 
 RESOURCES += \
     ../resources/resources.qrc
+
+
+
+
+
+

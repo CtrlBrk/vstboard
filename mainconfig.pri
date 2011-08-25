@@ -15,12 +15,12 @@ CONFIG += scriptengine                  #enable the script engine
 
 CONFIG(debug, debug|release) {          #only when debugging
 #    CONFIG += vld                      #enable VLD memory leak detector
-    CONFIG += debugMutex                #log mutex activity
+#    CONFIG += debugMutex                #log mutex activity
 #    CONFIG += debugUnusedMutex         #report unused mutex
-    CONFIG += debugSemaphore            #log semaphore activity
+#    CONFIG += debugSemaphore            #log semaphore activity
 #    CONFIG += debugUnusedSemaphore     #report unused semaphore
-    CONFIG += debugReadWriteLock        #log rwlocks activity
-    CONFIG += debugUnusedReadWriteLock  #report unused rwlocks
+#    CONFIG += debugReadWriteLock        #log rwlocks activity
+#    CONFIG += debugUnusedReadWriteLock  #report unused rwlocks
 }
 
 #===========================================================

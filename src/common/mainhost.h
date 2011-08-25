@@ -190,6 +190,12 @@ public slots:
     void SaveProjectFile(bool saveAs);
     void UndoStackPush(QUndoCommand *cmd) {undoStack->push(cmd);}
     void ChangeNbThreads(int nbThreads);
+    void invokeUndo(QUndoCommand* cmd) {
+        cmd->undo();
+    }
+    void invokeRedo(QUndoCommand* cmd) {
+        cmd->redo();
+    }
 
 private slots:
     void UpdateSolver(bool forceUpdate=false);

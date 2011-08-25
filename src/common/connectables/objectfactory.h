@@ -40,6 +40,7 @@ namespace Connectables {
         ~ObjectFactory();
 
         QSharedPointer<Object> NewObject( MetaInfo &info);
+
         inline void RemoveObject(int id) {
             listObjects.remove(id);
         }

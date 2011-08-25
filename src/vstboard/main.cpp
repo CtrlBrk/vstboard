@@ -96,6 +96,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<QMessageBox::StandardButtons>("QMessageBox::StandardButtons");
     qRegisterMetaType<QMessageBox::StandardButton>("QMessageBox::StandardButton");
     qRegisterMetaType<Qt::Orientation>("Qt::Orientation");
+    qRegisterMetaType<QUndoCommand*>("QUndoCommand*");
     qRegisterMetaTypeStreamOperators<MetaInfo>("ObjectInfo");
 
 #ifndef QT_NO_DEBUG
