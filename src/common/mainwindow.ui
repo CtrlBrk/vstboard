@@ -902,6 +902,9 @@
    <property name="shortcut">
     <string>Ctrl+S</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionLoad">
    <property name="icon">
@@ -920,6 +923,9 @@
    <property name="shortcut">
     <string>Ctrl+O</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionNew">
    <property name="icon">
@@ -935,6 +941,9 @@
    <property name="shortcut">
     <string>Ctrl+N</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionConfig">
    <property name="icon">
@@ -947,16 +956,8 @@
    <property name="statusTip">
     <string>Show the configuration dialog</string>
    </property>
-  </action>
-  <action name="actionShortcuts">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Edit Shortcuts (testing)</string>
-   </property>
-   <property name="statusTip">
-    <string>Edit Shortcuts (testing)</string>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionDelete">
@@ -969,6 +970,9 @@
    </property>
    <property name="statusTip">
     <string>Delete</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionSave_Setup">
@@ -985,6 +989,9 @@
    <property name="shortcut">
     <string>Alt+S</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionNew_Setup">
    <property name="icon">
@@ -999,6 +1006,9 @@
    </property>
    <property name="shortcut">
     <string>Alt+N</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionHost_panel">
@@ -1021,6 +1031,9 @@
    <property name="shortcut">
     <string>Ctrl+H</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionAbout">
    <property name="icon">
@@ -1032,6 +1045,9 @@
    </property>
    <property name="statusTip">
     <string>About</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionSave_Project_As">
@@ -1048,6 +1064,9 @@
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionSave_Setup_As">
    <property name="icon">
@@ -1062,6 +1081,9 @@
    </property>
    <property name="shortcut">
     <string>Alt+Shift+S</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionGroup_panel">
@@ -1087,6 +1109,9 @@
    <property name="shortcut">
     <string>Ctrl+G</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionProgram_panel">
    <property name="checkable">
@@ -1108,20 +1133,32 @@
    <property name="shortcut">
     <string>Ctrl+P</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionRefresh_Audio_devices">
    <property name="text">
     <string>Refresh Audio devices</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionRefresh_Midi_devices">
    <property name="text">
     <string>Refresh Midi devices</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionRestore_default_layout">
    <property name="text">
     <string>Restore default layout</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionTool_bar">
@@ -1130,6 +1167,9 @@
    </property>
    <property name="text">
     <string>Tool bar</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionProject_panel">
@@ -1145,6 +1185,9 @@
    </property>
    <property name="text">
     <string>Toggle Project panel</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionLoad_Setup">
@@ -1164,6 +1207,9 @@
    <property name="shortcut">
     <string>Alt+O</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionAppearance">
    <property name="checkable">
@@ -1175,6 +1221,9 @@
    </property>
    <property name="text">
     <string>Appearance</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionCable">
@@ -1190,6 +1239,9 @@
    <property name="shortcut">
     <string>C</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionValue">
    <property name="checkable">
@@ -1200,6 +1252,9 @@
    </property>
    <property name="shortcut">
     <string>V</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionKeyBinding">
@@ -1212,6 +1267,9 @@
    </property>
    <property name="toolTip">
     <string>Keyboard and Mouse mapping</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionHide_all_editors">
@@ -1228,6 +1286,9 @@
    <property name="shortcut">
     <string>H</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionAutoShowGui">
    <property name="checkable">
@@ -1242,6 +1303,9 @@
    </property>
    <property name="shortcut">
     <string>G</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionUndo">

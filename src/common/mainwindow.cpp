@@ -194,7 +194,7 @@ void MainWindow::ReceiveMsg(const MsgObject &msg)
 
 void MainWindow::showEvent(QShowEvent *event)
 {
-    LOG("window show event")
+//    LOG("window show event")
 
     MsgObject msg;
     msg.prop[MsgObject::Update]=1;
@@ -418,6 +418,8 @@ void MainWindow::UpdateKeyBinding()
     ui->actionAutoShowGui->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::autoOpenEditors));
     ui->actionUndo->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::undo));
     ui->actionRedo->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::redo));
+    ui->actionRefresh_Audio_devices->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::refreashAudioDevices));
+    ui->actionRefresh_Midi_devices->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::refreashMidiDevices));
 }
 
 void MainWindow::writeSettings()

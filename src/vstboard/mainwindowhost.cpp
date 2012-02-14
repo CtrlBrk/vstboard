@@ -149,13 +149,10 @@ void MainWindowHost::resetSettings()
 void MainWindowHost::UpdateAudioDevices()
 {
     listAudioDevModel->Rescan();
-//    ui->treeAudioInterfaces->setModel(static_cast<MainHostHost*>(myHost)->audioDevices->GetModel());
-//    ui->treeAudioInterfaces->expand( static_cast<MainHostHost*>(myHost)->audioDevices->AsioIndex );
 }
 
 void MainWindowHost::UpdateMidiDevices()
 {
-//    ui->treeMidiInterfaces->setModel(static_cast<MainHostHost*>(myHost)->midiDevices->GetModel());
     listMidiDevModel->Rescan();
 }
 

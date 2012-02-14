@@ -91,8 +91,6 @@ protected:
     ParkingModel *programParking;
 
 public slots:
-//    void programParkingModelChanges(QStandardItemModel *model);
-//    void groupParkingModelChanges(QStandardItemModel *model);
     void currentFileChanged();
     void OnViewConfigClosed();
     void LoadDefaultFiles();
@@ -112,9 +110,6 @@ private slots:
     void on_actionSave_triggered();
     void openRecentSetup();
     void openRecentProject();
-//    virtual void on_actionConfig_triggered();
-    virtual void on_actionRefresh_Midi_devices_triggered() {}
-    virtual void on_actionRefresh_Audio_devices_triggered() {}
     void UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color);
     void UpdateKeyBinding();
 

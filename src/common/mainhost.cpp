@@ -783,7 +783,7 @@ void MainHost::SetBufferSizeMs(unsigned int ms)
 
 void MainHost::SetBufferSize(unsigned long size)
 {
-    qDebug()<<"MainHost::SetBufferSize"<<size;
+//    qDebug()<<"MainHost::SetBufferSize"<<size;
     bufferSize = size;
     emit BufferSizeChanged(bufferSize);
 }
