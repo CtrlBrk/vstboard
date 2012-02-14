@@ -104,7 +104,7 @@ void PathSolver::CreateNodes()
         QSharedPointer<Connectables::Object> objPtr = i.value();
 
         //don't add parked objects
-        if(objPtr && objPtr->parkingId!=FixedObjId::ND) {
+        if(objPtr && objPtr->parkingId==FixedObjId::ND) {
 //            if(objPtr->info().nodeType!=NodeType::bridge && objPtr->info().nodeType!=NodeType::container) {
             if( objPtr->info().nodeType!=NodeType::container) {
                 SolverNode *node = new SolverNode();

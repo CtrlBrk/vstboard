@@ -15,8 +15,8 @@ public:
     void SetStep(int step, OptimizerStep* s);
     QMap<int, RendererNode* > GetThreadNodes(int thread);
     QList<RendererNode*> GetListOfNodes();
-    void BuildModel( QStandardItemModel *model);
-    void UpdateView( QStandardItemModel *model );
+//    void BuildModel( QStandardItemModel *model);
+//    void UpdateView( QStandardItemModel *model );
 
 protected:
     void Clear();

@@ -38,13 +38,13 @@ public:
     void SetNbThreads(int nbThreads);
     void SetEnabled(bool enabled) {stop=!enabled;}
     void OnNewRenderingOrder(const QList<SolverNode*> & listNodes);
-    QStandardItemModel * GetModel();
+//    QStandardItemModel * GetModel();
     Optimizer * GetOptimizer() { return &optimizer; }
 
     void LoadNodes(const QList<RendererNode*> & listNodes);
     QList<RendererNode*> SaveNodes();
 
-    QStandardItemModel model;
+//    QStandardItemModel model;
 
 protected:
     void InitThreads();

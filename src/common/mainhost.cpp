@@ -445,7 +445,7 @@ void MainHost::SetupProgramContainer()
     if(!programContainer)
         return;
 
-    programContainer->parkingId = FixedObjId::programParking;
+    programContainer->containersParkingId = FixedObjId::programParking;
     programContainer->SetLoadingMode(true);
 
     programContainer->SetOptimizerFlag(true);
@@ -564,7 +564,7 @@ void MainHost::SetupGroupContainer()
     if(!groupContainer)
         return;
 
-    groupContainer->parkingId = FixedObjId::groupParking;
+    groupContainer->containersParkingId = FixedObjId::groupParking;
     groupContainer->SetLoadingMode(true);
 
 //    groupContainer->LoadProgram(0);

@@ -49,7 +49,10 @@ public:
         Program,
         Group,
         State,
-        Increment
+        Increment,
+        SolverMap,
+        Row,
+        Col
     };
 
     MsgObject(int objIndex=FixedObjId::ND);

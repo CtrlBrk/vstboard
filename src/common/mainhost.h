@@ -63,7 +63,7 @@ public:
     void GetTempo(int &tempo, int &sign1, int &sign2);
     void SetTimeInfo(const VstTimeInfo *info);
 
-    QStandardItemModel *GetRendererModel() { return renderer->GetModel(); }
+//    QStandardItemModel *GetRendererModel() { return renderer->GetModel(); }
 
     void OptimizeRenderer() { if(renderer) renderer->Optimize(); }
     Renderer * GetRenderer() { return renderer; }

@@ -17,12 +17,13 @@ public:
     void SetNbThreads(int nb);
     bool GetMergedNode(int thread, RendererNode **node);
     QList<RendererNode*> GetListOfNodes();
-    void AddToModel( QStandardItemModel *model );
-    void UpdateView( QStandardItemModel *model );
+//    void AddToModel( QStandardItemModel *model );
+//    void UpdateView( QStandardItemModel *model );
     void ClearNodes();
 
     static bool CompareNodeSpeed(RendererNode *n1, RendererNode *n2);
     static bool CompareThreadSpeed(OptimizeStepThread *t1, OptimizeStepThread *t2);
+
 
 protected:
     void ClearThreads();

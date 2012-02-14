@@ -2,6 +2,8 @@
 #define RENDERERNODE_H
 
 #include "node.h"
+#include "msgobject.h"
+
 
 class SolverNode;
 class RendererNode : public Node
@@ -11,6 +13,8 @@ public:
     RendererNode(const SolverNode &c);
     RendererNode(const RendererNode &c);
     ~RendererNode();
+
+    void GetInfo(MsgObject &msg) const;
 
     void NewRenderLoop();
     void Render();

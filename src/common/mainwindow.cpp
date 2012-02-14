@@ -30,6 +30,8 @@
 #include "views/keybindingdialog.h"
 #include "msgobject.h"
 
+Q_DECLARE_METATYPE( QList<int> )
+
 MainWindow::MainWindow(Settings *settings, MainHost * myHost, QWidget *parent) :
     QMainWindow(parent),
     mySceneView(0),
@@ -116,27 +118,13 @@ void MainWindow::ReceiveMsg(const MsgObject &msg)
 {
     if(msg.objIndex==FixedObjId::mainWindow) {
         if(msg.prop.contains(MsgObject::Setup) && msg.prop.contains(MsgObject::Project)) {
-            QFileInfo setup( msg.prop[MsgObject::Setup].toString() );
+            currentFileChanged(msg);
+            return;
+        }
 
-            if(setup.fileName().isEmpty()) {
-                ui->actionSave_Setup_As->setEnabled( false );
-            } else {
-                ui->actionSave_Setup_As->setEnabled( true );
-                settings->SetSetting("lastSetupDir",setup.absolutePath());
-                ConfigDialog::AddRecentSetupFile(setup.absoluteFilePath(),settings);
-            }
-
-            QFileInfo project( msg.prop[MsgObject::Project].toString() );
-            if(project.fileName().isEmpty()) {
-                ui->actionSave_Project_As->setEnabled( false );
-            } else {
-                ui->actionSave_Project_As->setEnabled( true );
-                settings->SetSetting("lastProjectDir",project.absolutePath());
-                ConfigDialog::AddRecentProjectFile(project.absoluteFilePath(),settings);
-            }
-
-            setWindowTitle(QString("VstBoard %1:%2").arg( setup.baseName() ).arg( project.baseName() ));
-            updateRecentFileActions();
+        if(msg.prop.contains(MsgObject::SolverMap)) {
+            UpdateSolverMap(msg);
+            return;
         }
         return;
     }
@@ -146,9 +134,9 @@ void MainWindow::ReceiveMsg(const MsgObject &msg)
         return;
     }
 
-    if(msg.prop.contains(MsgObject::Remove)) {
+    if(msg.prop.contains(MsgObject::Remove) && msg.objIndex!=FixedObjId::programsManager) {
         if(!listObj.contains(msg.prop[MsgObject::Remove].toInt())) {
-            LOG("obj not found"<<msg.prop)
+            LOG("obj not found"<<msg.objIndex<<msg.prop)
             return;
         }
         delete listObj[msg.prop[MsgObject::Remove].toInt()];
@@ -217,6 +205,36 @@ void MainWindow::ReceiveMsg(const MsgObject &msg)
 //        ReceiveMsg(msg);
 //    }
 //}
+
+void MainWindow::UpdateSolverMap(const MsgObject &msg)
+{
+    ui->solverView->clear();
+    ui->solverView->clearSpans();
+    ui->solverView->setRowCount( msg.prop[MsgObject::Row].toInt() );
+    ui->solverView->setColumnCount( msg.prop[MsgObject::Col].toInt() );
+
+    foreach(const MsgObject &thread, msg.children) {
+         foreach(const MsgObject &step, thread.children) {
+            QList<int>lstVal = step.prop[MsgObject::Value].value< QList<int> >();
+            QString str = QString("[%1:%2][%3:%4](%5)\ndelay(%6:%7)")
+                    .arg(lstVal.at(0))
+                    .arg(lstVal.at(1))
+                    .arg(lstVal.at(2))
+                    .arg(lstVal.at(3))
+                    .arg(lstVal.at(4))
+                    .arg(lstVal.at(5))
+                    .arg(lstVal.at(6));
+            str+=step.prop[MsgObject::Name].toString();
+            QLabel *cell=new QLabel(str);
+            ui->solverView->setCellWidget(step.objIndex, thread.objIndex, cell);
+            if(lstVal.at(1) > lstVal.at(0)) {
+                ui->solverView->setSpan(step.objIndex, thread.objIndex, lstVal.at(1)-lstVal.at(0)+1, 1 );
+            }
+        }
+    }
+    ui->solverView->resizeColumnsToContents();
+    ui->solverView->resizeRowsToContents();
+}
 
 void MainWindow::showEvent(QShowEvent *event)
 {
@@ -563,15 +581,28 @@ void MainWindow::LoadDefaultFiles()
     updateRecentFileActions();
 }
 
-void MainWindow::currentFileChanged()
+void MainWindow::currentFileChanged(const MsgObject &msg)
 {
-    QFileInfo set(myHost->currentSetupFile);
-    QFileInfo proj(myHost->currentProjectFile);
-    setWindowTitle(QString("VstBoard %1:%2").arg( set.baseName() ).arg( proj.baseName() ));
+    QFileInfo setup( msg.prop[MsgObject::Setup].toString() );
 
-    ui->actionSave_Setup_As->setEnabled(!myHost->currentSetupFile.isEmpty());
-    ui->actionSave_Project_As->setEnabled(!myHost->currentProjectFile.isEmpty());
+    if(setup.fileName().isEmpty()) {
+        ui->actionSave_Setup_As->setEnabled( false );
+    } else {
+        ui->actionSave_Setup_As->setEnabled( true );
+        settings->SetSetting("lastSetupDir",setup.absolutePath());
+        ConfigDialog::AddRecentSetupFile(setup.absoluteFilePath(),settings);
+    }
 
+    QFileInfo project( msg.prop[MsgObject::Project].toString() );
+    if(project.fileName().isEmpty()) {
+        ui->actionSave_Project_As->setEnabled( false );
+    } else {
+        ui->actionSave_Project_As->setEnabled( true );
+        settings->SetSetting("lastProjectDir",project.absolutePath());
+        ConfigDialog::AddRecentProjectFile(project.absoluteFilePath(),settings);
+    }
+
+    setWindowTitle(QString("VstBoard %1:%2").arg( setup.baseName() ).arg( project.baseName() ));
     updateRecentFileActions();
 }
 
@@ -788,7 +819,7 @@ void MainWindow::on_actionHide_all_editors_triggered(bool checked)
         }
     } else {
         foreach(QSharedPointer<Connectables::Object>obj, listClosedEditors) {
-            if(obj || obj->parkingId!=FixedObjId::ND)
+            if(!obj || obj->parkingId!=FixedObjId::ND)
                 listClosedEditors.removeAll(obj);
             else
                 obj->ToggleEditor(true);

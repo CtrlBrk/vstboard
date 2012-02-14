@@ -8,8 +8,8 @@ public:
     OptimizeStepThread();
     OptimizeStepThread(const OptimizeStepThread &th);
     bool GetMergedNode(RendererNode **node);
-    void AddToModel(QStandardItemModel *model, int row, int col);
-    void UpdateView( QStandardItemModel *model );
+//    void AddToModel(QStandardItemModel *model, int row, int col);
+//    void UpdateView( QStandardItemModel *model );
 
     QList<RendererNode*>listOfNodes;
     long cpuTime;

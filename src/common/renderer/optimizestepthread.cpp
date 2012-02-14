@@ -55,28 +55,28 @@ bool OptimizeStepThread::GetMergedNode(RendererNode **node)
     return true;
 }
 
-void OptimizeStepThread::AddToModel(QStandardItemModel *model, int row, int col)
-{
-    if(spanFor) {
-        model->setItem(row,col, new QStandardItem("+") );
-        return;
-    }
+//void OptimizeStepThread::AddToModel(QStandardItemModel *model, int row, int col)
+//{
+//    if(spanFor) {
+//        model->setItem(row,col, new QStandardItem("+") );
+//        return;
+//    }
 
-    foreach(RendererNode *node, listOfNodes) {
-        if(node) {
-            QStandardItem *item = new QStandardItem(".");
-            model->setItem(row,col,item);
-            node->modelIndex=item->index();
-        }
-        row++;
-    }
-}
+//    foreach(RendererNode *node, listOfNodes) {
+//        if(node) {
+//            QStandardItem *item = new QStandardItem(".");
+//            model->setItem(row,col,item);
+//            node->modelIndex=item->index();
+//        }
+//        row++;
+//    }
+//}
 
-void OptimizeStepThread::UpdateView( QStandardItemModel *model )
-{
-    foreach(RendererNode *node, listOfNodes) {
-        if(node) {
-            node->UpdateModel( model );
-        }
-    }
-}
+//void OptimizeStepThread::UpdateView( QStandardItemModel *model )
+//{
+//    foreach(RendererNode *node, listOfNodes) {
+//        if(node) {
+//            node->UpdateModel( model );
+//        }
+//    }
+//}

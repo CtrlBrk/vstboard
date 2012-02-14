@@ -671,7 +671,7 @@ void Container::AddChildObject(QSharedPointer<Object> objPtr)
 //    myHost->GetModel()->itemFromIndex( modelIndex )->appendRow(item);
 //    objPtr->modelIndex=item->index();
 
-    if(containersParkingId!=FixedObjId::ND) {
+    if(containersParkingId!=FixedObjId::ND && objPtr->parkingId!=FixedObjId::ND) {
         MsgObject msg(containersParkingId);
         msg.prop[MsgObject::Remove]=objPtr->GetIndex();
         msgCtrl->SendMsg(msg);
@@ -714,9 +714,7 @@ void Container::ParkChildObject(QSharedPointer<Object> objPtr)
 //    QStandardItem *item = objPtr->GetParkingItem();
 //    parkModel.invisibleRootItem()->appendRow(item);
 //    objPtr->modelIndex=item->index();
-    objPtr->parkingId=parkingId;
-
-
+    objPtr->parkingId=containersParkingId;
 
 //    myHost->SetSolverUpdateNeeded();
 }

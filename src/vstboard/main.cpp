@@ -65,7 +65,6 @@ int main(int argc, char *argv[])
     qRegisterMetaType<QVariant>("QVariant");
     qRegisterMetaType<AudioBuffer*>("AudioBuffer*");
 
-
     qRegisterMetaTypeStreamOperators<ObjectInfo>("ObjectInfo");
 
 #ifndef QT_NO_DEBUG

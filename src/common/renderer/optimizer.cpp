@@ -133,29 +133,29 @@ QList<RendererNode*> Optimizer::GetListOfNodes()
     return newList;
 }
 
-void Optimizer::BuildModel( QStandardItemModel *model )
-{
-    mutex.lock();
-    model->clear();
+//void Optimizer::BuildModel( QStandardItemModel *model )
+//{
+//    mutex.lock();
+//    model->clear();
 
-    QMap<int,OptimizerStep*>::iterator i = listOfSteps.begin();
-    while(i!=listOfSteps.end()) {
-        OptimizerStep* s = i.value();
-        s->AddToModel( model );
-        ++i;
-    }
-    mutex.unlock();
-}
+//    QMap<int,OptimizerStep*>::iterator i = listOfSteps.begin();
+//    while(i!=listOfSteps.end()) {
+//        OptimizerStep* s = i.value();
+//        s->AddToModel( model );
+//        ++i;
+//    }
+//    mutex.unlock();
+//}
 
-void Optimizer::UpdateView( QStandardItemModel *model )
-{
-    mutex.lock();
-    QMap<int,OptimizerStep*>::iterator i = listOfSteps.begin();
-    while(i!=listOfSteps.end()) {
-        OptimizerStep* s = i.value();
-        s->UpdateView( model );
-        ++i;
-    }
-    mutex.unlock();
-}
+//void Optimizer::UpdateView( QStandardItemModel *model )
+//{
+//    mutex.lock();
+//    QMap<int,OptimizerStep*>::iterator i = listOfSteps.begin();
+//    while(i!=listOfSteps.end()) {
+//        OptimizerStep* s = i.value();
+//        s->UpdateView( model );
+//        ++i;
+//    }
+//    mutex.unlock();
+//}
 

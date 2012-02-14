@@ -105,7 +105,7 @@ void ObjectDropZone::dropEvent( QGraphicsSceneDragDropEvent *event)
 
     emit(ObjectDropped(event, msg));
     //reset to copy : we don't really want a moveaction
-//    event->setDropAction(Qt::CopyAction);
+    event->setDropAction(Qt::CopyAction);
 //    QGraphicsWidget::dropEvent(event);
 }
 

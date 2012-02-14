@@ -132,7 +132,7 @@ void SceneView::AddContainer(const MsgObject &msg)
         delete msgCtrl->listObj[msg.prop[MsgObject::Id].toInt()];
     }
 
-    ObjectView *objView = new MainContainerView( mainWindow->viewConfig, msgCtrl, msg.prop[MsgObject::Id].toInt() );
+    MainContainerView *objView = new MainContainerView( mainWindow->viewConfig, msgCtrl, msg.prop[MsgObject::Id].toInt() );
 
     switch(msg.prop[MsgObject::Id].toInt()) {
         case FixedObjId::hostContainer :
@@ -151,6 +151,7 @@ void SceneView::AddContainer(const MsgObject &msg)
 
         case FixedObjId::programContainer :
             objView->setParentItem(rootObjProgram);
+            objView->SetParking(progParking);
             connect(viewProgram,SIGNAL(viewResized(QRectF)),
                     objView,SLOT(OnViewChanged(QRectF)));
             QTimer::singleShot(0, viewProgram, SLOT(ForceResize()));
@@ -158,6 +159,7 @@ void SceneView::AddContainer(const MsgObject &msg)
 
         case FixedObjId::groupContainer :
             objView->setParentItem(rootObjGroup);
+            objView->SetParking(groupParking);
             connect(viewGroup,SIGNAL(viewResized(QRectF)),
                     objView,SLOT(OnViewChanged(QRectF)));
             QTimer::singleShot(0, viewGroup, SLOT(ForceResize()));

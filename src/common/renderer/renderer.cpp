@@ -59,22 +59,45 @@ void Renderer::UpdateView()
 
     if(needBuildModel) {
         needBuildModel=false;
-        optimizer.BuildModel( &model );
-        optimizer.UpdateView( &model );
+
+        MsgObject msg(FixedObjId::mainWindow);
+        msg.prop[MsgObject::SolverMap]=1;
+
+        int nbRow=0;
+        for(int th=0; th<maxNumberOfThreads; th++) {
+            QMap<int, RendererNode* >lst = optimizer.GetThreadNodes(th);
+
+            MsgObject msgThread(th);
+            QMap<int, RendererNode* >::iterator i = lst.begin();
+            while(i!=lst.end()) {
+                MsgObject msgStep(i.key());
+                i.value()->GetInfo(msgStep);
+                msgThread.children << msgStep;
+                if(i.key()>=nbRow) nbRow=i.key()+1;
+                ++i;
+            }
+            msg.children << msgThread;
+        }
+        msg.prop[MsgObject::Row]=nbRow;
+        msg.prop[MsgObject::Col]=maxNumberOfThreads;
+        myHost->SendMsg(msg);
+
+//        optimizer.BuildModel( &model );
+//        optimizer.UpdateView( &model );
     }
 
-    int i = 0;
-    foreach(RenderThread *th, listOfThreads) {
-        model.setHorizontalHeaderItem(i, new QStandardItem( QString("%1 (cpu:%2)").arg(i).arg(th->currentCpu) ));
-        ++i;
-    }
+//    int i = 0;
+//    foreach(RenderThread *th, listOfThreads) {
+//        model.setHorizontalHeaderItem(i, new QStandardItem( QString("%1 (cpu:%2)").arg(i).arg(th->currentCpu) ));
+//        ++i;
+//    }
     mutex.unlock();
 }
 
-QStandardItemModel * Renderer::GetModel()
-{
-    return &model;
-}
+//QStandardItemModel * Renderer::GetModel()
+//{
+//    return &model;
+//}
 
 void Renderer::Clear()
 {

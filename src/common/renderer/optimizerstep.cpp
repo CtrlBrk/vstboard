@@ -279,19 +279,19 @@ bool OptimizerStep::CompareThreadSpeed(OptimizeStepThread *t1, OptimizeStepThrea
     return t1->cpuTime < t2->cpuTime;
 }
 
-void OptimizerStep::AddToModel( QStandardItemModel *model )
-{
-    int col=0;
-    int row=model->rowCount();
-    foreach( OptimizeStepThread *th, listOfThreads ) {
-        th->AddToModel(model, row, col);
-        col++;
-    }
-}
+//void OptimizerStep::AddToModel( QStandardItemModel *model )
+//{
+//    int col=0;
+//    int row=model->rowCount();
+//    foreach( OptimizeStepThread *th, listOfThreads ) {
+//        th->AddToModel(model, row, col);
+//        col++;
+//    }
+//}
 
-void OptimizerStep::UpdateView( QStandardItemModel *model )
-{
-    foreach( OptimizeStepThread *th, listOfThreads ) {
-        th->UpdateView(model);
-    }
-}
+//void OptimizerStep::UpdateView( QStandardItemModel *model )
+//{
+//    foreach( OptimizeStepThread *th, listOfThreads ) {
+//        th->UpdateView(model);
+//    }
+//}

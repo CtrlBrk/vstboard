@@ -63,6 +63,8 @@ protected:
     void showEvent(QShowEvent *event);
     void changeEvent(QEvent *e);
     void SetupBrowsersModels(const QString &vstPath, const QString &browserPath);
+    void currentFileChanged(const MsgObject &msg);
+    void UpdateSolverMap(const MsgObject &msg);
 
     ListToolsModel *listToolsModel;
 
@@ -91,7 +93,6 @@ protected:
     ParkingModel *programParking;
 
 public slots:
-    void currentFileChanged();
     void OnViewConfigClosed();
     void LoadDefaultFiles();
     void SetProgramsFont(const QFont &f);

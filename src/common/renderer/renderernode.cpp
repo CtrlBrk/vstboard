@@ -21,6 +21,8 @@
 #include "renderernode.h"
 #include "solvernode.h"
 
+Q_DECLARE_METATYPE( QList<int> )
+
 RendererNode::RendererNode() :
     Node(),
     minRenderOrderOri(-1),
@@ -154,4 +156,36 @@ void RendererNode::UpdateModel(QStandardItemModel *model)
     foreach(RendererNode *mergedNode, listOfMergedNodes) {
         mergedNode->UpdateModel(model);
     }
+}
+
+void RendererNode::GetInfo(MsgObject &msg) const
+{
+
+    QList<int>lstVals;
+    lstVals << minRenderOrder;
+    lstVals << maxRenderOrder;
+    lstVals << minRenderOrderOri;
+    lstVals << maxRenderOrderOri;
+    lstVals << cpuTime;
+    lstVals << internalDelay;
+    lstVals << totalDelayAtOutput;
+
+    msg.prop[MsgObject::Value] = QVariant::fromValue(lstVals);
+
+    QString str;
+    foreach( QSharedPointer<Connectables::Object> objPtr, listOfObj) {
+        if(objPtr && !objPtr->GetSleep()) {
+            str.append("\n" + objPtr->objectName());
+        }
+    }
+
+    foreach(RendererNode *mergedNode, listOfMergedNodes) {
+        MsgObject c;
+        mergedNode->GetInfo(c);
+        str+=c.prop[MsgObject::Name].toString();
+//        msg.children << c;
+    }
+
+
+    msg.prop[MsgObject::Name]=str;
 }
