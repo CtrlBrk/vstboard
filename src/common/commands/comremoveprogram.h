@@ -21,25 +21,20 @@
 #ifndef COMREMOVEPROGRAM_H
 #define COMREMOVEPROGRAM_H
 
-#include <QUndoCommand>
-
-class ProgramsModel;
+class MainHost;
 class ComRemoveProgram : public QUndoCommand
 {
 public:
-    ComRemoveProgram(ProgramsModel *model,
-                     int row,
-                     int groupNum,
-                     QUndoCommand  *parent=0);
+    ComRemoveProgram(MainHost *myHost,
+                     int prgId,
+                     QUndoCommand *parent=0);
     void undo();
     void redo();
 
 private:
-    ProgramsModel *model;
-    int row;
-    int groupNum;
+    MainHost *myHost;
+    int prgId;
     QByteArray data;
-    bool done;
 };
 
 #endif // COMREMOVEPROGRAM_H

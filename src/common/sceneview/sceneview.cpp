@@ -31,7 +31,6 @@
 #include "commands/comaddcable.h"
 #include "commands/comdisconnectpin.h"
 #include "commands/comremovepin.h"
-#include "models/programsmodel.h"
 
 using namespace View;
 

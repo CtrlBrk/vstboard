@@ -1,26 +1,21 @@
 #ifndef COMADDPROGRAM_H
 #define COMADDPROGRAM_H
 
-#include <QUndoCommand>
-
-class ProgramsModel;
+class MainHost;
 class ComAddProgram : public QUndoCommand
 {
 public:
-    ComAddProgram(ProgramsModel *model,
-                  int groupNum,
-                  int row=0,
-                  QByteArray *data=0,
-                  QUndoCommand  *parent=0);
+    ComAddProgram(MainHost *myHost,
+                  int prgId,
+                  const QByteArray &data,
+                  QUndoCommand *parent=0);
     void undo();
     void redo();
 
 private:
-    ProgramsModel *model;
-    int row;
-    int groupNum;
+    MainHost *myHost;
+    int prgId;
     QByteArray data;
-    bool done;
 };
 
 #endif // COMADDPROGRAM_H

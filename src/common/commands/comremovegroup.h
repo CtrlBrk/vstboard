@@ -1,23 +1,20 @@
 #ifndef COMREMOVEGROUP_H
 #define COMREMOVEGROUP_H
 
-#include <QUndoCommand>
-
-class ProgramsModel;
+class MainHost;
 class ComRemoveGroup : public QUndoCommand
 {
 public:
-    ComRemoveGroup(ProgramsModel *model,
-                   int row,
+    ComRemoveGroup(MainHost *myHost,
+                   int prgId,
                    QUndoCommand *parent=0);
     void undo();
     void redo();
 
 private:
-    ProgramsModel *model;
-    int row;
+    MainHost *myHost;
+    int prgId;
     QByteArray data;
-    bool done;
 };
 
 #endif // COMREMOVEGROUP_H

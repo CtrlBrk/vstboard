@@ -134,7 +134,11 @@ void MainWindow::ReceiveMsg(const MsgObject &msg)
         return;
     }
 
-    if(msg.prop.contains(MsgObject::Remove) && msg.objIndex!=FixedObjId::programsManager) {
+    //some objects remove the objects themselves
+    if(msg.prop.contains(MsgObject::Remove) &&
+            msg.objIndex!=FixedObjId::programsManager &&
+            msg.objIndex!=FixedObjId::groupParking &&
+            msg.objIndex!=FixedObjId::programParking) {
         if(!listObj.contains(msg.prop[MsgObject::Remove].toInt())) {
             LOG("obj not found"<<msg.objIndex<<msg.prop)
             return;

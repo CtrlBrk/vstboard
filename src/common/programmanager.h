@@ -7,10 +7,6 @@
 class Program
 {
 public:
-    ~Program() {
-        //delete prog in container
-    }
-
     quint32 id;
     QString name;
 
@@ -25,8 +21,6 @@ class Group
 public:
     ~Group() {
         listPrograms.clear();
-
-        //delete prog in container
     }
 
     void GetInfos(MsgObject &msg) const {
@@ -79,6 +73,9 @@ public:
     void BuildDefaultPrograms();
 
     void ReceiveMsg(const MsgObject &msg);
+
+    const QList<Group> &GetListGroups() {return listGroups;}
+    void SetListGroups(const QList<Group> &grps);
 
 private:
     void Clear();

@@ -1,8 +1,12 @@
 #include "programmanager.h"
 #include "mainhost.h"
-#include "commands/comdiscardchanges.h"
-#include "commands/comchangeprogram.h"
 #include "commands/comchangeautosave.h"
+#include "commands/comaddgroup.h"
+#include "commands/comaddprogram.h"
+#include "commands/comremovegroup.h"
+#include "commands/comremoveprogram.h"
+#include "commands/comprogramstate.h"
+#include "connectables/containerprogram.h"
 
 ProgramManager::ProgramManager(MainHost *myHost) :
     QObject(myHost),
@@ -52,50 +56,100 @@ void ProgramManager::ReceiveMsg(const MsgObject &msg)
 
     if(msg.prop.contains(MsgObject::Update)) {
 
-        QList<Group> oldListGroups = listGroups;
-        listGroups.clear();
+        QUndoCommand *undoCom = new QUndoCommand();
+
+//        QList<Group> oldListGroups = listGroups;
+        QList<Group> newListGrp;
+//        listGroups.clear();
+        QList<int>listGrpId;
+        QList<int>listPrgId;
 
         foreach(const MsgObject &msgGrp, msg.children) {
             Group grp;
-            if(msgGrp.prop.contains(MsgObject::Id))
-                grp.id = msgGrp.prop[MsgObject::Id].toInt();
-            else {
-                orderChanged=true;
-                updateTimer.start();
-                grp.id = GetNextGroupId();
-            }
             grp.name = msgGrp.prop[MsgObject::Name].toString();
 
+            if(msgGrp.prop.contains(MsgObject::Id)) {
+                grp.id = msgGrp.prop[MsgObject::Id].toInt();
+
+                //this is a copy, make a new group
+                if(listGrpId.contains(grp.id)) {
+                    QByteArray bArray;
+                    QDataStream stream(&bArray, QIODevice::WriteOnly);
+                    myHost->groupContainer->ProgramToStream(grp.id, stream);
+                    grp.id = GetNextGroupId();
+                    new ComAddGroup(myHost,grp.id,bArray,undoCom);
+                    grp.name += "'";
+//                    orderChanged=true;
+                }
+                listGrpId << grp.id;
+
+            } else {
+//                orderChanged=true;
+                grp.id = GetNextGroupId();
+            }
 
             if(msgGrp.children.isEmpty()) {
                 //create a default program in the group
                 Program prg;
                 prg.id = GetNextProgId();
                 grp.listPrograms << prg;
-                orderChanged=true;
-                updateTimer.start();
+//                orderChanged=true;
             } else {
                 foreach(const MsgObject &msgPrg, msgGrp.children) {
                     Program prg;
-                    if(msgPrg.prop.contains(MsgObject::Id))
+                    prg.name = msgPrg.prop[MsgObject::Name].toString();
+
+                    if(msgPrg.prop.contains(MsgObject::Id)) {
                         prg.id = msgPrg.prop[MsgObject::Id].toInt();
-                    else {
-                        orderChanged=true;
-                        updateTimer.start();
+
+                        //this is a copy, make a new prog
+                        if(listPrgId.contains(prg.id)) {
+                            QByteArray bArray;
+                            QDataStream stream(&bArray, QIODevice::WriteOnly);
+                            myHost->programContainer->ProgramToStream(prg.id, stream);
+                            prg.id = GetNextProgId();
+                            new ComAddProgram(myHost,prg.id,bArray,undoCom);
+                            prg.name += "'";
+//                            orderChanged=true;
+                        }
+                        listPrgId << prg.id;
+
+                    } else {
+//                        orderChanged=true;
                         prg.id = GetNextProgId();
                     }
-                    prg.name = msgPrg.prop[MsgObject::Name].toString();
                     grp.listPrograms << prg;
                 }
             }
 
-            listGroups << grp;
+            newListGrp << grp;
         }
 
-        oldListGroups.clear();
+        new ComProgramState(myHost,newListGrp,undoCom);
+
+        //find deleted progs
+        foreach(const Group &grp, listGroups) {
+
+            foreach(const Program &prg, grp.listPrograms) {
+                if( !listPrgId.contains(prg.id)) {
+                    new ComRemoveProgram(myHost,prg.id,undoCom);
+                }
+            }
+
+            if( !listGrpId.contains(grp.id) ) {
+                new ComRemoveGroup(myHost,grp.id,undoCom);
+            }
+        }
+
+//        oldListGroups.clear();
+
+        myHost->undoStack.push(undoCom);
+
+//        if(orderChanged)
+//            updateTimer.start();
 
         //find the current prog
-        if(FindCurrentProg())
+//        if(FindCurrentProg())
             return;
     }
 
@@ -118,6 +172,14 @@ void ProgramManager::ReceiveMsg(const MsgObject &msg)
     if(msg.prop.contains(MsgObject::GroupAutosave)) {
         myHost->undoStack.push( new ComChangeAutosave(this,0,static_cast<Qt::CheckState>(msg.prop[MsgObject::GroupAutosave].toInt())) );
     }
+}
+
+void ProgramManager::SetListGroups(const QList<Group> &grps)
+{
+    listGroups = grps;
+    UserChangeProg(currentMidiProg, currentMidiGroup);
+    orderChanged=true;
+    updateTimer.start();
 }
 
 void ProgramManager::UpdateView()

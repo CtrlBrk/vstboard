@@ -21,7 +21,6 @@
 #include "projectfile.h"
 #include "mainhost.h"
 #include "mainwindow.h"
-#include "models/programsmodel.h"
 #include "fileversion.h"
 
 bool ProjectFile::SaveToProjectFile(MainHost *myHost,QString filePath)

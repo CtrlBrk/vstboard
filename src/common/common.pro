@@ -113,18 +113,14 @@ SOURCES += \
     projectfile/projectfile.cpp \
     models/listtoolsmodel.cpp \
     models/hostmodel.cpp \
-    models/programsmodel.cpp \
     commands/comdisconnectpin.cpp \
     commands/comaddobject.cpp \
     commands/comaddcable.cpp \
     commands/comremoveobject.cpp \
-    commands/comchangeprogram.cpp \
     commands/comaddprogram.cpp \
     commands/comremoveprogram.cpp \
     commands/comremovegroup.cpp \
     commands/comaddgroup.cpp \
-    commands/comchangeprogramitem.cpp \
-    commands/comdiscardchanges.cpp \
     commands/comchangeautosave.cpp \
     commands/comremovepin.cpp \
     commands/comaddpin.cpp \
@@ -139,7 +135,8 @@ SOURCES += \
     connectables/cursor.cpp \
     programmanager.cpp \
     models/groupsprogramsmodel.cpp \
-    models/parkingmodel.cpp
+    models/parkingmodel.cpp \
+    commands/comprogramstate.cpp
 
 
 SOURCES += \
@@ -219,18 +216,14 @@ HEADERS += \
     projectfile/fileversion.h \
     models/listtoolsmodel.h \
     models/hostmodel.h \
-    models/programsmodel.h \
     commands/comdisconnectpin.h \
     commands/comaddobject.h \
     commands/comaddcable.h \
     commands/comremoveobject.h \
-    commands/comchangeprogram.h \
     commands/comaddprogram.h \
     commands/comremoveprogram.h \
     commands/comremovegroup.h \
     commands/comaddgroup.h \
-    commands/comchangeprogramitem.h \
-    commands/comdiscardchanges.h \
     commands/comchangeautosave.h \
     commands/comremovepin.h \
     commands/comaddpin.h \
@@ -247,7 +240,8 @@ HEADERS += \
     models/groupsprogramsmodel.h \
     models/parkingmodel.h \
     connectables/vst3plugin.h \
-    vst/vst3host.h
+    vst/vst3host.h \
+    commands/comprogramstate.h
 
 HEADERS += \
     views/configdialog.h \

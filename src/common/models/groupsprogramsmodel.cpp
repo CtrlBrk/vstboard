@@ -60,22 +60,19 @@ void GroupsProgramsModel::ReceiveMsg(const MsgObject &msg)
     if(msg.prop.contains(MsgObject::Update)) {
         QStandardItemModel::clear();
         foreach(const MsgObject &msgGrp, msg.children) {
-#ifndef QT_NO_DEBUG
-            QStandardItem *itemGrp = new QStandardItem( QString("(%1)%2").arg(msgGrp.prop[MsgObject::Id].toInt()).arg(msgGrp.prop[MsgObject::Name].toString()));
-#else
             QStandardItem *itemGrp = new QStandardItem(msgGrp.prop[MsgObject::Name].toString());
+#ifndef QT_NO_DEBUG
+            itemGrp->setData(msgGrp.prop[MsgObject::Id],Qt::ToolTipRole);
 #endif
             itemGrp->setData(msgGrp.prop[MsgObject::Id]);
             itemGrp->setDragEnabled(true);
             itemGrp->setDropEnabled(false);
             itemGrp->setEditable(true);
-//            itemGrp->setCheckState(Qt::Unchecked);
 
             foreach(const MsgObject &msgPrg, msgGrp.children) {
-#ifndef QT_NO_DEBUG
-                QStandardItem *itemPrg = new QStandardItem( QString("(%1)%2").arg(msgPrg.prop[MsgObject::Id].toInt()).arg(msgPrg.prop[MsgObject::Name].toString()));
-#else
                 QStandardItem *itemPrg = new QStandardItem(msgPrg.prop[MsgObject::Name].toString());
+#ifndef QT_NO_DEBUG
+                itemPrg->setData(msgPrg.prop[MsgObject::Id],Qt::ToolTipRole);
 #endif
                 itemPrg->setData(msgPrg.prop[MsgObject::Id]);
                 itemPrg->setDragEnabled(true);

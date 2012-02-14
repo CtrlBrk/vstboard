@@ -23,7 +23,6 @@
 
 #include "grouplistview.h"
 
-class ProgramsModel;
 class ProgListView : public GroupListView
 {
     Q_OBJECT

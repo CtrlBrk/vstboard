@@ -21,8 +21,6 @@
 #include "objectfactory.h"
 #include "mainhost.h"
 #include "projectfile/projectfile.h"
-#include "models/programsmodel.h"
-
 #include "commands/comaddobject.h"
 #include "commands/comaddcable.h"
 #include "commands/comdisconnectpin.h"
@@ -266,6 +264,7 @@ void Container::LoadProgram(int prog)
         return;
     }
 
+    bool msgWasEnabled=MsgEnabled();
     SetMsgEnabled(false);
 
     SetLoadingMode(true);
@@ -326,12 +325,8 @@ void Container::LoadProgram(int prog)
         delete oldProg;
     }
 
-    if(GetIndex()!=FixedObjId::mainContainer) {
+    if(msgWasEnabled)
         SetMsgEnabled(true);
-        MsgObject msg(FixedObjId::mainContainer);
-        GetInfos(msg);
-        msgCtrl->SendMsg(msg);
-    }
 }
 
 const QTime Container::GetLastModificationTime() {
@@ -700,7 +695,7 @@ void Container::ParkChildObject(QSharedPointer<Object> objPtr)
 
     myHost->objFactory->listDelayObj.removeAll(objPtr->GetIndex());
 
-    if(containersParkingId!=FixedObjId::ND) {
+    if(containersParkingId!=FixedObjId::ND && !listStaticObjects.contains(objPtr)) {
         MsgObject msg(containersParkingId);
         msg.prop[MsgObject::Add]=objPtr->GetIndex();
 //        msg.prop["name"]=objPtr->info().name;
@@ -1011,6 +1006,7 @@ void Container::ProgramToStream (int progId, QDataStream &out)
 
     if(!prog) {
         out << (quint8)0;
+        LOG("prog not saved")
         return;
     }
     out << (quint8)1;
@@ -1036,8 +1032,10 @@ void Container::ProgramFromStream (int progId, QDataStream &in)
 {
     quint8 valid=0;
     in >> valid;
-    if(valid!=1)
+    if(valid!=1) {
+        LOG("program not valid")
         return;
+    }
 
     if(listProgToRemove.contains(progId)) {
         LOG("cancel deletion"<<progId<<objectName());
@@ -1163,7 +1161,13 @@ void Container::ReceiveMsg(const MsgObject &msg)
 
 void Container::SetMsgEnabled(bool enab)
 {
-    Object::SetMsgEnabled(enab);
+    if(enab==MsgEnabled())
+        return;
+
+    MsgHandler::SetMsgEnabled(enab);
+
+    if(GetIndex()==FixedObjId::mainContainer)
+        return;
 
     foreach( QSharedPointer< Object >obj, listStaticObjects) {
         if(obj) {
@@ -1173,4 +1177,6 @@ void Container::SetMsgEnabled(bool enab)
 
     if(currentContainerProgram)
         currentContainerProgram->SetMsgEnabled(enab);
+
+    Object::SetMsgEnabled(enab);
 }

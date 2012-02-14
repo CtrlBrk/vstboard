@@ -164,7 +164,7 @@ bool Object::Close()
 
     SetSleep(true);
 
-    if(MsgEnabled()) {
+//    if(MsgEnabled()) {
         if(parkingId==FixedObjId::ND) {
             MsgObject msg(containerId);
             msg.prop[MsgObject::Remove]=GetIndex();
@@ -174,7 +174,7 @@ bool Object::Close()
             msg.prop[MsgObject::Remove]=GetIndex();
             msgCtrl->SendMsg(msg);
         }
-    }
+//    }
 
 //    Hide();
     closed=true;
@@ -305,6 +305,9 @@ void Object::LoadProgram(int prog)
         return;
     }
 
+    bool msgWasEnabled=MsgEnabled();
+    SetMsgEnabled(false);
+
     //if a program is loaded, unload it without saving
     int progWas = currentProgId;
     if(currentProgId!=EMPTY_PROGRAM && currentProgram)
@@ -327,6 +330,9 @@ void Object::LoadProgram(int prog)
     if(progWas==TEMP_PROGRAM) {
         delete listPrograms.take(TEMP_PROGRAM);
     }
+
+    if(msgWasEnabled)
+        SetMsgEnabled(true);
 }
 
 /*!
@@ -698,7 +704,7 @@ QDataStream & Object::toStream(QDataStream & out) const
   */
 bool Object::fromStream(QDataStream & in)
 {
-//    LoadProgram(TEMP_PROGRAM);
+    LoadProgram(TEMP_PROGRAM);
 
     qint16 id;
     in >> id;
@@ -886,5 +892,12 @@ void Object::SetMsgEnabled(bool enab)
     MsgHandler::SetMsgEnabled(enab);
     foreach(PinsList *lst, pinLists) {
         lst->SetMsgEnabled(enab);
+    }
+
+    //we're enabled, parent is not : send update
+    if(enab && !msgCtrl->listObj[containerId]->MsgEnabled()) {
+        MsgObject msg(containerId);
+        GetInfos(msg);
+        msgCtrl->SendMsg(msg);
     }
 }

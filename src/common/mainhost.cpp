@@ -301,9 +301,9 @@ void MainHost::SetupHostContainer()
         hostContainer->childContainer=projectContainer;
 
     hostContainer->SetMsgEnabled(true);
-    MsgObject msg(FixedObjId::mainContainer);
-    hostContainer->GetInfos(msg);
-    SendMsg(msg);
+//    MsgObject msg(FixedObjId::mainContainer);
+//    hostContainer->GetInfos(msg);
+//    SendMsg(msg);
 
     hostContainer->SetLoadingMode(false);
     hostContainer->UpdateModificationTime();
@@ -412,9 +412,9 @@ void MainHost::SetupProjectContainer()
         projectContainer->childContainer=groupContainer;
 
     projectContainer->SetMsgEnabled(true);
-    MsgObject msg(FixedObjId::mainContainer);
-    projectContainer->GetInfos(msg);
-    SendMsg(msg);
+//    MsgObject msg(FixedObjId::mainContainer);
+//    projectContainer->GetInfos(msg);
+//    SendMsg(msg);
 
     projectContainer->SetLoadingMode(false);
     projectContainer->UpdateModificationTime();
@@ -530,9 +530,9 @@ void MainHost::SetupProgramContainer()
     }
 
     programContainer->SetMsgEnabled(true);
-    MsgObject msg(FixedObjId::mainContainer);
-    programContainer->GetInfos(msg);
-    SendMsg(msg);
+//    MsgObject msg(FixedObjId::mainContainer);
+//    programContainer->GetInfos(msg);
+//    SendMsg(msg);
 
     programContainer->SetLoadingMode(false);
     programContainer->UpdateModificationTime();
@@ -649,9 +649,9 @@ void MainHost::SetupGroupContainer()
     }
 
     groupContainer->SetMsgEnabled(true);
-    MsgObject msg(FixedObjId::mainContainer);
-    groupContainer->GetInfos(msg);
-    SendMsg(msg);
+//    MsgObject msg(FixedObjId::mainContainer);
+//    groupContainer->GetInfos(msg);
+//    SendMsg(msg);
 
     groupContainer->SetLoadingMode(false);
     groupContainer->UpdateModificationTime();

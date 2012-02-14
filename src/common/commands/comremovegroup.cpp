@@ -1,42 +1,25 @@
 #include "comremovegroup.h"
-#include "models/programsmodel.h"
+#include "mainhost.h"
 
-ComRemoveGroup::ComRemoveGroup(ProgramsModel *model,
-                               int row,
+ComRemoveGroup::ComRemoveGroup(MainHost *myHost,
+                               int prgId,
                                QUndoCommand *parent) :
     QUndoCommand(parent),
-    model(model),
-    row(row),
-    done(false)
+    myHost(myHost),
+    prgId(prgId)
 {
     setText(QObject::tr("Remove group"));
-
-    done=true;
-    redo();
-    done=false;
 }
 
 void ComRemoveGroup::undo()
 {
-    QModelIndex grpIndex;
-    if(!model->AddGroup(grpIndex, row))
-        return;
-
     QDataStream stream(&data, QIODevice::ReadOnly);
-    model->GroupFromStreamWithPrograms(stream, grpIndex );
+    myHost->groupContainer->ProgramFromStream(prgId, stream);
 }
 
 void ComRemoveGroup::redo()
 {
-    if(!done) {
-        done=true;
-        return;
-    }
-
     QDataStream stream(&data, QIODevice::WriteOnly);
-    model->GroupToStreamWithPrograms(stream, model->index(row,0) );
-
-    model->fromCom=true;
-    model->removeRow(row);
-    model->fromCom=false;
+    myHost->groupContainer->ProgramToStream(prgId, stream);
+    myHost->groupContainer->RemoveProgram(prgId);
 }
