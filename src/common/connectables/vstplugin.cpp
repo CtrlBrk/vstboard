@@ -422,13 +422,9 @@ bool VstPlugin::initPlugin()
 
         char szBuf[256] = "";
         if ((EffGetProductString(szBuf)) && (*szBuf)) {
-            setObjectName( QString("%1%2").arg(szBuf).arg(GetIndex()) );
-        } else {
-            sName = sName.section("/",-1);
-            sName = sName.section(".",0,-2);
-            setObjectName( sName % QString::number(GetIndex()) );
+            setObjectName( QString(szBuf) );
+            objInfo.name=objectName();
         }
-        objInfo.name=objectName();
 
         if(bWantMidi) {
             listMidiPinIn->AddPin(0);
@@ -1003,7 +999,7 @@ Pin* VstPlugin::CreatePin(const ConnectionInfo &info)
                 } else {
                     pin = new ParameterPinIn(this,info.pinNumber,EffGetParameter(info.pinNumber),EffGetParamName(info.pinNumber),hasEditor,hasEditor);
                 }
-                pin->SetDefaultVisible(!hasEditor && !IsInError());
+                pin->SetDefaultVisible(!hasEditor);
                 return pin;
             }
         }

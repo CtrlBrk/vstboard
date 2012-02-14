@@ -67,7 +67,7 @@ Object::Object(MainHost *host, int index, const ObjectInfo &info) :
 {
     objInfo.forcedObjId = index;
 
-    setObjectName(QString("%1.%2").arg(objInfo.name).arg(index));
+    setObjectName(objInfo.name);
     doublePrecision=myHost->doublePrecision;
 
 #ifdef SCRIPTENGINE
@@ -482,7 +482,10 @@ void Object::OnParameterChanged(ConnectionInfo pinInfo, float value)
   */
 bool Object::ToggleEditor(bool visible)
 {
-    ParameterPin *pin = static_cast<ParameterPin*>(listParameterPinIn->listPins.value(FixedPinNumber::editorVisible));
+    if(!listParameterPinIn)
+        return false;
+
+    ParameterPin *pin = static_cast<ParameterPin*>(listParameterPinIn->listPins.value(FixedPinNumber::editorVisible,0));
     if(!pin)
         return false;
     if(static_cast<bool>(pin->GetStepIndex())==visible)
@@ -497,6 +500,9 @@ bool Object::ToggleEditor(bool visible)
   */
 LearningMode::Enum Object::GetLearningMode()
 {
+    if(!listParameterPinIn)
+        return LearningMode::off;
+
     if(!listParameterPinIn->listPins.contains(FixedPinNumber::learningMode))
         return LearningMode::off;
 

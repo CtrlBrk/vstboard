@@ -244,7 +244,7 @@ void KeyBind::SetDefaults()
     mapMainShortcuts.insert(audioDevices,        "Ctrl+Alt+A");
     mapMainShortcuts.insert(solverModel,         "Ctrl+Alt+S");
     mapMainShortcuts.insert(hostModel,           "Ctrl+Alt+H");
-    mapMainShortcuts.insert(undoHistory,         "Ctrl+Alt+U");
+//    mapMainShortcuts.insert(undoHistory,         "Ctrl+Alt+U");
     mapMainShortcuts.insert(configuration,       "Ctrl+Alt+C");
     mapMainShortcuts.insert(appearence,          "Ctrl+Alt+E");
     mapMainShortcuts.insert(undo,                "Ctrl+Z");

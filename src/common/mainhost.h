@@ -140,6 +140,8 @@ private:
 
     void CheckTempo();
 
+    void currentFileChanged();
+
     bool solverNeedAnUpdate;
     bool solverUpdateEnabled;
 
@@ -171,7 +173,6 @@ signals:
 //    void programParkingModelChanged(QStandardItemModel *model);
 //    void groupParkingModelChanged(QStandardItemModel *model);
     void TempoChanged(int tempo=120, int sign1=4, int sign2=4);
-    void currentFileChanged();
     void DelayChanged(long samples);
 
 public slots:

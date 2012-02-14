@@ -140,10 +140,12 @@ bool Cable::SetDelay(quint32 d)
 
     tmpBuf->SetSize(myHost->GetBufferSize());
 
-    MsgObject msg(GetIndex());
-    msg.prop[MsgObject::Update]=1;
-    msg.prop[MsgObject::Delay]=d;
-    msgCtrl->SendMsg(msg);
+    if(MsgEnabled()) {
+        MsgObject msg(GetIndex());
+        msg.prop[MsgObject::Update]=1;
+        msg.prop[MsgObject::Delay]=d;
+        msgCtrl->SendMsg(msg);
+    }
     return true;
 }
 

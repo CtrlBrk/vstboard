@@ -54,6 +54,14 @@ Container::Container(MainHost *myHost,int index, const ObjectInfo &info) :
 {
     qDeleteAll(pinLists);
     pinLists.clear();
+    listAudioPinIn=0;
+    listAudioPinOut=0;
+    listParameterPinIn=0;
+    listParameterPinOut=0;
+    listMidiPinIn=0;
+    listMidiPinOut=0;
+    listBridgePinIn=0;
+    listBridgePinOut=0;
 
     parkModel.setObjectName("parkModel"%objectName());
     LoadProgram(TEMP_PROGRAM);

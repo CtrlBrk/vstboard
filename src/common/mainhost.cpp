@@ -909,10 +909,10 @@ void MainHost::LoadSetupFile(const QString &filename)
     undoStack.clear();
 
     if(ProjectFile::LoadFromFile(this,name)) {
-        ConfigDialog::AddRecentSetupFile(name,settings);
+//        ConfigDialog::AddRecentSetupFile(name,settings);
         currentSetupFile = name;
     } else {
-        ConfigDialog::RemoveRecentSetupFile(name,settings);
+//        ConfigDialog::RemoveRecentSetupFile(name,settings);
         ClearSetup();
     }
 
@@ -924,7 +924,7 @@ void MainHost::LoadSetupFile(const QString &filename)
 //        SendMsg(a);
 //    }
 
-    emit currentFileChanged();
+    currentFileChanged();
 }
 
 void MainHost::LoadProjectFile(const QString &filename)
@@ -945,10 +945,10 @@ void MainHost::LoadProjectFile(const QString &filename)
     undoStack.clear();
 
     if(ProjectFile::LoadFromFile(this,name)) {
-        ConfigDialog::AddRecentProjectFile(name,settings);
+//        ConfigDialog::AddRecentProjectFile(name,settings);
         currentProjectFile = name;
     } else {
-        ConfigDialog::RemoveRecentProjectFile(name,settings);
+//        ConfigDialog::RemoveRecentProjectFile(name,settings);
         ClearProject();
     }
 
@@ -974,7 +974,7 @@ void MainHost::LoadProjectFile(const QString &filename)
 //        SendMsg(c);
 //    }
 
-    emit currentFileChanged();
+    currentFileChanged();
 }
 
 void MainHost::ReloadProject()
@@ -994,7 +994,7 @@ void MainHost::ReloadSetup()
 
     undoStack.clear();
 
-    ConfigDialog::AddRecentSetupFile(currentSetupFile,settings);
+//    ConfigDialog::AddRecentSetupFile(currentSetupFile,settings);
 }
 
 void MainHost::ClearSetup()
@@ -1010,9 +1010,9 @@ void MainHost::ClearSetup()
     if(mainWindow)
         mainWindow->viewConfig->LoadFromRegistry();
 
-    ConfigDialog::AddRecentSetupFile("",settings);
+//    ConfigDialog::AddRecentSetupFile("",settings);
     currentSetupFile = "";
-    emit currentFileChanged();
+    currentFileChanged();
 }
 
 void MainHost::ClearProject()
@@ -1030,9 +1030,9 @@ void MainHost::ClearProject()
 
     programManager->BuildDefaultPrograms();
 
-    ConfigDialog::AddRecentProjectFile("",settings);
+//    ConfigDialog::AddRecentProjectFile("",settings);
     currentProjectFile = "";
-    emit currentFileChanged();
+    currentFileChanged();
 }
 
 bool MainHost::SaveSetupFile(bool saveAs)
@@ -1055,10 +1055,10 @@ bool MainHost::SaveSetupFile(bool saveAs)
     }
 
     if(ProjectFile::SaveToSetupFile(this,filename)) {
-        settings->SetSetting("lastSetupDir",QFileInfo(filename).absolutePath());
-        ConfigDialog::AddRecentSetupFile(filename,settings);
+//        settings->SetSetting("lastSetupDir",QFileInfo(filename).absolutePath());
+//        ConfigDialog::AddRecentSetupFile(filename,settings);
         currentSetupFile = filename;
-        emit currentFileChanged();
+        currentFileChanged();
     }
 
     return true;
@@ -1084,12 +1084,20 @@ bool MainHost::SaveProjectFile(bool saveAs)
     }
 
     if(ProjectFile::SaveToProjectFile(this,filename)) {
-        settings->SetSetting("lastProjectDir",QFileInfo(filename).absolutePath());
-        ConfigDialog::AddRecentProjectFile(filename,settings);
+//        settings->SetSetting("lastProjectDir",QFileInfo(filename).absolutePath());
+//        ConfigDialog::AddRecentProjectFile(filename,settings);
         currentProjectFile = filename;
-        emit currentFileChanged();
+        currentFileChanged();
     }
     return true;
+}
+
+void MainHost::currentFileChanged()
+{
+    MsgObject msg(FixedObjId::mainWindow);
+    msg.prop[MsgObject::Setup]=currentSetupFile;
+    msg.prop[MsgObject::Project]=currentProjectFile;
+    SendMsg(msg);
 }
 
 void MainHost::ReceiveMsg(const MsgObject &msg)

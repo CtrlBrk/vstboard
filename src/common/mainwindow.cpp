@@ -56,11 +56,10 @@ void MainWindow::Init()
 //            this,SLOT(programParkingModelChanges(QStandardItemModel*)));
 //    connect(myHost,SIGNAL(groupParkingModelChanged(QStandardItemModel*)),
 //            this,SLOT(groupParkingModelChanges(QStandardItemModel*)));
-//    connect(myHost,SIGNAL(currentFileChanged()),
-//            this,SLOT(currentFileChanged()));
 
     ui->setupUi(this);
     ui->statusBar->hide();
+    ui->dockUndo->hide();
 
     connect(ui->mainToolBar, SIGNAL(visibilityChanged(bool)),
             ui->actionTool_bar, SLOT(setChecked(bool)));
@@ -115,6 +114,33 @@ void MainWindow::Init()
 
 void MainWindow::ReceiveMsg(const MsgObject &msg)
 {
+    if(msg.objIndex==FixedObjId::mainWindow) {
+        if(msg.prop.contains(MsgObject::Setup) && msg.prop.contains(MsgObject::Project)) {
+            QFileInfo setup( msg.prop[MsgObject::Setup].toString() );
+
+            if(setup.fileName().isEmpty()) {
+                ui->actionSave_Setup_As->setEnabled( false );
+            } else {
+                ui->actionSave_Setup_As->setEnabled( true );
+                settings->SetSetting("lastSetupDir",setup.absolutePath());
+                ConfigDialog::AddRecentSetupFile(setup.absoluteFilePath(),settings);
+            }
+
+            QFileInfo project( msg.prop[MsgObject::Project].toString() );
+            if(project.fileName().isEmpty()) {
+                ui->actionSave_Project_As->setEnabled( false );
+            } else {
+                ui->actionSave_Project_As->setEnabled( true );
+                settings->SetSetting("lastProjectDir",project.absolutePath());
+                ConfigDialog::AddRecentProjectFile(project.absoluteFilePath(),settings);
+            }
+
+            setWindowTitle(QString("VstBoard %1:%2").arg( setup.baseName() ).arg( project.baseName() ));
+            updateRecentFileActions();
+        }
+        return;
+    }
+
     if(!listObj.contains(msg.objIndex)) {
         LOG("obj not found"<<msg.objIndex<<msg.prop)
         return;
@@ -411,7 +437,7 @@ void MainWindow::UpdateKeyBinding()
     ui->dockVstBrowser->toggleViewAction()->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::vstPlugins));
     ui->dockBankBrowser->toggleViewAction()->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::browser));
     ui->dockPrograms->toggleViewAction()->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::programs));
-    ui->dockUndo->toggleViewAction()->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::undoHistory));
+//    ui->dockUndo->toggleViewAction()->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::undoHistory));
     ui->dockSolver->toggleViewAction()->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::solverModel));
     ui->dockHostModel->toggleViewAction()->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::hostModel));
     ui->actionHide_all_editors->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::hideAllEditors));
@@ -456,8 +482,8 @@ void MainWindow::readSettings()
     ui->menuView->addAction(ui->dockPrograms->toggleViewAction());
     ui->mainToolBar->addAction(ui->dockPrograms->toggleViewAction());
 
-    ui->menuView->addAction(ui->dockUndo->toggleViewAction());
-    ui->mainToolBar->addAction(ui->dockUndo->toggleViewAction());
+//    ui->menuView->addAction(ui->dockUndo->toggleViewAction());
+//    ui->mainToolBar->addAction(ui->dockUndo->toggleViewAction());
 
     ui->menuView->addAction(ui->dockSolver->toggleViewAction());
 
@@ -498,6 +524,8 @@ void MainWindow::readSettings()
     } else {
         resetSettings();
     }
+
+    ui->dockUndo->setVisible(false);
 
     ui->splitterProg->setStretchFactor(0,100);
     ui->splitterGroup->setStretchFactor(0,100);
@@ -554,7 +582,7 @@ void MainWindow::resetSettings()
     listDocksVisible << ui->dockVstBrowser;
     listDocksVisible << ui->dockBankBrowser;
     listDocksVisible << ui->dockPrograms;
-    listDocksVisible << ui->dockUndo;
+//    listDocksVisible << ui->dockUndo;
     foreach(QDockWidget *dock, listDocksVisible) {
         dock->setFloating(false);
         dock->setVisible(true);
@@ -575,7 +603,7 @@ void MainWindow::resetSettings()
     addDockWidget(Qt::LeftDockWidgetArea,  ui->dockBankBrowser);
 
     addDockWidget(Qt::RightDockWidgetArea,  ui->dockPrograms);
-    addDockWidget(Qt::RightDockWidgetArea,  ui->dockUndo);
+//    addDockWidget(Qt::RightDockWidgetArea,  ui->dockUndo);
     addDockWidget(Qt::RightDockWidgetArea,  ui->dockSolver);
     addDockWidget(Qt::RightDockWidgetArea,  ui->dockHostModel);
 
@@ -589,6 +617,7 @@ void MainWindow::resetSettings()
     ui->actionTool_bar->setChecked(true);
 //    ui->actionStatus_bar->setChecked(false);
     ui->statusBar->setVisible(false);
+    ui->dockUndo->setVisible(false);
 
     int h = ui->splitterPanels->height()/4;
     QList<int>heights;

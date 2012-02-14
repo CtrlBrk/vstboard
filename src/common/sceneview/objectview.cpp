@@ -193,7 +193,7 @@ void ObjectView::ReceiveMsg(const MsgObject &msg)
 
     if(msg.prop.contains(MsgObject::Name)) {
 #ifndef QT_NO_DEBUG
-    UpdateTitle( QString("%1 (%2)").arg(msg.prop[MsgObject::Name].toString()).arg(msg.objIndex) );
+    UpdateTitle( QString("%1 (%2)").arg(msg.prop[MsgObject::Name].toString()).arg(GetIndex()) );
 #else
     UpdateTitle( msg.prop[MsgObject::Name].toString() );
 #endif
