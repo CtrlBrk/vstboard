@@ -286,7 +286,7 @@ namespace Connectables {
         virtual void UserAddPin(const ConnectionInfo &info);
 
         void SetErrorMessage(const QString &msg) {errorMessage=msg;}
-        bool IsInError() { return !(errorMessage.isEmpty()); }
+        bool IsInError() { return (objInfo.objType == ObjType::dummy || !errorMessage.isEmpty()); }
     };
 }
 

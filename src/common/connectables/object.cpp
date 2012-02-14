@@ -374,7 +374,7 @@ Pin * Object::GetPin(const ConnectionInfo &pinInfo)
     Pin* pin=0;
     bool autoCreate=false;
 
-    if(objInfo.objType == ObjType::dummy || !errorMessage.isEmpty())
+    if(IsInError())
         autoCreate=true;
 
     foreach(PinsList *lst, pinLists) {
@@ -802,7 +802,6 @@ void Object::GetInfos(MsgObject &msg)
 
     if(!errorMessage.isEmpty()) {
         msg.prop[MsgObject::Message]=errorMessage;
-        return;
     }
 
     QMap<QString, PinsList*>::iterator i = pinLists.constBegin();

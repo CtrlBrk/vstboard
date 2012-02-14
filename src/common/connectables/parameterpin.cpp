@@ -297,7 +297,7 @@ void ParameterPin::UpdateView()
             displayedText = parent->GetParameterName(connectInfo);
 //            setObjectName(parent->GetParameterName(connectInfo));
 
-        if(listValues) {
+        if(listValues && listValues->count()>outStepIndex) {
             displayedText = QString("%1:%2").arg(objectName()).arg(listValues->at(outStepIndex).toString());
         }
     }

@@ -987,11 +987,11 @@ Pin* VstPlugin::CreatePin(const ConnectionInfo &info)
             case FixedPinNumber::vstProgNumber :
                 return new ParameterPinIn(this,info.pinNumber,0,&listValues,"prog");
             case FixedPinNumber::editorVisible :
-                if(!hasEditor)
+                if(!hasEditor && !IsInError())
                     return 0;
                 return new ParameterPinIn(this,info.pinNumber,"show",&listEditorVisible,tr("Editor"));
             case FixedPinNumber::learningMode :
-                if(!hasEditor)
+                if(!hasEditor && !IsInError())
                     return 0;
                 return new ParameterPinIn(this,info.pinNumber,"off",&listIsLearning,tr("Learn"));
             case FixedPinNumber::bypass :
@@ -1003,7 +1003,7 @@ Pin* VstPlugin::CreatePin(const ConnectionInfo &info)
                 } else {
                     pin = new ParameterPinIn(this,info.pinNumber,EffGetParameter(info.pinNumber),EffGetParamName(info.pinNumber),hasEditor,hasEditor);
                 }
-                pin->SetDefaultVisible(!hasEditor);
+                pin->SetDefaultVisible(!hasEditor && !IsInError());
                 return pin;
             }
         }
