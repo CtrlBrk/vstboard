@@ -245,7 +245,30 @@ void MainWindow::showEvent(QShowEvent *event)
 //    LOG("window show event")
 
     MsgObject msg;
-    msg.prop[MsgObject::Update]=1;
+    msg.prop[MsgObject::Update]=true;
+
+    if(ui->actionHost_panel->isChecked()) {
+        msg.objIndex=FixedObjId::hostContainer;
+        SendMsg(msg);
+    }
+    if(ui->actionProject_panel->isChecked()) {
+        msg.objIndex=FixedObjId::projectContainer;
+        SendMsg(msg);
+    }
+    if(ui->actionGroup_panel->isChecked()) {
+        msg.objIndex=FixedObjId::groupContainer;
+        SendMsg(msg);
+    }
+    if(ui->actionProgram_panel->isChecked()) {
+        msg.objIndex=FixedObjId::programContainer;
+        SendMsg(msg);
+    }
+}
+
+void MainWindow::hideEvent(QHideEvent *event)
+{
+    MsgObject msg;
+    msg.prop[MsgObject::Update]=false;
     msg.objIndex=FixedObjId::hostContainer;
     SendMsg(msg);
     msg.objIndex=FixedObjId::projectContainer;
@@ -848,5 +871,37 @@ void MainWindow::on_actionRedo_triggered()
 {
     MsgObject msg(FixedObjId::mainHost);
     msg.prop[MsgObject::Redo]=1;
+    SendMsg(msg);
+}
+
+void MainWindow::on_actionHost_panel_toggled(bool arg1)
+{
+    MsgObject msg;
+    msg.prop[MsgObject::Update]=arg1;
+    msg.objIndex=FixedObjId::hostContainer;
+    SendMsg(msg);
+}
+
+void MainWindow::on_actionGroup_panel_toggled(bool arg1)
+{
+    MsgObject msg;
+    msg.prop[MsgObject::Update]=arg1;
+    msg.objIndex=FixedObjId::groupContainer;
+    SendMsg(msg);
+}
+
+void MainWindow::on_actionProgram_panel_toggled(bool arg1)
+{
+    MsgObject msg;
+    msg.prop[MsgObject::Update]=arg1;
+    msg.objIndex=FixedObjId::programContainer;
+    SendMsg(msg);
+}
+
+void MainWindow::on_actionProject_panel_toggled(bool arg1)
+{
+    MsgObject msg;
+    msg.prop[MsgObject::Update]=arg1;
+    msg.objIndex=FixedObjId::projectContainer;
     SendMsg(msg);
 }

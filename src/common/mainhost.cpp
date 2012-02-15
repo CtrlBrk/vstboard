@@ -159,7 +159,7 @@ void MainHost::Init()
     timeFromStart.start();
 
     updateViewTimer = new QTimer(this);
-    updateViewTimer->start(40);
+    updateViewTimer->start(120);
 
     connect(this,SIGNAL(SolverToUpdate()),
             this,SLOT(UpdateSolver()),

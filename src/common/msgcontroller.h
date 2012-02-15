@@ -13,7 +13,7 @@ public:
     virtual void SendMsg(const MsgObject &msg)=0;
     virtual void ReceiveMsg(const MsgObject &msg)=0;
 
-    QMap<int,MsgHandler*>listObj;
+    QHash<int,MsgHandler*>listObj;
 };
 
 #endif // MSGCONTROLLER_H

@@ -166,9 +166,9 @@ bool Object::Close()
 
 //    if(MsgEnabled()) {
         if(parkingId==FixedObjId::ND) {
-            MsgObject msg(containerId);
-            msg.prop[MsgObject::Remove]=GetIndex();
-            msgCtrl->SendMsg(msg);
+//            MsgObject msg(containerId);
+//            msg.prop[MsgObject::Remove]=GetIndex();
+//            msgCtrl->SendMsg(msg);
         } else {
             MsgObject msg(parkingId);
             msg.prop[MsgObject::Remove]=GetIndex();
@@ -563,15 +563,19 @@ void Object::CopyStatusTo(QSharedPointer<Object>objPtr)
     GetContainerAttribs(attr);
     objPtr->SetContainerAttribs(attr);
 
-    Connectables::ParameterPinIn* oldEditPin = static_cast<Connectables::ParameterPinIn*>(listParameterPinIn->GetPin(FixedPinNumber::editorVisible));
-    Connectables::ParameterPinIn* newEditPin = static_cast<Connectables::ParameterPinIn*>(objPtr->listParameterPinIn->GetPin(FixedPinNumber::editorVisible));
-    if(newEditPin && oldEditPin)
-        newEditPin->ChangeValue(oldEditPin->GetValue());
+    if(listParameterPinIn->listPins.contains(FixedPinNumber::editorVisible)) {
+        Connectables::ParameterPinIn* oldEditPin = static_cast<Connectables::ParameterPinIn*>(listParameterPinIn->GetPin(FixedPinNumber::editorVisible));
+        Connectables::ParameterPinIn* newEditPin = static_cast<Connectables::ParameterPinIn*>(objPtr->listParameterPinIn->GetPin(FixedPinNumber::editorVisible));
+        if(newEditPin && oldEditPin)
+            newEditPin->ChangeValue(oldEditPin->GetValue());
+    }
 
-    Connectables::ParameterPinIn* oldLearnPin = static_cast<Connectables::ParameterPinIn*>(listParameterPinIn->GetPin(FixedPinNumber::learningMode));
-    Connectables::ParameterPinIn* newLearnPin = static_cast<Connectables::ParameterPinIn*>(objPtr->listParameterPinIn->GetPin(FixedPinNumber::learningMode));
-    if(newLearnPin && oldLearnPin)
-        newLearnPin->ChangeValue(oldLearnPin->GetValue());
+    if(listParameterPinIn->listPins.contains(FixedPinNumber::learningMode)) {
+        Connectables::ParameterPinIn* oldLearnPin = static_cast<Connectables::ParameterPinIn*>(listParameterPinIn->GetPin(FixedPinNumber::learningMode));
+        Connectables::ParameterPinIn* newLearnPin = static_cast<Connectables::ParameterPinIn*>(objPtr->listParameterPinIn->GetPin(FixedPinNumber::learningMode));
+        if(newLearnPin && oldLearnPin)
+            newLearnPin->ChangeValue(oldLearnPin->GetValue());
+    }
 }
 
 void Object::SetBufferSize(unsigned long size)

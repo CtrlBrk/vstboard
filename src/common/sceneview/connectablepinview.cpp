@@ -159,7 +159,7 @@ void ConnectablePinView::ReceiveMsg(const MsgObject &msg)
         }
     }
 
-    PinView::ReceiveMsg(msg);
+//    PinView::ReceiveMsg(msg);
 }
 
 void ConnectablePinView::ResetOveload()

@@ -570,7 +570,6 @@ void Container::UserParkObject(QSharedPointer<Object> objPtr,
         msgCtrl->SendMsg(msg);
     }
 
-
     if(!loadingMode) {
         myHost->SetSolverUpdateNeeded();
         UpdateModificationTime();
@@ -1150,9 +1149,10 @@ void Container::ReceiveMsg(const MsgObject &msg)
     }
 
     if(msg.prop.contains(MsgObject::Update)) {
-        MsgObject ans(FixedObjId::mainContainer);
-        GetInfos(ans);
-        msgCtrl->SendMsg(ans);
+//        MsgObject ans(FixedObjId::mainContainer);
+//        GetInfos(ans);
+//        msgCtrl->SendMsg(ans);
+        SetMsgEnabled( msg.prop[MsgObject::Update].toBool() );
         return;
     }
 

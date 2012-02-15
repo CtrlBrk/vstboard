@@ -61,6 +61,7 @@ public:
 
 protected:
     void showEvent(QShowEvent *event);
+    void hideEvent(QHideEvent *event);
     void changeEvent(QEvent *e);
     void SetupBrowsersModels(const QString &vstPath, const QString &browserPath);
     void currentFileChanged(const MsgObject &msg);
@@ -123,6 +124,10 @@ private slots:
     void on_actionAutoShowGui_triggered(bool checked);
     void on_actionUndo_triggered();
     void on_actionRedo_triggered();
+    void on_actionHost_panel_toggled(bool arg1);
+    void on_actionGroup_panel_toggled(bool arg1);
+    void on_actionProgram_panel_toggled(bool arg1);
+    void on_actionProject_panel_toggled(bool arg1);
 };
 
 #endif // MAINWINDOW_H

@@ -39,7 +39,7 @@ ViewConfig::ViewConfig(Settings *settings, QObject *parent) :
     AutoOpenGui(false)
 {
     timerFalloff = new QTimer(this);
-    timerFalloff->start(50);
+    timerFalloff->start(120);
 
     colorGroupNames.insert( ColorGroups::ND, tr("-undefined-") );
     colorGroupNames.insert( ColorGroups::Window, tr("Window") );
