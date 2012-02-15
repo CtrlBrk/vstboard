@@ -19,7 +19,7 @@
 **************************************************************************/
 
 #include "connectablepinview.h"
-#include "../connectables/objectfactory.h"
+#include "connectables/objectfactory.h"
 
 using namespace View;
 

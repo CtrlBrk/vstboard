@@ -20,8 +20,8 @@
 
 #include "connectableobjectview.h"
 #include "connectablepinview.h"
-#include "../connectables/objectfactory.h"
-#include "../connectables/container.h"
+#include "connectables/objectfactory.h"
+#include "connectables/container.h"
 
 using namespace View;
 

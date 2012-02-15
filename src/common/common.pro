@@ -156,21 +156,21 @@ SOURCES += \
     views/keybind.cpp
 	
 SOURCES += \
-    sceneview/connectablepinview.cpp \
     sceneview/objectview.cpp \
-    sceneview/pinview.cpp \
     sceneview/sceneview.cpp \
     sceneview/cableview.cpp \
     sceneview/maincontainerview.cpp \
     sceneview/connectableobjectview.cpp \
-    sceneview/bridgepinview.cpp \
     sceneview/containercontent.cpp \
     sceneview/bridgeview.cpp \
     sceneview/listpinsview.cpp \
+    sceneview/vstpluginview.cpp \
+    sceneview/objectdropzone.cpp \
+    sceneview/pinview.cpp \
     sceneview/minmaxpinview.cpp \
     sceneview/cursorview.cpp \
-    sceneview/vstpluginview.cpp \
-    sceneview/objectdropzone.cpp
+    sceneview/connectablepinview.cpp \
+    sceneview/bridgepinview.cpp
 
 HEADERS += \
     _version.h \
@@ -261,20 +261,20 @@ HEADERS += \
 	
 HEADERS += \
     sceneview/objectview.h \
-    sceneview/pinview.h \
-    sceneview/connectablepinview.h \
     sceneview/sceneview.h \
     sceneview/cableview.h \
     sceneview/maincontainerview.h \
     sceneview/connectableobjectview.h \
-    sceneview/bridgepinview.h \
     sceneview/containercontent.h \
     sceneview/bridgeview.h \
     sceneview/listpinsview.h \
+    sceneview/vstpluginview.h \
+    sceneview/objectdropzone.h \
+    sceneview/pinview.h \
     sceneview/minmaxpinview.h \
     sceneview/cursorview.h \
-    sceneview/vstpluginview.h \
-    sceneview/objectdropzone.h
+    sceneview/connectablepinview.h \
+    sceneview/bridgepinview.h
     
 FORMS += \
     mainwindow.ui \

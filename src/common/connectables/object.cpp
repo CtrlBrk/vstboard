@@ -708,8 +708,6 @@ QDataStream & Object::toStream(QDataStream & out) const
   */
 bool Object::fromStream(QDataStream & in)
 {
-    LoadProgram(TEMP_PROGRAM);
-
     qint16 id;
     in >> id;
     savedIndex=id;
@@ -724,8 +722,12 @@ bool Object::fromStream(QDataStream & in)
 
         ObjectProgram *prog = new ObjectProgram();
         in >> *prog;
-        if(listPrograms.contains(progId))
+        if(listPrograms.contains(progId)) {
+            if(progId==currentProgId) {
+                currentProgram=prog;
+            }
             delete listPrograms.take(progId);
+        }
         listPrograms.insert(progId,prog);
     }
 

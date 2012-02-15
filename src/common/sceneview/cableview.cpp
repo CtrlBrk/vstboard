@@ -114,18 +114,6 @@ void CableView::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, con
     }
 }
 
-void CableView::UpdateModelIndex(const QModelIndex &index)
-{
-//    QPen p = pen();
-
-//    if(index.data(UserRoles::position).toInt()>0) {
-//        p.setWidth(3);
-//    } else {
-//        p.setWidth(0);
-//    }
-//    setPen(p);
-}
-
 void CableView::ReceiveMsg(const MsgObject &msg)
 {
     QPen p = pen();

@@ -63,7 +63,6 @@ void Renderer::UpdateView()
         MsgObject msg(FixedObjId::mainWindow);
         msg.prop[MsgObject::SolverMap]=1;
 
-        int nbRow=0;
         for(int th=0; th<maxNumberOfThreads; th++) {
             QMap<int, RendererNode* >lst = optimizer.GetThreadNodes(th);
 
@@ -73,12 +72,11 @@ void Renderer::UpdateView()
                 MsgObject msgStep(i.key());
                 i.value()->GetInfo(msgStep);
                 msgThread.children << msgStep;
-                if(i.key()>=nbRow) nbRow=i.key()+1;
                 ++i;
             }
             msg.children << msgThread;
         }
-        msg.prop[MsgObject::Row]=nbRow;
+        msg.prop[MsgObject::Row]=numberOfSteps;
         msg.prop[MsgObject::Col]=maxNumberOfThreads;
         myHost->SendMsg(msg);
 
@@ -287,6 +285,8 @@ void Renderer::GetStepsFromOptimizer()
     numberOfSteps = -1;
     numberOfThreads = maxNumberOfThreads;
 
+    LOG("new order")
+
     for(int th=0; th<maxNumberOfThreads; th++) {
         QMap<int, RendererNode* >lst = optimizer.GetThreadNodes(th);
 
@@ -299,6 +299,28 @@ void Renderer::GetStepsFromOptimizer()
                 numberOfSteps = lastStep+1;
             }
         }
+#ifndef QT_NO_DEBUG
+        QList<int>usedSteps;
+        QMap<int, RendererNode* >::iterator i = lst.begin();
+        while(i!=lst.end()) {
+            int start = i.value()->minRenderOrder;
+            int end = i.value()->maxRenderOrder;
+
+            LOG( "th" << th << "step" << i.key() << "[" << start << end << "] (was " << i.value()->minRenderOrderOri << i.value()->maxRenderOrderOri << ")" )
+
+            for(int j=start; j<=end; j++) {
+                if(usedSteps.contains(j)) {
+                    LOG("overlap"<<j)
+                    int a=0;
+                } else {
+                    usedSteps << j;
+                }
+            }
+
+
+            ++i;
+        }
+#endif
     }
 }
 

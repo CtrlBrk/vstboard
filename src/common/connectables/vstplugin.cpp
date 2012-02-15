@@ -513,7 +513,6 @@ void VstPlugin::CreateEditorWindow()
         return;
 
     editorWnd = new View::VstPluginWindow(myHost->mainWindow);
-    editorWnd->setAttribute(Qt::WA_ShowWithoutActivating);
 
     if(!editorWnd->SetPlugin(this)) {
         editorWnd=0;

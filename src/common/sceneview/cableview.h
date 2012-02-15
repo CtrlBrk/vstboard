@@ -21,8 +21,8 @@
 #ifndef CABLEVIEW_H
 #define CABLEVIEW_H
 
-#include "../precomp.h"
-#include "../globals.h"
+#include "precomp.h"
+#include "globals.h"
 #include "pinview.h"
 #include "views/viewconfig.h"
 #include "msghandler.h"
@@ -44,10 +44,6 @@ namespace View {
 
         void UpdatePosition(const PinView *pin, const float angle, const QPointF &pt);
         void UpdatePosition(const QPointF &pt);
-        void UpdateModelIndex(const QModelIndex &index);
-
-//        const ConnectionInfo pinOut;
-//        const ConnectionInfo pinIn;
 
     protected:
         QPointF PtOut;

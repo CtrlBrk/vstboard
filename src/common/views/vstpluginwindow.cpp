@@ -33,6 +33,7 @@ VstPluginWindow::VstPluginWindow(QWidget *parent) :
     plugin(0)
 {
     setAttribute(Qt::WA_DeleteOnClose);
+    setAttribute(Qt::WA_ShowWithoutActivating);
     setWindowFlags(Qt::Tool);
     ui->setupUi(this);
 }
