@@ -136,7 +136,9 @@ SOURCES += \
     programmanager.cpp \
     models/groupsprogramsmodel.cpp \
     models/parkingmodel.cpp \
-    commands/comprogramstate.cpp
+    commands/comprogramstate.cpp \
+    renderer/optimizernode.cpp \
+    renderer/optimizemap.cpp
 
 
 SOURCES += \
@@ -241,7 +243,9 @@ HEADERS += \
     models/parkingmodel.h \
     connectables/vst3plugin.h \
     vst/vst3host.h \
-    commands/comprogramstate.h
+    commands/comprogramstate.h \
+    renderer/optimizernode.h \
+    renderer/optimizemap.h
 
 HEADERS += \
     views/configdialog.h \

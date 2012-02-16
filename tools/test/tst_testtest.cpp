@@ -23,13 +23,14 @@
 
 #include "audiobuffer.h"
 #include "circularbuffer.h"
+#include "renderer/optimizemap.h"
 
-class TestTest : public QObject
+class TestBuffers : public QObject
 {
     Q_OBJECT
 
 public:
-    TestTest();
+    TestBuffers();
 
     AudioBuffer *pinInBuf;
     AudioBuffer *pinOutBuf;
@@ -42,10 +43,9 @@ public:
 
 private Q_SLOTS:
     void writeToRing();
+ };
 
-};
-
-TestTest::TestTest()
+TestBuffers::TestBuffers()
 {
     bufSize = 200;
     ringSize = 450;
@@ -72,7 +72,7 @@ TestTest::TestTest()
 //    ring->Put( buf, bufSize );
 }
 
-void TestTest::writeToRing()
+void TestBuffers::writeToRing()
 {
     QBENCHMARK {
         for(int i=0; i<100000; i++) {
@@ -87,6 +87,58 @@ void TestTest::writeToRing()
 //    }
 //    QVERIFY2(true, "Failure");
 }
-QTEST_APPLESS_MAIN(TestTest);
+
+
+class TestOptimizer : public QObject
+{
+    Q_OBJECT
+
+public:
+    TestOptimizer();
+    ~TestOptimizer();
+    OptimizeMap *opt;
+    QList<OptimizerNode*> nodes;
+    int nbThreads;
+
+private Q_SLOTS:
+    void Test();
+ };
+
+TestOptimizer::TestOptimizer()
+{
+    nbThreads = 4;
+
+    int id=0;
+    nodes << new OptimizerNode(id++,29484,2,2);
+    nodes << new OptimizerNode(id++,2496,0,0);
+    nodes << new OptimizerNode(id++,4212,0,0);
+    nodes << new OptimizerNode(id++,1560,1,1);
+    nodes << new OptimizerNode(id++,93756,0,2);
+    nodes << new OptimizerNode(id++,2808,1,1);
+    nodes << new OptimizerNode(id++,471744,2,2);
+    nodes << new OptimizerNode(id++,431652,0,2);
+
+    opt = new OptimizeMap( );
+}
+
+TestOptimizer::~TestOptimizer()
+{
+    delete opt;
+    qDeleteAll(nodes);
+}
+
+void TestOptimizer::Test()
+{
+    OptMap map;
+
+//    QBENCHMARK {
+        map = opt->GetBestMap( nodes, nbThreads);
+//    }
+
+    LOG("best"<<opt->bestTime<<"nbIter"<<opt->nbIter);
+    LOG( OptMap2Txt(map) );
+}
+
+QTEST_APPLESS_MAIN(TestOptimizer)
 
 #include "tst_testtest.moc"

@@ -6,7 +6,9 @@
 
 QT       += testlib
 
-QT       -= gui
+#QT       -= gui
+
+DEFINES += TESTING
 
 TARGET = tst_testtest
 CONFIG   += console
@@ -18,14 +20,21 @@ INCLUDEPATH += $$PWD/../../src/common
 DEPENDPATH += $$PWD/../../src/common
 
 SOURCES += tst_testtest.cpp \
-    ../../src/common/audiobuffer.cpp \
-    ../../src/common/circularbuffer.cpp
+    audiobuffer.cpp \
+    circularbuffer.cpp \
+    renderer/optimizernode.cpp \
+    renderer/optimizemap.cpp \
+    renderer/node.cpp
 
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 HEADERS += \
-    ../../src/common/audiobuffer.h \
-    ../../src/common/circularbuffer.h \
+    audiobuffer.h \
+    circularbuffer.h \
     precomp.h
 
 PRECOMPILED_HEADER = precomp.h
+
+#to add symbols :
+    QMAKE_CXXFLAGS_RELEASE +=  -Zi
+    QMAKE_LFLAGS_RELEASE += /DEBUG

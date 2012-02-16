@@ -9,6 +9,11 @@ class Node
 public:
     Node();
     Node(const Node &c);
+
+#ifdef TESTING
+    Node(int minRenderOrder, int maxRenderOrder) : minRenderOrder(minRenderOrder), maxRenderOrder(maxRenderOrder) {}
+#endif
+
     int minRenderOrder;
     int maxRenderOrder;
     long internalDelay;
