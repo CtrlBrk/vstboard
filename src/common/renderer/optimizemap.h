@@ -13,22 +13,26 @@ public:
     OptimizeMap();
     OptMap GetBestMap(const QList<OptimizerNode*> &nodes, int th);
 
-    int nbIter;
-    int maxNbResult;
     long bestTime;
+
+#ifdef TESTING
+    int nbIter;
+    int skipedIter;
+#endif
 
 private:
     bool MapNodes(QList<OptimizerNode *> &nodes, OptMap &map, int nbUsedThreads=0);
     bool AddNodeToMap(OptimizerNode *node, OptMap &map, int thread, const NodePos &pos);
     void RemoveNodeFromMap(OptimizerNode *node, OptMap &map, int thread, const NodePos &pos);
     long GetRenderingTime(const OptMap &map);
-    bool OptimizeMap::CompareNodeSpeed(OptimizerNode *n1, OptimizerNode *n2);
-    OptimizerNode *TakeNextNodeForStep(QList<OptimizerNode*> &nodes, int step);
-
     int nbThreads;
+    QMap<int,long>threadTimes;
+    long currentMapTime;
     OptMap _map;
 };
 
+#ifdef TESTING
 QString OptMap2Txt(const OptMap& map);
+#endif
 
 #endif // OPTIMIZEMAP_H

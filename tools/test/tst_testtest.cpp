@@ -131,12 +131,12 @@ void TestOptimizer::Test()
 {
     OptMap map;
 
-//    QBENCHMARK {
+    QBENCHMARK {
         map = opt->GetBestMap( nodes, nbThreads);
-//    }
+    }
 
-    LOG("best"<<opt->bestTime<<"nbIter"<<opt->nbIter);
-    LOG( OptMap2Txt(map) );
+    qDebug() << "best"<<opt->bestTime<<"nbIter"<<opt->nbIter<<"skipedIter"<<opt->skipedIter;
+    qDebug() << OptMap2Txt(map);
 }
 
 QTEST_APPLESS_MAIN(TestOptimizer)

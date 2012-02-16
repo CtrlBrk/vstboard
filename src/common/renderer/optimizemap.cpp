@@ -7,10 +7,17 @@ OptimizeMap::OptimizeMap()
 
 OptMap OptimizeMap::GetBestMap(const QList<OptimizerNode*> &nodes, int th)
 {
-    nbThreads=th;
-    nbIter=0;
-    maxNbResult=50;
+    threadTimes.clear();
     bestTime=0;
+    currentMapTime=0;
+    nbThreads=th;
+
+#ifdef TESTING
+    nbIter=0;
+    skipedIter=0;
+#endif
+
+
     QList<OptimizerNode*> testingNodes = nodes;
     qSort(testingNodes.begin(), testingNodes.end(), OptimizerNode::CompareCpuUsage);
     OptMap newMap;
@@ -21,58 +28,95 @@ OptMap OptimizeMap::GetBestMap(const QList<OptimizerNode*> &nodes, int th)
 
 bool OptimizeMap::MapNodes(QList<OptimizerNode*> &nodes, OptMap &map, int nbUsedThreads)
 {
-    bool added=false;
-
     //all nodes are mapped, get the rendering time
     if(nodes.isEmpty()) {
+#ifdef TESTING
         nbIter++;
-        long t = GetRenderingTime(map);
-        if( (t>0 && t<bestTime) || bestTime==0) {
-            bestTime=t;
+#endif
+        if( (currentMapTime>0 && currentMapTime<bestTime) || bestTime==0) {
+            bestTime=currentMapTime;
             _map = map;
-            LOG("res"<<maxNbResult<<"iter"<<nbIter<<"time:"<<t)
-            LOG( OptMap2Txt(_map) )
-            maxNbResult--;
-            if(maxNbResult==0)
-                return true;
         }
-        return false;
+        return true;
     }
 
-    //for each nodes
+    //for each nodes, starting with the biggest
     QList<OptimizerNode*> testingNodes = nodes;
     OptimizerNode *testedNode = testingNodes.takeLast();
 
-    //on each thread
-    for(int testedThread=0; testedThread<nbThreads && testedThread<=nbUsedThreads; testedThread++) {
-        if(testedThread==nbUsedThreads)
-            nbUsedThreads++;
 
-        //for each position
-        foreach(NodePos testedPos, testedNode->possiblePositions) {
-            testedNode->selectedPos = testedPos;
+    //create a list of thread to test
+    //include already used thread + one empty thread if one is available
+    //order by thread length
+    QList<int>lstThread;
+    if(threadTimes.isEmpty()) {
+        lstThread << 0;
+    } else {
+        int maxTh = std::min(nbUsedThreads+1,nbThreads);
+        QList<long>times = threadTimes.values();
+        qSort(times);
+        int cpt=0;
+        while(!times.empty() && cpt<maxTh) {
+            cpt++;
+            long t = times.takeLast();
 
-            //create a version of the map with the node on that thread/position
-            if(AddNodeToMap(testedNode, map, testedThread, testedPos)) {
-
-                long interTime = GetRenderingTime(map);
-                if(bestTime>0 && interTime>bestTime) {
-                    //already too long
-                } else {
-                    added=true;
-                    //add the remaining nodes on the tested map
-                    if(MapNodes(testingNodes,map,nbUsedThreads))
-                        return true;
-                }
+            //fast length test, without steps sync
+            long interTime = testedNode->cpuTime + t;
+            if(bestTime>0 && interTime>bestTime) {
+                //too long, skip this thread
+    #ifdef TESTING
+                skipedIter++;
+    #endif
+                continue;
             }
-            RemoveNodeFromMap(testedNode, map, testedThread, testedPos);
+
+            lstThread << threadTimes.key(t);
         }
     }
 
-//    if(!added) {
-//        return false;
-//    }
-    return false;
+    //on each thread, starting with the shortest
+    while(!lstThread.isEmpty()) {
+        int testedThread = lstThread.takeLast();
+
+        //for each possible position
+        foreach(NodePos testedPos, testedNode->possiblePositions) {
+            testedNode->selectedPos = testedPos;
+            bool addedThread=false;
+
+            //add the node on that thread/position
+            if(AddNodeToMap(testedNode, map, testedThread, testedPos)) {
+
+                //placed on an empty thread, increment the number of used threads
+                if(testedThread==nbUsedThreads) {
+                    addedThread=true;
+                    nbUsedThreads++;
+                }
+
+                //real length test with steps sync
+                currentMapTime = GetRenderingTime(map);
+                if(bestTime>0 && currentMapTime>bestTime) {
+                    //already too long, skip the remaining nodes
+#ifdef TESTING
+                    skipedIter++;
+#endif
+                } else {
+
+                    //add the remaining nodes on the tested map
+                    if(!MapNodes(testingNodes,map,nbUsedThreads)) {
+                        //solver was canceled
+                        return false;
+                    }
+                }
+            }
+
+            //remove the node, reset the nb of used threads, we'll test other positions
+            RemoveNodeFromMap(testedNode, map, testedThread, testedPos);
+            if(addedThread)
+                nbUsedThreads--;
+        }
+    }
+
+    return true;
 }
 
 bool OptimizeMap::AddNodeToMap(OptimizerNode *node, OptMap &map, int thread, const NodePos &pos)
@@ -122,6 +166,7 @@ void OptimizeMap::RemoveNodeFromMap(OptimizerNode *node, OptMap &map, int thread
 long OptimizeMap::GetRenderingTime(const OptMap &map)
 {
     long globalLength=0;
+    threadTimes.clear();
 
     //step, time
     QMap<int, long>stepGlobalEndTime;
@@ -152,9 +197,18 @@ long OptimizeMap::GetRenderingTime(const OptMap &map)
                     } else {
                         stepLength+=node.cpuTime;
                     }
+
+                    if(bestTime>0 && currentStepStartTime+stepLength > bestTime) {
+                        //already too long
+#ifdef TESTING
+                        skipedIter++;
+#endif
+                        return currentStepStartTime+stepLength;
+                    }
                 }
             }
             stepThreadLength[step.key()][thread] = stepLength;
+            threadTimes[thread]+=stepLength;
 
             if(stepLength>maxStepLength)
                 maxStepLength=stepLength;
@@ -162,18 +216,12 @@ long OptimizeMap::GetRenderingTime(const OptMap &map)
         stepGlobalEndTime[step.key()] = maxStepLength + currentStepStartTime;
         globalLength=maxStepLength + currentStepStartTime;
 
-//        //already too long
-//        if(bestTime>0 && globalLength>bestTime) {
-//            return globalLength;
-//        }
-
         ++step;
     }
-//    LOG(globalLength)
-//    LOG(OptMap2Txt(map))
     return globalLength;
 }
 
+#ifdef TESTING
 QString OptMap2Txt(const OptMap& map)
 {
     QMap<int, QMap<int,QString> >str;
@@ -189,7 +237,7 @@ QString OptMap2Txt(const OptMap& map)
             str[0][th.key()+1]=QString("thread:%1").arg(th.key());
 
             foreach(const OptimizerNode &n, th.value()) {
-                str[step.key()+1][th.key()+1] += QString("%1[%2:%3]%4 ").arg(n.id).arg(n.minRenderOrder).arg(n.maxRenderOrder).arg(n.cpuTime);
+                str[step.key()+1][th.key()+1] += QString("%1[%2:%3]%4 ").arg(n.id).arg(n.selectedPos.startStep).arg(n.selectedPos.endStep).arg(n.cpuTime);
             }
             ++th;
         }
@@ -211,15 +259,23 @@ QString OptMap2Txt(const OptMap& map)
     QString out("\n");
     QMap<int, QMap<int, QString > >::iterator step3 = str.begin();
     while(step3!=str.end()) {
+        int cpt=0;
         QMap<int, QString >::iterator th = step3.value().begin();
         while(th!=step3.value().end()) {
+            while(th.key()>cpt) {
+                out += QString(" ").repeated( cols[cpt] );
+                out += " | ";
+                cpt++;
+            }
             out += QString(" ").repeated( cols[th.key()] - th.value().length() );
             out += th.value();
             out += " | ";
             ++th;
+            cpt++;
         }
         out += "\n";
         ++step3;
     }
     return out;
 }
+#endif

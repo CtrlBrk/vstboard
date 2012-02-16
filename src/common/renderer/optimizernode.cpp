@@ -11,7 +11,7 @@ OptimizerNode::OptimizerNode(int id, const RendererNode &c) :
 void OptimizerNode::Init()
 {
     for(int i=minRenderOrder; i<=maxRenderOrder; i++) {
-        for(int j=i; j<=maxRenderOrder; j++) {
+        for(int j=maxRenderOrder; j>=i; j--) {
             possiblePositions << NodePos(i,j);
         }
     }
