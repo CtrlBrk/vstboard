@@ -1,28 +1,36 @@
 #include "optimizemap.h"
 
-OptimizeMap::OptimizeMap()
+OptimizeMap::OptimizeMap(const QList<OptimizerNode*> &nodes, int th) :
+    nodes(nodes),
+    nbThreads(th),
+    solvingDone(false)
 {
+    foreach(OptimizerNode *n, this->nodes) {
+        if(n->cpuTime<LOW_CPU_USAGE)
+            n->cpuTime=LOW_CPU_USAGE;
+    }
 
+    qSort(this->nodes.begin(), this->nodes.end(), OptimizerNode::CompareCpuUsage);
 }
 
-OptMap OptimizeMap::GetBestMap(const QList<OptimizerNode*> &nodes, int th)
+OptMap OptimizeMap::GetBestMap()
 {
-    threadTimes.clear();
-    bestTime=0;
-    currentMapTime=0;
-    nbThreads=th;
+    if(solvingDone)
+        return bestMap;
 
 #ifdef TESTING
     nbIter=0;
     skipedIter=0;
 #endif
 
+    threadTimes.clear();
+    bestTime=0;
+    currentMapTime=0;
 
     QList<OptimizerNode*> testingNodes = nodes;
-    qSort(testingNodes.begin(), testingNodes.end(), OptimizerNode::CompareCpuUsage);
-    OptMap newMap;
-    MapNodes(testingNodes,newMap);
-    return _map;
+    MapNodes(testingNodes, OptMap());
+    solvingDone=true;
+    return bestMap;
 }
 
 
@@ -35,7 +43,7 @@ bool OptimizeMap::MapNodes(QList<OptimizerNode*> &nodes, OptMap &map, int nbUsed
 #endif
         if( (currentMapTime>0 && currentMapTime<bestTime) || bestTime==0) {
             bestTime=currentMapTime;
-            _map = map;
+            bestMap = map;
         }
         return true;
     }
@@ -77,9 +85,16 @@ bool OptimizeMap::MapNodes(QList<OptimizerNode*> &nodes, OptMap &map, int nbUsed
     //on each thread, starting with the shortest
     while(!lstThread.isEmpty()) {
         int testedThread = lstThread.takeLast();
+        bool nodeOk=false;
 
         //for each possible position
         foreach(NodePos testedPos, testedNode->possiblePositions) {
+
+            //test only the smallest position
+            if(testedNode->cpuTime<=LOW_CPU_USAGE) {
+                testedPos = NodePos(testedNode->minRenderOrder,testedNode->minRenderOrder);
+            }
+
             testedNode->selectedPos = testedPos;
             bool addedThread=false;
 
@@ -107,12 +122,24 @@ bool OptimizeMap::MapNodes(QList<OptimizerNode*> &nodes, OptMap &map, int nbUsed
                         return false;
                     }
                 }
+
+                nodeOk=true;
             }
 
             //remove the node, reset the nb of used threads, we'll test other positions
             RemoveNodeFromMap(testedNode, map, testedThread, testedPos);
             if(addedThread)
                 nbUsedThreads--;
+
+            //don't try other positions
+            if(testedNode->cpuTime<=LOW_CPU_USAGE) {
+                break;
+            }
+        }
+
+        //don't try other threads if the node was placed
+        if(testedNode->cpuTime<=LOW_CPU_USAGE && nodeOk) {
+            return true;
         }
     }
 
@@ -165,6 +192,7 @@ void OptimizeMap::RemoveNodeFromMap(OptimizerNode *node, OptMap &map, int thread
 
 long OptimizeMap::GetRenderingTime(const OptMap &map)
 {
+    long offset=1;
     long globalLength=0;
     threadTimes.clear();
 
@@ -198,6 +226,9 @@ long OptimizeMap::GetRenderingTime(const OptMap &map)
                         stepLength+=node.cpuTime;
                     }
 
+                    //add an offset, ponder the number of nodes per thread
+                    stepLength+=offset;
+
                     if(bestTime>0 && currentStepStartTime+stepLength > bestTime) {
                         //already too long
 #ifdef TESTING
@@ -221,8 +252,8 @@ long OptimizeMap::GetRenderingTime(const OptMap &map)
     return globalLength;
 }
 
-#ifdef TESTING
-QString OptMap2Txt(const OptMap& map)
+//#ifdef TESTING
+QString OptimizeMap::OptMap2Txt(const OptMap& map)
 {
     QMap<int, QMap<int,QString> >str;
     str[0][0] = "       ";
@@ -237,7 +268,7 @@ QString OptMap2Txt(const OptMap& map)
             str[0][th.key()+1]=QString("thread:%1").arg(th.key());
 
             foreach(const OptimizerNode &n, th.value()) {
-                str[step.key()+1][th.key()+1] += QString("%1[%2:%3]%4 ").arg(n.id).arg(n.selectedPos.startStep).arg(n.selectedPos.endStep).arg(n.cpuTime);
+                str[step.key()+1][th.key()+1] += QString("%1[%2:%3]%4 ").arg(n.id).arg(n.minRenderOrder).arg(n.maxRenderOrder).arg(n.cpuTime);
             }
             ++th;
         }
@@ -278,4 +309,4 @@ QString OptMap2Txt(const OptMap& map)
     }
     return out;
 }
-#endif
+//#endif

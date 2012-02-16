@@ -25,6 +25,7 @@
 #include "connectables/object.h"
 #include "renderthread.h"
 #include "optimizer.h"
+#include "optimizemap.h"
 
 class MainHost;
 class RendererNode;

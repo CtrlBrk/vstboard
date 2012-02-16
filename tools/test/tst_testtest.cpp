@@ -94,49 +94,91 @@ class TestOptimizer : public QObject
     Q_OBJECT
 
 public:
-    TestOptimizer();
-    ~TestOptimizer();
-    OptimizeMap *opt;
     QList<OptimizerNode*> nodes;
     int nbThreads;
 
 private Q_SLOTS:
+    void initTestCase();
+    void cleanupTestCase();
     void Test();
  };
 
-TestOptimizer::TestOptimizer()
+void TestOptimizer::initTestCase()
 {
     nbThreads = 4;
 
     int id=0;
-    nodes << new OptimizerNode(id++,29484,2,2);
-    nodes << new OptimizerNode(id++,2496,0,0);
-    nodes << new OptimizerNode(id++,4212,0,0);
-    nodes << new OptimizerNode(id++,1560,1,1);
-    nodes << new OptimizerNode(id++,93756,0,2);
-    nodes << new OptimizerNode(id++,2808,1,1);
-    nodes << new OptimizerNode(id++,471744,2,2);
-    nodes << new OptimizerNode(id++,431652,0,2);
+//    nodes << new OptimizerNode(id++,29484,2,2);
+//    nodes << new OptimizerNode(id++,2496,0,0);
+//    nodes << new OptimizerNode(id++,4212,0,0);
+//    nodes << new OptimizerNode(id++,1560,1,1);
+//    nodes << new OptimizerNode(id++,93756,0,2);
+//    nodes << new OptimizerNode(id++,2808,1,1);
+//    nodes << new OptimizerNode(id++,471744,2,2);
+//    nodes << new OptimizerNode(id++,431652,0,2);
+//    nodes << new OptimizerNode(id++,100,3,3);
 
-    opt = new OptimizeMap( );
+    nodes << new OptimizerNode(id++,0,2,2);
+    nodes << new OptimizerNode(id++,0,0,0);
+    nodes << new OptimizerNode(id++,0,0,0);
+    nodes << new OptimizerNode(id++,1560,1,1);
+    nodes << new OptimizerNode(id++,0,0,2);
+    nodes << new OptimizerNode(id++,0,1,1);
+    nodes << new OptimizerNode(id++,0,2,2);
+    nodes << new OptimizerNode(id++,0,0,2);
+    nodes << new OptimizerNode(id++,101,3,3);
+    OptimizeMap opt(nodes, nbThreads );
+
+//    id=0;
+//    QList<OptimizerNode*> nodes2;
+//    nodes2 << new OptimizerNode(id++,105,3,3);
+//    nodes2 << new OptimizerNode(id++,29484,2,2);
+//    nodes2 << new OptimizerNode(id++,2496,0,0);
+//    nodes2 << new OptimizerNode(id++,2808,1,1);
+//    nodes2 << new OptimizerNode(id++,471744,2,2);
+//    nodes2 << new OptimizerNode(id++,431652,0,2);
+//    nodes2 << new OptimizerNode(id++,4212,0,0);
+//    nodes2 << new OptimizerNode(id++,1560,1,1);
+//    nodes2 << new OptimizerNode(id++,93756,0,2);
+//    OptimizeMap opt2(nodes2, nbThreads );
+
+//    id=0;
+//    QList<OptimizerNode*> nodes3;
+//    nodes3 << new OptimizerNode(id++,431652,0,2);
+//    nodes3 << new OptimizerNode(id++,4212,0,0);
+//    nodes3 << new OptimizerNode(id++,1560,1,1);
+//    nodes3 << new OptimizerNode(id++,93756,0,2);
+//    nodes3 << new OptimizerNode(id++,110,3,3);
+//    nodes3 << new OptimizerNode(id++,29484,2,2);
+//    nodes3 << new OptimizerNode(id++,2496,0,0);
+//    nodes3 << new OptimizerNode(id++,2808,1,1);
+//    nodes3 << new OptimizerNode(id++,471744,2,2);
+//    OptimizeMap opt3(nodes3, nbThreads );
+
+//    QVERIFY(opt==opt2);
+//    QVERIFY(opt!=opt3);
+//    QVERIFY(opt2==opt3);
+
+//    qDeleteAll(nodes2);
+//    qDeleteAll(nodes3);
 }
 
-TestOptimizer::~TestOptimizer()
+void TestOptimizer::cleanupTestCase()
 {
-    delete opt;
     qDeleteAll(nodes);
 }
 
 void TestOptimizer::Test()
 {
     OptMap map;
+    OptimizeMap opt(nodes, nbThreads);
 
     QBENCHMARK {
-        map = opt->GetBestMap( nodes, nbThreads);
+        map = opt.GetBestMap();
     }
 
-    qDebug() << "best"<<opt->bestTime<<"nbIter"<<opt->nbIter<<"skipedIter"<<opt->skipedIter;
-    qDebug() << OptMap2Txt(map);
+    qDebug() << "best"<<opt.bestTime<<"nbIter"<<opt.nbIter<<"skipedIter"<<opt.skipedIter;
+    qDebug() << OptimizeMap::OptMap2Txt(map);
 }
 
 QTEST_APPLESS_MAIN(TestOptimizer)

@@ -2,6 +2,8 @@
 #include "renderernode.h"
 
 OptimizerNode::OptimizerNode(int id, const RendererNode &c) :
+    minRenderOrder(c.minRenderOrderOri),
+    maxRenderOrder(c.maxRenderOrderOri),
     cpuTime(c.cpuTime),
     id(id)
 {

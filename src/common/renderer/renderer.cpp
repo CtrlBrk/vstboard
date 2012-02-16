@@ -154,7 +154,7 @@ void Renderer::OnNewRenderingOrder(const QList<SolverNode*> & listNodes)
 
     //copy nodes
     QList<RendererNode*> tmpListOfNodes;
-    foreach(SolverNode *n, listNodes) {
+    foreach(const SolverNode *n, listNodes) {
         tmpListOfNodes << new RendererNode(*n);
     }
 
@@ -203,6 +203,18 @@ void Renderer::StartRender()
         foreach(RenderThread *th, listOfThreads) {
             tmpListOfNodes << th->GetListOfNodes();
         }
+
+        int id=0;
+        QList<OptimizerNode*> tmpListOptNodes;
+        foreach(const RendererNode *n, tmpListOfNodes) {
+            tmpListOptNodes << new OptimizerNode(id,*n);
+            id++;
+        }
+        OptimizeMap opt(tmpListOptNodes, maxNumberOfThreads);
+        OptMap map = opt.GetBestMap();
+        LOG( OptimizeMap::OptMap2Txt(map) )
+
+
         optimizer.NewListOfNodes( tmpListOfNodes );
         optimizer.Optimize();
         GetStepsFromOptimizer();
@@ -285,7 +297,7 @@ void Renderer::GetStepsFromOptimizer()
     numberOfSteps = -1;
     numberOfThreads = maxNumberOfThreads;
 
-    LOG("new order")
+//    LOG("new order")
 
     for(int th=0; th<maxNumberOfThreads; th++) {
         QMap<int, RendererNode* >lst = optimizer.GetThreadNodes(th);
@@ -299,28 +311,28 @@ void Renderer::GetStepsFromOptimizer()
                 numberOfSteps = lastStep+1;
             }
         }
-#ifndef QT_NO_DEBUG
-        QList<int>usedSteps;
-        QMap<int, RendererNode* >::iterator i = lst.begin();
-        while(i!=lst.end()) {
-            int start = i.value()->minRenderOrder;
-            int end = i.value()->maxRenderOrder;
 
-            LOG( "th" << th << "step" << i.key() << "[" << start << end << "] (was " << i.value()->minRenderOrderOri << i.value()->maxRenderOrderOri << ")" )
+//#ifndef QT_NO_DEBUG
+//        QList<int>usedSteps;
+//        QMap<int, RendererNode* >::iterator i = lst.begin();
+//        while(i!=lst.end()) {
+//            int start = i.value()->minRenderOrder;
+//            int end = i.value()->maxRenderOrder;
 
-            for(int j=start; j<=end; j++) {
-                if(usedSteps.contains(j)) {
-                    LOG("overlap"<<j)
-                    int a=0;
-                } else {
-                    usedSteps << j;
-                }
-            }
+//            LOG( "th" << th << "step" << i.key() << "[" << start << end << "] (was " << i.value()->minRenderOrderOri << i.value()->maxRenderOrderOri << ")" )
+
+//            for(int j=start; j<=end; j++) {
+//                if(usedSteps.contains(j)) {
+//                    LOG("overlap"<<j)
+//                } else {
+//                    usedSteps << j;
+//                }
+//            }
 
 
-            ++i;
-        }
-#endif
+//            ++i;
+//        }
+//#endif
     }
 }
 

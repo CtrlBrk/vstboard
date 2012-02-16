@@ -27,7 +27,7 @@ public:
     long cpuTime;
     NodePos selectedPos;
 
-    bool operator ==(const OptimizerNode &c) {
+    bool operator ==(const OptimizerNode &c) const {
         return (c.id==id);
     }
 
