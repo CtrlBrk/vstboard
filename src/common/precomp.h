@@ -52,6 +52,7 @@
     #include <QDir>
     #include <QDragEnterEvent>
     #include <QDropEvent>
+    #include <QElapsedTimer>
     #include <QEvent>
     #include <QFileDialog>
     #include <QFileSystemModel>

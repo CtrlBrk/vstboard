@@ -138,7 +138,8 @@ SOURCES += \
     models/parkingmodel.cpp \
     commands/comprogramstate.cpp \
     renderer/optimizernode.cpp \
-    renderer/optimizemap.cpp
+    renderer/optimizemap.cpp \
+    renderer/semaphoreinverted.cpp
 
 
 SOURCES += \
@@ -245,7 +246,8 @@ HEADERS += \
     vst/vst3host.h \
     commands/comprogramstate.h \
     renderer/optimizernode.h \
-    renderer/optimizemap.h
+    renderer/optimizemap.h \
+    renderer/semaphoreinverted.h
 
 HEADERS += \
     views/configdialog.h \

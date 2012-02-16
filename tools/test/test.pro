@@ -24,7 +24,8 @@ SOURCES += tst_testtest.cpp \
     circularbuffer.cpp \
     renderer/optimizernode.cpp \
     renderer/optimizemap.cpp \
-    renderer/node.cpp
+    renderer/node.cpp \
+    ../../src/common/renderer/semaphoreinverted.cpp
 
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 

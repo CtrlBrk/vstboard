@@ -24,6 +24,7 @@
 #include "audiobuffer.h"
 #include "circularbuffer.h"
 #include "renderer/optimizemap.h"
+#include "renderer/semaphoreinverted.h"
 
 class TestBuffers : public QObject
 {
@@ -181,6 +182,48 @@ void TestOptimizer::Test()
     qDebug() << OptimizeMap::OptMap2Txt(map);
 }
 
-QTEST_APPLESS_MAIN(TestOptimizer)
+
+class TestSem : public QObject
+{
+    Q_OBJECT
+
+public:
+    SemaphoreInverted sem;
+    static void unlockThread(SemaphoreInverted *sem);
+
+private Q_SLOTS:
+    void initTestCase();
+    void cleanupTestCase();
+    void Test();
+ };
+
+void TestSem::unlockThread(SemaphoreInverted *sem)
+{
+    Sleep(500);
+    LOG("unlock")
+    sem->Unlock(2);
+}
+
+void TestSem::initTestCase()
+{
+   sem.AddLock(2);
+   LOG("lock")
+   QtConcurrent::run(TestSem::unlockThread,&sem);
+   bool ret = sem.IsLocked(1000);
+   LOG("run"<<ret)
+   Sleep(1000);
+}
+
+void TestSem::cleanupTestCase()
+{
+
+}
+
+void TestSem::Test()
+{
+
+}
+
+QTEST_APPLESS_MAIN(TestSem)
 
 #include "tst_testtest.moc"
