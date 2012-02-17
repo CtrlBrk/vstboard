@@ -27,9 +27,9 @@
 #include "objectinfo.h"
 class MainHost;
 
-namespace Connectables {
+typedef QHash<int,QWeakPointer<Connectables::Object> > hashObjects;
 
-    typedef QHash<int,QWeakPointer<Object> > hashObjects;
+namespace Connectables {
 
     class ObjectFactory : public QObject
     {

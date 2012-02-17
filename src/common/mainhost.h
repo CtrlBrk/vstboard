@@ -84,10 +84,10 @@ public:
         solverMutex.unlock();
     }
 
-    void UpdateGlobalDelay(long samples)
-    {
-        emit DelayChanged(samples);
-    }
+//    void UpdateGlobalDelay(long samples)
+//    {
+//        emit DelayChanged(samples);
+//    }
 
     inline bool undoProgramChanges() {return undoProgramChangesEnabled;}
 
@@ -163,6 +163,7 @@ private:
     bool undoProgramChangesEnabled;
 
     PathSolver *solver;
+    long globalDelay;
 
 signals:
     void SampleRateChanged(float rate);

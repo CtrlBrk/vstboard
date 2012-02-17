@@ -26,9 +26,8 @@
 #include "connectables/buffer.h"
 #include "updatedelays.h"
 
-PathSolver::PathSolver(MainHost *parent) :
-    QObject(parent),
-    myHost(parent)
+PathSolver::PathSolver(QObject *parent) :
+    QObject(parent)
 {
 
 }
@@ -50,22 +49,41 @@ void PathSolver::Clear()
 
 }
 
-void PathSolver::Resolve(hashCables cables, Renderer *renderer)
+long PathSolver::GetNodes(const hashObjects &lstObj, const hashCables &cables, QList<SolverNode*> &nodes)
 {
-    Clear();
-
-    if(cables.size()==0) {
-        return;
-    }
-
-    mutex.lock();
-
+    listObjects = lstObj;
     listCables = cables;
 
     CreateNodes();
     PutParentsInNodes();
     UnwrapLoops();
-    UpdateDelays(myHost,&cables,&listNodes);
+    UpdateDelays dly(listObjects,&listCables,&listNodes);
+    int cpt=0;
+    while(ChainNodes() && cpt<100) { ++cpt; }
+    RemoveUnusedNodes();
+    SetMinAndMaxStep();
+    nodes = listNodes;
+
+    return dly.GetDelay();
+}
+
+long PathSolver::Resolve(const hashObjects &lstObj, hashCables cables, Renderer *renderer)
+{
+    Clear();
+
+    if(cables.size()==0) {
+        return 0;
+    }
+
+    mutex.lock();
+
+    listObjects = lstObj;
+    listCables = cables;
+
+    CreateNodes();
+    PutParentsInNodes();
+    UnwrapLoops();
+    UpdateDelays dly(listObjects,&listCables,&listNodes);
     int cpt=0;
     while(ChainNodes() && cpt<100) { ++cpt; }
     RemoveUnusedNodes();
@@ -82,6 +100,8 @@ void PathSolver::Resolve(hashCables cables, Renderer *renderer)
 
     listCables.clear();
     mutex.unlock();
+
+    return dly.GetDelay();
 }
 
 void PathSolver::GetListPinsConnectedTo(ConnectionInfo out, QList<ConnectionInfo> &list)
@@ -98,8 +118,8 @@ void PathSolver::GetListPinsConnectedTo(ConnectionInfo out, QList<ConnectionInfo
   */
 void PathSolver::CreateNodes()
 {
-    const Connectables::hashObjects listObjects = myHost->objFactory->GetListObjects();
-    Connectables::hashObjects::const_iterator i = listObjects.constBegin();
+//    const Connectables::hashObjects listObjects = myHost->objFactory->GetListObjects();
+    hashObjects::const_iterator i = listObjects.constBegin();
     while(i!=listObjects.constEnd()) {
         QSharedPointer<Connectables::Object> objPtr = i.value();
 
@@ -371,7 +391,7 @@ QList< QSharedPointer<Connectables::Object> >PathSolver::GetListParents( QShared
 
     hashCables::iterator i = listCables.begin();
     while (i != listCables.end()) {
-        QSharedPointer<Connectables::Object> parentPtr = myHost->objFactory->GetObjectFromId(i.key().objId);
+        QSharedPointer<Connectables::Object> parentPtr = listObjects.value(i.key().objId); //myHost->objFactory->GetObjectFromId(i.key().objId);
         if(parentPtr) {
             if(i.value()->GetInfoIn().objId == objPtr->GetIndex()) {
                 if(!listParents.contains(parentPtr)) {
@@ -412,7 +432,7 @@ QList< QSharedPointer<Connectables::Object> >PathSolver::GetListChildren( QShare
 
     hashCables::iterator i = listCables.begin();
     while (i != listCables.end()) {
-        QSharedPointer<Connectables::Object> childPtr = myHost->objFactory->GetObjectFromId(i.value()->GetInfoIn().objId);
+        QSharedPointer<Connectables::Object> childPtr = listObjects.value( i.value()->GetInfoIn().objId ); //myHost->objFactory->GetObjectFromId(i.value()->GetInfoIn().objId);
         if(childPtr) {
             if(i.key().objId == objPtr->GetIndex()) {
                 if(!listChildren.contains(childPtr)) {

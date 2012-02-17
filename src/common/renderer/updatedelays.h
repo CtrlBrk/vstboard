@@ -24,25 +24,29 @@
 #include "connectables/cable.h"
 #include "solvernode.h"
 
+typedef QHash<int,QWeakPointer<Connectables::Object> > hashObjects;
+
 class MainHost;
 class UpdateDelays
 {
 public:
-    UpdateDelays(MainHost *myHost, hashCables *listCables, const QList<SolverNode*> *listNodes);
+    UpdateDelays(const hashObjects &listObjects, hashCables *listCables, const QList<SolverNode*> *listNodes);
+    long GetDelay() {return globalDelay;}
 
 private:
     void ResetDelays();
     bool AddDelays();
     bool SynchronizeParentNodes(SolverNode *node, long targetDelay);
     bool SynchronizeAudioOutputs();
+    void UpdateGlobalDelay();
 //    void CreateDelayNode(SolverNode *node, SolverNode *childNode, long delay);
 
     void GetListCablesConnectedTo(quint16 objId, QList<QSharedPointer<Connectables::Cable> > &list);
 
+    hashObjects listObjects;
     hashCables *listCables;
     const QList<SolverNode*> *listNodes;
     long globalDelay;
-    MainHost *myHost;
 };
 
 #endif // UPDATEDELAYS_H

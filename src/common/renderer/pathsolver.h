@@ -31,14 +31,18 @@
 
 class MainHost;
 
+
+typedef QHash<int,QWeakPointer<Connectables::Object> > hashObjects;
+
 class PathSolver : public QObject
 {
 Q_OBJECT
 
 public:
-    explicit PathSolver(MainHost *parent);
+    explicit PathSolver(QObject *parent=0);
     ~PathSolver();
-    void Resolve(hashCables cables, Renderer *renderer);
+    long Resolve(const hashObjects &listObjects, hashCables cables, Renderer *renderer);
+    long GetNodes(const hashObjects &listObjects, const hashCables &cables, QList<SolverNode*> &nodes);
 
 protected:
     void Clear();
@@ -62,12 +66,11 @@ protected:
 //    void GetListChildrenOfBridgePin(const ConnectionInfo &info, QList< QSharedPointer<Connectables::Object> > &listChildren);
 
     hashCables listCables;
-    MainHost *myHost;
-
     QList<SolverNode*>listNodes;
     QMutex mutex;
 
     QList<QSharedPointer<Connectables::Object> >listAciveObjects;
+    hashObjects listObjects;
 };
 
 #endif // PATHSOLVER_H

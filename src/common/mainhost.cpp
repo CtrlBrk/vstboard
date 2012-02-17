@@ -45,7 +45,8 @@ MainHost::MainHost(Settings *settings, QObject *parent) :
 //    mutexListCables(new QMutex(QMutex::Recursive)),
     settings(settings),
     undoProgramChangesEnabled(false),
-    programManager(0)
+    programManager(0),
+    globalDelay(0L)
 {
 
 }
@@ -77,7 +78,12 @@ void MainHost::Close()
     mutexRender.lock();
     if(renderer) {
         hashCables lstCables;
-        solver->Resolve(lstCables, renderer);
+        long newDelay = solver->Resolve(objFactory->GetListObjects(), lstCables, renderer);
+        if(newDelay!=globalDelay) {
+            globalDelay=newDelay;
+            emit DelayChanged(globalDelay);
+        }
+
     //    solver->Resolve(workingListOfCables, renderer);
         delete renderer;
     }
@@ -725,7 +731,12 @@ void MainHost::UpdateSolver(bool forceUpdate)
         groupContainer->GetCurrentProgram()->AddToCableList(&lstCables);
     if(programContainer && programContainer->GetCurrentProgram())
         programContainer->GetCurrentProgram()->AddToCableList(&lstCables);
-    solver->Resolve(lstCables, renderer);
+
+    long newDelay = solver->Resolve(objFactory->GetListObjects(), lstCables, renderer);
+    if(newDelay!=globalDelay) {
+        globalDelay=newDelay;
+        emit DelayChanged(globalDelay);
+    }
 //    mutexListCables->lock();
 //        solver->Resolve(workingListOfCables, renderer);
 //    mutexListCables->unlock();
