@@ -231,12 +231,12 @@ namespace LearningMode {
     };
 }
 
-namespace Event {
-    const QEvent::Type ProgChange = QEvent::User;
-    const QEvent::Type UpdateSolver = QEvent::Type(QEvent::User+1);
-    const QEvent::Type PinMessage = QEvent::Type(QEvent::User+2);
-    const QEvent::Type Shortcut = QEvent::Type(QEvent::User+3);
-}
+//namespace Event {
+//    const QEvent::Type ProgChange = QEvent::User;
+//    const QEvent::Type UpdateSolver = QEvent::Type(QEvent::User+1);
+//    const QEvent::Type PinMessage = QEvent::Type(QEvent::User+2);
+//    const QEvent::Type Shortcut = QEvent::Type(QEvent::User+3);
+//}
 
 namespace InsertionType {
     enum Enum {

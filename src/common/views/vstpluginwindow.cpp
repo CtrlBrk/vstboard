@@ -18,6 +18,8 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 
+#ifdef VSTSDK
+
 #include "vstpluginwindow.h"
 #include "ui_vstpluginwindow.h"
 #include "connectables/vstplugin.h"
@@ -230,3 +232,5 @@ tresult PLUGIN_API VstPluginWindow::resizeView (IPlugView* view, ViewRect* newSi
 //{
 //    return 0;
 //}
+
+#endif

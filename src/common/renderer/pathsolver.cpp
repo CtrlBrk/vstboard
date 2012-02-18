@@ -63,7 +63,7 @@ long PathSolver::GetNodes(const hashObjects &lstObj, const hashCables &cables, Q
     RemoveUnusedNodes();
     SetMinAndMaxStep();
     nodes = listNodes;
-
+    listNodes.clear();
     return dly.GetDelay();
 }
 

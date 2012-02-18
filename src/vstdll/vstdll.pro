@@ -33,10 +33,6 @@ INCLUDEPATH += ../common
 CONFIG += qtwinmigrate-uselib
 include($${_PRO_FILE_PWD_}/../../libs/qtwinmigrate/src/qtwinmigrate.pri)
 
-scriptengine {
-    QT += script
-}
-
 SOURCES += \
     main.cpp \
     gui.cpp \

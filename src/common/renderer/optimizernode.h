@@ -11,14 +11,15 @@ public:
     int endStep;
 };
 
-class RendererNode;
+class SolverNode;
 class OptimizerNode
 {
 public:
-    OptimizerNode(int id, const RendererNode &c);
-#ifdef TESTING
+    OptimizerNode(int id, const SolverNode &c);
+
+//#ifdef TESTING
     OptimizerNode(int id, long cpuTime, int minRenderOrder, int maxRenderOrder) :  id(id), minRenderOrder(minRenderOrder) ,maxRenderOrder(maxRenderOrder), cpuTime(cpuTime) { Init(); }
-#endif
+//#endif
 
     int id;
     int minRenderOrder;

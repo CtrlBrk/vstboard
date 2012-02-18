@@ -83,6 +83,7 @@
     #include <qmath.h>
     #include <QMenu>
     #include <QMessageBox>
+    #include <QMetaEnum>
     #include <QMimeData>
     #include <QMultiHash>
     #include <QMutex>
@@ -98,6 +99,7 @@
     #include <QSharedData>
     #include <QSharedPointer>
     #include <QSignalMapper>
+    #include <QSize>
     #include <QtGui/QSpacerItem>
     #include <QtGui/QSplitter>
     #include <QStandardItemModel>
@@ -126,7 +128,7 @@
         #define LOG(...)
     #else
         #include <QDebug>
-#define LOG(...); {qDebug()<<__VA_ARGS__<<"("<<__FUNCTION__<<":"<< __LINE__<<" )";}
+        #define LOG(...); {qDebug()<<__VA_ARGS__<<"("<<__FUNCTION__<<":"<< __LINE__<<" )";}
     #endif
 
 #endif

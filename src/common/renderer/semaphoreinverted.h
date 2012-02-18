@@ -7,18 +7,19 @@ class SemaphoreInverted
 {
 public:
     SemaphoreInverted();
+    ~SemaphoreInverted();
 
     void AddLock(int n=1);
     void Unlock(int n=1);
 
     void WaitUnlock();
     bool IsLocked();
-    bool IsLocked(int timeout);
+    bool WaitUnlock(int timeout);
 
 private:
-    Q_DISABLE_COPY(SemaphoreInverted)
-    QMutex mutex;
-    QWaitCondition cond;
+//    Q_DISABLE_COPY(SemaphoreInverted)
+    QMutex *mutex;
+    QWaitCondition *cond;
     int lockCpt;
 };
 

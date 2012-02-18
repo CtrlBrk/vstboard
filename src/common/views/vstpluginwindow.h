@@ -21,6 +21,8 @@
 #ifndef VSTPLUGINWINDOW_H
 #define VSTPLUGINWINDOW_H
 
+#ifdef VSTSDK
+
 #include "precomp.h"
 #include "base/source/fobject.h"
 #include "pluginterfaces/gui/iplugview.h"
@@ -88,4 +90,5 @@ namespace View {
 
     };
 }
+#endif
 #endif // VSTPLUGINWINDOW_H

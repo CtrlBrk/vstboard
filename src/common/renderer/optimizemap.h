@@ -1,9 +1,8 @@
 #ifndef OPTIMIZEMAP_H
 #define OPTIMIZEMAP_H
 
-#include "precomp.h"
+//#include "precomp.h"
 #include "optimizernode.h"
-
 #define LOW_CPU_USAGE 100L
 
 //step, thread, nodes
@@ -13,7 +12,8 @@ class OptimizeMap
 {
 public:
     OptimizeMap(const QList<OptimizerNode*> &nodes, int th);
-    OptMap GetBestMap();
+    ~OptimizeMap();
+    void GetBestMap(OptMap &map);
 
     long bestTime;
 
@@ -22,33 +22,7 @@ public:
     int skipedIter;
 #endif
 
-    bool operator ==(const OptimizeMap &c) const {
-        if(c.nbThreads != nbThreads)
-            return false;
-
-        if(c.nodes.count()!=nodes.count())
-            return false;
-
-        for(int i=0; i<nodes.count(); i++) {
-            if(nodes.at(i)->minRenderOrder != c.nodes.at(i)->minRenderOrder)
-                return false;
-            if(nodes.at(i)->maxRenderOrder != c.nodes.at(i)->maxRenderOrder)
-                return false;
-
-            //compare cpu times : tolerate 5%
-            long t1 = nodes.at(i)->cpuTime;
-            long t2 = c.nodes.at(i)->cpuTime;
-            if(t1 != t2) {
-                float dif = 200*abs(t1-t2);
-                dif/=(t1+t2);
-                if(dif>5)
-                    return false;
-            }
-        }
-
-        return true;
-    }
-
+    bool operator ==(const OptimizeMap &c) const;
     bool operator !=(const OptimizeMap &c) const {
         return !(*this==c);
     }

@@ -844,13 +844,13 @@ void MainHost::Render()
     emit Rendered();
 }
 
+#ifdef VSTSDK
 void MainHost::SetTimeInfo(const VstTimeInfo *info)
 {
-#ifdef VSTSDK
     vstHost->SetTimeInfo(info);
 //    CheckTempo();
-#endif
 }
+#endif
 
 void MainHost::SetTempo(int tempo, int sign1, int sign2)
 {

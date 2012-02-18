@@ -1,9 +1,11 @@
 #include "optimizemap.h"
 
-OptimizeMap::OptimizeMap(const QList<OptimizerNode*> &nodes, int th) :
+OptimizeMap::OptimizeMap(const QList<OptimizerNode *> &nodes, int th) :
     nodes(nodes),
     nbThreads(th),
-    solvingDone(false)
+    solvingDone(false),
+    bestTime(0),
+    currentMapTime(0)
 {
     foreach(OptimizerNode *n, this->nodes) {
         if(n->cpuTime<LOW_CPU_USAGE)
@@ -13,10 +15,17 @@ OptimizeMap::OptimizeMap(const QList<OptimizerNode*> &nodes, int th) :
     qSort(this->nodes.begin(), this->nodes.end(), OptimizerNode::CompareCpuUsage);
 }
 
-OptMap OptimizeMap::GetBestMap()
+OptimizeMap::~OptimizeMap()
 {
-    if(solvingDone)
-        return bestMap;
+
+}
+
+void OptimizeMap::GetBestMap(OptMap &map)
+{
+    if(solvingDone) {
+        map = bestMap;
+        return;
+    }
 
 #ifdef TESTING
     nbIter=0;
@@ -30,7 +39,7 @@ OptMap OptimizeMap::GetBestMap()
     QList<OptimizerNode*> testingNodes = nodes;
     MapNodes(testingNodes, OptMap());
     solvingDone=true;
-    return bestMap;
+    map = bestMap;
 }
 
 
@@ -252,6 +261,33 @@ long OptimizeMap::GetRenderingTime(const OptMap &map)
     return globalLength;
 }
 
+bool OptimizeMap::operator ==(const OptimizeMap &c) const {
+    if(c.nbThreads != nbThreads)
+        return false;
+
+    if(c.nodes.count()!=nodes.count())
+        return false;
+
+    for(int i=0; i<nodes.count(); i++) {
+        if(nodes.at(i)->minRenderOrder != c.nodes.at(i)->minRenderOrder)
+            return false;
+        if(nodes.at(i)->maxRenderOrder != c.nodes.at(i)->maxRenderOrder)
+            return false;
+
+        //compare cpu times : tolerate 5%
+        long t1 = nodes.at(i)->cpuTime;
+        long t2 = c.nodes.at(i)->cpuTime;
+        if(t1 != t2) {
+            float dif = 200*abs(t1-t2);
+            dif/=(t1+t2);
+            if(dif>5)
+                return false;
+        }
+    }
+
+    return true;
+}
+
 //#ifdef TESTING
 QString OptimizeMap::OptMap2Txt(const OptMap& map)
 {
@@ -310,3 +346,4 @@ QString OptimizeMap::OptMap2Txt(const OptMap& map)
     return out;
 }
 //#endif
+

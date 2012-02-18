@@ -22,10 +22,6 @@ INCLUDEPATH += $$PORTMIDI_PATH/pm_common
 
 INCLUDEPATH += ../common
 
-scriptengine {
-    QT += script
-}
-
 #CONFIG(debug, debug|release) {
 #    LIBS += -L"C:/Program Files (x86)/Visual Leak Detector/lib/" -lvld
 #    INCLUDEPATH += "C:/Program Files (x86)/Visual Leak Detector/include/"

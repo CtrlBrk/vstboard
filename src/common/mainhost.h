@@ -61,7 +61,10 @@ public:
 //    bool IsSolverUpdateEnabled();
 
     void GetTempo(int &tempo, int &sign1, int &sign2);
+
+#ifdef VSTSDK
     void SetTimeInfo(const VstTimeInfo *info);
+#endif
 
 //    QStandardItemModel *GetRendererModel() { return renderer->GetModel(); }
 

@@ -6,7 +6,9 @@ TEMPLATE = lib
 CONFIG += staticlib
 
 vstsdk {
-    HEADERS += vst/cvsthost.h \
+    HEADERS += vst/vst3host.h \
+        connectables/vst3plugin.h \
+        vst/cvsthost.h \
         connectables/vstplugin.h \
         vst/ceffect.h \
         vst/const.h \
@@ -59,8 +61,6 @@ vstsdk {
 }
 
 scriptengine {
-    QT += script
-
     SOURCES += connectables/script.cpp \
         views/scripteditor.cpp \
 
@@ -139,7 +139,14 @@ SOURCES += \
     commands/comprogramstate.cpp \
     renderer/optimizernode.cpp \
     renderer/optimizemap.cpp \
-    renderer/semaphoreinverted.cpp
+    renderer/semaphoreinverted.cpp \
+    solver/solver.cpp \
+    connectables/pinslist.cpp \
+    connectables/objectinfo.cpp \
+    msghandler.cpp \
+    renderer/renderer2.cpp \
+    renderer/rendererthread2.cpp \
+    renderer/renderernode2.cpp
 
 
 SOURCES += \
@@ -242,12 +249,14 @@ HEADERS += \
     programmanager.h \
     models/groupsprogramsmodel.h \
     models/parkingmodel.h \
-    connectables/vst3plugin.h \
-    vst/vst3host.h \
     commands/comprogramstate.h \
     renderer/optimizernode.h \
     renderer/optimizemap.h \
-    renderer/semaphoreinverted.h
+    renderer/semaphoreinverted.h \
+    solver/solver.h \
+    renderer/renderer2.h \
+    renderer/rendererthread2.h \
+    renderer/renderernode2.h
 
 HEADERS += \
     views/configdialog.h \

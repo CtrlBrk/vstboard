@@ -1,6 +1,8 @@
 #ifndef VST3PLUGIN_H
 #define VST3PLUGIN_H
 
+#ifdef VSTSDK
+
 #include "object.h"
 #include "public.sdk/source/common/memorystream.h"
 #include "public.sdk/source/vst/hosting/processdata.h"
@@ -87,4 +89,6 @@ public slots:
     void UserAddPin(const ConnectionInfo &info);
 };
 }
+
+#endif
 #endif // VST3PLUGIN_H

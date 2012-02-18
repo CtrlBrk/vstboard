@@ -204,17 +204,6 @@ void Renderer::StartRender()
             tmpListOfNodes << th->GetListOfNodes();
         }
 
-        int id=0;
-        QList<OptimizerNode*> tmpListOptNodes;
-        foreach(const RendererNode *n, tmpListOfNodes) {
-            tmpListOptNodes << new OptimizerNode(id,*n);
-            id++;
-        }
-        OptimizeMap opt(tmpListOptNodes, maxNumberOfThreads);
-        OptMap map = opt.GetBestMap();
-        LOG( OptimizeMap::OptMap2Txt(map) )
-
-
         optimizer.NewListOfNodes( tmpListOfNodes );
         optimizer.Optimize();
         GetStepsFromOptimizer();

@@ -180,6 +180,7 @@ bool HostModel::dropMimeData ( const QMimeData * data, Qt::DropAction action, in
                     }
                 }
 
+#ifdef VSTSDK
                 //fxb file
                 if( fileType == VST_BANK_FILE_EXTENSION || fileType == VST_PROGRAM_FILE_EXTENSION) {
                     switch(senderInfo.nodeType) {
@@ -212,6 +213,7 @@ bool HostModel::dropMimeData ( const QMimeData * data, Qt::DropAction action, in
                         }
                     }
                 }
+#endif
             }
         }
     }
@@ -315,7 +317,11 @@ bool HostModel::dropMimeData ( const QMimeData * data, Qt::DropAction action, in
 
         ComAddObject *com = new ComAddObject(myHost, info, targetContainer, senderObj, insertType);
 //        Connectables::VstPlugin::shellSelectView->SetTargetContainer( targetContainer->GetIndex() );
+
+#ifdef VSTSDK
         Connectables::VstPlugin::shellSelectView->command=com;
+#endif
+
         myHost->undoStack.push( com );
     }
 
@@ -375,7 +381,7 @@ bool HostModel::setData ( const QModelIndex & index, const QVariant & value, int
 
 //            if(role == UserRoles::editorVisible)
 //                objPtr->OnEditorVisibilityChanged( value.toBool() );
-
+#ifdef VSTSDK
             //save vst bank file
             if(role == UserRoles::bankFile) {
                 objPtr.staticCast<Connectables::VstPlugin>()->SaveBank( value.toString() );
@@ -393,6 +399,7 @@ bool HostModel::setData ( const QModelIndex & index, const QVariant & value, int
                     item->setData(value,UserRoles::programFile);
                 return true;
             }
+#endif
             break;
         }
 

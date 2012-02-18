@@ -6,7 +6,7 @@ MsgHandler::MsgHandler(MsgController *msgCtrl, int objId) :
     objId(objId),
     msgEnabled(false)
 {
-    if(objId==-1)
+    if(objId==-1 || !msgCtrl)
         return;
     if(msgCtrl->listObj.contains(objId)) {
         LOG("objId already exists"<<objId)
@@ -23,6 +23,9 @@ MsgHandler::~MsgHandler()
 
 bool MsgHandler::SetIndex(int id)
 {
+    if(!msgCtrl)
+        return true;
+
     if(objId==id)
         return true;
 
@@ -30,6 +33,7 @@ bool MsgHandler::SetIndex(int id)
         LOG("reset id not allowed")
         return false;
     }
+
     if(msgCtrl->listObj.contains(id)) {
         LOG("objId already exists"<<objId)
         return false;

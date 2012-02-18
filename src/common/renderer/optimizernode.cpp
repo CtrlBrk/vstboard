@@ -1,10 +1,10 @@
 #include "optimizernode.h"
-#include "renderernode.h"
+#include "solvernode.h"
 
-OptimizerNode::OptimizerNode(int id, const RendererNode &c) :
-    minRenderOrder(c.minRenderOrderOri),
-    maxRenderOrder(c.maxRenderOrderOri),
-    cpuTime(c.cpuTime),
+OptimizerNode::OptimizerNode(int id, const SolverNode &c) :
+    minRenderOrder(c.minRenderOrder),
+    maxRenderOrder(c.maxRenderOrder),
+    cpuTime(0),
     id(id)
 {
     Init();

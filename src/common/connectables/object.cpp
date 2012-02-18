@@ -47,14 +47,6 @@ Object::Object(MainHost *host, int index, const ObjectInfo &info) :
     parkingId(FixedObjId::ND),
     listenProgramChanges(true),
     myHost(host),
-    listAudioPinIn(new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId()) ),
-    listAudioPinOut(new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId()) ),
-    listMidiPinIn(new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId()) ),
-    listMidiPinOut(new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId()) ),
-    listBridgePinIn(new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId()) ),
-    listBridgePinOut(new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId()) ),
-    listParameterPinIn(new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId()) ),
-    listParameterPinOut(new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId()) ),
     solverNode(0),
     savedIndex(-2),
     sleep(true),
@@ -63,12 +55,33 @@ Object::Object(MainHost *host, int index, const ObjectInfo &info) :
     closed(true),
     objInfo(info),
     containerId(FixedObjId::noContainer),
-    initialDelay(0L)
+    initialDelay(0L),
+    listAudioPinIn(0),
+    listAudioPinOut(0),
+    listMidiPinIn(0),
+    listMidiPinOut(0),
+    listBridgePinIn(0),
+    listBridgePinOut(0),
+    listParameterPinIn(0),
+    listParameterPinOut(0),
+    doublePrecision(false)
 {
+    if(myHost && myHost->objFactory) {
+        listAudioPinIn = new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId());
+        listAudioPinOut = new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId());
+        listMidiPinIn = new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId());
+        listMidiPinOut = new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId());
+        listBridgePinIn = new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId());
+        listBridgePinOut = new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId());
+        listParameterPinIn = new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId());
+        listParameterPinOut = new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId());
+    }
+
     objInfo.forcedObjId = index;
 
     setObjectName(objInfo.name);
-    doublePrecision=myHost->doublePrecision;
+    if(myHost)
+        doublePrecision=myHost->doublePrecision;
 
 #ifdef SCRIPTENGINE
     QScriptValue scriptObj = myHost->scriptEngine->newQObject(this);
@@ -81,46 +94,60 @@ Object::Object(MainHost *host, int index, const ObjectInfo &info) :
     i.myHost=myHost;
 
     i.type=PinType::Audio;
-    i.direction=PinDirection::Input;
-    listAudioPinIn->SetInfo(this,i,ObjectInfo(NodeType::listPin, ObjType::listAudioIn));
-    listAudioPinIn->setObjectName("listAudioPinIn");
-    i.direction=PinDirection::Output;
-    listAudioPinOut->SetInfo(this,i,ObjectInfo(NodeType::listPin, ObjType::listAudioOut));
-    listAudioPinOut->setObjectName("listAudioPinOut");
+    if(listAudioPinIn) {
+        i.direction=PinDirection::Input;
+        listAudioPinIn->SetInfo(this,i,ObjectInfo(NodeType::listPin, ObjType::listAudioIn));
+        listAudioPinIn->setObjectName("listAudioPinIn");
+        pinLists.insert("audioin", listAudioPinIn);
+    }
+    if(listAudioPinOut) {
+        i.direction=PinDirection::Output;
+        listAudioPinOut->SetInfo(this,i,ObjectInfo(NodeType::listPin, ObjType::listAudioOut));
+        listAudioPinOut->setObjectName("listAudioPinOut");
+        pinLists.insert("audioout", listAudioPinOut);
+    }
 
     i.type=PinType::Midi;
-    i.direction=PinDirection::Input;
-    listMidiPinIn->SetInfo(this,i,ObjectInfo(NodeType::listPin, ObjType::listMidiIn));
-    listMidiPinIn->setObjectName("listMidiPinIn");
-    i.direction=PinDirection::Output;
-    listMidiPinOut->SetInfo(this,i,ObjectInfo(NodeType::listPin, ObjType::listMidiOut));
-    listMidiPinOut->setObjectName("listMidiPinOut");
+    if(listMidiPinIn) {
+        i.direction=PinDirection::Input;
+        listMidiPinIn->SetInfo(this,i,ObjectInfo(NodeType::listPin, ObjType::listMidiIn));
+        listMidiPinIn->setObjectName("listMidiPinIn");
+        pinLists.insert("midiin", listMidiPinIn);
+    }
+    if(listMidiPinOut) {
+        i.direction=PinDirection::Output;
+        listMidiPinOut->SetInfo(this,i,ObjectInfo(NodeType::listPin, ObjType::listMidiOut));
+        listMidiPinOut->setObjectName("listMidiPinOut");
+        pinLists.insert("midiout", listMidiPinOut);
+    }
 
     i.type=PinType::Bridge;
-    i.direction=PinDirection::Input;
-    listBridgePinIn->SetInfo(this,i,ObjectInfo(NodeType::listPin, ObjType::listBridgeIn));
-    listBridgePinIn->setObjectName("listBridgePinIn");
-    i.direction=PinDirection::Output;
-    listBridgePinOut->SetInfo(this,i,ObjectInfo(NodeType::listPin, ObjType::listBridgeOut));
-    listBridgePinOut->setObjectName("listBridgePinOut");
+    if(listBridgePinIn) {
+        i.direction=PinDirection::Input;
+        listBridgePinIn->SetInfo(this,i,ObjectInfo(NodeType::listPin, ObjType::listBridgeIn));
+        listBridgePinIn->setObjectName("listBridgePinIn");
+        pinLists.insert("bridgein", listBridgePinIn);
+    }
+    if(listBridgePinOut) {
+        i.direction=PinDirection::Output;
+        listBridgePinOut->SetInfo(this,i,ObjectInfo(NodeType::listPin, ObjType::listBridgeOut));
+        listBridgePinOut->setObjectName("listBridgePinOut");
+        pinLists.insert("bridgeout", listBridgePinOut);
+    }
 
     i.type=PinType::Parameter;
-    i.direction=PinDirection::Input;
-    listParameterPinIn->SetInfo(this,i,ObjectInfo(NodeType::listPin, ObjType::listParamIn));
-    listParameterPinIn->setObjectName("listParameterPinIn");
-    i.direction=PinDirection::Output;
-    listParameterPinOut->SetInfo(this,i,ObjectInfo(NodeType::listPin, ObjType::listParamOut));
-    listParameterPinOut->setObjectName("listParameterPinOut");
-
-    pinLists.insert("audioin", listAudioPinIn);
-    pinLists.insert("audioout", listAudioPinOut);
-    pinLists.insert("midiin", listMidiPinIn);
-    pinLists.insert("midiout", listMidiPinOut);
-    pinLists.insert("bridgein", listBridgePinIn);
-    pinLists.insert("bridgeout", listBridgePinOut);
-    pinLists.insert("parameterin",listParameterPinIn);
-    pinLists.insert("parameterout",listParameterPinOut);
-
+    if(listParameterPinIn) {
+        i.direction=PinDirection::Input;
+        listParameterPinIn->SetInfo(this,i,ObjectInfo(NodeType::listPin, ObjType::listParamIn));
+        listParameterPinIn->setObjectName("listParameterPinIn");
+        pinLists.insert("parameterin",listParameterPinIn);
+    }
+    if(listParameterPinOut) {
+        i.direction=PinDirection::Output;
+        listParameterPinOut->SetInfo(this,i,ObjectInfo(NodeType::listPin, ObjType::listParamOut));
+        listParameterPinOut->setObjectName("listParameterPinOut");
+        pinLists.insert("parameterout",listParameterPinOut);
+    }
 
 }
 
@@ -140,7 +167,8 @@ Object::~Object()
     }
     Close();
 
-    myHost->objFactory->RemoveObject(GetIndex());
+    if(myHost && myHost->objFactory)
+        myHost->objFactory->RemoveObject(GetIndex());
 }
 
 /*!
@@ -361,12 +389,16 @@ void Object::NewRenderLoop()
     if(sleep)
         return;
 
-    foreach(Pin *pin, listAudioPinIn->listPins) {
-        pin->NewRenderLoop();
+    if(listAudioPinIn) {
+        foreach(Pin *pin, listAudioPinIn->listPins) {
+            pin->NewRenderLoop();
+        }
     }
 
-    foreach(Pin *p, listBridgePinIn->listPins) {
-        p->NewRenderLoop();
+    if(listBridgePinIn) {
+        foreach(Pin *p, listBridgePinIn->listPins) {
+            p->NewRenderLoop();
+        }
     }
 }
 

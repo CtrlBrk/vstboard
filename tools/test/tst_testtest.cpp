@@ -24,7 +24,10 @@
 #include "audiobuffer.h"
 #include "circularbuffer.h"
 #include "renderer/optimizemap.h"
+#include "solver/solver.h"
 #include "renderer/semaphoreinverted.h"
+//#include "renderer/optimizernode.h"
+#include "renderer/renderer2.h"
 
 class TestBuffers : public QObject
 {
@@ -128,7 +131,7 @@ void TestOptimizer::initTestCase()
     nodes << new OptimizerNode(id++,0,2,2);
     nodes << new OptimizerNode(id++,0,0,2);
     nodes << new OptimizerNode(id++,101,3,3);
-    OptimizeMap opt(nodes, nbThreads );
+//    OptimizeMap opt(nodes, nbThreads );
 
 //    id=0;
 //    QList<OptimizerNode*> nodes2;
@@ -175,7 +178,7 @@ void TestOptimizer::Test()
     OptimizeMap opt(nodes, nbThreads);
 
     QBENCHMARK {
-        map = opt.GetBestMap();
+        opt.GetBestMap(map);
     }
 
     qDebug() << "best"<<opt.bestTime<<"nbIter"<<opt.nbIter<<"skipedIter"<<opt.skipedIter;
@@ -193,8 +196,6 @@ public:
 
 private Q_SLOTS:
     void initTestCase();
-    void cleanupTestCase();
-    void Test();
  };
 
 void TestSem::unlockThread(SemaphoreInverted *sem)
@@ -209,21 +210,151 @@ void TestSem::initTestCase()
    sem.AddLock(2);
    LOG("lock")
    QtConcurrent::run(TestSem::unlockThread,&sem);
-   bool ret = sem.IsLocked(1000);
+   bool ret = sem.WaitUnlock(1000);
    LOG("run"<<ret)
    Sleep(1000);
 }
 
-void TestSem::cleanupTestCase()
+class TestObj : public Connectables::Object
 {
+public:
+    TestObj::TestObj(int id, long cpuTime) :
+        Connectables::Object(0,id, ObjectInfo()),
+        cpuTime(cpuTime)
+    {
+        sleep=false;
+    }
+
+    void Render()
+    {
+        Sleep(cpuTime);
+    }
+
+    long cpuTime;
+};
+
+class TimerRender : public QThread
+{
+public:
+    TimerRender(Renderer2 *renderer, unsigned long t);
+    ~TimerRender();
+    void run();
+
+private:
+    bool stop;
+    Renderer2 *renderer;
+    unsigned long t;
+};
+
+TimerRender::TimerRender(Renderer2 *renderer, unsigned long t) :
+    QThread(renderer),
+    renderer(renderer),
+    stop(false),
+    t(t)
+{
+    start(QThread::NormalPriority);
+}
+
+TimerRender::~TimerRender()
+{
+    stop=true;
+    wait();
+}
+
+void TimerRender::run()
+{
+    stop=false;
+
+    while(!stop) {
+        msleep(t);
+        renderer->StartRender();
+    }
+}
+
+class TestSolver : public QObject
+{
+    Q_OBJECT
+
+public:
+    TimerRender *renderTh;
+    Renderer2 renderer;
+    Solver solv;
+    hashObjects lstObjects;
+    hashCables lstCables;
+    int nbThreads;
+
+    QList<QSharedPointer<Connectables::Object> >lstObj;
+
+private Q_SLOTS:
+    void initTestCase();
+    void cleanupTestCase();
+    void Test();
+ };
+
+void TestSolver::initTestCase()
+{
+    nbThreads = 2;
+
+    for(int i=0; i<5; i++) {
+        QSharedPointer<Connectables::Object>obj(new TestObj(i, i));
+        lstObj << obj;
+        lstObjects.insert(i, obj );
+    }
+    ConnectionInfo inf1(0,0,PinType::Audio,PinDirection::Output,0,false,false);
+    ConnectionInfo inf2(0,1,PinType::Audio,PinDirection::Input,0,false,false);
+    QSharedPointer<Connectables::Cable>cab(new Connectables::Cable(0,inf1,inf2));
+    lstCables.insert(inf1, cab);
+
+    renderTh = new TimerRender(&renderer, 15);
+
 
 }
 
-void TestSem::Test()
+void TestSolver::cleanupTestCase()
 {
-
+    delete renderTh;
+    lstObj.clear();
 }
 
-QTEST_APPLESS_MAIN(TestSem)
+void TestSolver::Test()
+{
+    RenderMap rMap;
+    solv.GetMap(lstObjects,lstCables,7,rMap);
+    renderer.SetMap(rMap,7);
+
+    Sleep(1000);
+
+    lstObjects.clear();
+    for(int i=0; i<3; i++) {
+        lstObjects.insert(i, lstObj[i] );
+    }
+    rMap.clear();
+    solv.GetMap(lstObjects,lstCables,7,rMap);
+    renderer.SetMap(rMap,7);
+
+    Sleep(1000);
+
+    lstObjects.clear();
+    for(int i=0; i<5; i++) {
+        lstObjects.insert(i, lstObj[i] );
+    }
+    rMap.clear();
+    solv.GetMap(lstObjects,lstCables,7,rMap);
+    renderer.SetMap(rMap,7);
+
+    Sleep(1000);
+
+    rMap.clear();
+    solv.GetMap(lstObjects,lstCables,3,rMap);
+    renderer.SetMap(rMap,3);
+
+    Sleep(1000);
+
+    renderer.SetMap(rMap,3);
+
+    Sleep(1000);
+}
+
+QTEST_APPLESS_MAIN(TestSolver)
 
 #include "tst_testtest.moc"
