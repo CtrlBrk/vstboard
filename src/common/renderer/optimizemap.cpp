@@ -78,14 +78,15 @@ bool OptimizeMap::MapNodes(QList<OptimizerNode*> &nodes, OptMap &map, int nbUsed
             long t = times.takeLast();
 
             //fast length test, without steps sync
-            long interTime = testedNode->cpuTime + t;
-            if(bestTime>0 && interTime>bestTime) {
-                //too long, skip this thread
-    #ifdef TESTING
-                skipedIter++;
-    #endif
-                continue;
-            }
+            //not a good thing to do, the steps sync changes everything
+//            long interTime = testedNode->cpuTime + t;
+//            if(bestTime>0 && interTime>bestTime) {
+//                //too long, skip this thread
+//    #ifdef TESTING
+//                skipedIter++;
+//    #endif
+//                continue;
+//            }
 
             lstThread << threadTimes.key(t);
         }
@@ -304,7 +305,13 @@ QString OptimizeMap::OptMap2Txt(const OptMap& map)
             str[0][th.key()+1]=QString("thread:%1").arg(th.key());
 
             foreach(const OptimizerNode &n, th.value()) {
-                str[step.key()+1][th.key()+1] += QString("%1[%2:%3]%4 ").arg(n.id).arg(n.minRenderOrder).arg(n.maxRenderOrder).arg(n.cpuTime);
+                str[step.key()+1][th.key()+1] += QString("%1[%2:%3][%4:%5]%6 ")
+                        .arg(n.id)
+                        .arg(n.minRenderOrder)
+                        .arg(n.maxRenderOrder)
+                        .arg(n.selectedPos.startStep)
+                        .arg(n.selectedPos.endStep)
+                        .arg(n.cpuTime);
             }
             ++th;
         }

@@ -6,7 +6,8 @@
 
 class RendererThread2;
 class RendererNode2;
-typedef QMap<int, QMap<int, QList<RendererNode2*> > > RenderMap;
+typedef QMap<int, QList<RendererNode2*> > ThreadNodes;
+typedef QMap<int, ThreadNodes > RenderMap;
 
 class Renderer2 : public QObject
 {
@@ -17,7 +18,7 @@ public:
     void SetMap(const RenderMap &map, int nbThreads);
     void StartRender();
     void SetEnabled(bool enab) {LOG("enable here"<<enab)}
-
+RenderMap currentMap;
 private:
     void ThreadCleanup();
     void ChangeNbOfThreads(int newNbThreads);

@@ -41,6 +41,8 @@
     #include "vst/vst3host.h"
 #endif
 
+#define MAX_NB_THREADS 500
+
 class MainWindow;
 //class ProgramsModel;
 class MainHost : public QObject, public MsgController
@@ -107,7 +109,6 @@ public:
 
 //    QStandardItemModel *GetRendererModel() { return renderer->GetModel(); }
 
-    void OptimizeRenderer() { LOG("optimize here") }
     Renderer2 * GetRenderer() { return renderer; }
 
     void SetSetupDirtyFlag() { if(hostContainer) hostContainer->SetDirty(); }
@@ -210,6 +211,8 @@ private:
 
     int nbThreads;
 
+    QTimer updateRendererViewTimer;
+
 signals:
     void SampleRateChanged(float rate);
     void BufferSizeChanged(unsigned long size);
@@ -238,6 +241,8 @@ public slots:
     bool SaveProjectFile(bool saveAs=false);
     void ChangeNbThreads(int nbTh=-1);
     void ResetDelays();
+    void UpdateRendererMap();
+    void UpdateRendererView();
 
 private slots:
     void UpdateSolver(bool forceUpdate=false);

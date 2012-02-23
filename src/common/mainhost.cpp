@@ -47,11 +47,6 @@ MainHost::MainHost(Settings *settings, QObject *parent) :
     programManager(0),
     globalDelay(0L),
     nbThreads(1)
-//    currentInputBuffer(0),
-//    currentOutputBuffer(0),
-//    currentFramesPerBuffer(0),
-//    inBufferReady(false),
-//    outBufferReady(false)
 {
 
 }
@@ -67,6 +62,8 @@ void MainHost::Close()
     if(closed)
         return;
     closed=true;
+
+    updateRendererViewTimer.stop();
 
     EnableSolverUpdate(false);
 
@@ -186,6 +183,9 @@ void MainHost::Init()
             this,SLOT(UpdateSolver()),
             Qt::QueuedConnection);
 
+    updateRendererViewTimer.start(5000);
+    connect(&updateRendererViewTimer, SIGNAL(timeout()),
+            this,SLOT(UpdateRendererView()));
 }
 
 void MainHost::Open()
@@ -752,6 +752,8 @@ void MainHost::UpdateSolver(bool forceUpdate)
         emit DelayChanged(globalDelay);
     }
     renderer->SetMap(rMap,nbThreads);
+    QTimer::singleShot(20, this, SLOT(UpdateRendererMap()));
+    QTimer::singleShot(1000, this, SLOT(UpdateRendererMap()));
 
 //    mutexListCables->lock();
 //        solver->Resolve(workingListOfCables, renderer);
@@ -762,30 +764,42 @@ void MainHost::UpdateSolver(bool forceUpdate)
 //    EnableSolverUpdate(true);
 }
 
+void MainHost::UpdateRendererMap()
+{
+    solver->UpdateCpuTimes(renderer->currentMap, nbThreads);
+    renderer->SetMap(renderer->currentMap,nbThreads);
+}
+
+void MainHost::UpdateRendererView()
+{
+    MsgObject msg(FixedObjId::mainWindow);
+    solver->GetInfo(renderer->currentMap,msg);
+    SendMsg(msg);
+}
+
 void MainHost::ChangeNbThreads(int nbTh)
 {
 //    if(!renderer)
 //            return;
+    if(nbTh<=0 || nbTh>MAX_NB_THREADS) {
+        nbTh = settings->GetSetting("NbThreads",-1).toInt();
+    }
 
-        if(nbTh<=0) {
-    #ifdef _WIN32
-            SYSTEM_INFO info;
-            GetSystemInfo(&info);
-            nbTh = info.dwNumberOfProcessors;
-    #else
-            nbTh = 1;
-    #endif
-        }
+    if(nbTh<=0 || nbTh>MAX_NB_THREADS) {
+#ifdef _WIN32
+        SYSTEM_INFO info;
+        GetSystemInfo(&info);
+        nbTh = info.dwNumberOfProcessors;
+#else
+        nbTh = 1;
+#endif
+    }
 
-        if(nbThreads == nbTh)
-            return;
+    if(nbThreads == nbTh)
+        return;
 
-//        mutexRender.lock();
-//        renderer->SetNbThreads(nbThreads);
-//        mutexRender.unlock();
-        nbThreads = nbTh;
-        SetSolverUpdateNeeded();
-
+    nbThreads = nbTh;
+    SetSolverUpdateNeeded();
 }
 
 //void MainHost::SendMsg(const ConnectionInfo &senderPin,const PinMessage::Enum msgType,void *data)
@@ -1183,9 +1197,25 @@ void MainHost::ReceiveMsg(const MsgObject &msg)
             }
             return;
         }
+
+
         return;
     }
 
+    if(msg.objIndex == FixedObjId::renderer) {
+        if(msg.prop.contains(MsgObject::GetUpdate)) {
+            UpdateRendererMap();
+        }
+        if(msg.prop.contains(MsgObject::Update)) {
+            if(msg.prop[MsgObject::Update].toBool()) {
+                UpdateRendererView();
+                updateRendererViewTimer.start(5000);
+            } else {
+                updateRendererViewTimer.stop();
+            }
+        }
+        return;
+    }
     //intercept project and setup files
     if(msg.prop.contains(MsgObject::FilesToLoad)) {
         QStringList lstFiles = msg.prop[MsgObject::FilesToLoad].toStringList();

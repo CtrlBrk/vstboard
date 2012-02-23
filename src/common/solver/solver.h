@@ -11,14 +11,20 @@ class Solver
 {
 public:
     Solver();
+    ~Solver();
     long GetMap(const hashObjects &listObject, const hashCables &lstCables, int nbThreads, RenderMap &rMap);
-    void UpdateMap(const QList<RendererNode2*> &rNodes);
+//    void UpdateMap(const RenderMap &rMap);
+    void UpdateCpuTimes(RenderMap &rMap, int nbThreads);
     static QString RMap2Txt(const RenderMap& map);
+    void GetInfo(const RenderMap &map, MsgObject &msg) const;
+
 private:
     void OptimzerMap2RenderMap(const OptMap &oMap, RenderMap &rMap);
     QList<SolverNode*>solverNodes;
     hashCables lstCables;
     QList<OptimizerNode*>optimizerNodes;
+    QList<RendererNode2*>rendererNodes;
+    QList<RendererNode2*>rendererNodesDeleted;
     int nbThreads;
 
 };

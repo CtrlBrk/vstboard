@@ -251,7 +251,7 @@
          </sizepolicy>
         </property>
         <property name="maximum">
-         <number>30</number>
+         <number>500</number>
         </property>
        </widget>
       </item>

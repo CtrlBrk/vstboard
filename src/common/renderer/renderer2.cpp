@@ -25,11 +25,14 @@ Renderer2::~Renderer2()
     qDeleteAll(threads);
     qDeleteAll(threadsToDelete);
     qDeleteAll(stepCanStart);
+
 }
 
 void Renderer2::SetMap(const RenderMap &map, int nbThreads)
 {
-    mutexThreadList.lock();
+    QMutexLocker l(&mutexThreadList);
+    currentMap = map;
+
     ChangeNbOfThreads( nbThreads );
     ThreadCleanup();
 
@@ -53,15 +56,12 @@ void Renderer2::SetMap(const RenderMap &map, int nbThreads)
             }
         }
     }
-
-    mutexThreadList.unlock();
 }
 
 void Renderer2::StartRender()
 {
-    mutexThreadList.lock();
+    QMutexLocker l(&mutexThreadList);
     stepCanStart.first()->AddLock(nbThreads);
-    mutexThreadList.unlock();
 
     if(!waitThreadReady.WaitAllThreads(10000)) {
         LOG("renderer start timeout")

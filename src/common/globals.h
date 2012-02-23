@@ -149,6 +149,7 @@ namespace FixedObjId {
         audioDevices,
         midiDevices,
         tools,
+        renderer,
         noContainer=65535
     };
 }
