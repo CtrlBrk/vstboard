@@ -3,55 +3,78 @@
 SemaphoreInverted::SemaphoreInverted() :
     lockCpt(0)
 {
-    mutex = new QMutex();
-    cond = new QWaitCondition();
 }
 
 SemaphoreInverted::~SemaphoreInverted()
 {
-    delete mutex;
-    delete cond;
 }
 
 void SemaphoreInverted::AddLock(int n)
 {
-    QMutexLocker locker(mutex);
+    QWriteLocker locker(&mutex);
     lockCpt+=n;
 }
 
 void SemaphoreInverted::Unlock(int n)
 {
-    QMutexLocker locker(mutex);
-    lockCpt-=n;
-    if(lockCpt<0) {
+    QWriteLocker locker(&mutex);
+//    if(n==-1) {
+//        lockCpt=0;
+//    } else {
+        lockCpt-=n;
+//    }
+
+    if(lockCpt<=0) {
         lockCpt=0;
+        condUnlock.wakeAll();
     }
-    if(lockCpt==0)
-        cond->wakeAll();
 }
 
 void SemaphoreInverted::WaitUnlock()
 {
-    QMutexLocker locker(mutex);
-    while(lockCpt>0)
-        cond->wait(locker.mutex());
+    QReadLocker locker(&mutex);
+    if(lockCpt==0)
+        return;
+
+    condUnlock.wait(&mutex);
 }
 
 bool SemaphoreInverted::IsLocked()
 {
-    QMutexLocker locker(mutex);
+    QReadLocker locker(&mutex);
     return (lockCpt!=0);
 }
 
 bool SemaphoreInverted::WaitUnlock(int timeout)
 {
-    QMutexLocker locker(mutex);
+    QReadLocker locker(&mutex);
+    if(lockCpt==0)
+        return true;
+
     QElapsedTimer timer;
     timer.start();
     while (lockCpt!=0) {
-        const qint64 elapsed = timer.elapsed();
-        if (timeout - elapsed <= 0 || !cond->wait(locker.mutex(), timeout - elapsed))
+        qint64 elapsed = timer.elapsed();
+        if (timeout - elapsed <= 0 || !condUnlock.wait(&mutex, timeout - elapsed))
             return false;
     }
     return true;
 }
+
+bool SemaphoreInverted::WaitUnlock(int timeout, int &timelocked)
+{
+    QReadLocker locker(&mutex);
+    if(lockCpt==0)
+        return true;
+
+    QElapsedTimer timer;
+    timer.start();
+    while (lockCpt!=0) {
+        qint64 elapsed = timer.elapsed();
+        if (timeout - elapsed <= 0 || !condUnlock.wait(&mutex, timeout - elapsed))
+            return false;
+    }
+    timelocked=timer.elapsed();
+    return true;
+}
+

@@ -3,16 +3,16 @@ DEFINES += APP_NAME=\\\"VstBoard\\\"
 PORTAUDIO_PATH 	= ../../libs/portaudio
 PORTMIDI_PATH 	= ../../libs/portmidi
 
-#win32|macx {
-#    VSTSDK_PATH	= ../../libs/VST3SDK
-#    CONFIG += vstsdk
-#    DEFINES += VSTSDK
-#    INCLUDEPATH += $$VSTSDK_PATH \
-#        $$VSTSDK_PATH/public.sdk/source/vst2.x
-#}
+win32|macx {
+    VSTSDK_PATH	= ../../libs/VST3SDK
+    CONFIG += vstsdk
+    DEFINES += VSTSDK
+    INCLUDEPATH += $$VSTSDK_PATH \
+        $$VSTSDK_PATH/public.sdk/source/vst2.x
+}
 
-#CONFIG += scriptengine
-#DEFINES += SCRIPTENGINE
+CONFIG += scriptengine
+DEFINES += SCRIPTENGINE
 
 #use ring buffers to sync multiple audio inputs
 #DEFINES += CIRCULAR_BUFFER

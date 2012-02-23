@@ -265,15 +265,6 @@ void Object::SetSleep(bool sleeping)
 }
 
 /*!
-  Retrive current sleep state
-  */
-bool Object::GetSleep()
-{
-    QMutexLocker l(&objMutex);
-    return sleep;
-}
-
-/*!
   Check if the objects program has been modified
   \return true if modified
   */

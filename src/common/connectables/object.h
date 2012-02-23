@@ -99,7 +99,11 @@ namespace Connectables {
         PinsList* GetListAudioPinOut() {return listAudioPinOut;}
         PinsList* GetListMidiPinOut() {return listMidiPinOut;}
 
-        bool GetSleep();
+        inline bool GetSleep() {
+            QMutexLocker l(&objMutex);
+            return sleep;
+        }
+
         virtual void NewRenderLoop();
 
         /// Lock the object mutex

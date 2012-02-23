@@ -17,7 +17,7 @@ RendererNode2::RendererNode2(const OptimizerNode& c) :
 {
 }
 
-void RendererNode2::NewRenderLoop()
+void RendererNode2::NewRenderLoop() const
 {
     foreach( QWeakPointer<Connectables::Object> ObjPtr, listOfObj) {
         if(ObjPtr) {
@@ -26,7 +26,7 @@ void RendererNode2::NewRenderLoop()
     }
 }
 
-void RendererNode2::Render()
+void RendererNode2::Render() const
 {
 #ifdef _WIN32
     unsigned long timerStart=0;

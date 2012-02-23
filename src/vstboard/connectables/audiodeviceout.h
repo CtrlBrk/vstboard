@@ -42,11 +42,14 @@ namespace Connectables {
         bool Open();
         bool Close();
         void SetParentDevice( AudioDevice *device );
+        void Render();
+
 #ifdef CIRCULAR_BUFFER
         void SetRingBufferFromPins(QList<CircularBuffer*>listCircularBuffers);
 #endif
         QStandardItem *GetFullItem();
-
+        void NewRenderLoop() {}
+        void NewRenderLoop2() {Object::NewRenderLoop();}
     protected:
         /// pointer to the linked AudioDevice
         AudioDevice *parentDevice;

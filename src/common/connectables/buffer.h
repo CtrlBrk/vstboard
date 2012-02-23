@@ -40,7 +40,7 @@ namespace Connectables
     private:
         bool CutBufferAtZeroCrossing(float *buffer, long size);
         CircularBuffer buffer;
-        bool delayChanged;
+        volatile bool delayChanged;
         long delaySize;
         long addedSize;
         long offset;

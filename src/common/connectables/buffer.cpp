@@ -46,14 +46,18 @@ Buffer::~Buffer()
 
 void Buffer::SetDelay(long d)
 {
+//    objMutex.lock();
     addedSize+=(d-delaySize);
     delaySize=d;
     delayChanged=true;
     static_cast<ParameterPin*>(listParameterPinIn->GetPin(0))->ChangeValue((float)d/50000, true);
+//    objMutex.unlock();
 }
 
 void Buffer::Render()
 {
+//    QMutexLocker l(&objMutex);
+
     if(delayChanged) {
         if(addedSize<500 && countWait<10) {
             //wait for more
@@ -100,8 +104,8 @@ void Buffer::Render()
                 size=offset;
             }
             if(size>0) {
-                CutBufferAtZeroCrossing(start,size);
-                buffer.SetWritePosToLastZeroCrossing();
+//                CutBufferAtZeroCrossing(start,size);
+//                buffer.SetWritePosToLastZeroCrossing();
                 buffer.Put(start, size);
                 addedSize-=size;
                 offset=0;
@@ -131,11 +135,13 @@ void Buffer::OnParameterChanged(ConnectionInfo pinInfo, float value)
 {
     Object::OnParameterChanged(pinInfo,value);
     long d = listParameterPinIn->listPins.value(0)->GetValue()*50000;
+//    objMutex.lock();
     if(abs(d-delaySize)>1) {
         addedSize+=(d-delaySize);
         delaySize=d;
         delayChanged=true;
     }
+//    objMutex.unlock();
 }
 
 bool Buffer::CutBufferAtZeroCrossing(float *buffer, long size)

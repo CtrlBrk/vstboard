@@ -62,19 +62,50 @@ bool AudioDeviceIn::Close()
 
 void AudioDeviceIn::Render()
 {
+//    Object::NewRenderLoop();
+
+//    if(!parentDevice)
+//        return;
+
+//    unsigned long framesPerBuffer=parentDevice->bufferSize;
+//    float ** inputBuffer = parentDevice->currentInputBuffer;
+////    float ** inputBuffer = myHost->TakeInputBuffer(framesPerBuffer);
+//    if(!inputBuffer) {
+//        LOG("buffer not ready")
+//        return;
+//    }
+
+//    if(!listAudioPinOut)
+//        return;
+
+//    for(int cpt=0; cpt<listAudioPinOut->nbPins(); cpt++) {
+//        AudioBuffer *pinBuf = listAudioPinOut->GetBuffer(cpt);
+//        if(pinBuf) {
+//            pinBuf->SetBufferContent( inputBuffer[cpt], framesPerBuffer);
+//            pinBuf->ConsumeStack();
+//        } else {
+//            LOG("no buffer !?")
+//        }
+//    }
+
+//    foreach(Pin* pin,listAudioPinOut->listPins) {
+//        static_cast<AudioPin*>(pin)->SendAudioBuffer();
+//    }
 
     foreach(Pin* pin,listAudioPinOut->listPins) {
         static_cast<AudioPin*>(pin)->GetBuffer()->ConsumeStack();
         static_cast<AudioPin*>(pin)->SendAudioBuffer();
     }
 
-    objMutex.lock();
-    if(parentDevice) {
+//    objMutex.lock();
+//    if(parentDevice) {
         ParameterPinOut* pin=static_cast<ParameterPinOut*>(listParameterPinOut->listPins.value(0));
         if(pin)
             pin->ChangeValue(parentDevice->GetCpuUsage());
-    }
-    objMutex.unlock();
+//    }
+//    objMutex.unlock();
+
+
 }
 
 void AudioDeviceIn::SetParentDevice( AudioDevice *device )

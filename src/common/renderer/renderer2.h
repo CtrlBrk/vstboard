@@ -2,6 +2,7 @@
 #define RENDERER2_H
 
 #include "semaphoreinverted.h"
+#include "waitall.h"
 
 class RendererThread2;
 class RendererNode2;
@@ -15,19 +16,20 @@ public:
     ~Renderer2();
     void SetMap(const RenderMap &map, int nbThreads);
     void StartRender();
-    void ThreadCleanup();
+    void SetEnabled(bool enab) {LOG("enable here"<<enab)}
 
 private:
+    void ThreadCleanup();
     void ChangeNbOfThreads(int newNbThreads);
-    RenderMap currentMap;
-    RenderMap newMap;
-    SemaphoreInverted renderInProgress;
-    QWaitCondition condStartRender;
-    QMutex mutexStartRender;
-    QList<SemaphoreInverted*>stepCanStart;
     QList<RendererThread2*>threads;
     QList<RendererThread2*>threadsToDelete;
     QMutex mutexThreadList;
+    int nbThreads;
+    int nbSteps;
+
+    WaitAll waitThreadReady;
+    WaitAll waitThreadEnd;
+    QList<SemaphoreInverted*>stepCanStart;
 friend class RendererThread2;
 };
 

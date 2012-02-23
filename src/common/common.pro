@@ -73,10 +73,16 @@ scriptengine {
 PRECOMPILED_HEADER = precomp.h
 
 SOURCES += \
+    msghandler.cpp \
     mainhost.cpp \
     audiobuffer.cpp \
     mainwindow.cpp \
     circularbuffer.cpp \
+    settings.cpp \
+    msgobject.cpp \
+    msgcontroller.cpp \
+    programmanager.cpp \
+    connectables/objectinfo.cpp \
     connectables/midipinin.cpp \
     connectables/midipinout.cpp \
     connectables/bridgepinin.cpp \
@@ -86,7 +92,6 @@ SOURCES += \
     connectables/object.cpp \
     connectables/container.cpp \
     connectables/connectioninfo.cpp \
-    connectables/objectinfo.cpp \
     connectables/pin.cpp \
     connectables/parameterpin.cpp \
     connectables/parameterpinin.cpp \
@@ -98,6 +103,10 @@ SOURCES += \
     connectables/hostcontroller.cpp \
     connectables/audiopin.cpp \
     connectables/buffer.cpp \
+    connectables/objectparameter.cpp \
+    connectables/objectprogram.cpp \
+    connectables/containerprogram.cpp \
+    connectables/cursor.cpp \
     renderer/pathsolver.cpp \
     renderer/renderer.cpp \
     renderer/solvernode.cpp \
@@ -107,12 +116,15 @@ SOURCES += \
     renderer/optimizestepthread.cpp \
     renderer/renderernode.cpp \
     renderer/node.cpp \
-    connectables/objectparameter.cpp \
-    connectables/objectprogram.cpp \
-    connectables/containerprogram.cpp \
+    renderer/updatedelays.cpp \
+    renderer/renderer2.cpp \
+    renderer/rendererthread2.cpp \
+    renderer/renderernode2.cpp \
+    renderer/optimizernode.cpp \
+    renderer/optimizemap.cpp \
+    renderer/semaphoreinverted.cpp \
+    solver/solver.cpp \
     projectfile/projectfile.cpp \
-    models/listtoolsmodel.cpp \
-    models/hostmodel.cpp \
     commands/comdisconnectpin.cpp \
     commands/comaddobject.cpp \
     commands/comaddcable.cpp \
@@ -124,30 +136,12 @@ SOURCES += \
     commands/comchangeautosave.cpp \
     commands/comremovepin.cpp \
     commands/comaddpin.cpp \
-    views/keybindingdialog.cpp \
-    views/buttonswidget.cpp \
-    views/modifierswidget.cpp \
-    renderer/updatedelays.cpp \
-    settings.cpp \
-    msgobject.cpp \
-    msghandler.cpp \
-    msgcontroller.cpp \
-    connectables/cursor.cpp \
-    programmanager.cpp \
+    commands/comprogramstate.cpp \
+    models/listtoolsmodel.cpp \
+    models/hostmodel.cpp \
     models/groupsprogramsmodel.cpp \
     models/parkingmodel.cpp \
-    commands/comprogramstate.cpp \
-    renderer/optimizernode.cpp \
-    renderer/optimizemap.cpp \
-    renderer/semaphoreinverted.cpp \
-    solver/solver.cpp \
-    connectables/pinslist.cpp \
-    connectables/objectinfo.cpp \
-    msghandler.cpp \
-    renderer/renderer2.cpp \
-    renderer/rendererthread2.cpp \
-    renderer/renderernode2.cpp
-
+    renderer/waitall.cpp
 
 SOURCES += \
     views/programlist.cpp \
@@ -163,7 +157,10 @@ SOURCES += \
     views/listaudiodevicesview.cpp \
     views/gradientwidget.cpp \
     views/gradientwidgethue.cpp \
-    views/keybind.cpp
+    views/keybind.cpp \
+    views/keybindingdialog.cpp \
+    views/buttonswidget.cpp \
+    views/modifierswidget.cpp \
 	
 SOURCES += \
     sceneview/objectview.cpp \
@@ -189,6 +186,14 @@ HEADERS += \
     audiobuffer.h \
     mainwindow.h \
     circularbuffer.h \
+    settings.h \
+    msgobject.h \
+    msghandler.h \
+    msgcontroller.h \
+    programmanager.h \
+    connectables/objectparameter.h \
+    connectables/objectprogram.h \
+    connectables/containerprogram.h \
     connectables/midisender.h \
     connectables/miditoautomation.h \
     connectables/hostcontroller.h \
@@ -210,6 +215,7 @@ HEADERS += \
     connectables/pinslist.h \
     connectables/audiopin.h \
     connectables/buffer.h \
+    connectables/cursor.h \
     renderer/solvernode.h \
     renderer/pathsolver.h \
     renderer/renderer.h \
@@ -219,13 +225,20 @@ HEADERS += \
     renderer/optimizestepthread.h \
     renderer/renderernode.h \
     renderer/node.h \
-    connectables/objectparameter.h \
-    connectables/objectprogram.h \
-    connectables/containerprogram.h \
+    renderer/optimizernode.h \
+    renderer/optimizemap.h \
+    renderer/semaphoreinverted.h \
+    renderer/renderer2.h \
+    renderer/rendererthread2.h \
+    renderer/renderernode2.h \
+    renderer/updatedelays.h \
+    solver/solver.h \
     projectfile/projectfile.h \
     projectfile/fileversion.h \
     models/listtoolsmodel.h \
     models/hostmodel.h \
+    models/groupsprogramsmodel.h \
+    models/parkingmodel.h \
     commands/comdisconnectpin.h \
     commands/comaddobject.h \
     commands/comaddcable.h \
@@ -237,26 +250,9 @@ HEADERS += \
     commands/comchangeautosave.h \
     commands/comremovepin.h \
     commands/comaddpin.h \
-    views/keybindingdialog.h \
-    views/buttonswidget.h \
-    views/modifierswidget.h \
-    renderer/updatedelays.h \
-    settings.h \
-    msgobject.h \
-    msghandler.h \
-    msgcontroller.h \
-    connectables/cursor.h \
-    programmanager.h \
-    models/groupsprogramsmodel.h \
-    models/parkingmodel.h \
     commands/comprogramstate.h \
-    renderer/optimizernode.h \
-    renderer/optimizemap.h \
-    renderer/semaphoreinverted.h \
-    solver/solver.h \
-    renderer/renderer2.h \
-    renderer/rendererthread2.h \
-    renderer/renderernode2.h
+    renderer/waitall.h
+
 
 HEADERS += \
     views/configdialog.h \
@@ -272,7 +268,10 @@ HEADERS += \
     views/listaudiodevicesview.h \
     views/gradientwidget.h \
     views/gradientwidgethue.h \
-    views/keybind.h
+    views/keybind.h \
+    views/keybindingdialog.h \
+    views/buttonswidget.h \
+    views/modifierswidget.h \
 	
 HEADERS += \
     sceneview/objectview.h \

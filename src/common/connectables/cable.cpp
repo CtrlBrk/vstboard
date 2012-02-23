@@ -40,7 +40,7 @@ Cable::Cable(MainHost *myHost, const ConnectionInfo &pinOut, const ConnectionInf
     MsgHandler(myHost, -1),
     pinOut(pinOut),
     pinIn(pinIn),
-    modelIndex(QModelIndex()),
+//    modelIndex(QModelIndex()),
     myHost(myHost),
     buffer(0),
     delay(0),
@@ -58,7 +58,7 @@ Cable::Cable(const Cable & c) :
     MsgHandler(c.myHost, -1),
     pinOut(c.pinOut),
     pinIn(c.pinIn),
-    modelIndex(c.modelIndex),
+//    modelIndex(c.modelIndex),
     myHost(c.myHost),
     buffer(0),
     delay(c.delay),
@@ -109,10 +109,10 @@ void Cable::RemoveFromParentNode(const QModelIndex &parentIndex)
     delete tmpBuf;
     tmpBuf=0;
 
-    if(modelIndex.isValid() && parentIndex.isValid())
-        myHost->GetModel()->removeRow(modelIndex.row(), parentIndex);
+//    if(modelIndex.isValid() && parentIndex.isValid())
+//        myHost->GetModel()->removeRow(modelIndex.row(), parentIndex);
 
-    modelIndex=QModelIndex();
+//    modelIndex=QModelIndex();
 }
 
 bool Cable::SetDelay(quint32 d)
@@ -159,7 +159,7 @@ void Cable::Render(const PinMessage::Enum msgType,void *data)
     if(!pin)
         return;
 
-    if(buffer==0) {
+    if(delay==0) {
         pin->ReceivePinMsg(msgType,data);
         return;
     }

@@ -2,37 +2,68 @@
 #include "renderer2.h"
 #include "renderernode2.h"
 #include "semaphoreinverted.h"
+#include "waitall.h"
 
 RendererThread2::RendererThread2(Renderer2 *renderer, int id) :
     QThread(renderer),
     renderer(renderer),
     stop(false),
-    suspendAsked(true),
-    suspended(true),
     id(id)
 {
-    mutexNewNodes = new QMutex();
-    mutexStop = new QMutex();
-    mutexSuspend = new QMutex();
-    condSuspend = new QWaitCondition();
+    renderer->waitThreadReady.AddClient();
+    renderer->waitThreadEnd.AddClient();
+
+#ifdef WIN32
+    DllAvRt = NULL;
+    FunctionAvSetMmThreadCharacteristics = NULL;
+    FunctionAvRevertMmThreadCharacteristics = NULL;
+    FunctionAvSetMmThreadPriority = NULL;
+
+    DllAvRt = LoadLibrary(TEXT("avrt.dll"));
+    if (DllAvRt != NULL)
+    {
+        FunctionAvSetMmThreadCharacteristics = (AVSETMMTHREADCHARACTERISTICS*)GetProcAddress(DllAvRt,"AvSetMmThreadCharacteristicsA");
+        FunctionAvRevertMmThreadCharacteristics = (AVREVERTMMTHREADCHARACTERISTICS*)GetProcAddress(DllAvRt, "AvRevertMmThreadCharacteristics");
+        FunctionAvSetMmThreadPriority = (AVSETMMTHREADPRIORITY*)GetProcAddress(DllAvRt, "AvSetMmThreadPriority");
+    }
+
+    /* If we have access to AVRT.DLL (Vista and later), use it */
+    if (FunctionAvSetMmThreadCharacteristics != NULL) {
+        DWORD dwTask = 0;
+        HANDLE hMmTask = FunctionAvSetMmThreadCharacteristics(QString("vstboard%1").arg(id).toStdString().c_str(), &dwTask);
+        if (hMmTask != NULL && hMmTask != INVALID_HANDLE_VALUE) {
+            BOOL bret = FunctionAvSetMmThreadPriority(hMmTask, PA_AVRT_PRIORITY_CRITICAL);
+            if (!bret) {
+                LOG("can't set msc priority");
+            }
+        }
+        else {
+            LOG("can't set msc priority, avrt.dll not loaded");
+        }
+    }
+#endif
+
     start(QThread::TimeCriticalPriority);
 }
 
 RendererThread2::~RendererThread2()
 {
-    {
-        QMutexLocker locker(mutexStop);
-        stop=true;
-    }
+
+
+    Stop();
 
     while(isRunning()) {
         Sleep(50);
     }
 
-    delete mutexNewNodes;
-    delete mutexStop;
-    delete mutexSuspend;
-    delete condSuspend;
+
+#ifdef WIN32
+    if (hMmTask != NULL) {
+        FunctionAvRevertMmThreadCharacteristics(hMmTask);
+    }
+    if(DllAvRt)
+        FreeLibrary(DllAvRt);
+#endif
 
     LOG("thread"<<id<<"deleted")
 }
@@ -40,60 +71,72 @@ RendererThread2::~RendererThread2()
 void RendererThread2::Stop()
 {
     {
-        QMutexLocker locker(mutexStop);
+        QMutexLocker locker(&mutexStop);
+        if(stop)
+            return;
         stop=true;
+
     }
-    Suspend(false);
     LOG("thread"<<id<<"stopped")
 }
 
 void RendererThread2::run()
 {
     {
-        QMutexLocker locker(mutexStop);
+        QMutexLocker locker(&mutexStop);
         stop=false;
     }
 
     forever {
 
-        WaitIfSuspended();
-
-        if(!WaitNextStart())
-            return;
-
-        if(CheckIfStopping())
-            return;
-
-        renderer->renderInProgress.AddLock();
-        ApplyNewNodes();
-        LockAllSteps();
-        Render();
-        renderer->renderInProgress.Unlock();
-
-        if(CheckIfStopping())
-            return;
-    }
-}
-
-void RendererThread2::Render()
-{
-   bool canceled=false;
-
-   ThreadNodes::iterator step = currentNodes.begin();
-    while(step != currentNodes.end()) {
-        foreach(RendererNode2 *node, step.value()) {
-
-            if(!renderer->stepCanStart[node->minRenderOrder]->WaitUnlock(2000)) {
-                LOG("timeout thread:"<<id<<"step:"<<step.key())
-                canceled=true;
-            }
-
-            if(!canceled)
-                node->Render();
-
-            renderer->stepCanStart[node->maxRenderOrder+1]->Unlock();
+        if(!renderer->waitThreadReady.WaitAllThreads(9000)) {
+            LOG("thread"<<id<<"start timeout")
+            QMutexLocker locker(&mutexStop);
+            stop=true;
         }
-        ++step;
+        {
+            QMutexLocker locker(&mutexStop);
+            if(stop) {
+                renderer->nbThreads--;
+                renderer->stepCanStart.first()->Unlock();
+                renderer->waitThreadReady.RemoveClient();
+                renderer->waitThreadEnd.RemoveClient();
+                return;
+            }
+        }
+
+        {
+            QMutexLocker locker(&mutexNewNodes);
+
+            if(!currentNodes.isEmpty()) {
+
+                LockAllSteps();
+                renderer->stepCanStart.first()->Unlock();
+
+                if(!renderer->stepCanStart.first()->WaitUnlock(9000)) {
+                    LOG("thread"<<id<<"1st step timeout")
+                }
+
+                ThreadNodes::const_iterator i = currentNodes.constBegin();
+                while(i!=currentNodes.constEnd()) {
+                    foreach(RendererNode2* n, i.value()) {
+                        n->startSemaphore->WaitUnlock();
+                        n->Render();
+                        n->nextStepSemaphore->Unlock();
+                    }
+
+                    ++i;
+                }
+            } else {
+                renderer->stepCanStart.first()->Unlock();
+            }
+        }
+
+        if(!renderer->waitThreadEnd.WaitAllThreads(9000)) {
+            LOG("thread"<<id<<"end timeout")
+            QMutexLocker locker(&mutexStop);
+            stop=true;
+        }
     }
 }
 
@@ -101,73 +144,23 @@ void RendererThread2::LockAllSteps()
 {
     ThreadNodes::iterator step = currentNodes.begin();
     while(step != currentNodes.end()) {
-        foreach(RendererNode2 *node, step.value()) {
-            renderer->stepCanStart[node->maxRenderOrder+1]->AddLock();
-            node->NewRenderLoop();
+        foreach(const RendererNode2 *node, step.value()) {
+            node->nextStepSemaphore->AddLock();
+            if(node)
+                node->NewRenderLoop();
         }
         ++step;
     }
 }
 
-void RendererThread2::ApplyNewNodes()
-{
-    QMutexLocker locker(mutexNewNodes);
-    if(!newNodes.isEmpty()) {
-        currentNodes = newNodes;
-        newNodes.clear();
-    }
-}
-
-bool RendererThread2::CheckIfStopping()
-{
-    QMutexLocker locker(mutexStop);
-    return stop;
-}
-
-bool RendererThread2::WaitNextStart()
-{
-    QMutexLocker l(&renderer->mutexStartRender);
-    if(!renderer->condStartRender.wait(&renderer->mutexStartRender, 5000)) {
-        LOG("timeout, can't start thread:"<<id)
-        return false;
-    }
-    return true;
-}
-
-void RendererThread2::WaitIfSuspended()
-{
-    QMutexLocker locker(mutexSuspend);
-    if(suspendAsked) {
-        suspended=true;
-        condSuspend->wait(locker.mutex());
-        suspended=false;
-    }
-}
-
-void RendererThread2::Suspend(bool s)
-{
-    QMutexLocker locker(mutexSuspend);
-    if(s==suspendAsked)
-        return;
-
-    if(s) {
-        LOG("suspend"<<id)
-        suspendAsked=true;
-    } else {
-        LOG("release"<<id)
-        suspendAsked=false;
-        condSuspend->wakeAll();
-    }
-}
-
-bool RendererThread2::IsSuspended()
-{
-    QMutexLocker locker(mutexSuspend);
-    return suspended;
-}
-
 void RendererThread2::SetListOfNodes(const ThreadNodes &n)
 {
-    QMutexLocker locker(mutexNewNodes);
-    newNodes = n;
+    QMutexLocker locker(&mutexNewNodes);
+    currentNodes = n;
+}
+
+void RendererThread2::ResetNodes()
+{
+    QMutexLocker locker(&mutexNewNodes);
+    currentNodes.clear();
 }

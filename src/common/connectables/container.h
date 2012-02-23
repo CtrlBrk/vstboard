@@ -24,7 +24,7 @@
 #include "object.h"
 #include "bridge.h"
 #include "containerprogram.h"
-#include "models/hostmodel.h"
+//#include "models/hostmodel.h"
 
 namespace Connectables {
 
@@ -81,7 +81,7 @@ namespace Connectables {
         QSharedPointer<Object> bridgeReturn;
 
         /// model for the parking storage
-        HostModel parkModel;
+//        HostModel parkModel;
 
         QWeakPointer<Container>childContainer;
         QWeakPointer<Container>parentContainer;

@@ -15,11 +15,12 @@ public:
     void WaitUnlock();
     bool IsLocked();
     bool WaitUnlock(int timeout);
+    bool WaitUnlock(int timeout, int &timelocked);
 
 private:
 //    Q_DISABLE_COPY(SemaphoreInverted)
-    QMutex *mutex;
-    QWaitCondition *cond;
+    QReadWriteLock mutex;
+    QWaitCondition condUnlock;
     int lockCpt;
 };
 

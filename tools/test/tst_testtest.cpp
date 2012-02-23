@@ -28,6 +28,7 @@
 #include "renderer/semaphoreinverted.h"
 //#include "renderer/optimizernode.h"
 #include "renderer/renderer2.h"
+#include "renderer/renderernode2.h"
 
 class TestBuffers : public QObject
 {
@@ -202,12 +203,12 @@ void TestSem::unlockThread(SemaphoreInverted *sem)
 {
     Sleep(500);
     LOG("unlock")
-    sem->Unlock(2);
+    sem->Unlock();
 }
 
 void TestSem::initTestCase()
 {
-   sem.AddLock(2);
+   sem.AddLock(1);
    LOG("lock")
    QtConcurrent::run(TestSem::unlockThread,&sem);
    bool ret = sem.WaitUnlock(1000);
@@ -227,7 +228,7 @@ public:
 
     void Render()
     {
-        Sleep(cpuTime);
+//        Sleep(cpuTime);
     }
 
     long cpuTime;
@@ -264,10 +265,10 @@ TimerRender::~TimerRender()
 void TimerRender::run()
 {
     stop=false;
-
+renderer->StartRender();
     while(!stop) {
         msleep(t);
-        renderer->StartRender();
+//        renderer->StartRender();
     }
 }
 
@@ -296,7 +297,7 @@ void TestSolver::initTestCase()
     nbThreads = 2;
 
     for(int i=0; i<5; i++) {
-        QSharedPointer<Connectables::Object>obj(new TestObj(i, i));
+        QSharedPointer<Connectables::Object>obj(new TestObj(i, 10));
         lstObj << obj;
         lstObjects.insert(i, obj );
     }
@@ -305,53 +306,32 @@ void TestSolver::initTestCase()
     QSharedPointer<Connectables::Cable>cab(new Connectables::Cable(0,inf1,inf2));
     lstCables.insert(inf1, cab);
 
-    renderTh = new TimerRender(&renderer, 15);
+//    renderTh = new TimerRender(&renderer, 15);
 
 
 }
 
 void TestSolver::cleanupTestCase()
 {
-    delete renderTh;
+//    delete renderTh;
     lstObj.clear();
 }
 
 void TestSolver::Test()
 {
     RenderMap rMap;
-    solv.GetMap(lstObjects,lstCables,7,rMap);
-    renderer.SetMap(rMap,7);
+//    solv.GetMap(lstObjects,lstCables,7,rMap);
 
-    Sleep(1000);
-
-    lstObjects.clear();
-    for(int i=0; i<3; i++) {
-        lstObjects.insert(i, lstObj[i] );
+    for(int i=0; i<4; i++) {
+        for(int s=0; s<10; s++) {
+            RendererNode2 *n = new RendererNode2(i*s,s,s,10);
+            n->listOfObj << lstObj.first();
+            rMap[i][s] << n;
+        }
     }
-    rMap.clear();
-    solv.GetMap(lstObjects,lstCables,7,rMap);
-    renderer.SetMap(rMap,7);
-
-    Sleep(1000);
-
-    lstObjects.clear();
-    for(int i=0; i<5; i++) {
-        lstObjects.insert(i, lstObj[i] );
-    }
-    rMap.clear();
-    solv.GetMap(lstObjects,lstCables,7,rMap);
-    renderer.SetMap(rMap,7);
-
-    Sleep(1000);
-
-    rMap.clear();
-    solv.GetMap(lstObjects,lstCables,3,rMap);
-    renderer.SetMap(rMap,3);
-
-    Sleep(1000);
-
-    renderer.SetMap(rMap,3);
-
+    LOG( Solver::RMap2Txt(rMap) )
+    renderer.SetMap(rMap,4);
+    renderer.StartRender();
     Sleep(1000);
 }
 

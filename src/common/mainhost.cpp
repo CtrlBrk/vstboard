@@ -37,7 +37,6 @@ quint32 MainHost::currentFileVersion=PROJECT_AND_SETUP_FILE_VERSION;
 
 MainHost::MainHost(Settings *settings, QObject *parent) :
     QObject(parent),
-    solver(new PathSolver(this)),
     objFactory(0),
     mainWindow(0),
     solverNeedAnUpdate(false),
@@ -46,7 +45,13 @@ MainHost::MainHost(Settings *settings, QObject *parent) :
     settings(settings),
     undoProgramChangesEnabled(false),
     programManager(0),
-    globalDelay(0L)
+    globalDelay(0L),
+    nbThreads(1)
+//    currentInputBuffer(0),
+//    currentOutputBuffer(0),
+//    currentFramesPerBuffer(0),
+//    inBufferReady(false),
+//    outBufferReady(false)
 {
 
 }
@@ -75,19 +80,20 @@ void MainHost::Close()
 //    workingListOfCables.clear();
 //    mutexListCables->unlock();
 
-    mutexRender.lock();
+//    mutexRender.lock();
     if(renderer) {
-        hashCables lstCables;
-        long newDelay = solver->Resolve(objFactory->GetListObjects(), lstCables, renderer);
-        if(newDelay!=globalDelay) {
-            globalDelay=newDelay;
-            emit DelayChanged(globalDelay);
-        }
+//        hashCables lstCables;
+//        long newDelay = solver->Resolve(objFactory->GetListObjects(), lstCables, renderer);
+//        if(newDelay!=globalDelay) {
+//            globalDelay=newDelay;
+//            emit DelayChanged(globalDelay);
+//        }
 
     //    solver->Resolve(workingListOfCables, renderer);
         delete renderer;
+        renderer=0;
     }
-    mutexRender.unlock();
+//    mutexRender.unlock();
 
     hostContainer.clear();
     projectContainer.clear();
@@ -98,6 +104,11 @@ void MainHost::Close()
     if(objFactory) {
         delete objFactory;
         objFactory=0;
+    }
+
+    if(solver) {
+        delete solver;
+        solver=0;
     }
 
 #ifdef VSTSDK
@@ -146,9 +157,11 @@ void MainHost::Init()
     vstUsersCounter++;
 #endif
 
-    model = new HostModel(this);
-    model->setObjectName("MainModel");
-    model->setColumnCount(1);
+    solver = new Solver();
+
+//    model = new HostModel(this);
+//    model->setObjectName("MainModel");
+//    model->setColumnCount(1);
 
     sampleRate = 44100.0;
     bufferSize = 100;
@@ -157,7 +170,9 @@ void MainHost::Init()
     currentTimeSig1=4;
     currentTimeSig2=4;
 
-    renderer = new Renderer(this);
+    ChangeNbThreads(-1);
+
+    renderer = new Renderer2(this);
 
 //    programsModel = new ProgramsModel(this);
 
@@ -204,7 +219,7 @@ void MainHost::SetupMainContainer()
 
     mainContainer->LoadProgram(0);
     QStandardItem *item = mainContainer->GetFullItem();
-    model->invisibleRootItem()->appendRow(item);
+//    model->invisibleRootItem()->appendRow(item);
 //    mainContainer->modelIndex=item->index();
 //    mainContainer->parkingId=false;
     mainContainer->listenProgramChanges=false;
@@ -664,13 +679,10 @@ void MainHost::SetupGroupContainer()
     SetSolverUpdateNeeded();
 }
 
-bool MainHost::EnableSolverUpdate(bool enable)
+void MainHost::EnableSolverUpdate(bool enable)
 {
-    solverMutex.lock();
-    bool ret = solverUpdateEnabled;
+    QMutexLocker locket(&solverMutex);
     solverUpdateEnabled = enable;
-    solverMutex.unlock();
-    return ret;
 }
 
 void MainHost::ResetDelays()
@@ -706,18 +718,18 @@ void MainHost::UpdateSolver(bool forceUpdate)
 
     solverMutex.unlock();
 
-    //if forced : lock rendering
-    if(forceUpdate) {
-        mutexRender.lock();
-    } else {
-        //not forced : do it later if we can't do it now
-        if(!mutexRender.tryLock()) {
-            //can't lock, ask for a ne update
-            SetSolverUpdateNeeded();
-            EnableSolverUpdate(solverWasEnabled);
-            return;
-        }
-    }
+//    //if forced : lock rendering
+//    if(forceUpdate) {
+//        mutexRender.lock();
+//    } else {
+//        //not forced : do it later if we can't do it now
+//        if(!mutexRender.tryLock()) {
+//            //can't lock, ask for a ne update
+//            SetSolverUpdateNeeded();
+//            EnableSolverUpdate(solverWasEnabled);
+//            return;
+//        }
+//    }
 
     //update the solver
     hashCables lstCables;
@@ -732,37 +744,46 @@ void MainHost::UpdateSolver(bool forceUpdate)
     if(programContainer && programContainer->GetCurrentProgram())
         programContainer->GetCurrentProgram()->AddToCableList(&lstCables);
 
-    long newDelay = solver->Resolve(objFactory->GetListObjects(), lstCables, renderer);
+//    long newDelay = solver->Resolve(objFactory->GetListObjects(), lstCables, renderer);
+    RenderMap rMap;
+    long newDelay = solver->GetMap(objFactory->GetListObjects(), lstCables, nbThreads, rMap);
     if(newDelay!=globalDelay) {
         globalDelay=newDelay;
         emit DelayChanged(globalDelay);
     }
+    renderer->SetMap(rMap,nbThreads);
+
 //    mutexListCables->lock();
 //        solver->Resolve(workingListOfCables, renderer);
 //    mutexListCables->unlock();
 
-    mutexRender.unlock();
+//    mutexRender.unlock();
     EnableSolverUpdate(solverWasEnabled);
+//    EnableSolverUpdate(true);
 }
 
-void MainHost::ChangeNbThreads(int nbThreads)
+void MainHost::ChangeNbThreads(int nbTh)
 {
-    if(!renderer)
-            return;
+//    if(!renderer)
+//            return;
 
-        if(nbThreads<=0) {
+        if(nbTh<=0) {
     #ifdef _WIN32
             SYSTEM_INFO info;
             GetSystemInfo(&info);
-            nbThreads = info.dwNumberOfProcessors;
+            nbTh = info.dwNumberOfProcessors;
     #else
-            nbThreads = 1;
+            nbTh = 1;
     #endif
         }
 
-        mutexRender.lock();
-        renderer->SetNbThreads(nbThreads);
-        mutexRender.unlock();
+        if(nbThreads == nbTh)
+            return;
+
+//        mutexRender.lock();
+//        renderer->SetNbThreads(nbThreads);
+//        mutexRender.unlock();
+        nbThreads = nbTh;
         SetSolverUpdateNeeded();
 
 }
@@ -820,7 +841,7 @@ void MainHost::Render()
     CheckTempo();
 #endif
 
-    mutexRender.lock();
+//    mutexRender.lock();
 
     if(mainContainer)
         mainContainer->NewRenderLoop();
@@ -836,7 +857,7 @@ void MainHost::Render()
     if(renderer)
         renderer->StartRender();
 
-    mutexRender.unlock();
+//    mutexRender.unlock();
 
     if(solverNeedAnUpdate && solverUpdateEnabled)
         emit SolverToUpdate();

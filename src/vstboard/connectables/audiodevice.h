@@ -62,6 +62,11 @@ namespace Connectables {
 
         QString errorMessage;
 
+        /// current buffre size
+        unsigned long bufferSize;
+        float **currentInputBuffer;
+        float **currentOutputBuffer;
+
     private:
         bool Close();
         static int paCallback( const void *inputBuffer, void *outputBuffer,
@@ -94,8 +99,7 @@ namespace Connectables {
         /// current sample rate
         float sampleRate;
 
-        /// current buffre size
-        unsigned long bufferSize;
+
 
         /// pointer to PortAudio stream
         PaStream *stream;

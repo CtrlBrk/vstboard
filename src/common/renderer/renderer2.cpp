@@ -3,11 +3,14 @@
 #include "solver/solver.h"
 #include "rendererthread2.h"
 
-
 Renderer2::Renderer2(QObject *parent) :
-    QObject(parent)
+    QObject(parent),
+    nbThreads(0),
+    nbSteps(0)
 {
-    //the first step is always ready
+    waitThreadReady.AddClient();
+    waitThreadEnd.AddClient();
+
     stepCanStart << new SemaphoreInverted();
 }
 
@@ -16,8 +19,8 @@ Renderer2::~Renderer2()
     foreach(RendererThread2 *th, threads) {
         th->Stop();
     }
-    renderInProgress.WaitUnlock(1000);
-    condStartRender.wakeAll();
+    waitThreadReady.RemoveClient();
+    waitThreadEnd.RemoveClient();
 
     qDeleteAll(threads);
     qDeleteAll(threadsToDelete);
@@ -26,50 +29,74 @@ Renderer2::~Renderer2()
 
 void Renderer2::SetMap(const RenderMap &map, int nbThreads)
 {
-    ThreadCleanup();
+    mutexThreadList.lock();
     ChangeNbOfThreads( nbThreads );
+    ThreadCleanup();
 
     for(int t=0; t<nbThreads; t++) {
         RendererThread2 *thread = threads[t];
         if(map.contains(t)) {
-
-            QList<int>lstStep = map.value(t).keys();
-            while(stepCanStart.count()<=lstStep.last()+1) {
-                stepCanStart << new SemaphoreInverted();
-            }
-
             thread->SetListOfNodes(map[t]);
-            thread->Suspend(false);
         } else {
-            thread->Suspend(true);
+            thread->ResetNodes();
         }
     }
+    foreach(const RendererThread2 *thread, threads) {
+        foreach(const QList<RendererNode2*> &lst, thread->currentNodes) {
+            foreach(RendererNode2 *n, lst) {
+                while(stepCanStart.count() <= n->maxRenderOrder+1) {
+                    stepCanStart << new SemaphoreInverted();
+                }
+
+                n->startSemaphore = stepCanStart[n->minRenderOrder];
+                n->nextStepSemaphore = stepCanStart[n->maxRenderOrder+1];
+            }
+        }
+    }
+
+    mutexThreadList.unlock();
 }
 
 void Renderer2::StartRender()
 {
-    if(renderInProgress.IsLocked()) {
-        LOG("last rendering not finished, drop buffer")
-        return;
+    mutexThreadList.lock();
+    stepCanStart.first()->AddLock(nbThreads);
+    mutexThreadList.unlock();
+
+    if(!waitThreadReady.WaitAllThreads(10000)) {
+        LOG("renderer start timeout")
     }
-    condStartRender.wakeAll();
+
+    if(!waitThreadEnd.WaitAllThreads(10000)) {
+        LOG("renderer end timeout")
+    }
+
 }
 
 void Renderer2::ChangeNbOfThreads(int newNbThreads)
 {
-    int currentNbThreads = threads.count();
+    //remove crashed threads
+    for(int i=nbThreads-1; i>=0; i--) {
+        RendererThread2* th = threads[i];
+        if(!th->isRunning()) {
+            --nbThreads;
+            threads.removeAt(i);
+            threadsToDelete << th;
+        }
+    }
 
     //remove unneeded threads, don't wait for deletion rigth now
-    while(currentNbThreads > newNbThreads) {
-        --currentNbThreads;
+    while(threads.count() > newNbThreads) {
+        //the thread updates the counter
+        //        --nbThreads;
         RendererThread2* th = threads.takeLast();
         th->Stop();
         threadsToDelete << th;
     }
 
     //add threads if needed
-    while(currentNbThreads < newNbThreads) {
-        ++currentNbThreads;
+    while(nbThreads < newNbThreads) {
+        ++nbThreads;
         threads << new RendererThread2(this,threads.count());
     }
 }

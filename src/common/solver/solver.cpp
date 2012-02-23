@@ -8,14 +8,14 @@ Solver::Solver() :
 {
 }
 
-void Solver::GetMap(const hashObjects &listObject, const hashCables &listCables, int nbTh, RenderMap &rMap)
+long Solver::GetMap(const hashObjects &listObject, const hashCables &listCables, int nbTh, RenderMap &rMap)
 {
     nbThreads=nbTh;
 
     qDeleteAll(solverNodes);
     solverNodes.clear();
     PathSolver path;
-    path.GetNodes(listObject, listCables, solverNodes);
+    long globalDelay = path.GetNodes(listObject, listCables, solverNodes);
 
     qDeleteAll(optimizerNodes);
     optimizerNodes.clear();
@@ -30,6 +30,8 @@ void Solver::GetMap(const hashObjects &listObject, const hashCables &listCables,
     LOG( OptimizeMap::OptMap2Txt(oMap) )
 
     OptimzerMap2RenderMap(oMap,rMap);
+
+    return globalDelay;
 }
 
 void Solver::UpdateMap(const QList<RendererNode2*> &rNodes)
@@ -68,4 +70,61 @@ void Solver::OptimzerMap2RenderMap(const OptMap &oMap, RenderMap &rMap)
         }
         ++step;
     }
+}
+
+QString Solver::RMap2Txt(const RenderMap& map)
+{
+    QMap<int, QMap<int,QString> >str;
+    str[0][0] = "       ";
+
+    RenderMap::iterator thread = map.begin();
+    while(thread!=map.end()) {
+        str[0][thread.key()+1]=QString("thread:%1").arg(thread.key());
+
+
+        QMap<int, QList<RendererNode2*> >::iterator step = thread.value().begin();
+        while(step!=thread.value().end()) {
+            str[step.key()+1][0]=QString("step:%1").arg(step.key());
+
+            foreach(const RendererNode2 *n, step.value()) {
+                str[step.key()+1][thread.key()+1] += QString("%1[%2:%3]%4 ").arg(n->id).arg(n->minRenderOrder).arg(n->maxRenderOrder).arg(n->cpuTime);
+            }
+            ++step;
+        }
+        ++thread;
+    }
+
+    QMap<int,int>cols;
+    QMap<int, QMap<int, QString > >::iterator step2 = str.begin();
+    while(step2!=str.end()) {
+        QMap<int, QString >::iterator th = step2.value().begin();
+        while(th!=step2.value().end()) {
+            if(cols[th.key()] < th.value().length())
+                cols[th.key()] = th.value().length();
+            ++th;
+        }
+        ++step2;
+    }
+
+    QString out("\n");
+    QMap<int, QMap<int, QString > >::iterator step3 = str.begin();
+    while(step3!=str.end()) {
+        int cpt=0;
+        QMap<int, QString >::iterator th = step3.value().begin();
+        while(th!=step3.value().end()) {
+            while(th.key()>cpt) {
+                out += QString(" ").repeated( cols[cpt] );
+                out += " | ";
+                cpt++;
+            }
+            out += QString(" ").repeated( cols[th.key()] - th.value().length() );
+            out += th.value();
+            out += " | ";
+            ++th;
+            cpt++;
+        }
+        out += "\n";
+        ++step3;
+    }
+    return out;
 }
