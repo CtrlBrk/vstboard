@@ -28,7 +28,7 @@
 #include "connectables/container.h"
 //#include "renderer/pathsolver.h"
 //#include "renderer/renderer.h"
-#include "solver/solver.h"
+#include "renderer/solver.h"
 #include "renderer/renderer2.h"
 #include "globals.h"
 //#include "models/hostmodel.h"

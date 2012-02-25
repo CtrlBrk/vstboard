@@ -25,7 +25,7 @@
 #include "cable.h"
 #include "objectinfo.h"
 #include "msgobject.h"
-#include "solver/solver.h"
+#include "renderer/solver.h"
 class MainHost;
 
 //class RendererNode;

@@ -24,7 +24,7 @@
 #include "audiobuffer.h"
 #include "circularbuffer.h"
 #include "renderer/optimizemap.h"
-#include "solver/solver.h"
+#include "renderer/solver.h"
 #include "renderer/semaphoreinverted.h"
 //#include "renderer/optimizernode.h"
 #include "renderer/renderer2.h"

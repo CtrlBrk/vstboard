@@ -67,43 +67,6 @@ long PathSolver::GetNodes(const hashObjects &lstObj, const hashCables &cables, Q
     return dly.GetDelay();
 }
 
-long PathSolver::Resolve(const hashObjects &lstObj, hashCables cables, Renderer *renderer)
-{
-    Clear();
-
-    if(cables.size()==0) {
-        return 0;
-    }
-
-    mutex.lock();
-
-    listObjects = lstObj;
-    listCables = cables;
-
-    CreateNodes();
-    PutParentsInNodes();
-    UnwrapLoops();
-    UpdateDelays dly(listObjects,&listCables,&listNodes);
-    int cpt=0;
-    while(ChainNodes() && cpt<100) { ++cpt; }
-    RemoveUnusedNodes();
-    SetMinAndMaxStep();
-
-    //keep a reference, avoid deletion by the renderer thread
-    foreach(SolverNode *n, listNodes) {
-        foreach(QSharedPointer<Connectables::Object>obj, n->listOfObj) {
-            listAciveObjects << obj;
-        }
-    }
-
-    renderer->OnNewRenderingOrder(listNodes);
-
-    listCables.clear();
-    mutex.unlock();
-
-    return dly.GetDelay();
-}
-
 void PathSolver::GetListPinsConnectedTo(ConnectionInfo out, QList<ConnectionInfo> &list)
 {
     hashCables::const_iterator i = listCables.constFind(out);

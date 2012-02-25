@@ -16,16 +16,15 @@ Solver::~Solver()
     foreach(RendererNode2 *n, rendererNodes) {
         delete n;
     }
-    qDeleteAll(solverNodes);
-    solverNodes.clear();
 }
 
 long Solver::GetMap(const hashObjects &listObject, const hashCables &listCables, int nbTh, RenderMap &rMap)
 {
     nbThreads=nbTh;
 
-    qDeleteAll(solverNodes);
-    solverNodes.clear();
+//
+//    solverNodes.clear();
+    QList<SolverNode*>solverNodes;
     PathSolver path;
     long globalDelay = path.GetNodes(listObject, listCables, solverNodes);
 
@@ -38,9 +37,10 @@ long Solver::GetMap(const hashObjects &listObject, const hashCables &listCables,
     OptimizeMap optMap(optimizerNodes,nbThreads);
     OptMap oMap;
     optMap.GetBestMap(oMap);
-    qDeleteAll(optimizerNodes);
-//    OptimzerMap2RenderMap(oMap,rMap);
     rMap=RenderMap(oMap,solverNodes);
+
+    qDeleteAll(optimizerNodes);
+    qDeleteAll(solverNodes);
 
     LOG( OptimizeMap::OptMap2Txt(oMap) )
 //    LOG( RMap2Txt(rMap) )
@@ -51,12 +51,14 @@ long Solver::GetMap(const hashObjects &listObject, const hashCables &listCables,
 void Solver::UpdateCpuTimes(RenderMap &rMap, int nbThreads)
 {
     QList<OptimizerNode*>optimizerNodes;
+    QList<SolverNode*>solverNodes;
 
     RendererMap::iterator thread = rMap.map.begin();
     while(thread != rMap.map.end()) {
        ThreadNodes::iterator step = thread.value().begin();
         while(step!=thread.value().end()) {
             foreach(const QSharedPointer<RendererNode2>node, step.value()) {
+                solverNodes << new SolverNode(*node);
                 optimizerNodes << new OptimizerNode(*node);
             }
 
@@ -68,11 +70,10 @@ void Solver::UpdateCpuTimes(RenderMap &rMap, int nbThreads)
     OptimizeMap optMap(optimizerNodes,nbThreads);
     OptMap oMap;
     optMap.GetBestMap(oMap);
-    qDeleteAll(optimizerNodes);
-//    rMap.clear();
-//    OptimzerMap2RenderMap(oMap,rMap);
-//    rMap(oMap,solverNodes);
     rMap=RenderMap(oMap,solverNodes);
+
+    qDeleteAll(optimizerNodes);
+    qDeleteAll(solverNodes);
 
     LOG( OptimizeMap::OptMap2Txt(oMap) )
 //    LOG( RMap2Txt(rMap) )

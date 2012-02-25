@@ -107,14 +107,7 @@ SOURCES += \
     connectables/objectprogram.cpp \
     connectables/containerprogram.cpp \
     connectables/cursor.cpp \
-    renderer/pathsolver.cpp \
-    renderer/renderer.cpp \
     renderer/solvernode.cpp \
-    renderer/renderthread.cpp \
-    renderer/optimizerstep.cpp \
-    renderer/optimizer.cpp \
-    renderer/optimizestepthread.cpp \
-    renderer/renderernode.cpp \
     renderer/node.cpp \
     renderer/updatedelays.cpp \
     renderer/renderer2.cpp \
@@ -123,7 +116,9 @@ SOURCES += \
     renderer/optimizernode.cpp \
     renderer/optimizemap.cpp \
     renderer/semaphoreinverted.cpp \
-    solver/solver.cpp \
+    renderer/waitall.cpp \
+    renderer/rendermap.cpp \
+    renderer/solver.cpp \
     projectfile/projectfile.cpp \
     commands/comdisconnectpin.cpp \
     commands/comaddobject.cpp \
@@ -141,8 +136,7 @@ SOURCES += \
     models/hostmodel.cpp \
     models/groupsprogramsmodel.cpp \
     models/parkingmodel.cpp \
-    renderer/waitall.cpp \
-    renderer/rendermap.cpp
+    renderer/pathsolver.cpp
 
 SOURCES += \
     views/programlist.cpp \
@@ -218,13 +212,6 @@ HEADERS += \
     connectables/buffer.h \
     connectables/cursor.h \
     renderer/solvernode.h \
-    renderer/pathsolver.h \
-    renderer/renderer.h \
-    renderer/renderthread.h \
-    renderer/optimizerstep.h \
-    renderer/optimizer.h \
-    renderer/optimizestepthread.h \
-    renderer/renderernode.h \
     renderer/node.h \
     renderer/optimizernode.h \
     renderer/optimizemap.h \
@@ -233,7 +220,9 @@ HEADERS += \
     renderer/rendererthread2.h \
     renderer/renderernode2.h \
     renderer/updatedelays.h \
-    solver/solver.h \
+    renderer/waitall.h \
+    renderer/rendermap.h \
+    renderer/solver.h \
     projectfile/projectfile.h \
     projectfile/fileversion.h \
     models/listtoolsmodel.h \
@@ -252,9 +241,7 @@ HEADERS += \
     commands/comremovepin.h \
     commands/comaddpin.h \
     commands/comprogramstate.h \
-    renderer/waitall.h \
-    renderer/rendermap.h
-
+    renderer/pathsolver.h
 
 HEADERS += \
     views/configdialog.h \

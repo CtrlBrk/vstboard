@@ -26,8 +26,6 @@
 #include "connectables/cable.h"
 #include "solvernode.h"
 #include "globals.h"
-#include "renderer.h"
-
 
 class MainHost;
 
@@ -41,7 +39,6 @@ Q_OBJECT
 public:
     explicit PathSolver(QObject *parent=0);
     ~PathSolver();
-    long Resolve(const hashObjects &listObjects, hashCables cables, Renderer *renderer);
     long GetNodes(const hashObjects &listObjects, const hashCables &cables, QList<SolverNode*> &nodes);
 
 protected:

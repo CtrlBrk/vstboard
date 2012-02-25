@@ -1,8 +1,8 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 
-#include "renderer/pathsolver.h"
-#include "renderer/rendermap.h"
+#include "pathsolver.h"
+#include "rendermap.h"
 
 class Solver
 {
@@ -14,7 +14,6 @@ public:
     int nbThreads;
 
 private:
-    QList<SolverNode*>solverNodes;
     QList<RendererNode2*>rendererNodes;
     QList<RendererNode2*>rendererNodesDeleted;
 

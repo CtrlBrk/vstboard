@@ -1,6 +1,6 @@
 #include "renderer2.h"
 #include "renderernode2.h"
-#include "solver/solver.h"
+#include "solver.h"
 #include "rendererthread2.h"
 
 Renderer2::Renderer2(QObject *parent) :

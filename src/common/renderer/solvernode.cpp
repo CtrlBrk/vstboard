@@ -19,7 +19,7 @@
 **************************************************************************/
 
 #include "solvernode.h"
-#include "connectables/buffer.h"
+#include "renderernode2.h"
 
 SolverNode::SolverNode() :
     Node(),
@@ -36,6 +36,18 @@ SolverNode::SolverNode(const SolverNode &c) :
     listChilds(c.listChilds)
 {
 
+}
+
+SolverNode::SolverNode(const RendererNode2 &c) :
+    Node(),
+    loopFlag(0),
+    countSteps(0)
+{
+    minRenderOrder=c.minRenderOrderOri;
+    maxRenderOrder=c.maxRenderOrderOri;
+    internalDelay=0;
+    totalDelayAtOutput=0;
+    listOfObj=c.listOfObj;
 }
 
 void SolverNode::AddChild(SolverNode *child)

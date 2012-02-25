@@ -24,11 +24,13 @@
 #include "node.h"
 
 class PathSolver;
+class RendererNode2;
 class SolverNode : public Node
 {
 public:
     SolverNode();
     SolverNode(const SolverNode &c);
+    SolverNode(const RendererNode2 &c);
 
 protected:
     void ReconnectChildsTo(SolverNode *newParent);

@@ -20,9 +20,8 @@
 
 
 #include "object.h"
-#include "../globals.h"
-#include "../mainhost.h"
-#include "../renderer/pathsolver.h"
+#include "globals.h"
+#include "mainhost.h"
 #include "container.h"
 
 #include "commands/comaddobject.h"
