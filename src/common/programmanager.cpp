@@ -386,6 +386,7 @@ int ProgramManager::WaitPromptAnswer(const QString &type)
 
     //wait for answer
     while(promptAnswer==-1) {
+        Sleep(50);
         qApp->processEvents();
     }
 

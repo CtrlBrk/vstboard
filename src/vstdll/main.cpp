@@ -17,8 +17,9 @@
 #    You should have received a copy of the under the terms of the GNU Lesser General Public License
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
-
 #include "pluginterfaces/base/ftypes.h"
+#include "public.sdk/source/vst/vst2wrapper/vst2wrapper.h"
+#include "ids.h"
 
 #include <windows.h>
 #include <QMfcApp>
@@ -45,18 +46,26 @@ Steinberg::tchar gPath[MAX_PATH] = {0};
 extern bool InitModule ();		///< must be provided by Plug-in: called when the library is loaded
 extern bool DeinitModule ();	///< must be provided by Plug-in: called when the library is unloaded
 
-//------------------------------------------------------------------------
+bool asIntrument=false;
+::AudioEffect* createEffectInstance(audioMasterCallback audioMaster)
+{
+    return Steinberg::Vst::Vst2Wrapper::create (GetPluginFactory (), VstBoardProcessorUID, uniqueIDEffect, audioMaster);
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-        bool DllExport InitDll () ///< must be called from host right after loading dll
-        {
-                return InitModule ();
-        }
-        bool DllExport ExitDll ()  ///< must be called from host right before unloading dll
-        {
-                return DeinitModule ();
-        }
+
+
+
+    bool DllExport InitDll () ///< must be called from host right after loading dll
+    {
+            return InitModule ();
+    }
+    bool DllExport ExitDll ()  ///< must be called from host right before unloading dll
+    {
+            return DeinitModule ();
+    }
 #ifdef __cplusplus
 } // extern "C"
 #endif
@@ -107,14 +116,15 @@ extern "C" {
 #define VST_EXPORT _declspec(dllexport)
 //#endif
 
-    VST_EXPORT AEffect* VSTPluginMain (audioMasterCallback audioMaster)
+    VST_EXPORT AEffect* VSTEffectMain (audioMasterCallback audioMaster)
     {
         // Get VST Version of the Host
         if (!audioMaster (0, audioMasterVersion, 0, 0, 0, 0))
             return 0;  // old version
 
         // Create the AudioEffect
-        AudioEffect* effect = createEffectInstance (audioMaster,false);
+        asIntrument=false;
+        AudioEffect* effect = createEffectInstance (audioMaster);
         if (!effect)
             return 0;
 
@@ -129,7 +139,8 @@ extern "C" {
             return 0;  // old version
 
         // Create the AudioEffect
-        AudioEffect* effect = createEffectInstance (audioMaster,true);
+        asIntrument=true;
+        AudioEffect* effect = createEffectInstance (audioMaster);
         if (!effect)
             return 0;
 
@@ -159,5 +170,4 @@ BOOL WINAPI DllMain( HINSTANCE hInst, DWORD dwReason, LPVOID )
 }// extern "C"
 
 #endif
-
 */

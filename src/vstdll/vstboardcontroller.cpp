@@ -37,7 +37,7 @@ tresult PLUGIN_API VstBoardController::initialize (FUnknown* context)
     QCoreApplication::setOrganizationName("CtrlBrk");
     QCoreApplication::setApplicationName("VstBoard");
 
-    parameters.addParameter (STR16 ("Delay"), STR16 ("sec"), 0, 1, Vst::ParameterInfo::kCanAutomate, kDelayTag);
+//    parameters.addParameter (STR16 ("Delay"), STR16 ("sec"), 0, 1, Vst::ParameterInfo::kCanAutomate, kDelayTag);
 
     return kResultTrue;
 }

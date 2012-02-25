@@ -30,8 +30,6 @@
 #include "views/keybindingdialog.h"
 #include "msgobject.h"
 
-Q_DECLARE_METATYPE( QList<int> )
-
 MainWindow::MainWindow(Settings *settings, MainHost * myHost, QWidget *parent) :
     QMainWindow(parent),
     mySceneView(0),
@@ -222,17 +220,16 @@ void MainWindow::UpdateSolverMap(const MsgObject &msg)
             QString strStep;
             int end=step.objIndex;
             foreach(const MsgObject &node, step.children) {
-                QList<int>lstVal = node.prop[MsgObject::Value].value< QList<int> >();
                 QString str = QString("[%1:%2][%3:%4](%5)")
-                    .arg(lstVal[0])
-                    .arg(lstVal[1])
-                    .arg(lstVal[2])
-                    .arg(lstVal[3])
-                    .arg(lstVal[4]);
+                    .arg(msg.prop[MsgObject::Value].toInt())
+                    .arg(msg.prop[MsgObject::Value1].toInt())
+                    .arg(msg.prop[MsgObject::Value2].toInt())
+                    .arg(msg.prop[MsgObject::Value3].toInt())
+                    .arg(msg.prop[MsgObject::Value4].toInt());
                 str+=node.prop[MsgObject::Name].toString();
                 strStep+=str+"\n";
-                if(lstVal[1]>end)
-                    end=lstVal[1];
+                if(msg.prop[MsgObject::Value1].toInt()>end)
+                    end=msg.prop[MsgObject::Value1].toInt();
             }
 
             QLabel *cell=new QLabel(strStep);

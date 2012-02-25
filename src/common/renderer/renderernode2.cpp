@@ -1,16 +1,14 @@
 #include "renderernode2.h"
 #include "optimizernode.h"
 
-Q_DECLARE_METATYPE( QList<int> )
-
 #ifdef TESTING
-RendererNode2::RendererNode2(int id, int minRenderOrder, int maxRenderOrder, long cpuTime) :
+RendererNode2::RendererNode2(qint32 id, qint32 minRenderOrder, qint32 maxRenderOrder, qint32 cpuTime) :
     id(id),
     minRenderOrder(minRenderOrder),
     maxRenderOrder(maxRenderOrder),
     minRenderOrderOri(0),
     maxRenderOrderOri(0),
-    cpuTime(0L),
+    cpuTime(cpuTime),
     startSemaphore(0),
     nextStepSemaphore(0)
 {
@@ -81,14 +79,11 @@ void RendererNode2::Render() const
 
 void RendererNode2::GetInfo(MsgObject &msg) const
 {
-    QList<int>lstVals;
-    lstVals << minRenderOrder;
-    lstVals << maxRenderOrder;
-    lstVals << minRenderOrderOri;
-    lstVals << maxRenderOrderOri;
-    lstVals << cpuTime;
-
-    msg.prop[MsgObject::Value] = QVariant::fromValue(lstVals);
+    msg.prop[MsgObject::Value] = minRenderOrder;
+    msg.prop[MsgObject::Value1] = maxRenderOrder;
+    msg.prop[MsgObject::Value2] = minRenderOrderOri;
+    msg.prop[MsgObject::Value3] = maxRenderOrderOri;
+    msg.prop[MsgObject::Value4] = cpuTime;
 
     QString str;
     foreach( QSharedPointer<Connectables::Object> objPtr, listOfObj) {

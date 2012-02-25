@@ -20,6 +20,7 @@
 //#ifndef QT_NO_DEBUG
 //    #include "vld.h"
 //#endif
+
 #include <QLibraryInfo>
 #include <QTranslator>
 

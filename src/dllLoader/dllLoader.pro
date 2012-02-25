@@ -10,7 +10,6 @@ QMAKE_LFLAGS+="/DEF:$${_PRO_FILE_PWD_}/vstboard.def"
 
 DEFINES -= AS_INSTRUMENT
 TARGET = VstBoardEffect
-TARGET_EXT = .vst3
 TEMPLATE = lib
 
 QT       -= core gui

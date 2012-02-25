@@ -21,13 +21,13 @@
 #ifndef IDS_H
 #define IDS_H
 
-// parameter tags
-enum {
-        kDelayTag = 100,
-};
+#include "pluginterfaces/base/funknown.h"
+
+#define uniqueIDEffect CCONST('V','b','P','l')
+#define uniqueIDInstrument CCONST('V','b','I','s')
 
 // unique class ids
-static const FUID VstBoardProcessorUID (0x6183A41C, 0x584C4795, 0xA819AB96, 0xF04CBA61);
-static const FUID VstBoardControllerUID (0x999B210E, 0x45964a25, 0x91A5ACDC, 0xF8EB9481);
+static const Steinberg::FUID VstBoardProcessorUID (0x6183A41C, 0x584C4795, 0xA819AB96, 0xF04CBA61);
+static const Steinberg::FUID VstBoardControllerUID (0x999B210E, 0x45964a25, 0x91A5ACDC, 0xF8EB9481);
 
 #endif // IDS_H

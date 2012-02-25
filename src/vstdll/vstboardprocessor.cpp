@@ -276,7 +276,7 @@ void VstBoardProcessor::SendMsg(const MsgObject &msg)
         message->setMessageID("msg");
         QByteArray br;
         QDataStream str(&br, QIODevice::WriteOnly);
-        LOG(msg.prop)
+//        LOG(msg.prop)
         str << msg;
         message->getAttributes ()->setBinary ("data", br.data(), br.size());
         sendMessage(message);

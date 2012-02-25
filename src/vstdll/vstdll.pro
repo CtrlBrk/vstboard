@@ -48,9 +48,12 @@ SOURCES += \
     factory.cpp \
     vstboardcontroller.cpp \
     vstboardprocessor.cpp \
-    vsttest.cpp
-
-
+    vsttest.cpp \
+    $$VSTSDK_PATH/base/source/timer.cpp \
+    $$VSTSDK_PATH/base/source/fstreamer.cpp \
+    $$VSTSDK_PATH/base/source/fbuffer.cpp \
+    $$VSTSDK_PATH/public.sdk/source/vst/hosting/eventlist.cpp \
+    $$VSTSDK_PATH/public.sdk/source/vst/vst2wrapper/vst2wrapper.cpp
 
 HEADERS  += \
     gui.h \

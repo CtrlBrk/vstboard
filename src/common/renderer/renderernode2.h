@@ -18,12 +18,12 @@ public:
     void Render() const;
     void GetInfo(MsgObject &msg) const;
 
-    int id;
-    int minRenderOrder;
-    int maxRenderOrder;
-    int minRenderOrderOri;
-    int maxRenderOrderOri;
-    mutable long cpuTime;
+    qint32 id;
+    qint32 minRenderOrder;
+    qint32 maxRenderOrder;
+    qint32 minRenderOrderOri;
+    qint32 maxRenderOrderOri;
+    mutable qint32 cpuTime;
 
     SemaphoreInverted *startSemaphore;
     SemaphoreInverted *nextStepSemaphore;

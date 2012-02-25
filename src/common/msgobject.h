@@ -28,7 +28,6 @@ public:
         Redo,
         Message,
         Answer,
-        Value,
         Container,
         Object,
         Direction,
@@ -52,7 +51,13 @@ public:
         Increment,
         SolverMap,
         Row,
-        Col
+        Col,
+        Value,
+        Value1,
+        Value2,
+        Value3,
+        Value4,
+        Value5
     };
 
     MsgObject(int objIndex=FixedObjId::ND);
