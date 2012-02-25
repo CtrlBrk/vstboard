@@ -93,7 +93,11 @@ void RendererNode2::GetInfo(MsgObject &msg) const
     QString str;
     foreach( QSharedPointer<Connectables::Object> objPtr, listOfObj) {
         if(objPtr && !objPtr->GetSleep()) {
-            str.append("\n" + objPtr->objectName());
+#ifndef QT_NO_DEBUG
+            str.append(QString("\n%1 (%2)").arg(objPtr->objectName()).arg(objPtr->GetIndex()) );
+#else
+            str.append( "\n"+objPtr->objectName() );
+#endif
         }
     }
 

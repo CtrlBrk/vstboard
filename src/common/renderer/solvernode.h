@@ -52,6 +52,8 @@ protected:
 
     bool MergeWithParentNode();
 
+    bool BridgesOnly();
+
     bool loopFlag;
     int countSteps;
 

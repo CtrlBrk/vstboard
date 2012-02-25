@@ -21,7 +21,7 @@
 #ifndef VSTBOARDCONTROLLER_H
 #define VSTBOARDCONTROLLER_H
 
-#include "precomp.h"
+//#include "precomp.h"
 #include "public.sdk/source/vst/vsteditcontroller.h"
 
 class MainWindowVst;

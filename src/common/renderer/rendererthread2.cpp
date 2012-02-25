@@ -137,6 +137,10 @@ void RendererThread2::run()
             LOG("thread"<<id<<"end timeout")
             QMutexLocker locker(&mutexStop);
             stop=true;
+            renderer->nbThreads--;
+            renderer->waitThreadReady.RemoveClient();
+            renderer->waitThreadEnd.RemoveClient();
+            return;
         }
     }
 }

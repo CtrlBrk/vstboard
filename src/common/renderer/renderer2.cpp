@@ -65,11 +65,15 @@ void Renderer2::StartRender()
 
     if(!waitThreadReady.WaitAllThreads(10000)) {
         QString err("renderer start timeout");
+        waitThreadReady.RemoveClient();
+        waitThreadReady.AddClient();
         LOG(err)
     }
 
     if(!waitThreadEnd.WaitAllThreads(10000)) {
         QString err("renderer end timeout");
+        waitThreadEnd.RemoveClient();
+        waitThreadEnd.AddClient();
         LOG(err)
     }
 

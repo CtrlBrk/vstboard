@@ -15,7 +15,8 @@ public:
     void SetMap(const RenderMap &rMap, int nbThreads);
     void StartRender();
     void SetEnabled(bool enab) {LOG("enable here"<<enab)}
-RenderMap currentMap;
+    RenderMap currentMap;
+
 private:
     void ThreadCleanup();
     void ChangeNbOfThreads(int newNbThreads);

@@ -254,8 +254,8 @@ namespace Connectables {
     private:
         /// the current container id if not parked
         quint16 containerId;
-
         long initialDelay;
+        QTimer updateViewDelay;
 
     signals:
         /// Sent to the editor window when we want to close it
@@ -291,6 +291,9 @@ namespace Connectables {
 
         void SetErrorMessage(const QString &msg) {errorMessage=msg;}
         bool IsInError() { return (objInfo.objType == ObjType::dummy || !errorMessage.isEmpty()); }
+
+    private slots:
+        void UpdateViewNow();
     };
 }
 

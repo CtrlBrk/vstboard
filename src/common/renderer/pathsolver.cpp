@@ -56,10 +56,11 @@ long PathSolver::GetNodes(const hashObjects &lstObj, const hashCables &cables, Q
 
     CreateNodes();
     PutParentsInNodes();
-    UnwrapLoops();
-    UpdateDelays dly(listObjects,&listCables,&listNodes);
     int cpt=0;
     while(ChainNodes() && cpt<100) { ++cpt; }
+    UnwrapLoops();
+    UpdateDelays dly(listObjects,&listCables,&listNodes);
+//    while(ChainNodes() && cpt<100) { ++cpt; }
     RemoveUnusedNodes();
     SetMinAndMaxStep();
     nodes = listNodes;
@@ -150,14 +151,7 @@ bool PathSolver::ChainNodes()
 void PathSolver::RemoveUnusedNodes()
 {
     foreach(SolverNode *node, listNodes) {
-        bool onlyBridges=true;
-        foreach(QSharedPointer<Connectables::Object>objPtr,node->listOfObj) {
-            if(objPtr->info().nodeType!=NodeType::bridge) {
-                onlyBridges=false;
-                break;
-            }
-        }
-        if(onlyBridges) {
+        if(node->BridgesOnly()) {
             foreach(SolverNode *child, node->listChilds) {
                 child->listParents.removeAll(node);
                 child->listParents << node->listParents;

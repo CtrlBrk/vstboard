@@ -259,7 +259,7 @@ void MainHost::SetupHostContainer()
 
     //bridge in
     ObjectInfo in;
-    in.name="in";
+    in.name="hostBridgeIn";
     in.nodeType = NodeType::bridge;
     in.objType = ObjType::BridgeIn;
     in.forcedObjId = FixedObjId::hostContainerIn;
@@ -271,7 +271,7 @@ void MainHost::SetupHostContainer()
 
     //bridge out
     ObjectInfo out;
-    out.name="out";
+    out.name="hostBridgeOut";
     out.nodeType = NodeType::bridge;
     out.objType = ObjType::BridgeOut;
     out.forcedObjId = FixedObjId::hostContainerOut;
@@ -289,7 +289,7 @@ void MainHost::SetupHostContainer()
 
     //send bridge
     ObjectInfo send;
-    send.name = "send";
+    send.name = "hostBridgeSend";
     send.nodeType = NodeType::bridge;
     send.objType = ObjType::BridgeSend;
     send.forcedObjId = FixedObjId::hostContainerSend;
@@ -301,7 +301,7 @@ void MainHost::SetupHostContainer()
 
     //return bridge
     ObjectInfo retrn;
-    retrn.name = "return";
+    retrn.name = "hostBridgeReturn";
     retrn.nodeType = NodeType::bridge;
     retrn.objType = ObjType::BridgeReturn;
     retrn.forcedObjId = FixedObjId::hostContainerReturn;
@@ -318,8 +318,10 @@ void MainHost::SetupHostContainer()
     }
     hostContainer->listenProgramChanges=false;
 
-    if(projectContainer)
+    if(projectContainer) {
         hostContainer->childContainer=projectContainer;
+        projectContainer->parentContainer=hostContainer;
+    }
 
     hostContainer->SetMsgEnabled(true);
 //    MsgObject msg(FixedObjId::mainContainer);
@@ -362,7 +364,7 @@ void MainHost::SetupProjectContainer()
 
     //bridge in
     ObjectInfo in;
-    in.name="in";
+    in.name="projectBridgeIn";
     in.nodeType = NodeType::bridge;
     in.objType = ObjType::BridgeIn;
     in.forcedObjId = FixedObjId::projectContainerIn;
@@ -374,7 +376,7 @@ void MainHost::SetupProjectContainer()
 
     //bridge out
     ObjectInfo out;
-    out.name="out";
+    out.name="projectBridgeOut";
     out.nodeType = NodeType::bridge;
     out.objType = ObjType::BridgeOut;
     out.forcedObjId = FixedObjId::projectContainerOut;
@@ -393,7 +395,7 @@ void MainHost::SetupProjectContainer()
 
     //bridge send
     ObjectInfo send;
-    send.name="send";
+    send.name="projectBridgeSend";
     send.nodeType = NodeType::bridge;
     send.objType = ObjType::BridgeSend;
     send.forcedObjId = FixedObjId::projectContainerSend;
@@ -405,7 +407,7 @@ void MainHost::SetupProjectContainer()
 
     //bridge return
     ObjectInfo retrn;
-    retrn.name="return";
+    retrn.name="projectBridgeReturn";
     retrn.nodeType = NodeType::bridge;
     retrn.objType = ObjType::BridgeReturn;
     retrn.forcedObjId = FixedObjId::projectContainerReturn;
@@ -427,10 +429,14 @@ void MainHost::SetupProjectContainer()
 
     projectContainer->listenProgramChanges=false;
 
-    if(hostContainer)
+    if(hostContainer) {
         hostContainer->childContainer=projectContainer;
-    if(groupContainer)
+        projectContainer->parentContainer=hostContainer;
+    }
+    if(groupContainer) {
         projectContainer->childContainer=groupContainer;
+        groupContainer->parentContainer=projectContainer;
+    }
 
     projectContainer->SetMsgEnabled(true);
 //    MsgObject msg(FixedObjId::mainContainer);
@@ -477,7 +483,7 @@ void MainHost::SetupProgramContainer()
 
     //bridge in
     ObjectInfo in;
-    in.name="in";
+    in.name="programBridgeIn";
     in.nodeType = NodeType::bridge;
     in.objType = ObjType::BridgeIn;
     in.forcedObjId = FixedObjId::programContainerIn;
@@ -489,7 +495,7 @@ void MainHost::SetupProgramContainer()
 
     //bridge out
     ObjectInfo out;
-    out.name="out";
+    out.name="programBridgeOut";
     out.nodeType = NodeType::bridge;
     out.objType = ObjType::BridgeOut;
     out.forcedObjId = FixedObjId::programContainerOut;
@@ -508,7 +514,7 @@ void MainHost::SetupProgramContainer()
 
     //bridge send
     ObjectInfo send;
-    send.name="send";
+    send.name="programBridgeSend";
     send.nodeType = NodeType::bridge;
     send.objType = ObjType::BridgeSend;
     send.forcedObjId = FixedObjId::programContainerSend;
@@ -520,7 +526,7 @@ void MainHost::SetupProgramContainer()
 
     //bridge return
     ObjectInfo retrn;
-    retrn.name="return";
+    retrn.name="programBridgeReturn";
     retrn.nodeType = NodeType::bridge;
     retrn.objType = ObjType::BridgeReturn;
     retrn.forcedObjId = FixedObjId::programContainerReturn;
@@ -595,7 +601,7 @@ void MainHost::SetupGroupContainer()
 
     //bridge in
     ObjectInfo in;
-    in.name="in";
+    in.name="groupBridgeIn";
     in.nodeType = NodeType::bridge;
     in.objType = ObjType::BridgeIn;
     in.forcedObjId = FixedObjId::groupContainerIn;
@@ -607,7 +613,7 @@ void MainHost::SetupGroupContainer()
 
     //bridge out
     ObjectInfo out;
-    out.name="out";
+    out.name="groupBridgeOut";
     out.nodeType = NodeType::bridge;
     out.objType = ObjType::BridgeOut;
     out.forcedObjId = FixedObjId::groupContainerOut;
@@ -625,7 +631,7 @@ void MainHost::SetupGroupContainer()
 
     //bridge send
     ObjectInfo send;
-    send.name="send";
+    send.name="groupBridgeSend";
     send.nodeType = NodeType::bridge;
     send.objType = ObjType::BridgeSend;
     send.forcedObjId = FixedObjId::groupContainerSend;
@@ -637,7 +643,7 @@ void MainHost::SetupGroupContainer()
 
     //bridge return
     ObjectInfo retrn;
-    retrn.name="return";
+    retrn.name="groupBridgeReturn";
     retrn.nodeType = NodeType::bridge;
     retrn.objType = ObjType::BridgeReturn;
     retrn.forcedObjId = FixedObjId::groupContainerReturn;
@@ -662,8 +668,10 @@ void MainHost::SetupGroupContainer()
 
 //    emit groupParkingModelChanged(&groupContainer->parkModel);
 
-    if(projectContainer)
+    if(projectContainer) {
         projectContainer->childContainer=groupContainer;
+        groupContainer->parentContainer=projectContainer;
+    }
     if(programContainer) {
         groupContainer->childContainer=programContainer;
         programContainer->parentContainer=groupContainer;
@@ -752,8 +760,8 @@ void MainHost::UpdateSolver(bool forceUpdate)
         emit DelayChanged(globalDelay);
     }
     SetRenderMap(rMap);
-    QTimer::singleShot(20, this, SLOT(UpdateRendererMap()));
-    QTimer::singleShot(1000, this, SLOT(UpdateRendererMap()));
+//    QTimer::singleShot(20, this, SLOT(UpdateRendererMap()));
+//    QTimer::singleShot(1000, this, SLOT(UpdateRendererMap()));
 
 //    mutexListCables->lock();
 //        solver->Resolve(workingListOfCables, renderer);
@@ -801,25 +809,6 @@ void MainHost::ChangeNbThreads(int nbTh)
     nbThreads = nbTh;
     SetSolverUpdateNeeded();
 }
-
-//void MainHost::SendMsg(const ConnectionInfo &senderPin,const PinMessage::Enum msgType,void *data)
-//{
-//    QMutexLocker lock(mutexListCables);
-
-
-//    hashCables::const_iterator i = workingListOfCables.constFind(senderPin);
-//    while (i != workingListOfCables.constEnd()  && i.key() == senderPin) {
-////        const ConnectionInfo &destPin = i.value();
-////        Connectables::Pin *pin = objFactory->GetPin(destPin);
-////        if(!pin) {
-////            LOG("unknown pin"<<destPin.objId<<"from"<<senderPin.objId);
-////            return;
-////        }
-////        pin->ReceiveMsg(msgType,data);
-//        i.value()->Render(msgType,data);
-//        ++i;
-//    }
-//}
 
 void MainHost::SetBufferSizeMs(unsigned int ms)
 {

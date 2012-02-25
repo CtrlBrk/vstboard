@@ -148,6 +148,10 @@ Object::Object(MainHost *host, int index, const ObjectInfo &info) :
         pinLists.insert("parameterout",listParameterPinOut);
     }
 
+    updateViewDelay.setSingleShot(true);
+    updateViewDelay.setInterval(100);
+    connect(&updateViewDelay, SIGNAL(timeout()),
+            this, SLOT(UpdateViewNow()));
 }
 
 /*!
@@ -924,8 +928,14 @@ void Object::SetMsgEnabled(bool enab)
 
     //we're enabled, parent is not : send update
     if(enab && !msgCtrl->listObj[containerId]->MsgEnabled()) {
-        MsgObject msg(containerId);
-        GetInfos(msg);
-        msgCtrl->SendMsg(msg);
+        if(!updateViewDelay.isActive())
+            updateViewDelay.start();
     }
+}
+
+void Object::UpdateViewNow()
+{
+    MsgObject msg(containerId);
+    GetInfos(msg);
+    msgCtrl->SendMsg(msg);
 }

@@ -274,3 +274,19 @@ bool SolverNode::MergeWithParentNode()
     return true;
 }
 
+bool SolverNode::BridgesOnly()
+{
+    //check if all the objects are bridges
+    foreach(QSharedPointer<Connectables::Object>objPtr,listOfObj) {
+        if(objPtr->info().nodeType!=NodeType::bridge) {
+            return false;
+        }
+    }
+    //check if a parent node contains only bridges
+    foreach(SolverNode* parent,listParents) {
+        if(!parent->BridgesOnly()) {
+            return false;
+        }
+    }
+    return true;
+}
