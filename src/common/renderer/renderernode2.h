@@ -8,8 +8,11 @@ class OptimizerNode;
 class RendererNode2
 {
 public:
+#ifdef TESTING
     RendererNode2(int id, int minRenderOrder, int maxRenderOrder, long cpuTime);
+#endif
     RendererNode2(const OptimizerNode& c);
+    RendererNode2(const RendererNode2& c);
     ~RendererNode2();
     void NewRenderLoop() const;
     void Render() const;
@@ -18,6 +21,8 @@ public:
     int id;
     int minRenderOrder;
     int maxRenderOrder;
+    int minRenderOrderOri;
+    int maxRenderOrderOri;
     mutable long cpuTime;
 
     SemaphoreInverted *startSemaphore;

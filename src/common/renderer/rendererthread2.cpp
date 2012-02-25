@@ -70,14 +70,15 @@ RendererThread2::~RendererThread2()
 
 void RendererThread2::Stop()
 {
-    {
-        QMutexLocker locker(&mutexStop);
-        if(stop)
-            return;
-        stop=true;
-
-    }
+    QMutexLocker locker(&mutexStop);
+    stop=true;
     LOG("thread"<<id<<"stopped")
+}
+
+bool RendererThread2::IsStopped()
+{
+    QMutexLocker locker(&mutexStop);
+    return stop;
 }
 
 void RendererThread2::run()
@@ -119,7 +120,7 @@ void RendererThread2::run()
 
                 ThreadNodes::const_iterator i = currentNodes.constBegin();
                 while(i!=currentNodes.constEnd()) {
-                    foreach(RendererNode2* n, i.value()) {
+                    foreach(const QSharedPointer<RendererNode2> &n, i.value()) {
                         n->startSemaphore->WaitUnlock();
                         n->Render();
                         n->nextStepSemaphore->Unlock();
@@ -144,7 +145,7 @@ void RendererThread2::LockAllSteps()
 {
     ThreadNodes::iterator step = currentNodes.begin();
     while(step != currentNodes.end()) {
-        foreach(const RendererNode2 *node, step.value()) {
+        foreach(const QSharedPointer<RendererNode2> &node, step.value()) {
             node->nextStepSemaphore->AddLock();
             if(node)
                 node->NewRenderLoop();

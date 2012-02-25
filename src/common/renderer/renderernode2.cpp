@@ -3,20 +3,44 @@
 
 Q_DECLARE_METATYPE( QList<int> )
 
+#ifdef TESTING
 RendererNode2::RendererNode2(int id, int minRenderOrder, int maxRenderOrder, long cpuTime) :
     id(id),
     minRenderOrder(minRenderOrder),
     maxRenderOrder(maxRenderOrder),
-    cpuTime(0L)
+    minRenderOrderOri(0),
+    maxRenderOrderOri(0),
+    cpuTime(0L),
+    startSemaphore(0),
+    nextStepSemaphore(0)
 {
 }
+#endif
 
 RendererNode2::RendererNode2(const OptimizerNode& c) :
     id(c.id),
     minRenderOrder(c.selectedPos.startStep),
     maxRenderOrder(c.selectedPos.endStep),
-    cpuTime(c.cpuTime)
+    minRenderOrderOri(c.minRenderOrder),
+    maxRenderOrderOri(c.maxRenderOrder),
+    cpuTime(c.cpuTime),
+    startSemaphore(0),
+    nextStepSemaphore(0)
 {
+}
+
+RendererNode2::RendererNode2(const RendererNode2& c) :
+    id(c.id),
+    minRenderOrder(c.minRenderOrder),
+    maxRenderOrder(c.maxRenderOrder),
+    minRenderOrderOri(c.minRenderOrderOri),
+    maxRenderOrderOri(c.maxRenderOrderOri),
+    cpuTime(c.cpuTime),
+    startSemaphore(0),
+    nextStepSemaphore(0),
+    listOfObj(c.listOfObj)
+{
+
 }
 
 RendererNode2::~RendererNode2()
@@ -60,6 +84,8 @@ void RendererNode2::GetInfo(MsgObject &msg) const
     QList<int>lstVals;
     lstVals << minRenderOrder;
     lstVals << maxRenderOrder;
+    lstVals << minRenderOrderOri;
+    lstVals << maxRenderOrderOri;
     lstVals << cpuTime;
 
     msg.prop[MsgObject::Value] = QVariant::fromValue(lstVals);

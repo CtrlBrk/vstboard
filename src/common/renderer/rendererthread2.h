@@ -1,10 +1,8 @@
 #ifndef RENDERERTHREAD2_H
 #define RENDERERTHREAD2_H
 
-#include "precomp.h"
-
-class RendererNode2;
-typedef QMap<int, QList<RendererNode2*> > ThreadNodes;
+//#include "precomp.h"
+#include "rendermap.h"
 
 class Renderer2;
 class RendererThread2 : public QThread
@@ -19,7 +17,7 @@ public:
     void ResetNodes();
     void LockAllSteps();
     void Stop();
-
+    bool IsStopped();
     ThreadNodes currentNodes;
 
 private:

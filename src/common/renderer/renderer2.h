@@ -3,19 +3,16 @@
 
 #include "semaphoreinverted.h"
 #include "waitall.h"
+#include "rendermap.h"
 
 class RendererThread2;
-class RendererNode2;
-typedef QMap<int, QList<RendererNode2*> > ThreadNodes;
-typedef QMap<int, ThreadNodes > RenderMap;
-
 class Renderer2 : public QObject
 {
     Q_OBJECT
 public:
     Renderer2(QObject *parent=0);
     ~Renderer2();
-    void SetMap(const RenderMap &map, int nbThreads);
+    void SetMap(const RenderMap &rMap, int nbThreads);
     void StartRender();
     void SetEnabled(bool enab) {LOG("enable here"<<enab)}
 RenderMap currentMap;

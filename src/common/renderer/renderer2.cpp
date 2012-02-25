@@ -28,25 +28,25 @@ Renderer2::~Renderer2()
 
 }
 
-void Renderer2::SetMap(const RenderMap &map, int nbThreads)
+void Renderer2::SetMap(const RenderMap &rMap, int nbThreads)
 {
     QMutexLocker l(&mutexThreadList);
-    currentMap = map;
+    currentMap = rMap;
 
     ChangeNbOfThreads( nbThreads );
     ThreadCleanup();
 
     for(int t=0; t<nbThreads; t++) {
         RendererThread2 *thread = threads[t];
-        if(map.contains(t)) {
-            thread->SetListOfNodes(map[t]);
+        if(currentMap.map.contains(t)) {
+            thread->SetListOfNodes(currentMap.map[t]);
         } else {
             thread->ResetNodes();
         }
     }
     foreach(const RendererThread2 *thread, threads) {
-        foreach(const QList<RendererNode2*> &lst, thread->currentNodes) {
-            foreach(RendererNode2 *n, lst) {
+        foreach(const RenderStep &step, thread->currentNodes) {
+            foreach( QSharedPointer<RendererNode2> n, step) {
                 while(stepCanStart.count() <= n->maxRenderOrder+1) {
                     stepCanStart << new SemaphoreInverted();
                 }
@@ -64,11 +64,13 @@ void Renderer2::StartRender()
     stepCanStart.first()->AddLock(nbThreads);
 
     if(!waitThreadReady.WaitAllThreads(10000)) {
-        LOG("renderer start timeout")
+        QString err("renderer start timeout");
+        LOG(err)
     }
 
     if(!waitThreadEnd.WaitAllThreads(10000)) {
-        LOG("renderer end timeout")
+        QString err("renderer end timeout");
+        LOG(err)
     }
 
 }
@@ -78,7 +80,7 @@ void Renderer2::ChangeNbOfThreads(int newNbThreads)
     //remove crashed threads
     for(int i=nbThreads-1; i>=0; i--) {
         RendererThread2* th = threads[i];
-        if(!th->isRunning()) {
+        if(!th->isRunning() && !th->IsStopped()) {
             --nbThreads;
             threads.removeAt(i);
             threadsToDelete << th;

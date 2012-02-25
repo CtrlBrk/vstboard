@@ -52,9 +52,7 @@ public:
         Increment,
         SolverMap,
         Row,
-        Col,
-        Min,
-        Max
+        Col
     };
 
     MsgObject(int objIndex=FixedObjId::ND);

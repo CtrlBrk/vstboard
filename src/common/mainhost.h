@@ -168,6 +168,9 @@ public:
 
     Settings *settings;
 
+    void GetRenderMap(RenderMap &map);
+    void SetRenderMap(const RenderMap &map);
+
 protected:
     void Close();
     QTime timeFromStart;

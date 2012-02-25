@@ -12,11 +12,13 @@ public:
 };
 
 class SolverNode;
+class RendererNode2;
 class OptimizerNode
 {
 public:
     OptimizerNode(int id, const SolverNode &c);
-
+    OptimizerNode(const OptimizerNode &c);
+    OptimizerNode(const RendererNode2 &c);
 //#ifdef TESTING
     OptimizerNode(int id, long cpuTime, int minRenderOrder, int maxRenderOrder) :  id(id), minRenderOrder(minRenderOrder) ,maxRenderOrder(maxRenderOrder), cpuTime(cpuTime) { Init(); }
 //#endif

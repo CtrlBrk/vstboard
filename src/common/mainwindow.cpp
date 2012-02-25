@@ -226,9 +226,9 @@ void MainWindow::UpdateSolverMap(const MsgObject &msg)
                 QString str = QString("[%1:%2][%3:%4](%5)")
                     .arg(lstVal[0])
                     .arg(lstVal[1])
-                    .arg(node.prop[MsgObject::Min].toInt())
-                    .arg(node.prop[MsgObject::Max].toInt())
-                    .arg(lstVal[2]);
+                    .arg(lstVal[2])
+                    .arg(lstVal[3])
+                    .arg(lstVal[4]);
                 str+=node.prop[MsgObject::Name].toString();
                 strStep+=str+"\n";
                 if(lstVal[1]>end)

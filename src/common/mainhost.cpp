@@ -751,7 +751,7 @@ void MainHost::UpdateSolver(bool forceUpdate)
         globalDelay=newDelay;
         emit DelayChanged(globalDelay);
     }
-    renderer->SetMap(rMap,nbThreads);
+    SetRenderMap(rMap);
     QTimer::singleShot(20, this, SLOT(UpdateRendererMap()));
     QTimer::singleShot(1000, this, SLOT(UpdateRendererMap()));
 
@@ -773,7 +773,7 @@ void MainHost::UpdateRendererMap()
 void MainHost::UpdateRendererView()
 {
     MsgObject msg(FixedObjId::mainWindow);
-    solver->GetInfo(renderer->currentMap,msg);
+    renderer->currentMap.GetInfo(msg);
     SendMsg(msg);
 }
 
@@ -1247,4 +1247,15 @@ void MainHost::ReceiveMsg(const MsgObject &msg)
     }
 }
 
+void MainHost::GetRenderMap(RenderMap &map)
+{
+    map=renderer->currentMap;
+}
 
+void MainHost::SetRenderMap(const RenderMap &map)
+{
+    renderer->SetMap(map,nbThreads);
+//    solver->UpdateCpuTimes(map,nbThreads);
+    if(updateRendererViewTimer.isActive())
+        UpdateRendererView();
+}

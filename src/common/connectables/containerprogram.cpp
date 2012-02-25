@@ -36,7 +36,9 @@ ContainerProgram::ContainerProgram(MainHost *myHost,Container *container) :
     collectedListOfAddedCables(0),
     collectedListOfRemovedCables(0),
     listAddedCablesIds(0),
-    listRemovedCablesIds(0)
+    listRemovedCablesIds(0),
+    lastModificationTime(unsavedTime),
+    savedTime(unsavedTime)
 {
 }
 
@@ -47,7 +49,9 @@ ContainerProgram::ContainerProgram(const ContainerProgram& c) :
     collectedListOfAddedCables(0),
     collectedListOfRemovedCables(0),
     listAddedCablesIds(0),
-    listRemovedCablesIds(0)
+    listRemovedCablesIds(0),
+    lastModificationTime(c.lastModificationTime),
+    savedTime(c.savedTime)
 {
     foreach(QSharedPointer<Object> objPtr, c.listObjects) {
         listObjects << objPtr;
@@ -63,10 +67,7 @@ ContainerProgram::ContainerProgram(const ContainerProgram& c) :
         ++i;
     }
 
-//    foreach(RendererNode *node, c.listOfRendererNodes) {
-//        listOfRendererNodes << new RendererNode(*node);
-//    }
-//    lastModificationTime = c.lastModificationTime;
+    savedRenderMap=c.savedRenderMap;
 }
 
 ContainerProgram::~ContainerProgram()
@@ -202,34 +203,38 @@ void ContainerProgram::SetMsgEnabled(bool enab)
 
 void ContainerProgram::SaveRendererState()
 {
-    LOG("save here")
-//    const QTime t = container->GetLastModificationTime();
-//    if(!savedTime.isValid() || t > savedTime) {
-//        savedTime = QTime::currentTime();
-//        lastModificationTime = savedTime;
+    const QTime t = container->GetLastModificationTime();
+    if(!savedTime.isValid() || t > savedTime) {
+        savedTime = QTime::currentTime();
+        lastModificationTime = savedTime;
+
+        //savedRenderMap.clear();
+        myHost->GetRenderMap(savedRenderMap);
+
 //        qDeleteAll(listOfRendererNodes);
 //        listOfRendererNodes.clear();
 //        listOfRendererNodes = myHost->GetRenderer()->SaveNodes();
-//    }
+    }
 }
 
 void ContainerProgram::LoadRendererState()
 {
-    LOG("load here")
+
     //if an object contains an initialDelay we need to update everything
-//    if(myHost->objFactory->listDelayObj.isEmpty()) {
-//        myHost->ResetDelays();
-//        const QTime t = container->GetLastModificationTime();
-//        if(t > lastModificationTime) {
-//            //my renderer map is outdated
-//            myHost->SetSolverUpdateNeeded();
-//        } else {
+    if(myHost->objFactory->listDelayObj.isEmpty()) {
+        myHost->ResetDelays();
+        const QTime t = container->GetLastModificationTime();
+        if(t > lastModificationTime || lastModificationTime==unsavedTime) {
+            //my renderer map is outdated
+            myHost->SetSolverUpdateNeeded();
+        } else {
+            myHost->SetRenderMap(savedRenderMap);
 //            myHost->GetRenderer()->LoadNodes( listOfRendererNodes );
-//        }
-//    } else {
-//        LOG("update everything for delays");
-//        myHost->SetSolverUpdateNeeded();
-//    }
+        }
+    } else {
+        LOG("update everything for delays");
+        myHost->SetSolverUpdateNeeded();
+    }
 }
 
 void ContainerProgram::ResetDelays()

@@ -141,7 +141,8 @@ SOURCES += \
     models/hostmodel.cpp \
     models/groupsprogramsmodel.cpp \
     models/parkingmodel.cpp \
-    renderer/waitall.cpp
+    renderer/waitall.cpp \
+    renderer/rendermap.cpp
 
 SOURCES += \
     views/programlist.cpp \
@@ -251,7 +252,8 @@ HEADERS += \
     commands/comremovepin.h \
     commands/comaddpin.h \
     commands/comprogramstate.h \
-    renderer/waitall.h
+    renderer/waitall.h \
+    renderer/rendermap.h
 
 
 HEADERS += \

@@ -28,6 +28,16 @@ SolverNode::SolverNode() :
 {
 }
 
+SolverNode::SolverNode(const SolverNode &c) :
+    Node(c),
+    loopFlag(c.loopFlag),
+    countSteps(c.countSteps),
+    listParents(c.listParents),
+    listChilds(c.listChilds)
+{
+
+}
+
 void SolverNode::AddChild(SolverNode *child)
 {
     listChilds << child;
