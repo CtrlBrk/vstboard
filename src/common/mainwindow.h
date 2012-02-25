@@ -128,6 +128,7 @@ private slots:
     void on_actionGroup_panel_toggled(bool arg1);
     void on_actionProgram_panel_toggled(bool arg1);
     void on_actionProject_panel_toggled(bool arg1);
+    void on_dockSolver_visibilityChanged(bool visible);
 };
 
 #endif // MAINWINDOW_H

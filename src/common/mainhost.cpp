@@ -37,7 +37,6 @@ quint32 MainHost::currentFileVersion=PROJECT_AND_SETUP_FILE_VERSION;
 
 MainHost::MainHost(Settings *settings, QObject *parent) :
     QObject(parent),
-    solver(new PathSolver(this)),
     objFactory(0),
     mainWindow(0),
     solverNeedAnUpdate(false),
@@ -45,7 +44,9 @@ MainHost::MainHost(Settings *settings, QObject *parent) :
 //    mutexListCables(new QMutex(QMutex::Recursive)),
     settings(settings),
     undoProgramChangesEnabled(false),
-    programManager(0)
+    programManager(0),
+    globalDelay(0L),
+    nbThreads(1)
 {
 
 }
@@ -62,6 +63,8 @@ void MainHost::Close()
         return;
     closed=true;
 
+    updateRendererViewTimer.stop();
+
     EnableSolverUpdate(false);
 
     if(updateViewTimer) {
@@ -74,14 +77,20 @@ void MainHost::Close()
 //    workingListOfCables.clear();
 //    mutexListCables->unlock();
 
-    mutexRender.lock();
+//    mutexRender.lock();
     if(renderer) {
-        hashCables lstCables;
-        solver->Resolve(lstCables, renderer);
+//        hashCables lstCables;
+//        long newDelay = solver->Resolve(objFactory->GetListObjects(), lstCables, renderer);
+//        if(newDelay!=globalDelay) {
+//            globalDelay=newDelay;
+//            emit DelayChanged(globalDelay);
+//        }
+
     //    solver->Resolve(workingListOfCables, renderer);
         delete renderer;
+        renderer=0;
     }
-    mutexRender.unlock();
+//    mutexRender.unlock();
 
     hostContainer.clear();
     projectContainer.clear();
@@ -92,6 +101,11 @@ void MainHost::Close()
     if(objFactory) {
         delete objFactory;
         objFactory=0;
+    }
+
+    if(solver) {
+        delete solver;
+        solver=0;
     }
 
 #ifdef VSTSDK
@@ -140,9 +154,11 @@ void MainHost::Init()
     vstUsersCounter++;
 #endif
 
-    model = new HostModel(this);
-    model->setObjectName("MainModel");
-    model->setColumnCount(1);
+    solver = new Solver();
+
+//    model = new HostModel(this);
+//    model->setObjectName("MainModel");
+//    model->setColumnCount(1);
 
     sampleRate = 44100.0;
     bufferSize = 100;
@@ -151,7 +167,9 @@ void MainHost::Init()
     currentTimeSig1=4;
     currentTimeSig2=4;
 
-    renderer = new Renderer(this);
+    ChangeNbThreads(-1);
+
+    renderer = new Renderer2(this);
 
 //    programsModel = new ProgramsModel(this);
 
@@ -165,6 +183,9 @@ void MainHost::Init()
             this,SLOT(UpdateSolver()),
             Qt::QueuedConnection);
 
+    updateRendererViewTimer.start(5000);
+    connect(&updateRendererViewTimer, SIGNAL(timeout()),
+            this,SLOT(UpdateRendererView()));
 }
 
 void MainHost::Open()
@@ -198,7 +219,7 @@ void MainHost::SetupMainContainer()
 
     mainContainer->LoadProgram(0);
     QStandardItem *item = mainContainer->GetFullItem();
-    model->invisibleRootItem()->appendRow(item);
+//    model->invisibleRootItem()->appendRow(item);
 //    mainContainer->modelIndex=item->index();
 //    mainContainer->parkingId=false;
     mainContainer->listenProgramChanges=false;
@@ -238,7 +259,7 @@ void MainHost::SetupHostContainer()
 
     //bridge in
     ObjectInfo in;
-    in.name="in";
+    in.name="hostBridgeIn";
     in.nodeType = NodeType::bridge;
     in.objType = ObjType::BridgeIn;
     in.forcedObjId = FixedObjId::hostContainerIn;
@@ -250,7 +271,7 @@ void MainHost::SetupHostContainer()
 
     //bridge out
     ObjectInfo out;
-    out.name="out";
+    out.name="hostBridgeOut";
     out.nodeType = NodeType::bridge;
     out.objType = ObjType::BridgeOut;
     out.forcedObjId = FixedObjId::hostContainerOut;
@@ -268,7 +289,7 @@ void MainHost::SetupHostContainer()
 
     //send bridge
     ObjectInfo send;
-    send.name = "send";
+    send.name = "hostBridgeSend";
     send.nodeType = NodeType::bridge;
     send.objType = ObjType::BridgeSend;
     send.forcedObjId = FixedObjId::hostContainerSend;
@@ -280,7 +301,7 @@ void MainHost::SetupHostContainer()
 
     //return bridge
     ObjectInfo retrn;
-    retrn.name = "return";
+    retrn.name = "hostBridgeReturn";
     retrn.nodeType = NodeType::bridge;
     retrn.objType = ObjType::BridgeReturn;
     retrn.forcedObjId = FixedObjId::hostContainerReturn;
@@ -297,8 +318,10 @@ void MainHost::SetupHostContainer()
     }
     hostContainer->listenProgramChanges=false;
 
-    if(projectContainer)
+    if(projectContainer) {
         hostContainer->childContainer=projectContainer;
+        projectContainer->parentContainer=hostContainer;
+    }
 
     hostContainer->SetMsgEnabled(true);
 //    MsgObject msg(FixedObjId::mainContainer);
@@ -341,7 +364,7 @@ void MainHost::SetupProjectContainer()
 
     //bridge in
     ObjectInfo in;
-    in.name="in";
+    in.name="projectBridgeIn";
     in.nodeType = NodeType::bridge;
     in.objType = ObjType::BridgeIn;
     in.forcedObjId = FixedObjId::projectContainerIn;
@@ -353,7 +376,7 @@ void MainHost::SetupProjectContainer()
 
     //bridge out
     ObjectInfo out;
-    out.name="out";
+    out.name="projectBridgeOut";
     out.nodeType = NodeType::bridge;
     out.objType = ObjType::BridgeOut;
     out.forcedObjId = FixedObjId::projectContainerOut;
@@ -372,7 +395,7 @@ void MainHost::SetupProjectContainer()
 
     //bridge send
     ObjectInfo send;
-    send.name="send";
+    send.name="projectBridgeSend";
     send.nodeType = NodeType::bridge;
     send.objType = ObjType::BridgeSend;
     send.forcedObjId = FixedObjId::projectContainerSend;
@@ -384,7 +407,7 @@ void MainHost::SetupProjectContainer()
 
     //bridge return
     ObjectInfo retrn;
-    retrn.name="return";
+    retrn.name="projectBridgeReturn";
     retrn.nodeType = NodeType::bridge;
     retrn.objType = ObjType::BridgeReturn;
     retrn.forcedObjId = FixedObjId::projectContainerReturn;
@@ -406,10 +429,14 @@ void MainHost::SetupProjectContainer()
 
     projectContainer->listenProgramChanges=false;
 
-    if(hostContainer)
+    if(hostContainer) {
         hostContainer->childContainer=projectContainer;
-    if(groupContainer)
+        projectContainer->parentContainer=hostContainer;
+    }
+    if(groupContainer) {
         projectContainer->childContainer=groupContainer;
+        groupContainer->parentContainer=projectContainer;
+    }
 
     projectContainer->SetMsgEnabled(true);
 //    MsgObject msg(FixedObjId::mainContainer);
@@ -456,7 +483,7 @@ void MainHost::SetupProgramContainer()
 
     //bridge in
     ObjectInfo in;
-    in.name="in";
+    in.name="programBridgeIn";
     in.nodeType = NodeType::bridge;
     in.objType = ObjType::BridgeIn;
     in.forcedObjId = FixedObjId::programContainerIn;
@@ -468,7 +495,7 @@ void MainHost::SetupProgramContainer()
 
     //bridge out
     ObjectInfo out;
-    out.name="out";
+    out.name="programBridgeOut";
     out.nodeType = NodeType::bridge;
     out.objType = ObjType::BridgeOut;
     out.forcedObjId = FixedObjId::programContainerOut;
@@ -487,7 +514,7 @@ void MainHost::SetupProgramContainer()
 
     //bridge send
     ObjectInfo send;
-    send.name="send";
+    send.name="programBridgeSend";
     send.nodeType = NodeType::bridge;
     send.objType = ObjType::BridgeSend;
     send.forcedObjId = FixedObjId::programContainerSend;
@@ -499,7 +526,7 @@ void MainHost::SetupProgramContainer()
 
     //bridge return
     ObjectInfo retrn;
-    retrn.name="return";
+    retrn.name="programBridgeReturn";
     retrn.nodeType = NodeType::bridge;
     retrn.objType = ObjType::BridgeReturn;
     retrn.forcedObjId = FixedObjId::programContainerReturn;
@@ -574,7 +601,7 @@ void MainHost::SetupGroupContainer()
 
     //bridge in
     ObjectInfo in;
-    in.name="in";
+    in.name="groupBridgeIn";
     in.nodeType = NodeType::bridge;
     in.objType = ObjType::BridgeIn;
     in.forcedObjId = FixedObjId::groupContainerIn;
@@ -586,7 +613,7 @@ void MainHost::SetupGroupContainer()
 
     //bridge out
     ObjectInfo out;
-    out.name="out";
+    out.name="groupBridgeOut";
     out.nodeType = NodeType::bridge;
     out.objType = ObjType::BridgeOut;
     out.forcedObjId = FixedObjId::groupContainerOut;
@@ -604,7 +631,7 @@ void MainHost::SetupGroupContainer()
 
     //bridge send
     ObjectInfo send;
-    send.name="send";
+    send.name="groupBridgeSend";
     send.nodeType = NodeType::bridge;
     send.objType = ObjType::BridgeSend;
     send.forcedObjId = FixedObjId::groupContainerSend;
@@ -616,7 +643,7 @@ void MainHost::SetupGroupContainer()
 
     //bridge return
     ObjectInfo retrn;
-    retrn.name="return";
+    retrn.name="groupBridgeReturn";
     retrn.nodeType = NodeType::bridge;
     retrn.objType = ObjType::BridgeReturn;
     retrn.forcedObjId = FixedObjId::groupContainerReturn;
@@ -641,8 +668,10 @@ void MainHost::SetupGroupContainer()
 
 //    emit groupParkingModelChanged(&groupContainer->parkModel);
 
-    if(projectContainer)
+    if(projectContainer) {
         projectContainer->childContainer=groupContainer;
+        groupContainer->parentContainer=projectContainer;
+    }
     if(programContainer) {
         groupContainer->childContainer=programContainer;
         programContainer->parentContainer=groupContainer;
@@ -658,13 +687,10 @@ void MainHost::SetupGroupContainer()
     SetSolverUpdateNeeded();
 }
 
-bool MainHost::EnableSolverUpdate(bool enable)
+void MainHost::EnableSolverUpdate(bool enable)
 {
-    solverMutex.lock();
-    bool ret = solverUpdateEnabled;
+    QMutexLocker locket(&solverMutex);
     solverUpdateEnabled = enable;
-    solverMutex.unlock();
-    return ret;
 }
 
 void MainHost::ResetDelays()
@@ -700,18 +726,18 @@ void MainHost::UpdateSolver(bool forceUpdate)
 
     solverMutex.unlock();
 
-    //if forced : lock rendering
-    if(forceUpdate) {
-        mutexRender.lock();
-    } else {
-        //not forced : do it later if we can't do it now
-        if(!mutexRender.tryLock()) {
-            //can't lock, ask for a ne update
-            SetSolverUpdateNeeded();
-            EnableSolverUpdate(solverWasEnabled);
-            return;
-        }
-    }
+//    //if forced : lock rendering
+//    if(forceUpdate) {
+//        mutexRender.lock();
+//    } else {
+//        //not forced : do it later if we can't do it now
+//        if(!mutexRender.tryLock()) {
+//            //can't lock, ask for a ne update
+//            SetSolverUpdateNeeded();
+//            EnableSolverUpdate(solverWasEnabled);
+//            return;
+//        }
+//    }
 
     //update the solver
     hashCables lstCables;
@@ -725,55 +751,64 @@ void MainHost::UpdateSolver(bool forceUpdate)
         groupContainer->GetCurrentProgram()->AddToCableList(&lstCables);
     if(programContainer && programContainer->GetCurrentProgram())
         programContainer->GetCurrentProgram()->AddToCableList(&lstCables);
-    solver->Resolve(lstCables, renderer);
+
+//    long newDelay = solver->Resolve(objFactory->GetListObjects(), lstCables, renderer);
+    RenderMap rMap;
+    long newDelay = solver->GetMap(objFactory->GetListObjects(), lstCables, nbThreads, rMap);
+    if(newDelay!=globalDelay) {
+        globalDelay=newDelay;
+        emit DelayChanged(globalDelay);
+    }
+    SetRenderMap(rMap);
+//    QTimer::singleShot(20, this, SLOT(UpdateRendererMap()));
+//    QTimer::singleShot(1000, this, SLOT(UpdateRendererMap()));
+
 //    mutexListCables->lock();
 //        solver->Resolve(workingListOfCables, renderer);
 //    mutexListCables->unlock();
 
-    mutexRender.unlock();
+//    mutexRender.unlock();
     EnableSolverUpdate(solverWasEnabled);
+//    EnableSolverUpdate(true);
 }
 
-void MainHost::ChangeNbThreads(int nbThreads)
+void MainHost::UpdateRendererMap()
 {
-    if(!renderer)
-            return;
-
-        if(nbThreads<=0) {
-    #ifdef _WIN32
-            SYSTEM_INFO info;
-            GetSystemInfo(&info);
-            nbThreads = info.dwNumberOfProcessors;
-    #else
-            nbThreads = 1;
-    #endif
-        }
-
-        mutexRender.lock();
-        renderer->SetNbThreads(nbThreads);
-        mutexRender.unlock();
-        SetSolverUpdateNeeded();
-
+    solver->UpdateCpuTimes(renderer->currentMap, nbThreads);
+    renderer->SetMap(renderer->currentMap,nbThreads);
 }
 
-//void MainHost::SendMsg(const ConnectionInfo &senderPin,const PinMessage::Enum msgType,void *data)
-//{
-//    QMutexLocker lock(mutexListCables);
+void MainHost::UpdateRendererView()
+{
+    MsgObject msg(FixedObjId::mainWindow);
+    renderer->currentMap.GetInfo(msg);
+    SendMsg(msg);
+}
 
+void MainHost::ChangeNbThreads(int nbTh)
+{
+//    if(!renderer)
+//            return;
+    if(nbTh<=0 || nbTh>MAX_NB_THREADS) {
+        nbTh = settings->GetSetting("NbThreads",-1).toInt();
+    }
 
-//    hashCables::const_iterator i = workingListOfCables.constFind(senderPin);
-//    while (i != workingListOfCables.constEnd()  && i.key() == senderPin) {
-////        const ConnectionInfo &destPin = i.value();
-////        Connectables::Pin *pin = objFactory->GetPin(destPin);
-////        if(!pin) {
-////            LOG("unknown pin"<<destPin.objId<<"from"<<senderPin.objId);
-////            return;
-////        }
-////        pin->ReceiveMsg(msgType,data);
-//        i.value()->Render(msgType,data);
-//        ++i;
-//    }
-//}
+    if(nbTh<=0 || nbTh>MAX_NB_THREADS) {
+#ifdef _WIN32
+        SYSTEM_INFO info;
+        GetSystemInfo(&info);
+        nbTh = info.dwNumberOfProcessors;
+#else
+        nbTh = 1;
+#endif
+    }
+
+    if(nbThreads == nbTh)
+        return;
+
+    nbThreads = nbTh;
+    SetSolverUpdateNeeded();
+}
 
 void MainHost::SetBufferSizeMs(unsigned int ms)
 {
@@ -809,7 +844,7 @@ void MainHost::Render()
     CheckTempo();
 #endif
 
-    mutexRender.lock();
+//    mutexRender.lock();
 
     if(mainContainer)
         mainContainer->NewRenderLoop();
@@ -825,7 +860,7 @@ void MainHost::Render()
     if(renderer)
         renderer->StartRender();
 
-    mutexRender.unlock();
+//    mutexRender.unlock();
 
     if(solverNeedAnUpdate && solverUpdateEnabled)
         emit SolverToUpdate();
@@ -833,13 +868,13 @@ void MainHost::Render()
     emit Rendered();
 }
 
+#ifdef VSTSDK
 void MainHost::SetTimeInfo(const VstTimeInfo *info)
 {
-#ifdef VSTSDK
     vstHost->SetTimeInfo(info);
 //    CheckTempo();
-#endif
 }
+#endif
 
 void MainHost::SetTempo(int tempo, int sign1, int sign2)
 {
@@ -1151,9 +1186,25 @@ void MainHost::ReceiveMsg(const MsgObject &msg)
             }
             return;
         }
+
+
         return;
     }
 
+    if(msg.objIndex == FixedObjId::renderer) {
+        if(msg.prop.contains(MsgObject::GetUpdate)) {
+            UpdateRendererMap();
+        }
+        if(msg.prop.contains(MsgObject::Update)) {
+            if(msg.prop[MsgObject::Update].toBool()) {
+                UpdateRendererView();
+                updateRendererViewTimer.start(5000);
+            } else {
+                updateRendererViewTimer.stop();
+            }
+        }
+        return;
+    }
     //intercept project and setup files
     if(msg.prop.contains(MsgObject::FilesToLoad)) {
         QStringList lstFiles = msg.prop[MsgObject::FilesToLoad].toStringList();
@@ -1185,4 +1236,15 @@ void MainHost::ReceiveMsg(const MsgObject &msg)
     }
 }
 
+void MainHost::GetRenderMap(RenderMap &map)
+{
+    map=renderer->currentMap;
+}
 
+void MainHost::SetRenderMap(const RenderMap &map)
+{
+    renderer->SetMap(map,nbThreads);
+//    solver->UpdateCpuTimes(map,nbThreads);
+    if(updateRendererViewTimer.isActive())
+        UpdateRendererView();
+}

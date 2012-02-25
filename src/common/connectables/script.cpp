@@ -18,7 +18,7 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 
-
+#ifdef SCRIPTENGINE
 #include "script.h"
 #include "../mainhost.h"
 #include "../mainwindow.h"
@@ -296,3 +296,4 @@ void Script::LoadProgram(int prog)
         editorWnd->SetScript(scriptText);
 }
 
+#endif

@@ -1,6 +1,8 @@
 #ifndef SCRIPT_H
 #define SCRIPT_H
 
+#ifdef SCRIPTENGINE
+
 #include "object.h"
 #include "views/scripteditor.h"
 
@@ -50,5 +52,7 @@ namespace Connectables {
         void DspMsg(const QString &title, const QString &str);
     };
 }
+
+#endif
 
 #endif // SCRIPT_H

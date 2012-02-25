@@ -25,10 +25,10 @@
 #include "cable.h"
 #include "objectinfo.h"
 #include "msgobject.h"
-
+#include "renderer/solver.h"
 class MainHost;
 
-class RendererNode;
+//class RendererNode;
 namespace Connectables {
 
     class Object;
@@ -87,7 +87,8 @@ namespace Connectables {
         QDataStream & toStream (QDataStream &) const;
         QDataStream & fromStream (QDataStream &);
 
-        QList<RendererNode*>listOfRendererNodes;
+//        QList<RendererNode*>listOfRendererNodes;
+        RenderMap savedRenderMap;
         QTime lastModificationTime;
         QTime savedTime;
         static QTime unsavedTime;

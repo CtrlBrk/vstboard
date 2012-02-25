@@ -28,8 +28,7 @@ using namespace Connectables;
 
 BridgePinIn::BridgePinIn(Object *parent, int number, bool bridge) :
     Pin(parent,PinType::Bridge,PinDirection::Input,number,bridge),
-    valueType(PinType::ND),
-    loopCounter(0)
+    valueType(PinType::ND)
 {
     setObjectName(QString("BIn%1").arg(number));
     visible=true;
@@ -38,17 +37,56 @@ BridgePinIn::BridgePinIn(Object *parent, int number, bool bridge) :
 //send message to the corresponding output pin
 void BridgePinIn::ReceivePinMsg(const PinMessage::Enum msgType,void *data)
 {
-    if(loopCounter>20)
+    messagesType << msgType;
+    messagesData << data;
+
+//    if(loopCounter>20)
+//        return;
+//    ++loopCounter;
+
+//    ConnectionInfo info = connectInfo;
+//    info.direction=PinDirection::Output;
+//    parent->GetPin(info)->SendMsg(msgType,data);
+
+//    switch(msgType) {
+//        case PinMessage::AudioBuffer :
+//            if(static_cast<AudioBuffer*>(data)->GetCurrentVu() < 0.01)
+//                return;
+//            valueType=PinType::Audio;
+//            break;
+//        case PinMessage::ParameterValue :
+//            valueType=PinType::Parameter;
+//            break;
+//        case PinMessage::MidiMsg:
+//            valueType=PinType::Midi;
+//            break;
+//        default :
+//            valueType=PinType::ND;
+//    }
+    valueChanged=true;
+}
+
+void BridgePinIn::NewRenderLoop()
+{
+    messagesType.clear();
+    messagesData.clear();
+}
+
+void BridgePinIn::SendMsgToOutput()
+{
+    if(messagesType.isEmpty())
         return;
-    ++loopCounter;
 
     ConnectionInfo info = connectInfo;
     info.direction=PinDirection::Output;
-    parent->GetPin(info)->SendMsg(msgType,data);
 
-    switch(msgType) {
+    for(int i=0; i<messagesType.count(); i++) {
+        parent->GetPin(info)->SendMsg(messagesType[i],messagesData[i]);
+    }
+
+    switch(messagesType.last()) {
         case PinMessage::AudioBuffer :
-            if(static_cast<AudioBuffer*>(data)->GetCurrentVu() < 0.01)
+            if(static_cast<AudioBuffer*>(messagesData.last())->GetCurrentVu() < 0.01)
                 return;
             valueType=PinType::Audio;
             break;
@@ -61,12 +99,6 @@ void BridgePinIn::ReceivePinMsg(const PinMessage::Enum msgType,void *data)
         default :
             valueType=PinType::ND;
     }
-    valueChanged=true;
-}
-
-void BridgePinIn::NewRenderLoop()
-{
-    loopCounter=0;
 }
 
 float BridgePinIn::GetValue()

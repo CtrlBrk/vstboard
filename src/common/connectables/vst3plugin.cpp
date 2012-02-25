@@ -1,3 +1,5 @@
+#ifdef VSTSDK
+
 #include "vst3plugin.h"
 #include "pluginterfaces/vst/ivsthostapplication.h"
 #include "mainhost.h"
@@ -834,3 +836,5 @@ bool Vst3Plugin::fromStream(QDataStream & in)
 //{
 
 //}
+
+#endif

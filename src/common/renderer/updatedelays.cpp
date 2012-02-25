@@ -21,16 +21,20 @@
 #include "updatedelays.h"
 #include "mainhost.h"
 
-UpdateDelays::UpdateDelays(MainHost *myHost, hashCables *listCables, const QList<SolverNode*> *listNodes) :
+UpdateDelays::UpdateDelays(const hashObjects &listObjects, hashCables *listCables, const QList<SolverNode*> *listNodes) :
+    listObjects(listObjects),
     listCables(listCables),
-    listNodes(listNodes),
-    myHost(myHost)
+    listNodes(listNodes)
 {
     ResetDelays();
     int cpt=0;
     while(AddDelays() && cpt<100) { ++cpt; }
     cpt=0;
-    while(SynchronizeAudioOutputs() && cpt<100) { ++cpt; }
+
+    do {
+        UpdateGlobalDelay();
+        ++cpt;
+    } while(SynchronizeAudioOutputs() && cpt<100);
 }
 
 /*!
@@ -77,7 +81,7 @@ bool UpdateDelays::SynchronizeParentNodes(SolverNode *node, long targetDelay)
             GetListCablesConnectedTo(obj->GetIndex(), lstCables);
             bool mod=false;
             foreach(QSharedPointer<Connectables::Cable>cab, lstCables) {
-                QSharedPointer<Connectables::Object>destObj = myHost->objFactory->GetObjectFromId(cab->GetInfoIn().objId);
+                QSharedPointer<Connectables::Object>destObj = listObjects.value( cab->GetInfoIn().objId ); // myHost->objFactory->GetObjectFromId(cab->GetInfoIn().objId);
                 if(node->listOfObj.contains(destObj)) {
                     if(cab->SetDelay(delayToAdd))
                         mod=true;
@@ -92,20 +96,23 @@ bool UpdateDelays::SynchronizeParentNodes(SolverNode *node, long targetDelay)
     return false;
 }
 
-bool UpdateDelays::SynchronizeAudioOutputs()
+void UpdateDelays::UpdateGlobalDelay()
 {
     //get the maximum delay at audio out
-    long newDelay=0L;
+    globalDelay=0L;
     foreach(SolverNode *node, *listNodes) {
-        if(node->totalDelayAtOutput>newDelay) {
+        if(node->totalDelayAtOutput>globalDelay) {
             //only for nodes containing audio output
             foreach(QSharedPointer<Connectables::Object>obj, node->listOfObj) {
                 if(obj->info().objType==ObjType::AudioInterfaceOut)
-                    newDelay=node->totalDelayAtOutput;
+                    globalDelay=node->totalDelayAtOutput;
             }
         }
     }
+}
 
+bool UpdateDelays::SynchronizeAudioOutputs()
+{
     //set an equal delay on all outputs
     foreach(SolverNode *node, *listNodes) {
         bool isOutput=false;
@@ -115,16 +122,10 @@ bool UpdateDelays::SynchronizeAudioOutputs()
             }
         }
         if(isOutput) {
-            if(SynchronizeParentNodes(node,newDelay)) {
+            if(SynchronizeParentNodes(node,globalDelay)) {
                 return true;
             }
         }
-    }
-
-    //report new delay to the host
-    if(newDelay!=globalDelay) {
-        globalDelay=newDelay;
-        myHost->UpdateGlobalDelay(globalDelay);
     }
 
     return false;

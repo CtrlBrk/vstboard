@@ -20,7 +20,7 @@
 
 #ifndef CIRCULARBUFFER_H
 #define CIRCULARBUFFER_H
-
+#include "precomp.h"
 class CircularBuffer
 {
 public:
@@ -40,11 +40,14 @@ public:
     long filledSize;
 
     bool SetWritePosToLastZeroCrossing();
-
+float *bufStart;
 private:
+    template <class T>
+    bool Put(T *buf, long size);
+
     float *readPos;
     float *writePos;
-    float *bufStart;
+
     float *bufEnd;
     float *buffer;
 

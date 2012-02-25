@@ -21,7 +21,7 @@
 #ifndef OBJECTINFO_H
 #define OBJECTINFO_H
 
-#include "../globals.h"
+#include "globals.h"
 
 class ObjectInfo
 {

@@ -61,7 +61,7 @@ Container::Container(MainHost *myHost,int index, const ObjectInfo &info) :
     listBridgePinIn=0;
     listBridgePinOut=0;
 
-    parkModel.setObjectName("parkModel"%objectName());
+//    parkModel.setObjectName("parkModel"%objectName());
     LoadProgram(TEMP_PROGRAM);
     connect(myHost,SIGNAL(BufferSizeChanged(ulong)),
             this,SLOT(SetBufferSize(ulong)));

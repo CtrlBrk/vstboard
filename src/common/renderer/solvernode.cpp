@@ -19,13 +19,35 @@
 **************************************************************************/
 
 #include "solvernode.h"
-#include "connectables/buffer.h"
+#include "renderernode2.h"
 
 SolverNode::SolverNode() :
     Node(),
     loopFlag(0),
     countSteps(0)
 {
+}
+
+SolverNode::SolverNode(const SolverNode &c) :
+    Node(c),
+    loopFlag(c.loopFlag),
+    countSteps(c.countSteps),
+    listParents(c.listParents),
+    listChilds(c.listChilds)
+{
+
+}
+
+SolverNode::SolverNode(const RendererNode2 &c) :
+    Node(),
+    loopFlag(0),
+    countSteps(0)
+{
+    minRenderOrder=c.minRenderOrderOri;
+    maxRenderOrder=c.maxRenderOrderOri;
+    internalDelay=0;
+    totalDelayAtOutput=0;
+    listOfObj=c.listOfObj;
 }
 
 void SolverNode::AddChild(SolverNode *child)
@@ -252,3 +274,19 @@ bool SolverNode::MergeWithParentNode()
     return true;
 }
 
+bool SolverNode::BridgesOnly()
+{
+    //check if all the objects are bridges
+    foreach(QSharedPointer<Connectables::Object>objPtr,listOfObj) {
+        if(objPtr->info().nodeType!=NodeType::bridge) {
+            return false;
+        }
+    }
+    //check if a parent node contains only bridges
+    foreach(SolverNode* parent,listParents) {
+        if(!parent->BridgesOnly()) {
+            return false;
+        }
+    }
+    return true;
+}

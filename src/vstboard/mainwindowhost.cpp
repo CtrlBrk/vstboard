@@ -174,8 +174,8 @@ void MainWindowHost::on_actionConfig_triggered()
 
 void MainWindowHost::SendMsg(const MsgObject &msg)
 {
-    emit SendMsgSignal(msg);
-//    myHost->ReceiveMsg(msg);
+//    emit SendMsgSignal(msg);
+    myHost->ReceiveMsg(msg);
 }
 
 void MainWindowHost::ReceiveMsgSignal(const MsgObject &msg)

@@ -23,7 +23,7 @@
 #include "connectables/audiodevicein.h"
 #include "connectables/audiodeviceout.h"
 #include "globals.h"
-#include "renderer/renderer.h"
+//#include "renderer/renderer.h"
 #include "mainhosthost.h"
 #include "audiodevices.h"
 
@@ -64,8 +64,7 @@ AudioDevice::AudioDevice(PaDeviceInfo &devInfo,MainHostHost *myHost,const Object
     devIn(0),
     devOut(0),
     opened(false),
-    myHost(myHost),
-    inputBufferReady(false)
+    myHost(myHost)
 {
     devOutClosing=false;
     setObjectName(objInfo.name);
@@ -494,8 +493,6 @@ bool AudioDevice::Close()
     opened=false;
     mutexOpenClose.unlock();
 
-    inputBufferReady=false;
-
     emit InUseChanged( objInfo.api,objInfo.id,false);
 
     if(stream)
@@ -697,9 +694,9 @@ bool AudioDevice::DeviceToPinBuffers( const void *inputBuffer, unsigned long fra
        hostBuffSize = framesPerBuffer;
     }
 
-    mutexDevicesInOut.lock();
+//    mutexDevicesInOut.lock();
     if(!devIn) {
-        mutexDevicesInOut.unlock();
+//        mutexDevicesInOut.unlock();
         return true;
     }
 
@@ -714,20 +711,20 @@ bool AudioDevice::DeviceToPinBuffers( const void *inputBuffer, unsigned long fra
         pinBuf->SetBufferContent( ((float **) inputBuffer)[cpt], framesPerBuffer);
     }
 
-    mutexDevicesInOut.unlock();
+//    mutexDevicesInOut.unlock();
 
     return true;
 }
 
 bool AudioDevice::PinBuffersToDevice( void *outputBuffer, unsigned long framesPerBuffer )
 {
-    mutexDevicesInOut.lock();
+//    mutexDevicesInOut.lock();
     if(devOutClosing) {
         devOutClosing=false;
-        mutexDevicesInOut.unlock();
+//        mutexDevicesInOut.unlock();
         return true;
     }
-    mutexDevicesInOut.unlock();
+//    mutexDevicesInOut.unlock();
 
     if(!devOut)
         return true;
@@ -779,6 +776,7 @@ int AudioDevice::paCallback( const void *inputBuffer, void *outputBuffer,
     if(!device->RingBuffersToDevice(outputBuffer, framesPerBuffer))
         return paComplete;
 #else
+    QMutexLocker l(&device->mutexDevicesInOut);
     device->mutexOpenClose.lock();
     if(device->isClosing) {
         device->mutexOpenClose.unlock();
@@ -786,13 +784,46 @@ int AudioDevice::paCallback( const void *inputBuffer, void *outputBuffer,
     }
     device->mutexOpenClose.unlock();
 
+
+////    if(device->devOut) {
+//        device->myHost->SetCurrentBuffers((float **)inputBuffer, (float **)outputBuffer, framesPerBuffer);
+//    }
+
+//    QMutexLocker l(&device->mutexOutReady);
+
+//    device->currentInputBuffer=(float**)inputBuffer;
+//    device->currentOutputBuffer=(float**)outputBuffer;
+//    device->bufferSize=framesPerBuffer;
+
+
+
+//    if(device->devIn)
+//        device->devIn->NewRenderLoop2();
+
+
+
     if(!device->DeviceToPinBuffers(inputBuffer,framesPerBuffer))
         return paComplete;
 
-    device->myHost->Render();
 
+    device->myHost->Render();
     if(!device->PinBuffersToDevice(outputBuffer,framesPerBuffer))
         return paComplete;
+//    if(device->devOut)
+//        device->devOut->NewRenderLoop2();
+
+//    device->currentInputBuffer=0;
+//    device->currentOutputBuffer=0;
+//    if(device->devOut)
+//        device->condBufferOutReady.wait(l.mutex(), 100);
+
+//    if(!device->OutBufferIsReady()) {
+//        LOG("buffer not ready")
+//        return paContinue;
+//    }
+//    device->SetOutputBufferReady(false);
+
+
 #endif
     return paContinue;
 }

@@ -23,6 +23,10 @@ DEFINES += SCRIPTENGINE
 #use lines instead of curves
 #DEFINES += SIMPLE_CABLES
 
+scriptengine {
+    QT += script
+}
+
 CONFIG(debug, debug|release) {
     POST =
     build_postfix=debug

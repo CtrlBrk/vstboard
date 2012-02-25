@@ -224,7 +224,10 @@ void HostController::TapTempo()
 //    double intPart;
 //    double fractPart = modf (myHost->vstHost->vstTimeInfo.ppqPos, &intPart);
 //    LOG(fractPart);
+
+#ifdef VSTSDK
     myHost->vstHost->vstTimeInfo.ppqPos = (int)myHost->vstHost->vstTimeInfo.ppqPos;
+#endif
 
     if(taps.size()>2) {
         float tempo=.0f;

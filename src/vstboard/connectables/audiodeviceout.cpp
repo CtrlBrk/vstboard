@@ -121,9 +121,48 @@ void AudioDeviceOut::SetRingBufferFromPins(QList<CircularBuffer*>listCircularBuf
 }
 #endif
 
+void AudioDeviceOut::Render()
+{
+//    if(!parentDevice)
+//        return;
+
+
+
+//    unsigned long framesPerBuffer = parentDevice->bufferSize;
+//    float **outputBuffer = parentDevice->currentOutputBuffer;
+////    float **outputBuffer = myHost->TakeOutputBuffer(framesPerBuffer);
+
+//    if(!outputBuffer) {
+//        LOG("buffer not ready")
+//        return;
+//    }
+
+//    if(!listAudioPinIn)
+//        return;
+
+//    for(int cpt=0; cpt<listAudioPinIn->nbPins(); cpt++) {
+//        AudioBuffer *pinBuf = listAudioPinIn->GetBuffer(cpt);
+//        if(pinBuf) {
+//            pinBuf->ConsumeStack();
+//            pinBuf->DumpToBuffer( outputBuffer[cpt], framesPerBuffer);
+//            pinBuf->ResetStackCounter();
+//        } else {
+//            LOG("no buffer !?")
+//        }
+//    }
+
+////    if(parentDevice) {
+////        parentDevice->SetOutputBufferReady(true);
+////        parentDevice->SetOutputBufferReady();
+////    }
+
+////    Object::NewRenderLoop();
+}
+
 QStandardItem *AudioDeviceOut::GetFullItem()
 {
     QStandardItem *modelNode = Object::GetFullItem();
     modelNode->setData(doublePrecision, UserRoles::isDoublePrecision);
     return modelNode;
 }
+

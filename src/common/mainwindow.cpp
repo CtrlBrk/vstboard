@@ -218,22 +218,28 @@ void MainWindow::UpdateSolverMap(const MsgObject &msg)
     ui->solverView->setColumnCount( msg.prop[MsgObject::Col].toInt() );
 
     foreach(const MsgObject &thread, msg.children) {
-         foreach(const MsgObject &step, thread.children) {
-            QList<int>lstVal = step.prop[MsgObject::Value].value< QList<int> >();
-            QString str = QString("[%1:%2][%3:%4](%5)\ndelay(%6:%7)")
-                    .arg(lstVal.at(0))
-                    .arg(lstVal.at(1))
-                    .arg(lstVal.at(2))
-                    .arg(lstVal.at(3))
-                    .arg(lstVal.at(4))
-                    .arg(lstVal.at(5))
-                    .arg(lstVal.at(6));
-            str+=step.prop[MsgObject::Name].toString();
-            QLabel *cell=new QLabel(str);
-            ui->solverView->setCellWidget(step.objIndex, thread.objIndex, cell);
-            if(lstVal.at(1) > lstVal.at(0)) {
-                ui->solverView->setSpan(step.objIndex, thread.objIndex, lstVal.at(1)-lstVal.at(0)+1, 1 );
+        foreach(const MsgObject &step, thread.children) {
+            QString strStep;
+            int end=step.objIndex;
+            foreach(const MsgObject &node, step.children) {
+                QList<int>lstVal = node.prop[MsgObject::Value].value< QList<int> >();
+                QString str = QString("[%1:%2][%3:%4](%5)")
+                    .arg(lstVal[0])
+                    .arg(lstVal[1])
+                    .arg(lstVal[2])
+                    .arg(lstVal[3])
+                    .arg(lstVal[4]);
+                str+=node.prop[MsgObject::Name].toString();
+                strStep+=str+"\n";
+                if(lstVal[1]>end)
+                    end=lstVal[1];
             }
+
+            QLabel *cell=new QLabel(strStep);
+            ui->solverView->setCellWidget(step.objIndex, thread.objIndex, cell);
+//            if(end > step.objIndex) {
+//                ui->solverView->setSpan(step.objIndex, thread.objIndex, end-step.objIndex+1, 1 );
+//            }
         }
     }
     ui->solverView->resizeColumnsToContents();
@@ -763,7 +769,9 @@ void MainWindow::on_actionRestore_default_layout_triggered()
 
 void MainWindow::on_solverView_clicked(const QModelIndex &index)
 {
-    myHost->OptimizeRenderer();
+    MsgObject msg(FixedObjId::renderer);
+    msg.prop[MsgObject::GetUpdate]=1;
+    SendMsg(msg);
 }
 
 void MainWindow::on_actionAppearance_toggled(bool arg1)
@@ -876,32 +884,35 @@ void MainWindow::on_actionRedo_triggered()
 
 void MainWindow::on_actionHost_panel_toggled(bool arg1)
 {
-    MsgObject msg;
+    MsgObject msg(FixedObjId::hostContainer);
     msg.prop[MsgObject::Update]=arg1;
-    msg.objIndex=FixedObjId::hostContainer;
     SendMsg(msg);
 }
 
 void MainWindow::on_actionGroup_panel_toggled(bool arg1)
 {
-    MsgObject msg;
+    MsgObject msg(FixedObjId::groupContainer);
     msg.prop[MsgObject::Update]=arg1;
-    msg.objIndex=FixedObjId::groupContainer;
     SendMsg(msg);
 }
 
 void MainWindow::on_actionProgram_panel_toggled(bool arg1)
 {
-    MsgObject msg;
+    MsgObject msg(FixedObjId::programContainer);
     msg.prop[MsgObject::Update]=arg1;
-    msg.objIndex=FixedObjId::programContainer;
     SendMsg(msg);
 }
 
 void MainWindow::on_actionProject_panel_toggled(bool arg1)
 {
-    MsgObject msg;
+    MsgObject msg(FixedObjId::projectContainer);
     msg.prop[MsgObject::Update]=arg1;
-    msg.objIndex=FixedObjId::projectContainer;
+    SendMsg(msg);
+}
+
+void MainWindow::on_dockSolver_visibilityChanged(bool visible)
+{
+    MsgObject msg(FixedObjId::renderer);
+    msg.prop[MsgObject::Update]=visible;
     SendMsg(msg);
 }

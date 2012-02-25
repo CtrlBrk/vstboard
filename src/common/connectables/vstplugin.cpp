@@ -18,6 +18,8 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 
+#ifdef VSTSDK
+
 #include "vstplugin.h"
 #include "globals.h"
 #include "audiobuffer.h"
@@ -1054,3 +1056,4 @@ QStandardItem *VstPlugin::GetFullItem()
     modelNode->setData(doublePrecision, UserRoles::isDoublePrecision);
     return modelNode;
 }
+#endif

@@ -177,7 +177,7 @@ bool ProjectFile::FromStream(MainHost *myHost,QDataStream &in)
     }
 
     myHost->EnableSolverUpdate(false);
-    myHost->renderer->SetEnabled(false);
+    myHost->GetRenderer()->SetEnabled(false);
 
     QString chunkName;
     QByteArray tmpBa;
@@ -262,7 +262,7 @@ bool ProjectFile::FromStream(MainHost *myHost,QDataStream &in)
         if(tmpStream.status()==QDataStream::ReadPastEnd) {
             LOG("err"<<tmpStream.status());
             myHost->objFactory->ResetSavedId();
-            myHost->renderer->SetEnabled(true);
+            myHost->GetRenderer()->SetEnabled(true);
             myHost->EnableSolverUpdate(true);
             QMessageBox msg(QMessageBox::Warning, "", tr("The file is corrupted and cannot be loaded"), QMessageBox::Ok );
             msg.exec();
@@ -271,7 +271,7 @@ bool ProjectFile::FromStream(MainHost *myHost,QDataStream &in)
     }
 
     myHost->objFactory->ResetSavedId();
-    myHost->renderer->SetEnabled(true);
+    myHost->GetRenderer()->SetEnabled(true);
     myHost->EnableSolverUpdate(true);
 
     if(in.status()!=QDataStream::Ok) {

@@ -1,41 +1,32 @@
-#ifndef RENDERTHREAD_H
-#define RENDERTHREAD_H
+#ifndef RENDERERTHREAD2_H
+#define RENDERERTHREAD2_H
 
 //#include "precomp.h"
+#include "rendermap.h"
 
-class Renderer;
-class RendererNode;
-class RenderThread : public QThread
+class Renderer2;
+class RendererThread2 : public QThread
 {
     Q_OBJECT
 
 public:
-    RenderThread(Renderer *renderer, int cpu, const QString &name);
-    ~RenderThread();
-
+    RendererThread2(Renderer2 *renderer, int id);
+    ~RendererThread2();
     void run();
-    void SetListOfSteps( const QMap<int, RendererNode* > &lst );
-    void StartRenderStep( int s );
-    QList<RendererNode*> GetListOfNodes();
+    void SetListOfNodes(const ThreadNodes &n);
+    void ResetNodes();
+    void LockAllSteps();
+    void Stop();
+    bool IsStopped();
+    ThreadNodes currentNodes;
 
-    int currentCpu;
+private:
 
-protected:
-    void ResetSteps();
-    void RenderStep(int step);
-
-    QMap<int, RendererNode* > listOfSteps;
-    Renderer *renderer;
-    QReadWriteLock mutex;
-
-    QSemaphore sem;
-    int step;
+    QMutex mutexNewNodes;
     bool stop;
-
-    RendererNode* currentNode;
-
-    QMutex mutexRender;
-
+    QMutex mutexStop;
+    Renderer2 *renderer;
+    int id;
 
 #ifdef WIN32
     HMODULE DllAvRt;
@@ -56,4 +47,4 @@ protected:
 #endif
 };
 
-#endif // RENDERTHREAD_H
+#endif // RENDERERTHREAD2_H

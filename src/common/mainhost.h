@@ -26,10 +26,12 @@
 #include "connectables/objectfactory.h"
 #include "connectables/object.h"
 #include "connectables/container.h"
-#include "renderer/pathsolver.h"
-#include "renderer/renderer.h"
+//#include "renderer/pathsolver.h"
+//#include "renderer/renderer.h"
+#include "renderer/solver.h"
+#include "renderer/renderer2.h"
 #include "globals.h"
-#include "models/hostmodel.h"
+//#include "models/hostmodel.h"
 #include "settings.h"
 #include "msgcontroller.h"
 #include "programmanager.h"
@@ -38,6 +40,8 @@
     #include "vst/cvsthost.h"
     #include "vst/vst3host.h"
 #endif
+
+#define MAX_NB_THREADS 500
 
 class MainWindow;
 //class ProgramsModel;
@@ -57,16 +61,55 @@ public:
     unsigned long GetBufferSize() {return bufferSize;}
     float GetSampleRate() {return sampleRate;}
 
-    bool EnableSolverUpdate(bool enable);
+    void EnableSolverUpdate(bool enable);
 //    bool IsSolverUpdateEnabled();
 
     void GetTempo(int &tempo, int &sign1, int &sign2);
+
+#ifdef VSTSDK
     void SetTimeInfo(const VstTimeInfo *info);
+#endif
+
+//    void SetCurrentBuffers(float ** inputBuffer, float ** outputBuffer,unsigned long size) {
+//        QMutexLocker l(&currentBuffersMutex);
+//        currentInputBuffer = inputBuffer;
+//        currentOutputBuffer = outputBuffer;
+//        currentFramesPerBuffer = size;
+//        inBufferReady = true;
+//        outBufferReady = true;
+
+//        if(currentFramesPerBuffer > bufferSize) {
+//           SetBufferSize(currentFramesPerBuffer);
+//        }
+//    }
+
+//    float ** TakeInputBuffer(unsigned long &size) {
+//        QMutexLocker l(&currentBuffersMutex);
+//        if(!inBufferReady)
+//            return 0;
+//        size = currentFramesPerBuffer;
+//        inBufferReady = false;
+//        return currentInputBuffer;
+//    }
+//    float ** TakeOutputBuffer(unsigned long &size) {
+//        QMutexLocker l(&currentBuffersMutex);
+//        if(!outBufferReady)
+//            return 0;
+//        size = currentFramesPerBuffer;
+//        outBufferReady = false;
+//        return currentOutputBuffer;
+//    }
+
+//    QMutex currentBuffersMutex;
+//    float **currentInputBuffer;
+//    float **currentOutputBuffer;
+//    unsigned long currentFramesPerBuffer;
+//    bool inBufferReady;
+//    bool outBufferReady;
 
 //    QStandardItemModel *GetRendererModel() { return renderer->GetModel(); }
 
-    void OptimizeRenderer() { if(renderer) renderer->Optimize(); }
-    Renderer * GetRenderer() { return renderer; }
+    Renderer2 * GetRenderer() { return renderer; }
 
     void SetSetupDirtyFlag() { if(hostContainer) hostContainer->SetDirty(); }
 
@@ -84,10 +127,10 @@ public:
         solverMutex.unlock();
     }
 
-    void UpdateGlobalDelay(long samples)
-    {
-        emit DelayChanged(samples);
-    }
+//    void UpdateGlobalDelay(long samples)
+//    {
+//        emit DelayChanged(samples);
+//    }
 
     inline bool undoProgramChanges() {return undoProgramChangesEnabled;}
 
@@ -99,7 +142,7 @@ public:
 
     QTimer *updateViewTimer;
 
-    HostModel * GetModel() {return model;}
+//    HostModel * GetModel() {return model;}
     ProgramManager *programManager;
     Connectables::ObjectFactory *objFactory;
     MainWindow *mainWindow;
@@ -124,6 +167,9 @@ public:
     QMutex mutexRender;
 
     Settings *settings;
+
+    void GetRenderMap(RenderMap &map);
+    void SetRenderMap(const RenderMap &map);
 
 protected:
     void Close();
@@ -150,11 +196,11 @@ private:
 
 //    hashCables workingListOfCables;
 //    QMutex *mutexListCables;
-    Renderer *renderer;
+    Renderer2 *renderer;
 
     QMutex solverMutex;
 
-    HostModel *model;
+//    HostModel *model;
 
     int currentTempo;
     int currentTimeSig1;
@@ -162,7 +208,13 @@ private:
 
     bool undoProgramChangesEnabled;
 
-    PathSolver *solver;
+//    PathSolver *solver;
+    Solver *solver;
+    long globalDelay;
+
+    int nbThreads;
+
+    QTimer updateRendererViewTimer;
 
 signals:
     void SampleRateChanged(float rate);
@@ -190,8 +242,10 @@ public slots:
     void ClearProject();
     bool SaveSetupFile(bool saveAs=false);
     bool SaveProjectFile(bool saveAs=false);
-    void ChangeNbThreads(int nbThreads);
+    void ChangeNbThreads(int nbTh=-1);
     void ResetDelays();
+    void UpdateRendererMap();
+    void UpdateRendererView();
 
 private slots:
     void UpdateSolver(bool forceUpdate=false);

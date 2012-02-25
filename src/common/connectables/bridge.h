@@ -32,7 +32,9 @@ namespace Connectables {
     public:
         Bridge(MainHost *myHost,int index, const ObjectInfo & info);
         bool Open();
+        void Render();
 //        Pin* CreatePin(const ConnectionInfo &info);
+
      };
 }
 

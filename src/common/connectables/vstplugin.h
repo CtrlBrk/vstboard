@@ -21,6 +21,8 @@
 #ifndef VSTPLUGIN_H
 #define VSTPLUGIN_H
 
+#ifdef VSTSDK
+
 #include "object.h"
 #include "../vst/ceffect.h"
 #include "../views/vstshellselect.h"
@@ -127,4 +129,5 @@ namespace Connectables {
 
 }
 
+#endif
 #endif // VSTPLUGIN_H

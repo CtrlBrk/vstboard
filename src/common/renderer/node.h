@@ -9,6 +9,7 @@ class Node
 public:
     Node();
     Node(const Node &c);
+
     int minRenderOrder;
     int maxRenderOrder;
     long internalDelay;

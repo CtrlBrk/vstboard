@@ -65,6 +65,13 @@ bool Bridge::Open()
     return true;
 }
 
+void Bridge::Render()
+{
+    foreach(Pin *pin, listBridgePinIn->listPins) {
+        static_cast<BridgePinIn*>(pin)->SendMsgToOutput();
+    }
+}
+
 //Pin* Bridge::CreatePin(const ConnectionInfo &info)
 //{
 //    Pin *pin = 0;

@@ -66,7 +66,7 @@ namespace Connectables {
         const ConnectionInfo pinIn;
 
         /// the cable index in the model
-        QPersistentModelIndex modelIndex;
+//        QPersistentModelIndex modelIndex;
 
         /// pointer to the MainHost
         MainHost *myHost;
