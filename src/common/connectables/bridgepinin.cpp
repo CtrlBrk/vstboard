@@ -28,65 +28,46 @@ using namespace Connectables;
 
 BridgePinIn::BridgePinIn(Object *parent, int number, bool bridge) :
     Pin(parent,PinType::Bridge,PinDirection::Input,number,bridge),
-    valueType(PinType::ND)
+    valueType(PinType::ND),
+    msgCount(0)
 {
     setObjectName(QString("BIn%1").arg(number));
     visible=true;
 }
 
-//send message to the corresponding output pin
 void BridgePinIn::ReceivePinMsg(const PinMessage::Enum msgType,void *data)
 {
-    messagesType << msgType;
-    messagesData << data;
+    if(msgCount==50) {
+        return;
+    }
 
-//    if(loopCounter>20)
-//        return;
-//    ++loopCounter;
+    messagesData[msgCount]=data;
+    messagesType[msgCount]=msgType;
+    ++msgCount;
 
-//    ConnectionInfo info = connectInfo;
-//    info.direction=PinDirection::Output;
-//    parent->GetPin(info)->SendMsg(msgType,data);
-
-//    switch(msgType) {
-//        case PinMessage::AudioBuffer :
-//            if(static_cast<AudioBuffer*>(data)->GetCurrentVu() < 0.01)
-//                return;
-//            valueType=PinType::Audio;
-//            break;
-//        case PinMessage::ParameterValue :
-//            valueType=PinType::Parameter;
-//            break;
-//        case PinMessage::MidiMsg:
-//            valueType=PinType::Midi;
-//            break;
-//        default :
-//            valueType=PinType::ND;
-//    }
     valueChanged=true;
 }
 
 void BridgePinIn::NewRenderLoop()
 {
-    messagesType.clear();
-    messagesData.clear();
+    msgCount=0;
 }
 
 void BridgePinIn::SendMsgToOutput()
 {
-    if(messagesType.isEmpty())
+    if(msgCount==0)
         return;
 
     ConnectionInfo info = connectInfo;
     info.direction=PinDirection::Output;
 
-    for(int i=0; i<messagesType.count(); i++) {
+    for(int i=0; i<msgCount; i++) {
         parent->GetPin(info)->SendMsg(messagesType[i],messagesData[i]);
     }
 
-    switch(messagesType.last()) {
+    switch(messagesType[msgCount-1]) {
         case PinMessage::AudioBuffer :
-            if(static_cast<AudioBuffer*>(messagesData.last())->GetCurrentVu() < 0.01)
+        if(static_cast<AudioBuffer*>(messagesData[msgCount-1])->GetCurrentVu() < 0.01)
                 return;
             valueType=PinType::Audio;
             break;
@@ -106,7 +87,6 @@ float BridgePinIn::GetValue()
     if(valueChanged) {
         if(value==1.0f) value=0.99f;
         else value=1.0f;
-//        parent->getHost()->GetModel()->setData(modelIndex, valueType, UserRoles::type);
     }
     return value;
 }

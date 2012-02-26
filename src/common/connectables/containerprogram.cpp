@@ -116,6 +116,7 @@ void ContainerProgram::Load(int progId)
 {
     foreach(QSharedPointer<Object> objPtr, listObjects) {
         if(objPtr) {
+            //the container adds the object if not already there
 //            container->AddChildObject(objPtr);
             objPtr->LoadProgram(progId);
         }
@@ -174,6 +175,15 @@ void ContainerProgram::GetInfos(MsgObject &msg)
             MsgObject a(container->GetIndex());
             obj->GetInfos(a);
             msg.children << a;
+
+            //add view attribs (position, size, etc.)
+            if(mapObjAttribs.contains(obj->GetIndex())) {
+                MsgObject attr(obj->GetIndex());
+                attr.prop[MsgObject::State] = QVariant::fromValue( mapObjAttribs[obj->GetIndex()] );
+                msg.children << attr;
+
+            }
+
         }
     }
 
@@ -183,6 +193,16 @@ void ContainerProgram::GetInfos(MsgObject &msg)
             cab->GetInfos(a);
             msg.children << a;
         }
+    }
+
+    QMap<int,ObjectContainerAttribs>::Iterator i = mapObjAttribs.begin();
+    while(i!=mapObjAttribs.end()) {
+        QSharedPointer<Object> obj = myHost->objFactory->GetObjectFromId(i.key());
+        if(!obj) {
+            //delete attrib if object not found
+            i=mapObjAttribs.erase(i);
+        }
+        ++i;
     }
 }
 
@@ -308,6 +328,7 @@ void ContainerProgram::AddObject(QSharedPointer<Object> objPtr)
 {
     listObjects << objPtr;
     container->AddChildObject(objPtr);
+    objPtr->SetContainerAttribs( ObjectContainerAttribs() );
     SetDirty();
 }
 
@@ -351,6 +372,8 @@ bool ContainerProgram::AddCable(const ConnectionInfo &outputPin, const Connectio
 
     QSharedPointer<Cable>cab(new Cable(myHost,outputPin,inputPin));
     listCables << cab;
+    if(container->MsgEnabled())
+        cab->SetMsgEnabled(true);
 
     if(collectedListOfAddedCables)
         *collectedListOfAddedCables << QPair<ConnectionInfo,ConnectionInfo>(outputPin,inputPin);

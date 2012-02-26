@@ -358,7 +358,7 @@ void Vst3Plugin::OnShowEditor()
         return;
 
     editorWnd->show();
-    editorWnd->LoadAttribs();
+    editorWnd->LoadAttribs(currentViewAttr);
 }
 
 void Vst3Plugin::OnHideEditor()
@@ -366,7 +366,7 @@ void Vst3Plugin::OnHideEditor()
     if(!editorWnd)
         return;
 
-    editorWnd->SaveAttribs();
+    editorWnd->SaveAttribs(currentViewAttr);
 
     if(myHost->settings->GetSetting("fastEditorsOpenClose",true).toBool()) {
         disconnect(myHost->updateViewTimer,SIGNAL(timeout()),
@@ -393,6 +393,32 @@ void Vst3Plugin::EditorDestroyed()
     editorWnd=0;
     RemoveGui();
     listParameterPinIn->listPins.value(FixedPinNumber::editorVisible)->SetVisible(false);
+}
+
+void Vst3Plugin::SetContainerAttribs(const ObjectContainerAttribs &attr)
+{
+    Object::SetContainerAttribs(attr);
+
+    if(editorWnd) {
+        if(currentViewAttr.editorVisible != editorWnd->isVisible()) {
+            editorWnd->setVisible(currentViewAttr.editorVisible);
+        }
+        if(currentViewAttr.editorVisible)
+            editorWnd->LoadAttribs(currentViewAttr);
+    }
+}
+
+void Vst3Plugin::GetContainerAttribs(ObjectContainerAttribs &attr)
+{
+    currentViewAttr.editorVisible=false;
+    if(editorWnd) {
+        if(editorWnd->isVisible()) {
+            editorWnd->SaveAttribs(currentViewAttr);
+            currentViewAttr.editorVisible=true;
+        }
+    }
+
+    Object::GetContainerAttribs(attr);
 }
 
 void Vst3Plugin::RemoveGui()

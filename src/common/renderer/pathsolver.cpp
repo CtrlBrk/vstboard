@@ -68,14 +68,14 @@ long PathSolver::GetNodes(const hashObjects &lstObj, const hashCables &cables, Q
     return dly.GetDelay();
 }
 
-void PathSolver::GetListPinsConnectedTo(ConnectionInfo out, QList<ConnectionInfo> &list)
-{
-    hashCables::const_iterator i = listCables.constFind(out);
-    while (i != listCables.constEnd()  && i.key() == out) {
-        list << i.value()->GetInfoIn();
-        ++i;
-    }
-}
+//void PathSolver::GetListPinsConnectedTo(ConnectionInfo out, QList<ConnectionInfo> &list)
+//{
+//    hashCables::const_iterator i = listCables.constFind(out);
+//    while (i != listCables.constEnd()  && i.key() == out) {
+//        list << i.value()->GetInfoIn();
+//        ++i;
+//    }
+//}
 
 /*!
   Create nodes for each objects

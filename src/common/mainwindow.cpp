@@ -221,15 +221,15 @@ void MainWindow::UpdateSolverMap(const MsgObject &msg)
             int end=step.objIndex;
             foreach(const MsgObject &node, step.children) {
                 QString str = QString("[%1:%2][%3:%4](%5)")
-                    .arg(msg.prop[MsgObject::Value].toInt())
-                    .arg(msg.prop[MsgObject::Value1].toInt())
-                    .arg(msg.prop[MsgObject::Value2].toInt())
-                    .arg(msg.prop[MsgObject::Value3].toInt())
-                    .arg(msg.prop[MsgObject::Value4].toInt());
+                    .arg(node.prop[MsgObject::Value].toInt())
+                    .arg(node.prop[MsgObject::Value1].toInt())
+                    .arg(node.prop[MsgObject::Value2].toInt())
+                    .arg(node.prop[MsgObject::Value3].toInt())
+                    .arg(node.prop[MsgObject::Value4].toInt());
                 str+=node.prop[MsgObject::Name].toString();
                 strStep+=str+"\n";
-                if(msg.prop[MsgObject::Value1].toInt()>end)
-                    end=msg.prop[MsgObject::Value1].toInt();
+//                if(node.prop[MsgObject::Value1].toInt()>end)
+//                    end=node.prop[MsgObject::Value1].toInt();
             }
 
             QLabel *cell=new QLabel(strStep);

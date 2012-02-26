@@ -197,8 +197,11 @@ void ObjectView::ReceiveMsg(const MsgObject &msg)
 #else
     UpdateTitle( msg.prop[MsgObject::Name].toString() );
 #endif
-    } else {
-        UpdateTitle("noname");
+    }
+
+    if(msg.prop.contains(MsgObject::State)) {
+        ObjectContainerAttribs attr = msg.prop[MsgObject::State].value<ObjectContainerAttribs>();
+        setPos(attr.position);
     }
 }
 

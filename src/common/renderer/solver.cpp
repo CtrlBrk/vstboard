@@ -31,8 +31,7 @@ long Solver::GetMap(const hashObjects &listObject, const hashCables &listCables,
     QList<OptimizerNode*>optimizerNodes;
     int cpt=0;
     foreach(const SolverNode *n, solverNodes) {
-        optimizerNodes << new OptimizerNode(cpt, *n);
-        ++cpt;
+        optimizerNodes << new OptimizerNode(cpt++, *n);
     }
     OptimizeMap optMap(optimizerNodes,nbThreads);
     OptMap oMap;
@@ -53,15 +52,17 @@ void Solver::UpdateCpuTimes(RenderMap &rMap, int nbThreads)
     QList<OptimizerNode*>optimizerNodes;
     QList<SolverNode*>solverNodes;
 
+    int cpt=0;
     RendererMap::iterator thread = rMap.map.begin();
     while(thread != rMap.map.end()) {
        ThreadNodes::iterator step = thread.value().begin();
         while(step!=thread.value().end()) {
             foreach(const QSharedPointer<RendererNode2>node, step.value()) {
                 solverNodes << new SolverNode(*node);
-                optimizerNodes << new OptimizerNode(*node);
+                OptimizerNode *oN = new OptimizerNode(*node);
+                oN->id = cpt++;
+                optimizerNodes << oN;
             }
-
             ++step;
         }
         ++thread;

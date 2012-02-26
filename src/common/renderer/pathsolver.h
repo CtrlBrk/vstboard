@@ -50,7 +50,7 @@ protected:
     void SetMinAndMaxStep();
     void RemoveUnusedNodes();
 
-    void GetListPinsConnectedTo(ConnectionInfo out, QList<ConnectionInfo> &list);
+//    void GetListPinsConnectedTo(ConnectionInfo out, QList<ConnectionInfo> &list);
 
     QList<SolverNode*> ListOfGoodStarts(const QList<SolverNode*>&loop);
     QList<SolverNode*> BestStartsInAList(const QList<SolverNode*>&loop, const QList<SolverNode*>&possibleStarts);

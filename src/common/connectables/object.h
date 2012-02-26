@@ -251,6 +251,8 @@ namespace Connectables {
         /// a string describing the error if the object can't be created
         QString errorMessage;
 
+        ObjectContainerAttribs currentViewAttr;
+
     private:
         /// the current container id if not parked
         quint16 containerId;

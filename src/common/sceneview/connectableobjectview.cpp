@@ -148,13 +148,19 @@ void ConnectableObjectView::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event
 {
     if(moving) {
         moving=false;
-//        if(model)
-//            model->setData(objIndex,pos(),UserRoles::position);
+        ReportPosChange();
         event->accept();
         return;
     }
     QGraphicsWidget::mouseReleaseEvent(event);
 
+}
+
+void ConnectableObjectView::ReportPosChange()
+{
+    MsgObject msg(GetIndex());
+    msg.prop[MsgObject::State]=pos();
+    msgCtrl->SendMsg(msg);
 }
 
 void ConnectableObjectView::ObjectDropped(QGraphicsSceneDragDropEvent *event, MsgObject msg)

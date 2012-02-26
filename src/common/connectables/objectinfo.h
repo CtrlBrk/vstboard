@@ -75,6 +75,8 @@ public:
     QDataStream & fromStream (QDataStream &);
 };
 
+Q_DECLARE_METATYPE(ObjectContainerAttribs);
+
 QDataStream & operator<< (QDataStream & out, const ObjectContainerAttribs& value);
 QDataStream & operator>> (QDataStream & in, ObjectContainerAttribs& value);
 

@@ -117,12 +117,16 @@ void Cable::RemoveFromParentNode(const QModelIndex &parentIndex)
 
 bool Cable::SetDelay(quint32 d)
 {
+    QMutexLocker l(&mutexDelay);
+    if(delay==d)
+        return true;
+
     delay=d;
-//    if(modelIndex.isValid()) {
-//        QStandardItem *item = myHost->GetModel()->itemFromIndex(modelIndex);
-//        item->setText( QString("cable %1:%2 %3").arg(pinOut.objId).arg(pinIn.objId).arg(delay) );
-//        item->setData(d,UserRoles::position);
-//    }
+    if(MsgEnabled()) {
+        MsgObject msg(GetIndex());
+        msg.prop[MsgObject::Delay]=d;
+        msgCtrl->SendMsg(msg);
+    }
 
     if(delay==0) {
         if(buffer) {
@@ -144,12 +148,6 @@ bool Cable::SetDelay(quint32 d)
 
     tmpBuf->SetSize(myHost->GetBufferSize());
 
-    if(MsgEnabled()) {
-        MsgObject msg(GetIndex());
-        msg.prop[MsgObject::Update]=1;
-        msg.prop[MsgObject::Delay]=d;
-        msgCtrl->SendMsg(msg);
-    }
     return true;
 }
 
@@ -159,7 +157,8 @@ void Cable::Render(const PinMessage::Enum msgType,void *data)
     if(!pin)
         return;
 
-    if(delay==0) {
+    QMutexLocker l(&mutexDelay);
+    if(buffer==0) {
         pin->ReceivePinMsg(msgType,data);
         return;
     }

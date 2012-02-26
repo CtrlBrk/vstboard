@@ -49,6 +49,9 @@ public:
     QDataStream & toStream (QDataStream &) const;
     bool fromStream (QDataStream &);
 
+    void SetContainerAttribs(const ObjectContainerAttribs &attr);
+    void GetContainerAttribs(ObjectContainerAttribs &attr);
+
 private:
     void Unload();
     void CreateEditorWindow();

@@ -74,6 +74,7 @@ namespace Connectables {
         CircularBuffer *buffer;
         quint32 delay;
         AudioBuffer *tmpBuf;
+        QMutex mutexDelay;
     };
 }
 

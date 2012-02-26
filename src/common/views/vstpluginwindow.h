@@ -37,6 +37,8 @@ namespace Connectables {
     class Vst3Plugin;
 }
 
+class ObjectContainerAttribs;
+
 using namespace Steinberg;
 
 namespace View {
@@ -55,8 +57,8 @@ namespace View {
         WId GetWinId();
 //        const QPixmap GetScreenshot();
 
-        void LoadAttribs();
-        void SaveAttribs();
+        void LoadAttribs(const ObjectContainerAttribs &attr);
+        void SaveAttribs(ObjectContainerAttribs &attr);
 
 //        tresult PLUGIN_API queryInterface (const TUID iid, void** obj);
 //        uint32 PLUGIN_API addRef ();

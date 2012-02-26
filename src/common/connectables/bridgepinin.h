@@ -33,11 +33,12 @@ namespace Connectables {
         float GetValue();
         void NewRenderLoop();
         void SendMsgToOutput();
+
     protected:
-        /// type of the last message transmited
         PinType::Enum valueType;
-        QList<PinMessage::Enum>messagesType;
-        QList<void*>messagesData;
+        PinMessage::Enum messagesType[50];
+        void* messagesData[50];
+        int msgCount;
     };
 }
 

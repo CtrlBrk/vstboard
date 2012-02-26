@@ -220,7 +220,8 @@ bool CircularBuffer::Get(float *buf, long size)
         return false;
     }
 
-    if(readPos+size <= bufEnd) {
+    float* readEnd = readPos+size-1;
+    if(readEnd <= bufEnd) {
         memcpy(buf,readPos,size*sizeof(float));
         readPos+=size;
     } else {
@@ -232,6 +233,8 @@ bool CircularBuffer::Get(float *buf, long size)
     }
     filledSize-=size;
 
+    while(readPos>bufEnd)
+        readPos-=buffSize;
     return true;
 }
 

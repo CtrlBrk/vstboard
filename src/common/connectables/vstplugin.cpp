@@ -560,7 +560,7 @@ void VstPlugin::OnShowEditor()
 //    editorWnd->raise();
     connect(myHost->updateViewTimer,SIGNAL(timeout()),
             this,SLOT(EditIdle()));
-    editorWnd->LoadAttribs();
+    editorWnd->LoadAttribs(currentViewAttr);
 }
 
 void VstPlugin::OnHideEditor()
@@ -568,7 +568,7 @@ void VstPlugin::OnHideEditor()
     if(!editorWnd)
         return;
 
-    editorWnd->SaveAttribs();
+    editorWnd->SaveAttribs(currentViewAttr);
 
     if(myHost->settings->GetSetting("fastEditorsOpenClose",true).toBool()) {
         disconnect(myHost->updateViewTimer,SIGNAL(timeout()),
@@ -602,26 +602,25 @@ void VstPlugin::SetContainerAttribs(const ObjectContainerAttribs &attr)
     Object::SetContainerAttribs(attr);
 
     if(editorWnd) {
-        if(attr.editorVisible != editorWnd->isVisible()) {
-            editorWnd->setVisible(attr.editorVisible);
+        if(currentViewAttr.editorVisible != editorWnd->isVisible()) {
+            editorWnd->setVisible(currentViewAttr.editorVisible);
         }
-        if(attr.editorVisible)
-            editorWnd->LoadAttribs();
-//        editorWnd->move(attr.editorPosition);
-//        editorWnd->resize(attr.editorSize);
-//        editorWnd->SetScrollValue(attr.editorHScroll,attr.editorVScroll);
+        if(currentViewAttr.editorVisible)
+            editorWnd->LoadAttribs(currentViewAttr);
     }
 }
 
 void VstPlugin::GetContainerAttribs(ObjectContainerAttribs &attr)
 {
-    if(editorWnd && editorWnd->isVisible())
-        editorWnd->SaveAttribs();
+    currentViewAttr.editorVisible=false;
+    if(editorWnd) {
+        if(editorWnd->isVisible()) {
+            editorWnd->SaveAttribs(currentViewAttr);
+            currentViewAttr.editorVisible=true;
+        }
+    }
 
     Object::GetContainerAttribs(attr);
-
-    if(editorWnd)
-        attr.editorVisible=editorWnd->isVisible();
 }
 
 void VstPlugin::EditorDestroyed()

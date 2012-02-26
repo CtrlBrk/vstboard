@@ -117,24 +117,31 @@ void MainContainerView::AddBridge(const MsgObject &msg)
 
 void MainContainerView::AddObject(const MsgObject &msg)
 {
-    ObjectView *objView = 0;
-
+    ConnectableObjectView *objView = 0;
     QPointF pos = GetDropPos();
+    int objId = msg.prop[MsgObject::Id].toInt();
 
     //a temp obj exists
-    if(msgCtrl->listObj.contains(msg.prop[MsgObject::Id].toInt())) {
-        ConnectableObjectView *obj = static_cast<ConnectableObjectView*>( msgCtrl->listObj.value(msg.prop[MsgObject::Id].toInt()) );
+    if(msgCtrl->listObj.contains(objId)) {
+        ConnectableObjectView *obj = static_cast<ConnectableObjectView*>( msgCtrl->listObj.value(objId) );
         pos=obj->pos();
         delete obj;
     }
 
     if(msg.prop[MsgObject::Type].toInt() == ObjType::VstPlugin) {
-        objView = new VstPluginView(config, msgCtrl, msg.prop[MsgObject::Id].toInt(), this);
+        objView = new VstPluginView(config, msgCtrl, objId, this);
     } else {
-        objView = new ConnectableObjectView(config, msgCtrl, msg.prop[MsgObject::Id].toInt(), this);
+        objView = new ConnectableObjectView(config, msgCtrl, objId, this);
     }
     objView->Init(msg);
-    objView->setPos(pos);
+
+    if(msg.prop.contains(MsgObject::State)) {
+        ObjectContainerAttribs attr = msg.prop[MsgObject::State].value<ObjectContainerAttribs>();
+        objView->setPos(attr.position);
+    } else {
+        objView->setPos(pos);
+        objView->ReportPosChange();
+    }
 
     //when adding item, the scene set focus to the last item
     if(scene()->focusItem())

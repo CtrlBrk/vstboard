@@ -34,6 +34,7 @@ namespace View {
     Q_OBJECT
     public:
         ConnectableObjectView(ViewConfig *config,MsgController *msgCtrl,int objId, MainContainerView *parent);
+        void ReportPosChange();
 
     protected:
         void mousePressEvent(QGraphicsSceneMouseEvent *event);

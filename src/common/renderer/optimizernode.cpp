@@ -26,7 +26,7 @@ OptimizerNode::OptimizerNode(const RendererNode2 &c) :
     id(c.id),
     minRenderOrder(c.minRenderOrderOri),
     maxRenderOrder(c.maxRenderOrderOri),
-    cpuTime(0)
+    cpuTime(c.cpuTime)
 {
     Init();
 }

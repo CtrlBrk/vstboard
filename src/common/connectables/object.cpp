@@ -547,6 +547,7 @@ LearningMode::Enum Object::GetLearningMode()
   */
 void Object::SetContainerAttribs(const ObjectContainerAttribs &attr)
 {
+    currentViewAttr = attr;
 //    if(!modelIndex.isValid())
 //        return;
 
@@ -568,6 +569,7 @@ void Object::SetContainerAttribs(const ObjectContainerAttribs &attr)
   */
 void Object::GetContainerAttribs(ObjectContainerAttribs &attr)
 {
+    attr=currentViewAttr;
 //    if(!modelIndex.isValid())
 //        return;
 
@@ -860,6 +862,10 @@ void Object::GetInfos(MsgObject &msg)
         msg.children << lstPinMsg;
         ++i;
     }
+
+    if(currentViewAttr.position != QPointF(0,0)) {
+        msg.prop[MsgObject::State]=QVariant::fromValue(currentViewAttr);
+    }
 }
 
 void Object::ReceiveMsg(const MsgObject &msg)
@@ -915,6 +921,11 @@ void Object::ReceiveMsg(const MsgObject &msg)
                 }
             }
         }
+        return;
+    }
+
+    if(msg.prop.contains(MsgObject::State)) {
+        currentViewAttr.position = msg.prop[MsgObject::State].toPointF();
         return;
     }
 }
