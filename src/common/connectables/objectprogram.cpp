@@ -49,6 +49,7 @@ void ObjectProgram::Load(PinsList *in, PinsList *out)
     QMap<ushort,ObjectParameter>::ConstIterator i=listParametersIn.constBegin();
     while(i!=listParametersIn.constEnd()) {
         Pin *pin=0;
+
         if(!in->listPins.contains(i.key())) {
             pin = in->AddPin(i.key());
         } else {
@@ -65,7 +66,9 @@ void ObjectProgram::Load(PinsList *in, PinsList *out)
             continue;
         }
 
+
         static_cast<ParameterPin*>(pin)->Load(i.value());
+
         ++i;
     }
 

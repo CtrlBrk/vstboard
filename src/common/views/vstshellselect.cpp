@@ -20,51 +20,65 @@
 
 #include "vstshellselect.h"
 #include "ui_vstshellselect.h"
-#include "mainhost.h"
-#include "connectables/vstplugin.h"
-#include "commands/comaddobject.h"
 using namespace View;
 
-ComAddObject* VstShellSelect::command=0;
-
-VstShellSelect::VstShellSelect(MainHost *myHost, Connectables::VstPlugin *plugin) :
-    myHost(myHost),
-    ui(new Ui::VstShellSelect)
+VstShellSelect::VstShellSelect(MsgController *msgCtrl, int objId, QWidget *parent) :
+    QDialog(parent),
+    MsgHandler(msgCtrl,objId),
+    ui(new Ui::VstShellSelect),
+    senderObjId(0)
 {
+    setWindowFlags(Qt::Tool);
     ui->setupUi(this);
-    setAttribute( Qt::WA_DeleteOnClose );
-
-    QList<ulong> listPlugins;
-    char szName[64];
-    ulong id;
-    while ((id = plugin->EffGetNextShellPlugin(szName))) {
-        if(listPlugins.contains(id))
-            continue;
-        listPlugins << id;
-        QListWidgetItem *item = new QListWidgetItem(szName,ui->listPlugins);
-        item->setData(Qt::UserRole,(int)id);
-    }
-
-    info = plugin->info();
-    info.forcedObjId = 0;
+//    setAttribute( Qt::WA_DeleteOnClose );
 }
 
 VstShellSelect::~VstShellSelect()
 {
-    Connectables::VstPlugin::shellSelectView=0;
     delete ui;
 }
 
-void View::VstShellSelect::on_buttonOk_clicked()
+void VstShellSelect::ReceiveMsg(const MsgObject &msg)
 {
-    info.id = ui->listPlugins->currentIndex().data(Qt::UserRole).toInt();
-    command->ReloadObject(info);
-    close();
+    senderObjId = msg.prop[MsgObject::Id].toInt();
+    info = msg.prop[MsgObject::ObjInfo].value<ObjectInfo>();
+
+    foreach(const MsgObject &plug, msg.children) {
+        QListWidgetItem *item = new QListWidgetItem( plug.prop[MsgObject::Name].toString());
+        item->setData(Qt::UserRole, plug.prop[MsgObject::Id].toUInt());
+        ui->listPlugins->addItem(item);
+    }
+
+    show();
+    window()->setFocus();
+    ui->listPlugins->setFocus();
 }
 
-void View::VstShellSelect::on_buttonCancel_clicked()
+void View::VstShellSelect::accept()
 {
-    myHost->undoStack.undo();
-    close();
+    info.id = ui->listPlugins->currentIndex().data(Qt::UserRole).toUInt();
+    ui->listPlugins->clear();
+    QDialog::accept();
+
+    MsgObject msg(senderObjId);
+    msg.prop[MsgObject::ObjInfo] = QVariant::fromValue(info);
+    msgCtrl->SendMsg(msg);
+
+    senderObjId=0;
+}
+
+void View::VstShellSelect::reject()
+{
+    ui->listPlugins->clear();
+    QDialog::reject();
+
+//    MsgObject msg(senderObjId);
+//    msg.prop[MsgObject::Remove]=RemoveType::RemoveWithCables;
+//    msgCtrl->SendMsg(msg);
+    MsgObject msg(senderObjId);
+    msg.prop[MsgObject::ObjInfo] = QVariant::fromValue(info);
+    msgCtrl->SendMsg(msg);
+
+    senderObjId=0;
 }
 

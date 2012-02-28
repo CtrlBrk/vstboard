@@ -293,6 +293,7 @@ namespace Connectables {
 
         void SetErrorMessage(const QString &msg) {errorMessage=msg;}
         bool IsInError() { return (objInfo.objType == ObjType::dummy || !errorMessage.isEmpty()); }
+        void UpdateView();
 
     private slots:
         void UpdateViewNow();

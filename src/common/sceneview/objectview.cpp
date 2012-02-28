@@ -130,7 +130,7 @@ void ObjectView::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
 void ObjectView::Init(const MsgObject &msg)
 {
-    if(msg.prop.contains(MsgObject::Type) && msg.prop[MsgObject::Type].toInt() != NodeType::bridge) {
+    if(msg.prop.contains(MsgObject::Add) && msg.prop[MsgObject::Add].toInt() != NodeType::bridge) {
 
         actRemoveBridge = new QAction(QIcon(":/img16x16/delete.png"),tr("Remove"),this);
         actRemoveBridge->setShortcutContext(Qt::WidgetShortcut);

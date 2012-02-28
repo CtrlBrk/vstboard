@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>VstShellSelect</class>
- <widget class="QWidget" name="VstShellSelect">
+ <widget class="QDialog" name="VstShellSelect">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -33,20 +33,10 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QPushButton" name="buttonCancel">
-     <property name="text">
-      <string>Cancel</string>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="1">
-    <widget class="QPushButton" name="buttonOk">
-     <property name="text">
-      <string>Ok</string>
-     </property>
-     <property name="default">
-      <bool>true</bool>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
@@ -55,18 +45,50 @@
  <resources/>
  <connections>
   <connection>
-   <sender>listPlugins</sender>
-   <signal>itemActivated(QListWidgetItem*)</signal>
-   <receiver>buttonOk</receiver>
-   <slot>click()</slot>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>VstShellSelect</receiver>
+   <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>116</x>
-     <y>136</y>
+     <x>110</x>
+     <y>284</y>
     </hint>
     <hint type="destinationlabel">
-     <x>175</x>
-     <y>285</y>
+     <x>72</x>
+     <y>351</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>VstShellSelect</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>190</x>
+     <y>287</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>171</x>
+     <y>334</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>listPlugins</sender>
+   <signal>itemDoubleClicked(QListWidgetItem*)</signal>
+   <receiver>VstShellSelect</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>107</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>426</x>
+     <y>436</y>
     </hint>
    </hints>
   </connection>

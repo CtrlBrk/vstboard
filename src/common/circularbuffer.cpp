@@ -45,7 +45,7 @@ void CircularBuffer::SetSize(long size)
 
     if(size!=0) {
         float *newBuf = new float[size];
-//        memset(newBuf,0,size*sizeof(float));
+
         //skip the oldest data if needed
         if(filledSize>size)
             Skip(filledSize-size);
@@ -135,12 +135,64 @@ bool CircularBuffer::Put(double *buf, long size)
     return true;
 }
 
+long CircularBuffer::Put(CircularBuffer &buf, long size)
+{
+    if(!buffer)
+        return false;
+
+    float *currentVal = writePos-1;
+    if(currentVal<bufStart)
+        currentVal=bufEnd;
+
+    float val=.0f;
+    do{
+        buf.Get(&val,1);
+        --size;
+    } while(size>0 && abs(val-*currentVal)>0.01f);
+
+
+    if(size>buffSize) {
+        LOG("buffer too long")
+        size=buffSize;
+    }
+
+    if((buffSize-filledSize)<size) {
+//       LOG("CircularBuffer::Put not enough free space");
+       long overlapping = size-(buffSize-filledSize);
+       readPos+=overlapping;
+       filledSize-=overlapping;
+       while(readPos>bufEnd)
+           readPos-=buffSize;
+    }
+
+    if(writePos+size <= bufEnd) {
+        buf.Get(writePos,size);
+        writePos+=size;
+    } else {
+        long size1 = bufEnd - writePos +1;
+        long size2 = size - size1;
+        if(size1<0 || size2<0) {
+            size1=0;
+            size2=0;
+            return false;
+        }
+        buf.Get(writePos,size1);
+        buf.Get(writePos,size2);
+        writePos=bufStart+size2;
+    }
+    while(writePos>bufEnd)
+        writePos-=buffSize;
+    filledSize+=size;
+    return size;
+}
+
 bool CircularBuffer::Put(float *buf, long size)
 {
     if(!buffer)
         return false;
 
     if(size>buffSize) {
+        LOG("buffer too long")
         size=buffSize;
     }
 
@@ -173,42 +225,6 @@ bool CircularBuffer::Put(float *buf, long size)
     filledSize+=size;
     return true;
 }
-
-//long CircularBuffer::PutAtZero(float *buf, long size)
-//{
-//    float *lastPos = writePos;
-//    if(lastPos==bufStart)
-//        lastPos=bufEnd;
-//    else
-//        --lastPos;
-
-//    //find the last zero crossing on the ring buffer
-//    bool currentSign = (*lastPos>0);
-//    float *destPos=lastPos;
-//    while( (*destPos>0)==currentSign && destPos!=writePos) {
-//        --destPos;
-//        if(destPos<bufStart)
-//            destPos+=buffSize;
-//    }
-//    if(destPos==writePos) {
-//        LOG("zero not found");
-//        destPos=bufEnd;
-//    }
-
-//    //find the first zero crossing on the added buffer
-//    float *startPos=buf;
-//    currentSign = (*startPos>0);
-//    while( (*startPos>0)==currentSign && startPos<buf+size) {
-//        ++startPos;
-//    }
-//    if(startPos==buf+size) {
-//        LOG("zero not found");
-//        startPos=buf;
-//    }
-
-
-//}
-
 
 bool CircularBuffer::Get(float *buf, long size)
 {
@@ -280,84 +296,3 @@ bool CircularBuffer::Skip(long size)
     filledSize-=size;
     return true;
 }
-
-bool CircularBuffer::SetWritePosToLastZeroCrossing()
-{
-    float *pos = writePos;
-    if(writePos==bufStart)
-        pos=bufEnd;
-    else
-        --pos;
-
-    long cpt=0;
-    bool sign=(*pos>0);
-    while((*pos>0)==sign) {
-        --pos;
-        if(pos<bufStart)
-            pos=bufEnd;
-
-        if(pos==writePos || pos==readPos) {
-//            LOG("zero point not found");
-            return false;
-        }
-        ++cpt;
-    }
-    ++pos;
-    ++pos;
-    --cpt;
-    writePos=pos;
-    filledSize-=cpt;
-
-    while(writePos>bufEnd)
-        writePos-=buffSize;
-
-    return true;
-}
-
-//bool CircularBuffer::Keep(unsigned int size) {
-//    if(filledSize<size) {
-//        debug("CircularBuffer::Get can't keep more than filledsize")
-//        return false;
-//    }
-
-//    filledStart=filledEnd-size;
-//    if(filledStart<bufStart) {
-//        filledStart=bufEnd-(bufStart-filledStart);
-//    }
-//    filledSize=size;
-//    return true;
-//}
-
-
-///*!
-//  Stretch the filled data to the needed size
-//*/
-//void CircularBuffer::Stretch(unsigned int neededSize)
-//{
-//    if(filledSize==0)
-//        return;
-
-//    //get what we have
-//    float *tmpOri = new float[filledSize];
-//    float *tmpDest = new float[neededSize];
-//    unsigned int filled = filledSize;
-//    filledSize=buffSize;
-//    Get(tmpOri,filledSize);
-
-//    unsigned int chunkSize=3000;
-
-//    if(filled<chunkSize)
-//        chunkSize=filled;
-
-//    float ratio = (float)filled/neededSize;
-//    int nbSteps = neededSize/chunkSize;
-//    for(int dest=nbSteps-1; dest>=0; --dest) {
-//        int ori = ratio*dest;
-//        memcpy(tmpDest+(dest*chunkSize), tmpOri+(ori*chunkSize), chunkSize*sizeof(float));
-//    }
-//    memcpy(tmpDest+neededSize-chunkSize, tmpOri+filled-chunkSize, chunkSize*sizeof(float));
-//    filledSize=0;
-//    Put(tmpDest,neededSize);
-//    delete[] tmpOri;
-//    delete[] tmpDest;
-//}

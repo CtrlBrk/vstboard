@@ -14,13 +14,13 @@ public:
     bool SetIndex(int id);
     virtual void ReceiveMsg(const MsgObject &) {}
     MsgController *msgCtrl;
-    int objId;
 
     bool MsgEnabled() const { return msgEnabled;}
     virtual void SetMsgEnabled(bool enab) {msgEnabled=enab;}
 
 private:
     bool msgEnabled;
+    int objId;
 };
 
 #endif // MSGHANDLER_H

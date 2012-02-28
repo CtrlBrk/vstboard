@@ -133,7 +133,6 @@ SOURCES += \
     commands/comaddpin.cpp \
     commands/comprogramstate.cpp \
     models/listtoolsmodel.cpp \
-    models/hostmodel.cpp \
     models/groupsprogramsmodel.cpp \
     models/parkingmodel.cpp \
     renderer/pathsolver.cpp
@@ -226,7 +225,6 @@ HEADERS += \
     projectfile/projectfile.h \
     projectfile/fileversion.h \
     models/listtoolsmodel.h \
-    models/hostmodel.h \
     models/groupsprogramsmodel.h \
     models/parkingmodel.h \
     commands/comdisconnectpin.h \

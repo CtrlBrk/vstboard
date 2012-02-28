@@ -25,7 +25,7 @@
 
 #include "object.h"
 #include "../vst/ceffect.h"
-#include "../views/vstshellselect.h"
+//#include "../views/vstshellselect.h"
 
 namespace View {
     class VstPluginWindow;
@@ -57,7 +57,7 @@ namespace Connectables {
 
         void CreateEditorWindow();
 
-        static View::VstShellSelect *shellSelectView;
+//        static View::VstShellSelect *shellSelectView;
 
         void SetContainerAttribs(const ObjectContainerAttribs &attr);
         void GetContainerAttribs(ObjectContainerAttribs &attr);
@@ -71,6 +71,7 @@ namespace Connectables {
         bool fromStream (QDataStream &);
 
         void AddPluginToDatabase();
+        void ReceiveMsg(const MsgObject &msg);
 
     protected:
         void SetId(int id) {objInfo.id = id;}
@@ -117,14 +118,14 @@ namespace Connectables {
         void LoadBank();
         bool LoadBank(const QString &filename);
         void SaveBank(const QString &filename);
-        bool LoadProgram(const QString &filename);
-        void SaveProgram(const QString &filename);
+        bool LoadProgramFile(const QString &filename);
+        void SaveProgramFile(const QString &filename);
 //        void TakeScreenshot();
         void UserRemovePin(const ConnectionInfo &info);
         void UserAddPin(const ConnectionInfo &info);
 
         friend class View::VstPluginWindow;
-        friend class View::VstShellSelect;
+//        friend class View::VstShellSelect;
     };
 
 }

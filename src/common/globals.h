@@ -150,6 +150,7 @@ namespace FixedObjId {
         midiDevices,
         tools,
         renderer,
+        shellselect,
         noContainer=65535
     };
 }

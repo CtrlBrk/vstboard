@@ -45,7 +45,8 @@ MainWindow::MainWindow(Settings *settings, MainHost * myHost, QWidget *parent) :
     settings(settings),
     progModel(new GroupsProgramsModel(this,this)),
     groupParking(0),
-    programParking(0)
+    programParking(0),
+    shellSelect(0)
 {
 }
 
@@ -110,6 +111,8 @@ void MainWindow::Init()
 //    ui->listUndo->setStack(&myHost->undoStack);
 
     UpdateKeyBinding();
+    shellSelect = new View::VstShellSelect(this, FixedObjId::shellselect, this);
+    shellSelect->hide();
 }
 
 void MainWindow::ReceiveMsg(const MsgObject &msg)
@@ -150,63 +153,15 @@ void MainWindow::ReceiveMsg(const MsgObject &msg)
     //some objects take care of the children
     if(msg.objIndex==FixedObjId::programsManager ||
         msg.objIndex==FixedObjId::audioDevices ||
-        msg.objIndex==FixedObjId::midiDevices) {
+        msg.objIndex==FixedObjId::midiDevices ||
+        msg.objIndex==FixedObjId::shellselect) {
         return;
     }
 
     foreach(const MsgObject &cMsg, msg.children) {
         ReceiveMsg(cMsg);
     }
-
-
-//    if(msg.objIndex == FixedObjId::audioDevices) {
-//        if(listObj.contains(msg.objIndex)) {
-//            listObj[msg.objIndex]->ReceiveMsg(msg);
-//        }
-//        return;
-//    }
-
-//    if(msg.objIndex == FixedObjId::midiDevices) {
-//        if(listObj.contains(msg.objIndex)) {
-//            listObj[msg.objIndex]->ReceiveMsg(msg);
-//        }
-//        return;
-//    }
-
-//    if(progModel && msg.objIndex==FixedObjId::programsManager) {
-//        progModel->ReceiveMsg(msg);
-//        return;
-//    }
-
-//    if(groupParking && msg.objIndex==FixedObjId::groupParking) {
-//        groupParking->ReceiveMsg(msg);
-//        return;
-//    }
-
-//    if(programParking && msg.objIndex==FixedObjId::programParking) {
-//        programParking->ReceiveMsg(msg);
-//        return;
-//    }
-
-//    if(!mySceneView)
-//        return;
-////    LOG("addobj"<<msg.objIndex<<msg.parentIndex<<msg.prop)
-//    mySceneView->ReceiveMsg(msg);
-//    if(!msg.children.isEmpty())
-//        ProcessMsg(msg.children);
 }
-
-//void MainWindow::ReceiveMsg(const QString &type, const QVariant &data)
-//{
-//    ProcessMsg( data.value< ListMsgObj >() );
-//}
-
-//void MainWindow::ProcessMsg(const ListMsgObj &lstMsg)
-//{
-//    foreach(MsgObject msg, lstMsg) {
-//        ReceiveMsg(msg);
-//    }
-//}
 
 void MainWindow::UpdateSolverMap(const MsgObject &msg)
 {

@@ -33,7 +33,7 @@ using namespace Connectables;
 
 VstPlugin *VstPlugin::pluginLoading = 0;
 QMap<AEffect*,VstPlugin*>VstPlugin::mapPlugins;
-View::VstShellSelect *VstPlugin::shellSelectView=0;
+//View::VstShellSelect *VstPlugin::shellSelectView=0;
 
 VstPlugin::VstPlugin(MainHost *myHost,int index, const ObjectInfo & info) :
     Object(myHost,index, info),
@@ -51,8 +51,7 @@ VstPlugin::VstPlugin(MainHost *myHost,int index, const ObjectInfo & info) :
     }
     listBypass << "On" << "Bypass" << "Mute";
 
-    listParameterPinIn->AddPin(FixedPinNumber::vstProgNumber);
-    listParameterPinIn->AddPin(FixedPinNumber::bypass);
+
 }
 
 VstPlugin::~VstPlugin()
@@ -307,7 +306,7 @@ bool VstPlugin::Open()
                 return false;
             }
             if(!FilenameFromDatabase(i,objInfo.filename)) {
-                QMessageBox msg(QMessageBox::Critical,"Unkown Id",tr("Id %1 not in database, load the corresponding plugin first").arg(i));
+                QMessageBox msg(QMessageBox::Critical,"Unknown Id",tr("Id %1 not in database, load the corresponding plugin first").arg(i));
                 msg.exec();
                 return false;
             }
@@ -315,36 +314,72 @@ bool VstPlugin::Open()
 
         if(!Load(objInfo.filename )) {
             VstPlugin::pluginLoading = 0;
-            errorMessage=tr("Error while loading plugin");
+            errorMessage=tr("Error while loading the plugin");
             //return true to create a dummy object
             return true;
         }
 
-        closed=false;
-        mapPlugins.insert(pEffect, this);
         VstPlugin::pluginLoading = 0;
-
-        if(EffGetPlugCategory() == kPlugCategShell && objInfo.id==0) {
-
-            if(VstPlugin::shellSelectView) {
-                VstPlugin::shellSelectView->raise();
-                LOG("shell selection already opened");
-                return false;
-            }
-
-            VstPlugin::shellSelectView = new View::VstShellSelect(myHost, this);
-            VstPlugin::shellSelectView->show();
-
-            //this is a shell, return false to delete this object
-            return false;
-        }
     }
 
+    if(EffGetPlugCategory() == kPlugCategShell && objInfo.id==0) {
+        QList<quint32>ids;
+
+        MsgObject msg(FixedObjId::shellselect);
+        msg.prop[MsgObject::Id] = GetIndex();
+        msg.prop[MsgObject::ObjInfo] = QVariant::fromValue(objInfo);
+        char szName[256];
+        quint32 id;
+        while ((id = EffGetNextShellPlugin(szName))) {
+            if(ids.contains(id))
+                continue;
+            ids << id;
+            MsgObject plug;
+            plug.prop[MsgObject::Name] = szName;
+            plug.prop[MsgObject::Id] = id;
+            msg.children << plug;
+        }
+        ids.clear();
+        msgCtrl->SendMsg(msg);
+        Unload();
+        return true;
+    }
+
+    mapPlugins.insert(pEffect, this);
+    closed=false;
+    VstPlugin::pluginLoading = 0;
     return initPlugin();
+}
+
+void VstPlugin::ReceiveMsg(const MsgObject &msg)
+{
+    //reload a shell plugin with the selected id
+    if(msg.prop.contains(MsgObject::ObjInfo) && objInfo.id==0) {
+        objInfo = msg.prop[MsgObject::ObjInfo].value<ObjectInfo>();
+        if(objInfo.id == 0) {
+            myHost->undoStack.undo();
+        } else {
+            int lastProg = currentProgId;
+            Object::LoadProgram(TEMP_PROGRAM);
+            delete listPrograms.take(lastProg);
+            Open();
+            Object::LoadProgram(lastProg);
+
+            SetMsgEnabled(true);
+            UpdateView();
+        }
+        return;
+    }
+
+    Object::ReceiveMsg(msg);
 }
 
 bool VstPlugin::initPlugin()
 {
+    bool wasEnabled = MsgEnabled();
+    if(wasEnabled)
+        SetMsgEnabled(false);
+
     {
         QMutexLocker lock(&objMutex);
 
@@ -455,6 +490,9 @@ bool VstPlugin::initPlugin()
         listIsLearning << "unlearn";
         listParameterPinIn->AddPin(FixedPinNumber::learningMode);
     }
+    listParameterPinIn->AddPin(FixedPinNumber::vstProgNumber);
+    listParameterPinIn->AddPin(FixedPinNumber::bypass);
+
     EffSetProgram(0);
     Object::Open();
 
@@ -465,6 +503,11 @@ bool VstPlugin::initPlugin()
 
     if(!bankToLoad.isEmpty()) {
         QTimer::singleShot(0,this,SLOT(LoadBank()));
+    }
+
+    if(wasEnabled) {
+        SetMsgEnabled(true);
+        UpdateView();
     }
     return true;
 }
@@ -896,7 +939,7 @@ void VstPlugin::LoadBank()
     if(bankToLoad.endsWith(VST_BANK_FILE_EXTENSION,Qt::CaseInsensitive))
         LoadBank(bankToLoad);
     if(bankToLoad.endsWith(VST_PROGRAM_FILE_EXTENSION,Qt::CaseInsensitive))
-        LoadProgram(bankToLoad);
+        LoadProgramFile(bankToLoad);
     bankToLoad.clear();
 }
 
@@ -933,7 +976,7 @@ void VstPlugin::SaveBank(const QString &filename)
   \param filename the file name
   \return true on success
   */
-bool VstPlugin::LoadProgram(const QString &filename)
+bool VstPlugin::LoadProgramFile(const QString &filename)
 {
     std::string str = filename.toStdString();
     if(!CEffect::LoadProgram(&str))
@@ -949,7 +992,7 @@ bool VstPlugin::LoadProgram(const QString &filename)
   \param filename the file name
   \return true on success
   */
-void VstPlugin::SaveProgram(const QString &filename)
+void VstPlugin::SaveProgramFile(const QString &filename)
 {
     std::string str = filename.toStdString();
     if(!CEffect::SaveProgram(&str))
@@ -979,6 +1022,8 @@ Pin* VstPlugin::CreatePin(const ConnectionInfo &info)
         //if the plugin has a gui, the pins can be learned and the name can change
         bool hasEditor = (!pEffect || (pEffect->flags & effFlagsHasEditor) == 0)?false:true;
 
+        ParameterPin *pin=0;
+
         switch(info.pinNumber) {
             case FixedPinNumber::vstProgNumber :
                 return new ParameterPinIn(this,info.pinNumber,0,&listValues,"prog");
@@ -989,11 +1034,12 @@ Pin* VstPlugin::CreatePin(const ConnectionInfo &info)
             case FixedPinNumber::learningMode :
                 if(!hasEditor && !IsInError())
                     return 0;
-                return new ParameterPinIn(this,info.pinNumber,"off",&listIsLearning,tr("Learn"));
+                pin = new ParameterPinIn(this,info.pinNumber,"off",&listIsLearning,tr("Learn"));
+                pin->SetDefaultVisible(true);
+                return pin;
             case FixedPinNumber::bypass :
                 return new ParameterPinIn(this,info.pinNumber,"On",&listBypass);
-            default : {
-                ParameterPin *pin=0;
+            default :
                 if(closed) {
                     pin = new ParameterPinIn(this,info.pinNumber,0,"",true,hasEditor);
                 } else {
@@ -1001,7 +1047,6 @@ Pin* VstPlugin::CreatePin(const ConnectionInfo &info)
                 }
                 pin->SetDefaultVisible(!hasEditor);
                 return pin;
-            }
         }
     }
 

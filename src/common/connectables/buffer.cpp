@@ -29,97 +29,89 @@ Buffer::Buffer(MainHost *host, int index, const ObjectInfo &info) :
     addedSize(0),
     offset(0),
     adjustDelay(0),
-    countWait(0)
+    countWait(0),
+    desiredSize(0)
 {
+    QMutexLocker l(&mutexBuffer);
     delaySize = info.initDelay;
-    buffer.SetSize(myHost->GetBufferSize()*2 + delaySize);
+    buffer.SetSize(myHost->GetBufferSize() + delaySize);
     listAudioPinIn->SetNbPins(1);
     listAudioPinOut->SetNbPins(1);
     listParameterPinIn->listPins.insert(0, new ParameterPinIn(this,0,(float)delaySize/50000,"Delay",true));
+    resizeBuffer.SetSize(4000);
 }
 
 Buffer::~Buffer()
 {
+    QMutexLocker l(&mutexBuffer);
     if(adjustDelay)
         delete[] adjustDelay;
 }
 
 void Buffer::SetDelay(long d)
 {
-//    objMutex.lock();
-    addedSize+=(d-delaySize);
-    delaySize=d;
-    delayChanged=true;
+    QMutexLocker l(&mutexBuffer);
+    desiredSize=d;
+    delayChanged=10;
     static_cast<ParameterPin*>(listParameterPinIn->GetPin(0))->ChangeValue((float)d/50000, true);
-//    objMutex.unlock();
+}
+
+void Buffer::Resize()
+{
+    if(desiredSize<delaySize) {
+        //fast forward
+        long tmpSize = delaySize-desiredSize;
+        if(tmpSize>buffer.filledSize) {
+            tmpSize = buffer.filledSize;
+        }
+        delaySize-=tmpSize;
+        buffer.SetSize(myHost->GetBufferSize() + delaySize);
+    }
+
+    if(desiredSize>delaySize) {
+        AudioBuffer *pinInBuf = listAudioPinIn->GetBuffer(0);
+        long tmpSize = desiredSize-delaySize;
+        if(tmpSize>pinInBuf->GetSize()) {
+            tmpSize = pinInBuf->GetSize();
+        }
+
+        resizeBuffer.Put( (float*)pinInBuf->GetPointer(), tmpSize );
+
+        if(resizeBuffer.filledSize>3000) {
+            long canAdd=resizeBuffer.filledSize;
+            if(delaySize+canAdd > desiredSize)
+                canAdd = desiredSize-delaySize;
+
+            delaySize+=canAdd;
+            buffer.SetSize(myHost->GetBufferSize() + delaySize);
+            buffer.Put(resizeBuffer,canAdd);
+        }
+    }
 }
 
 void Buffer::Render()
 {
-//    QMutexLocker l(&objMutex);
+    QMutexLocker l(&mutexBuffer);
 
-    if(delayChanged) {
-        if(addedSize<500 && countWait<10) {
-            //wait for more
-            ++countWait;
-        } else {
-            countWait=0;
-            delayChanged=false;
-            buffer.SetSize(myHost->GetBufferSize()*2 + delaySize);
-        }
-
-        if(addedSize<0) {
-            addedSize=0;
-            offset=0;
-        }
-
-
-    }
-
-    //get buffer from input
     AudioBuffer *pinInBuf = listAudioPinIn->GetBuffer(0);
-    if(pinInBuf->GetDoublePrecision())
-        buffer.Put( (double*)pinInBuf->ConsumeStack(), pinInBuf->GetSize() );
-    else {
-        float *buf = (float*)pinInBuf->ConsumeStack();
-        buffer.Put( buf, pinInBuf->GetSize() );
+    AudioBuffer *pinOutBuf = listAudioPinOut->GetBuffer(0);
 
-        if(addedSize>0 && countWait==0) {
-            if(!adjustDelay)
-                adjustDelay = new float[4000];
-
-            memcpy( adjustDelay+offset, buf, pinInBuf->GetSize()*sizeof(float) );
-            offset+=pinInBuf->GetSize();
-
-            float *start=0;
-            long size=0;
-            if(offset>=addedSize) {
-                start=adjustDelay;
-                size=addedSize;
-            } else if(offset>=buffer.buffSize) {
-                start=adjustDelay;
-                size=buffer.buffSize;
-            } else if(offset>=1500) {
-                start=adjustDelay;
-                size=offset;
-            }
-            if(size>0) {
-//                CutBufferAtZeroCrossing(start,size);
-//                buffer.SetWritePosToLastZeroCrossing();
-                buffer.Put(start, size);
-                addedSize-=size;
-                offset=0;
-                if(addedSize<=0 && adjustDelay) {
-                    delete[] adjustDelay;
-                    adjustDelay=0;
-                }
-            }
-        }
+    if(buffer.buffSize < delaySize+pinOutBuf->GetSize()) {
+        buffer.SetSize(delaySize+pinOutBuf->GetSize());
     }
+
+    float *buf = (float*)pinInBuf->ConsumeStack();
+    buffer.Put( buf, pinInBuf->GetSize() );
     pinInBuf->ResetStackCounter();
 
-    AudioBuffer *pinOutBuf = listAudioPinOut->GetBuffer(0);
-    if(buffer.filledSize>=delaySize+pinOutBuf->GetSize() || addedSize>0 ) {
+    if(delayChanged>0) {
+        --delayChanged;
+    }
+    if(delayChanged==0) {
+        Resize();
+    }
+
+    if(buffer.filledSize>=delaySize+pinOutBuf->GetSize() ) {
         //set buffer to output
         if(pinOutBuf->GetDoublePrecision())
             buffer.Get( (double*)pinOutBuf->GetPointerWillBeFilled(), pinOutBuf->GetSize() );
@@ -133,54 +125,9 @@ void Buffer::Render()
 
 void Buffer::OnParameterChanged(ConnectionInfo pinInfo, float value)
 {
+    QMutexLocker l(&mutexBuffer);
+
     Object::OnParameterChanged(pinInfo,value);
-    long d = listParameterPinIn->listPins.value(0)->GetValue()*50000;
-//    objMutex.lock();
-    if(abs(d-delaySize)>1) {
-        addedSize+=(d-delaySize);
-        delaySize=d;
-        delayChanged=true;
-    }
-//    objMutex.unlock();
-}
-
-bool Buffer::CutBufferAtZeroCrossing(float *buffer, long size)
-{
-    if(size<10)
-        return false;
-
-    if(size<200) {
-        for(int i=10;i>=0;--i) {
-            buffer[i]*=(float)i/10;
-            buffer[size-1-i]*=(float)i/10;
-        }
-        return true;
-    }
-
-    float *start=buffer;
-    float *end=buffer+size-1;
-
-    bool sign=(*start>0);
-    while((*start>0)==sign) {
-        ++start;
-        if(start==end) {
-//            LOG("zero not found");
-            return false;
-        }
-    }
-    --start;
-
-    sign=(*end>0);
-    while((*end<0)==sign) {
-        --end;
-        if(start==end) {
-//            LOG("zero not found");
-            return false;
-        }
-    }
-    ++end;
-
-    buffer=start;
-    size=end-start+1;
-    return true;
+    desiredSize = listParameterPinIn->listPins.value(0)->GetValue()*50000;
+    delayChanged=10;
 }

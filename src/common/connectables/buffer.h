@@ -35,19 +35,26 @@ namespace Connectables
         ~Buffer();
         void Render();
         void SetDelay(long d);
-        QString GetParameterName(ConnectionInfo /*pinInfo*/) {return QString::number(delaySize);}
+        QString GetParameterName(ConnectionInfo /*pinInfo*/) {return QString::number(desiredSize);}
 
     private:
-        bool CutBufferAtZeroCrossing(float *buffer, long size);
         CircularBuffer buffer;
-        volatile bool delayChanged;
+        CircularBuffer resizeBuffer;
+        volatile int delayChanged;
         long delaySize;
+        volatile long desiredSize;
         long addedSize;
         long offset;
         float *adjustDelay;
         int countWait;
+
+        QMutex mutexBuffer;
+
     public slots:
         void OnParameterChanged(ConnectionInfo pinInfo, float value);
+
+    private slots:
+        void Resize();
     };
 
 }

@@ -110,7 +110,7 @@ void ComAddObject::redo ()
 
     //get the target
     QSharedPointer<Connectables::Object> target = myHost->objFactory->GetObjectFromId( targetInfo.forcedObjId );
-    if(target) {
+    if(target && target->info().objType!=ObjType::Container) {
         targetInfo = target->info();
         QDataStream stream(&targetState, QIODevice::ReadWrite);
         target->SaveProgram();

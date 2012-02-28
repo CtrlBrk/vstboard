@@ -29,25 +29,19 @@ public:
     void Clear();
     void SetSize(long size);
     bool Put(float *buf, long size);
-//    long PutAtZero(float *buf, long size);
+    long Put(CircularBuffer &buf, long size);
     bool Put(double *buf, long size);
     bool Get(float *buf, long size);
     bool Get(double *buf, long size);
     bool Skip(long size);
-//    void Stretch(unsigned int neededSize);
-//    bool Keep(unsigned int size);
     long buffSize;
     long filledSize;
 
-    bool SetWritePosToLastZeroCrossing();
-float *bufStart;
-private:
-    template <class T>
-    bool Put(T *buf, long size);
 
+private:
     float *readPos;
     float *writePos;
-
+    float *bufStart;
     float *bufEnd;
     float *buffer;
 

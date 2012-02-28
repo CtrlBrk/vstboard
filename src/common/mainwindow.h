@@ -31,6 +31,7 @@
 #include "msgcontroller.h"
 #include "models/groupsprogramsmodel.h"
 #include "models/parkingmodel.h"
+#include "views/vstshellselect.h"
 
 namespace Ui {
     class MainWindow;
@@ -92,6 +93,8 @@ protected:
 
     ParkingModel *groupParking;
     ParkingModel *programParking;
+
+    View::VstShellSelect *shellSelect;
 
 public slots:
     void OnViewConfigClosed();

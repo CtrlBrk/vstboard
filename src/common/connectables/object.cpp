@@ -944,6 +944,12 @@ void Object::SetMsgEnabled(bool enab)
     }
 }
 
+void Object::UpdateView()
+{
+    if(!updateViewDelay.isActive())
+        updateViewDelay.start();
+}
+
 void Object::UpdateViewNow()
 {
     MsgObject msg(containerId);

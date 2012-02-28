@@ -17,7 +17,6 @@ QDataStream & MsgObject::toStream (QDataStream &out) const
     while(i!=prop.constEnd()) {
         QString s(i.key());
         out << static_cast<int>(i.key());
-        LOG(i.value())
         out << i.value();
         ++i;
     }

@@ -22,32 +22,31 @@
 #define VSTSHELLSELECT_H
 
 #include "precomp.h"
+#include "msghandler.h"
 #include "connectables/objectinfo.h"
 
 namespace Ui {
     class VstShellSelect;
 }
-namespace Connectables {
-    class VstPlugin;
-}
-class ComAddObject;
-class MainHost;
+
 namespace View {
-    class VstShellSelect : public QWidget {
+    class VstShellSelect : public QDialog, public MsgHandler
+    {
         Q_OBJECT
     public:
-        VstShellSelect(MainHost *myHost, Connectables::VstPlugin *plugin);
+        VstShellSelect(MsgController *msgCtrl, int objId, QWidget *parent=0);
         ~VstShellSelect();
-        static ComAddObject* command;
+
+        void ReceiveMsg(const MsgObject & msg);
 
     private:
+        int senderObjId;
         ObjectInfo info;
         Ui::VstShellSelect *ui;
-        MainHost *myHost;
 
-    private slots:
-        void on_buttonCancel_clicked();
-        void on_buttonOk_clicked();
+    public slots:
+        void accept();
+        void reject();
     };
 }
 #endif // VSTSHELLSELECT_H

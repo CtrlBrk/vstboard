@@ -1205,6 +1205,7 @@ void MainHost::ReceiveMsg(const MsgObject &msg)
         }
         return;
     }
+
     //intercept project and setup files
     if(msg.prop.contains(MsgObject::FilesToLoad)) {
         QStringList lstFiles = msg.prop[MsgObject::FilesToLoad].toStringList();
