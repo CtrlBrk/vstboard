@@ -47,9 +47,10 @@ namespace Connectables {
 #ifdef CIRCULAR_BUFFER
         void SetBufferFromRingBuffer(QList<CircularBuffer*>listCircularBuffers);
 #endif
-        QStandardItem *GetFullItem();
         void NewRenderLoop() {}
         void NewRenderLoop2() {Object::NewRenderLoop();}
+        void SetSleep(bool sleeping);
+
     protected:
         /// pointer to the linked AudioDevice
         AudioDevice *parentDevice;

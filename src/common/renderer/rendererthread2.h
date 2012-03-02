@@ -45,6 +45,9 @@ private:
     AVREVERTMMTHREADCHARACTERISTICS* FunctionAvRevertMmThreadCharacteristics;
     AVSETMMTHREADPRIORITY* FunctionAvSetMmThreadPriority;
 #endif
+
+signals:
+    void Timeout();
 };
 
 #endif // RENDERERTHREAD2_H

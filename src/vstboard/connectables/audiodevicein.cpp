@@ -51,74 +51,46 @@ AudioDeviceIn::~AudioDeviceIn()
 
 bool AudioDeviceIn::Close()
 {
-    objMutex.lock();
+    QMutexLocker l(&objMutex);
     if(parentDevice) {
         parentDevice->SetObjectInput(0);
         parentDevice=0;
     }
-    objMutex.unlock();
     return true;
 }
 
 void AudioDeviceIn::Render()
 {
-//    Object::NewRenderLoop();
-
-//    if(!parentDevice)
-//        return;
-
-//    unsigned long framesPerBuffer=parentDevice->bufferSize;
-//    float ** inputBuffer = parentDevice->currentInputBuffer;
-////    float ** inputBuffer = myHost->TakeInputBuffer(framesPerBuffer);
-//    if(!inputBuffer) {
-//        LOG("buffer not ready")
-//        return;
-//    }
-
-//    if(!listAudioPinOut)
-//        return;
-
-//    for(int cpt=0; cpt<listAudioPinOut->nbPins(); cpt++) {
-//        AudioBuffer *pinBuf = listAudioPinOut->GetBuffer(cpt);
-//        if(pinBuf) {
-//            pinBuf->SetBufferContent( inputBuffer[cpt], framesPerBuffer);
-//            pinBuf->ConsumeStack();
-//        } else {
-//            LOG("no buffer !?")
-//        }
-//    }
-
-//    foreach(Pin* pin,listAudioPinOut->listPins) {
-//        static_cast<AudioPin*>(pin)->SendAudioBuffer();
-//    }
-
     foreach(Pin* pin,listAudioPinOut->listPins) {
         static_cast<AudioPin*>(pin)->GetBuffer()->ConsumeStack();
         static_cast<AudioPin*>(pin)->SendAudioBuffer();
     }
 
-//    objMutex.lock();
-//    if(parentDevice) {
-        ParameterPinOut* pin=static_cast<ParameterPinOut*>(listParameterPinOut->listPins.value(0));
-        if(pin)
-            pin->ChangeValue(parentDevice->GetCpuUsage());
-//    }
-//    objMutex.unlock();
+    QMutexLocker l(&objMutex);
+    if(!parentDevice)
+        return;
 
 
+
+    ParameterPinOut* pin=static_cast<ParameterPinOut*>(listParameterPinOut->listPins.value(0));
+    if(pin)
+        pin->ChangeValue(parentDevice->GetCpuUsage());
+
+}
+
+void AudioDeviceIn::SetSleep(bool sleeping)
+{
+    Object::SetSleep(sleeping);
 }
 
 void AudioDeviceIn::SetParentDevice( AudioDevice *device )
 {
-    objMutex.lock();
+    QMutexLocker l(&objMutex);
     parentDevice=device;
-    objMutex.unlock();
 }
 
 bool AudioDeviceIn::Open()
 {
-    QMutexLocker l(&objMutex);
-
     closed=false;
     errorMessage="";
 
@@ -126,8 +98,10 @@ bool AudioDeviceIn::Open()
     if(!parentDevice) {
         MainHostHost *host=static_cast<MainHostHost*>(myHost);
         parentDevice=host->audioDevices->AddDevice(objInfo, &errorMessage);
-        if(!parentDevice)
+        if(!parentDevice) {
+            errorMessage=tr("Device not found");
             return true;
+        }
     }
 
     //if no input channels
@@ -203,10 +177,3 @@ void AudioDeviceIn::SetBufferFromRingBuffer(QList<CircularBuffer*>listCircularBu
     }
 }
 #endif
-
-QStandardItem *AudioDeviceIn::GetFullItem()
-{
-    QStandardItem *modelNode = Object::GetFullItem();
-    modelNode->setData(doublePrecision, UserRoles::isDoublePrecision);
-    return modelNode;
-}

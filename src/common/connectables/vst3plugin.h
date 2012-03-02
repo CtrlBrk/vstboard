@@ -11,6 +11,7 @@
 #include "pluginterfaces/vst/ivstcomponent.h"
 #include "pluginterfaces/vst/ivsteditcontroller.h"
 #include "pluginterfaces/vst/ivstaudioprocessor.h"
+#include "pluginterfaces/vst/ivsthostapplication.h"
 #include "pluginterfaces/gui/iplugview.h"
 
 namespace View {
@@ -51,11 +52,15 @@ public:
 
     void SetContainerAttribs(const ObjectContainerAttribs &attr);
     void GetContainerAttribs(ObjectContainerAttribs &attr);
+    void ReceiveMsg(const MsgObject &msg);
 
 private:
     void Unload();
     void CreateEditorWindow();
     void RemoveGui();
+    bool initPlugin();
+    bool initProcessor();
+    bool initController();
 
     QLibrary *pluginLib;
     IPluginFactory* factory;
@@ -63,6 +68,8 @@ private:
     Vst::IEditController* editController;
     Vst::IAudioProcessor* audioEffect;
     Vst::HostProcessData processData;
+    Vst::IConnectionPoint* iConnectionPointComponent;
+    Vst::IConnectionPoint* iConnectionPointController;
 //    Vst::ParameterChanges vstParamChanges;
 //    QMap<qint32,qint32>listParamQueue;
     bool hasEditor;
@@ -78,6 +85,7 @@ private:
 //    char *savedChunk;
 //    quint32 savedChunkSize;
     QByteArray savedState;
+    bool bypass;
 
 signals:
     void WindowSizeChange(int newWidth, int newHeight);

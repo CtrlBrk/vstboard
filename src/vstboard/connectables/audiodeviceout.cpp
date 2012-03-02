@@ -77,8 +77,10 @@ bool AudioDeviceOut::Open()
     if(!parentDevice) {
         MainHostHost *host=static_cast<MainHostHost*>(myHost);
         parentDevice=host->audioDevices->AddDevice(objInfo, &errorMessage);
-        if(!parentDevice)
+        if(!parentDevice) {
+            errorMessage=tr("Device not found");
             return true;
+        }
     }
 
     //if no output channels
@@ -158,11 +160,3 @@ void AudioDeviceOut::Render()
 
 ////    Object::NewRenderLoop();
 }
-
-QStandardItem *AudioDeviceOut::GetFullItem()
-{
-    QStandardItem *modelNode = Object::GetFullItem();
-    modelNode->setData(doublePrecision, UserRoles::isDoublePrecision);
-    return modelNode;
-}
-

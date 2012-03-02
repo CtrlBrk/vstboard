@@ -90,10 +90,12 @@ void RendererThread2::run()
 
     forever {
 
-        if(!renderer->waitThreadReady.WaitAllThreads(9000)) {
+        if(!renderer->waitThreadReady.WaitAllThreads(1000)) {
             LOG("thread"<<id<<"start timeout")
-            QMutexLocker locker(&mutexStop);
-            stop=true;
+//            QMutexLocker locker(&mutexStop);
+//            stop=true;
+            emit Timeout();
+//            return;
         }
         {
             QMutexLocker locker(&mutexStop);
@@ -114,8 +116,9 @@ void RendererThread2::run()
                 LockAllSteps();
                 renderer->stepCanStart.first()->Unlock();
 
-                if(!renderer->stepCanStart.first()->WaitUnlock(9000)) {
+                if(!renderer->stepCanStart.first()->WaitUnlock(1000)) {
                     LOG("thread"<<id<<"1st step timeout")
+//                    emit Timeout();
                 }
 
                 ThreadNodes::const_iterator i = currentNodes.constBegin();
@@ -133,14 +136,15 @@ void RendererThread2::run()
             }
         }
 
-        if(!renderer->waitThreadEnd.WaitAllThreads(9000)) {
+        if(!renderer->waitThreadEnd.WaitAllThreads(1000)) {
             LOG("thread"<<id<<"end timeout")
-            QMutexLocker locker(&mutexStop);
-            stop=true;
-            renderer->nbThreads--;
-            renderer->waitThreadReady.RemoveClient();
-            renderer->waitThreadEnd.RemoveClient();
-            return;
+//            QMutexLocker locker(&mutexStop);
+//            stop=true;
+//            renderer->nbThreads--;
+//            renderer->waitThreadReady.RemoveClient();
+//            renderer->waitThreadEnd.RemoveClient();
+//            return;
+//            emit Timeout();
         }
     }
 }

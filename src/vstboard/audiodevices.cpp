@@ -42,7 +42,9 @@ FakeTimer::~FakeTimer()
 {
     LOG("stop thread"<<objectName()<<(int)currentThreadId());
     stop=true;
-    wait(2000);
+    while(isRunning())
+        wait(10);
+    LOG("thread stopped"<<objectName()<<(int)currentThreadId());
 }
 
 void FakeTimer::run()
@@ -97,9 +99,11 @@ AudioDevices::~AudioDevices()
 
 void AudioDevices::CloseDevices(bool close)
 {
-    mutexClosing.lock();
-    closing=true;
-    mutexClosing.unlock();
+    if(close) {
+        mutexClosing.lock();
+        closing=true;
+        mutexClosing.unlock();
+    }
 
     mutexDevices.lock();
     foreach(Connectables::AudioDevice *ad, listAudioDevices) {
@@ -107,11 +111,11 @@ void AudioDevices::CloseDevices(bool close)
     }
     mutexDevices.unlock();
 
-    if(!close) {
-        mutexClosing.lock();
-        closing=false;
-        mutexClosing.unlock();
-    }
+//    if(!close) {
+//        mutexClosing.lock();
+//        closing=false;
+//        mutexClosing.unlock();
+//    }
 
     if(paOpened) {
         PaError err=Pa_Terminate();
@@ -137,9 +141,6 @@ void AudioDevices::OpenDevices()
     }
     paOpened=true;
 
-    if(MsgEnabled())
-        BuildModel();
-
     mutexClosing.lock();
     closing=true;
     mutexClosing.unlock();
@@ -162,19 +163,13 @@ void AudioDevices::OpenDevices()
 
         ObjectInfo info( obj->info() );
         if(info.objType == ObjType::AudioInterfaceIn || info.objType == ObjType::AudioInterfaceOut) {
-            QString errMsg;
-            Connectables::AudioDevice *newDevice = AddDevice( info, &errMsg );
-            if(info.objType == ObjType::AudioInterfaceIn)
-                static_cast<Connectables::AudioDeviceIn*>(obj.data())->SetParentDevice(newDevice);
-            if(info.objType == ObjType::AudioInterfaceOut)
-                static_cast<Connectables::AudioDeviceOut*>(obj.data())->SetParentDevice(newDevice);
-            if(obj->Open()) {
-//                obj->UpdateModelNode();
-            } else {
-                static_cast<Connectables::Container*>(myHost->objFactory->GetObjectFromId( obj->GetContainerId() ).data())->UserParkObject( obj );
-            }
-            obj->SetErrorMessage(errMsg);
+            obj->Open();
         }
+    }
+
+    if(MsgEnabled()) {
+        BuildModel();
+        myHost->UpdateView();
     }
 }
 
@@ -487,4 +482,13 @@ void AudioDevices::ConfigDevice(const QModelIndex &index)
     }
 
     OpenDevices();
+}
+
+void AudioDevices::RendererTimeout()
+{
+    LOG("renderer timeout")
+    CloseDevices();
+    OpenDevices();
+//    myHost->SetSolverUpdateNeeded();
+//    myHost->UpdateView();
 }

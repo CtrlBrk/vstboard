@@ -166,7 +166,7 @@ void VstPlugin::Render()
         return;
     }
 
-    if(closed || sleep)
+    if(closed) // || GetSleep())
         return;
 
     QMutexLocker lock(&objMutex);
@@ -340,8 +340,10 @@ bool VstPlugin::Open()
             msg.children << plug;
         }
         ids.clear();
-        msgCtrl->SendMsg(msg);
+
         Unload();
+        msgCtrl->SendMsg(msg);
+
         return true;
     }
 
@@ -376,9 +378,9 @@ void VstPlugin::ReceiveMsg(const MsgObject &msg)
 
 bool VstPlugin::initPlugin()
 {
-    bool wasEnabled = MsgEnabled();
-    if(wasEnabled)
-        SetMsgEnabled(false);
+//    bool wasEnabled = MsgEnabled();
+//    if(wasEnabled)
+//        SetMsgEnabled(false);
 
     {
         QMutexLocker lock(&objMutex);
@@ -505,10 +507,10 @@ bool VstPlugin::initPlugin()
         QTimer::singleShot(0,this,SLOT(LoadBank()));
     }
 
-    if(wasEnabled) {
-        SetMsgEnabled(true);
-        UpdateView();
-    }
+//    if(wasEnabled) {
+//        SetMsgEnabled(true);
+//        UpdateView();
+//    }
     return true;
 }
 
@@ -558,6 +560,7 @@ void VstPlugin::CreateEditorWindow()
         return;
 
     editorWnd = new View::VstPluginWindow(myHost->mainWindow);
+    editorWnd->setWindowTitle(objectName());
 
     if(!editorWnd->SetPlugin(this)) {
         editorWnd=0;
@@ -831,7 +834,6 @@ VstIntPtr VstPlugin::OnMasterCallback(long opcode, long index, long value, void 
             SetInitDelay(pEffect->initialDelay);
             listAudioPinIn->ChangeNumberOfPins(pEffect->numInputs);
             listAudioPinOut->ChangeNumberOfPins(pEffect->numOutputs);
-//            UpdateModelNode();
             return  1L;
 
         case audioMasterNeedIdle : //14
@@ -1034,9 +1036,7 @@ Pin* VstPlugin::CreatePin(const ConnectionInfo &info)
             case FixedPinNumber::learningMode :
                 if(!hasEditor && !IsInError())
                     return 0;
-                pin = new ParameterPinIn(this,info.pinNumber,"off",&listIsLearning,tr("Learn"));
-                pin->SetDefaultVisible(true);
-                return pin;
+                return new ParameterPinIn(this,info.pinNumber,"off",&listIsLearning,tr("Learn"));
             case FixedPinNumber::bypass :
                 return new ParameterPinIn(this,info.pinNumber,"On",&listBypass);
             default :
@@ -1094,10 +1094,4 @@ bool VstPlugin::fromStream(QDataStream & in)
     return true;
 }
 
-QStandardItem *VstPlugin::GetFullItem()
-{
-    QStandardItem *modelNode = Object::GetFullItem();
-    modelNode->setData(doublePrecision, UserRoles::isDoublePrecision);
-    return modelNode;
-}
 #endif

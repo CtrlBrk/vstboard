@@ -88,9 +88,7 @@ void MidiDevices::OpenDevices()
             continue;
 
         if(obj->info().objType == ObjType::MidiInterface) {
-//            if(!obj->errorMessage.isEmpty())
-                obj->Open();
-//            obj->UpdateModelNode();
+            obj->Open();
         }
     }
 
@@ -101,6 +99,7 @@ void MidiDevices::OpenDevices()
     }
     mutexListMidi.unlock();
 
+    myHost->UpdateView();
 }
 
 void MidiDevices::OpenDevice(Connectables::MidiDevice* objPtr)

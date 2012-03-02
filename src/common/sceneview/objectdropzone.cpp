@@ -152,6 +152,7 @@ bool ObjectDropZone::TranslateMimeData( const QMimeData * data, MsgObject &msg )
             //vst3 plugin
             if ( fileType=="vst3" ) {
                 ObjectInfo infoVst;
+                infoVst.id = FixedObjId::noContainer;
                 infoVst.nodeType = NodeType::object;
                 infoVst.objType = ObjType::Vst3Plugin;
                 infoVst.filename = url.toLocalFile();

@@ -108,7 +108,6 @@ bool VstPluginWindow::SetPlugin(Connectables::VstPlugin *plugin)
         return false;
 
     SetWindowSize(rect->right, rect->bottom);
-    setWindowTitle(plugin->objectName());
 
     return true;
 }

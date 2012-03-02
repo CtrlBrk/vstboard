@@ -12,13 +12,26 @@ Renderer2::Renderer2(QObject *parent) :
     waitThreadEnd.AddClient();
 
     stepCanStart << new SemaphoreInverted();
+
+    signalTimeoutTimer.setSingleShot(true);
+    signalTimeoutTimer.setInterval(100);
+    connect(&signalTimeoutTimer, SIGNAL(timeout()),
+            this, SIGNAL(Timeout()));
 }
 
 Renderer2::~Renderer2()
 {
+    QMutexLocker l(&mutexThreadList);
+
     foreach(RendererThread2 *th, threads) {
         th->Stop();
     }
+
+    if(!waitThreadEnd.WaitAllThreads(2000)) {
+        QString err("closing : renderer end timeout");
+        LOG(err)
+    }
+
     waitThreadReady.RemoveClient();
     waitThreadEnd.RemoveClient();
 
@@ -65,16 +78,22 @@ void Renderer2::StartRender()
 
     if(!waitThreadReady.WaitAllThreads(10000)) {
         QString err("renderer start timeout");
-        waitThreadReady.RemoveClient();
-        waitThreadReady.AddClient();
+//        waitThreadReady.RemoveClient();
+//        waitThreadReady.AddClient();
         LOG(err)
+//        ChangeNbOfThreads(0);
+//        emit Timeout();
+//        return;
     }
 
-    if(!waitThreadEnd.WaitAllThreads(10000)) {
+    if(!waitThreadEnd.WaitAllThreads(2000)) {
         QString err("renderer end timeout");
-        waitThreadEnd.RemoveClient();
-        waitThreadEnd.AddClient();
+//        waitThreadEnd.RemoveClient();
+//        waitThreadEnd.AddClient();
         LOG(err)
+//        ChangeNbOfThreads(0);
+//        emit Timeout();
+//        return;
     }
 
 }
@@ -85,6 +104,7 @@ void Renderer2::ChangeNbOfThreads(int newNbThreads)
     for(int i=nbThreads-1; i>=0; i--) {
         RendererThread2* th = threads[i];
         if(!th->isRunning() && !th->IsStopped()) {
+            LOG("remove crashed thread"<<i)
             --nbThreads;
             threads.removeAt(i);
             threadsToDelete << th;
@@ -103,7 +123,10 @@ void Renderer2::ChangeNbOfThreads(int newNbThreads)
     //add threads if needed
     while(nbThreads < newNbThreads) {
         ++nbThreads;
-        threads << new RendererThread2(this,threads.count());
+        RendererThread2 *th = new RendererThread2(this,threads.count());
+        threads << th;
+        connect(th,SIGNAL(Timeout()),
+                this,SLOT(OnThreadTimeout()));
     }
 }
 
@@ -118,4 +141,11 @@ void Renderer2::ThreadCleanup()
             delete th;
         }
     }
+}
+
+void Renderer2::OnThreadTimeout()
+{
+    if(signalTimeoutTimer.isActive())
+        return;
+    signalTimeoutTimer.start();
 }

@@ -391,6 +391,9 @@ bool AudioDevice::OpenStream(double sampleRate)
         return false;
     }
 
+    LOG("Open"<<objectName())
+    emit InUseChanged(objInfo.api, objInfo.id, true, inputParameters?inputParameters->suggestedLatency:0, outputParameters?outputParameters->suggestedLatency:0);
+
 //    err = Pa_SetStreamFinishedCallback( stream, &paStreamFinished );
 //    if( err != paNoError ) {
 //        Pa_CloseStream(stream);
@@ -408,7 +411,7 @@ bool AudioDevice::OpenStream(double sampleRate)
 //        emit InUseChanged(objInfo.api,objInfo.id,true,inf->inputLatency,inf->outputLatency,inf->sampleRate);
 //    else
 //        emit InUseChanged(objInfo.api,objInfo.id,true);
-    emit InUseChanged(objInfo.api, objInfo.id, true, inputParameters?inputParameters->suggestedLatency:0, outputParameters?outputParameters->suggestedLatency:0);
+
 
     if(inputParameters)
         delete inputParameters;
@@ -484,7 +487,7 @@ bool AudioDevice::Open()
 bool AudioDevice::Close()
 {
     mutexOpenClose.lock();
-    if(isClosing) {
+    if(isClosing || !opened) {
         mutexOpenClose.unlock();
 //        debug("AudioDevice::CloseStream already closing")
         return false;
@@ -493,6 +496,7 @@ bool AudioDevice::Close()
     opened=false;
     mutexOpenClose.unlock();
 
+    LOG("Close"<<objectName())
     emit InUseChanged( objInfo.api,objInfo.id,false);
 
     if(stream)
@@ -550,12 +554,12 @@ void AudioDevice::SetSleep(bool sleeping)
     if(!sleeping)
         Open();
 
-    mutexDevicesInOut.lock();
-    if(devIn)
-        devIn->SetSleep(sleeping);
-    if(devOut)
-        devOut->SetSleep(sleeping);
-    mutexDevicesInOut.unlock();
+//    mutexDevicesInOut.lock();
+//    if(devIn)
+//        devIn->SetSleep( (!opened || sleeping) );
+//    if(devOut)
+//        devOut->SetSleep( (!opened || sleeping) );
+//    mutexDevicesInOut.unlock();
 
     if(sleeping)
         Close();

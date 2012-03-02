@@ -103,9 +103,3 @@ void VstAudioDeviceOut::GetBuffers(Steinberg::Vst::AudioBusBuffers *buf, int sam
     }
 }
 
-QStandardItem *VstAudioDeviceOut::GetFullItem()
-{
-    QStandardItem *modelNode = Object::GetFullItem();
-    modelNode->setData(doublePrecision, UserRoles::isDoublePrecision);
-    return modelNode;
-}

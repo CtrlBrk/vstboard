@@ -223,7 +223,7 @@ public:
         Connectables::Object(0,id, ObjectInfo()),
         cpuTime(cpuTime)
     {
-        sleep=false;
+        SetSleep(false);
     }
 
     void Render()

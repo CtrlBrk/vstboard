@@ -176,6 +176,7 @@ protected:
     QTime timeFromStart;
     float sampleRate;
     unsigned long bufferSize;
+    Renderer2 *renderer;
 
 private:
     void SetupMainContainer();
@@ -196,7 +197,7 @@ private:
 
 //    hashCables workingListOfCables;
 //    QMutex *mutexListCables;
-    Renderer2 *renderer;
+
 
     QMutex solverMutex;
 
@@ -246,6 +247,7 @@ public slots:
     void ResetDelays();
     void UpdateRendererMap();
     void UpdateRendererView();
+    void UpdateView();
 
 private slots:
     void UpdateSolver(bool forceUpdate=false);

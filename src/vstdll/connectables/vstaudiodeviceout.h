@@ -43,7 +43,6 @@ namespace Connectables {
         void GetBuffers(float **buf, int &cpt, int sampleFrames);
         void GetBuffersD(double **buf, int &cpt, int sampleFrames);
         void GetBuffers(Steinberg::Vst::AudioBusBuffers *buf, int sampleFrames);
-        QStandardItem *GetFullItem();
 
     public slots:
         void SetBufferSize(unsigned long size);

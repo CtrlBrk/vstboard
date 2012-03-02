@@ -32,6 +32,15 @@ ListMidiInterfacesModel::ListMidiInterfacesModel(MsgController *msgCtrl, int obj
     setHorizontalHeaderLabels(  headerLabels );
 }
 
+Qt::ItemFlags ListMidiInterfacesModel::flags ( const QModelIndex & index ) const
+{
+    if(!index.data(UserRoles::objInfo).isValid())
+        return Qt::ItemIsEnabled;
+
+    return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
+
+}
+
 QMimeData  * ListMidiInterfacesModel::mimeData ( const QModelIndexList  & indexes ) const
 {
     QByteArray b;

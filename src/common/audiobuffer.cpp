@@ -358,7 +358,7 @@ void AudioBuffer::SetBufferContent(float *buff, int count)
     debugbuf("setcontent float");
 
     if(count!=bufferSize) {
-        LOG("resize buffer"<<bufferSize<<count);
+//        LOG("resize buffer"<<bufferSize<<count);
         SetSize(count);
     }
 

@@ -17,6 +17,8 @@ public:
     void SetEnabled(bool enab) {LOG("enable here"<<enab)}
     RenderMap currentMap;
 
+
+
 private:
     void ThreadCleanup();
     void ChangeNbOfThreads(int newNbThreads);
@@ -29,6 +31,14 @@ private:
     WaitAll waitThreadReady;
     WaitAll waitThreadEnd;
     QList<SemaphoreInverted*>stepCanStart;
+
+    QTimer signalTimeoutTimer;
+
+signals:
+    void Timeout();
+public slots:
+    void OnThreadTimeout();
+
 friend class RendererThread2;
 };
 

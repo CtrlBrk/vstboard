@@ -47,7 +47,6 @@ namespace Connectables {
 #ifdef CIRCULAR_BUFFER
         void SetRingBufferFromPins(QList<CircularBuffer*>listCircularBuffers);
 #endif
-        QStandardItem *GetFullItem();
         void NewRenderLoop() {}
         void NewRenderLoop2() {Object::NewRenderLoop();}
     protected:

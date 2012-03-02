@@ -80,7 +80,6 @@ namespace Connectables {
         virtual void SetVisible(bool vis);
         void EnableVuUpdates(bool enab);
         void SetBridge(bool bridge);
-//        void UpdateModelNode();
         void Close();
 
         /*!

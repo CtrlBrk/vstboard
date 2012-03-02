@@ -99,8 +99,8 @@ namespace Connectables {
         PinsList* GetListAudioPinOut() {return listAudioPinOut;}
         PinsList* GetListMidiPinOut() {return listMidiPinOut;}
 
-        inline bool GetSleep() {
-            QMutexLocker l(&objMutex);
+        inline bool GetSleep() const {
+            QMutexLocker l(&mutexSleep);
             return sleep;
         }
 
@@ -113,8 +113,6 @@ namespace Connectables {
         inline void Unlock() { objMutex.unlock();}
 
         LearningMode::Enum GetLearningMode();
-        QStandardItem *GetParkingItem();
-        virtual QStandardItem *GetFullItem();
 
         /*!
           Get the current container id
@@ -140,7 +138,6 @@ namespace Connectables {
         virtual QDataStream & toStream (QDataStream &) const;
         virtual bool fromStream (QDataStream &);
         virtual void SetContainerId(quint16 id);
-//        virtual QStandardItem * UpdateModelNode();
 //        virtual void SetBridgePinsInVisible(bool visible);
 //        virtual void SetBridgePinsOutVisible(bool visible);
         virtual void RemoveProgram(int prg);
@@ -233,9 +230,6 @@ namespace Connectables {
         /// the index the object had when the project was saved
         int savedIndex;
 
-        /// true if sleeping
-        bool sleep;
-
         /// pointer to the currently loaded program
         ObjectProgram *currentProgram;
 
@@ -258,6 +252,10 @@ namespace Connectables {
         quint16 containerId;
         long initialDelay;
         QTimer updateViewDelay;
+
+        /// true if sleeping
+        mutable QMutex mutexSleep;
+        bool sleep;
 
     signals:
         /// Sent to the editor window when we want to close it

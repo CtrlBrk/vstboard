@@ -189,6 +189,7 @@ void ParameterPin::ChangeValue(float val, bool fromObj)
 
     if(!fromObj)
         parent->OnParameterChanged(connectInfo,outValue);
+
     UpdateView();
 }
 
@@ -292,14 +293,14 @@ void ParameterPin::OnValueChanged(float val)
 
 void ParameterPin::UpdateView()
 {
-    if(visible) {
-        if(nameCanChange)
-            displayedText = parent->GetParameterName(connectInfo);
-//            setObjectName(parent->GetParameterName(connectInfo));
+    if(!visible)
+        return;
 
-        if(listValues && listValues->count()>outStepIndex) {
-            displayedText = QString("%1:%2").arg(objectName()).arg(listValues->at(outStepIndex).toString());
-        }
+    if(nameCanChange)
+        displayedText = parent->GetParameterName(connectInfo);
+
+    if(listValues && listValues->count()>outStepIndex) {
+        displayedText = QString("%1:%2").arg(objectName()).arg(listValues->at(outStepIndex).toString());
     }
 }
 

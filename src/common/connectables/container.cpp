@@ -172,7 +172,7 @@ void Container::SetSleep(bool sleeping)
 
     foreach(QSharedPointer<Object> objPtr, currentContainerProgram->listObjects) {
         if(objPtr)
-            objPtr->SetSleep(sleep);
+            objPtr->SetSleep(GetSleep());
     }
 }
 
@@ -260,7 +260,6 @@ void Container::LoadProgram(int prog)
 
     //if prog is already loaded, update model
     if(prog==currentProgId && currentContainerProgram) {
-//        UpdateModelNode();
         return;
     }
 
@@ -318,15 +317,14 @@ void Container::LoadProgram(int prog)
     if(optimizerFlag)
         currentContainerProgram->LoadRendererState();
 
-//    if(modelIndex.isValid())
-//        UpdateModelNode();
-
     if(oldProg) {
         delete oldProg;
     }
 
-    if(msgWasEnabled)
+//    if(msgWasEnabled) {
         SetMsgEnabled(true);
+        UpdateView();
+//    }
 }
 
 const QTime Container::GetLastModificationTime() {
@@ -465,11 +463,8 @@ void Container::UserAddObject(const QSharedPointer<Object> &objPtr,
     AddObject(objPtr);
     objPtr->SetMsgEnabled(MsgEnabled());
 
-    if(MsgEnabled()) {
-        MsgObject msg(GetIndex());
-        objPtr->GetInfos(msg);
-        msgCtrl->SendMsg(msg);
-    }
+    if(MsgEnabled())
+        objPtr->UpdateView();
 
     if(targetPtr) {
         currentContainerProgram->CollectCableUpdates( listOfAddedCables, listOfRemovedCables );
@@ -850,7 +845,7 @@ QDataStream & Container::toStream (QDataStream& out) const
         //save container header
         tmpStream << (qint16)GetIndex();
         tmpStream << objectName();
-        tmpStream << sleep;
+        tmpStream << GetSleep();
         ProjectFile::SaveChunk( "CntHead", tmpBa, out);
     }
 
@@ -953,7 +948,9 @@ bool Container::loadHeaderStream (QDataStream &in)
     in >> name;
     setObjectName(name);
 
-    in >> sleep;
+    bool s;
+    in >> s;
+    SetSleep(s);
 
     return true;
 }

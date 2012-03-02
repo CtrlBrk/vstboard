@@ -222,29 +222,6 @@ void Pin::SetVisible(bool vis)
     }
 }
 
-/*!
-  Update the view model
-  Used when moved to a new container
-  */
-//void Pin::UpdateModelNode()
-//{
-//    QStandardItem *item = parent->getHost()->GetModel()->itemFromIndex(modelIndex);
-//    if(!item) {
-//        LOG("item not found"<<modelIndex);
-//        return;
-//    }
-//    item->setData(objectName(),Qt::DisplayRole);
-//    item->setData(GetValue(),UserRoles::value);
-//    item->setData(QVariant::fromValue(ObjectInfo(NodeType::pin)),UserRoles::objInfo);
-//    item->setData(QVariant::fromValue(connectInfo),UserRoles::connectionInfo);
-//    item->setData(stepSize,UserRoles::stepSize);
-//    modelIndex = item->index();
-//    if(connectInfo.type!=PinType::Bridge) {
-//        connect(parent->getHost()->updateViewTimer,SIGNAL(timeout()),
-//                this,SLOT(updateView()),
-//                Qt::UniqueConnection);
-//    }
-//}
 
 /*!
   Update view values
@@ -263,7 +240,7 @@ void Pin::updateView()
 
     if(!displayedText.isEmpty()) {
         msg.prop[MsgObject::Name]=displayedText;
-        displayedText="";
+//        displayedText="";
     }
 
     float newVu = GetValue();

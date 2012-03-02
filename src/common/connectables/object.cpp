@@ -262,9 +262,9 @@ void Object::setObjectName(const QString &name)
   */
 void Object::SetSleep(bool sleeping)
 {
-    objMutex.lock();
+    mutexSleep.lock();
     sleep = sleeping;
-    objMutex.unlock();
+    mutexSleep.unlock();
 }
 
 /*!
@@ -323,7 +323,6 @@ void Object::LoadProgram(int prog)
 {
     //if prog is already loaded, update model
     if(prog==currentProgId && currentProgram) {
-//        UpdateModelNode();
         return;
     }
 
@@ -343,7 +342,7 @@ void Object::LoadProgram(int prog)
     currentProgram=listPrograms.value(currentProgId);
     currentProgram->Load(listParameterPinIn,listParameterPinOut);
 
-//    UpdateModelNode();
+
     foreach(PinsList *lst, pinLists) {
         lst->EnableVuUpdates(true);
     }
@@ -380,7 +379,7 @@ void Object::RemoveProgram(int prg)
   */
 void Object::NewRenderLoop()
 {
-    if(sleep)
+    if(GetSleep())
         return;
 
     if(listAudioPinIn) {
@@ -421,39 +420,6 @@ Pin * Object::GetPin(const ConnectionInfo &pinInfo)
 }
 
 /*!
-  Create a small model used when the object is parked
-  The caller is the owner of the return pointer and should delete it
-  \return a pointer to the QStandardItem
-  */
-QStandardItem *Object::GetParkingItem()
-{
-    QStandardItem *modelNode=new QStandardItem();
-    modelNode->setData(GetIndex(),UserRoles::value);
-    modelNode->setData(objectName(), Qt::DisplayRole);
-
-    //suspend the object if not used in the next program
-    QTimer::singleShot(50,this,SLOT(SuspendIfParked()));
-
-    return modelNode;
-}
-
-/*!
-  Create a full model used when the object is on a panel
-  The caller is the owner of the return pointer and should delete it
-  \return a pointer to the QStandardItem
-  */
-QStandardItem *Object::GetFullItem()
-{
-    QStandardItem *modelNode = new QStandardItem();
-    modelNode->setData(QVariant::fromValue(objInfo), UserRoles::objInfo);
-    modelNode->setData(GetIndex(), UserRoles::value);
-    modelNode->setData(objectName(), Qt::DisplayRole);
-    modelNode->setData(errorMessage, UserRoles::errorMessage);
-    Resume();
-    return modelNode;
-}
-
-/*!
   Set the container Id, called by the parent container
   notify the children pins
   \param id the new container id
@@ -466,30 +432,6 @@ void Object::SetContainerId(quint16 id)
         lst->SetContainerId(containerId);
     }
 }
-
-/*!
-  Update the view
-  */
-//QStandardItem * Object::UpdateModelNode()
-//{
-//    if(!modelIndex.isValid())
-//        return 0;
-
-//    QStandardItem *modelNode = myHost->GetModel()->itemFromIndex(modelIndex);
-//    if(!modelNode) {
-//        LOG("node not found"<<modelIndex);
-//        return 0;
-//    }
-
-//    modelNode->setData(QVariant::fromValue(objInfo), UserRoles::objInfo);
-//    modelNode->setData(errorMessage, UserRoles::errorMessage);
-
-//    foreach(PinsList *lst, pinLists) {
-//        lst->UpdateModelNode(modelNode);
-//    }
-
-//    return modelNode;
-//}
 
 /*!
   Called when a parameter pin has changed
@@ -608,6 +550,7 @@ void Object::CopyStatusTo(QSharedPointer<Object>objPtr)
 
 void Object::SetBufferSize(unsigned long size)
 {
+    QMutexLocker l(&objMutex);
     foreach(Pin *pin, listAudioPinIn->listPins) {
         static_cast<AudioPin*>(pin)->SetBufferSize(size);
     }
@@ -714,7 +657,7 @@ Pin* Object::CreatePin(const ConnectionInfo &info)
 QDataStream & Object::toStream(QDataStream & out) const
 {
     out << (qint16)GetIndex();
-    out << sleep;
+    out << GetSleep();
     out << listenProgramChanges;
 
     out << (quint16)listPrograms.size();
@@ -739,7 +682,9 @@ bool Object::fromStream(QDataStream & in)
     qint16 id;
     in >> id;
     savedIndex=id;
-    in >> sleep;
+    bool s;
+    in >> s;
+    SetSleep(s);
     in >> listenProgramChanges;
 
     quint16 nbProg;
@@ -938,14 +883,17 @@ void Object::SetMsgEnabled(bool enab)
     }
 
     //we're enabled, parent is not : send update
-    if(enab && !msgCtrl->listObj[containerId]->MsgEnabled()) {
-        if(!updateViewDelay.isActive())
-            updateViewDelay.start();
-    }
+//    if(enab && !msgCtrl->listObj[containerId]->MsgEnabled()) {
+//        if(!updateViewDelay.isActive())
+//            updateViewDelay.start();
+//    }
 }
 
 void Object::UpdateView()
 {
+    if(!MsgEnabled())
+        return;
+
     if(!updateViewDelay.isActive())
         updateViewDelay.start();
 }

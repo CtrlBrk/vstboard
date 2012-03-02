@@ -59,6 +59,7 @@ bool WaitAll::WaitAllThreads(int timeout)
 
     if(!condStart.wait(l.mutex(),timeout)) {
         ++cptAtStart;
+        condStart.wakeAll();
         return false;
     }
 

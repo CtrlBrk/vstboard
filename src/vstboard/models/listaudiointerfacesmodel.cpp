@@ -34,7 +34,7 @@ ListAudioInterfacesModel::ListAudioInterfacesModel(MsgController *msgCtrl, int o
 
 Qt::ItemFlags ListAudioInterfacesModel::flags ( const QModelIndex & index ) const
 {
-    if(!index.parent().isValid())
+    if(!index.parent().isValid()  || !index.data(UserRoles::objInfo).isValid())
         return Qt::ItemIsEnabled;
 
     return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;

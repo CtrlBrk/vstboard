@@ -216,12 +216,7 @@ void MainHost::SetupMainContainer()
         return;
 
     mainContainer->SetLoadingMode(true);
-
     mainContainer->LoadProgram(0);
-    QStandardItem *item = mainContainer->GetFullItem();
-//    model->invisibleRootItem()->appendRow(item);
-//    mainContainer->modelIndex=item->index();
-//    mainContainer->parkingId=false;
     mainContainer->listenProgramChanges=false;
 
     mainContainer->SetLoadingMode(false);
@@ -1248,4 +1243,16 @@ void MainHost::SetRenderMap(const RenderMap &map)
 //    solver->UpdateCpuTimes(map,nbThreads);
     if(updateRendererViewTimer.isActive())
         UpdateRendererView();
+}
+
+void MainHost::UpdateView()
+{
+    if( hostContainer)
+        hostContainer->UpdateView();
+    if(projectContainer)
+        projectContainer->UpdateView();
+    if(groupContainer)
+        groupContainer->UpdateView();
+    if(programContainer)
+        programContainer->UpdateView();
 }

@@ -28,6 +28,7 @@ class ListMidiInterfacesModel : public QStandardItemModel, public MsgHandler
 {
 public:
     ListMidiInterfacesModel(MsgController *msgCtrl, int objId, QObject *parent=0);
+    Qt::ItemFlags flags ( const QModelIndex & index ) const;
     QMimeData  * mimeData ( const QModelIndexList  & indexes ) const ;
     void ReceiveMsg(const MsgObject &msg);
     void Update();

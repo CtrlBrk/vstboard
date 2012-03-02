@@ -148,23 +148,6 @@ void PinsList::ConnectAllTo(Container* container, PinsList *other, bool hidden)
     }
 }
 
-//void PinsList::UpdateModelNode(QStandardItem *parentNode)
-//{
-//    if(!modelList.isValid() && parentNode) {
-//        QStandardItem *item = new QStandardItem("lstPins");
-//        item->setData( QVariant::fromValue(objInfo) , UserRoles::objInfo);
-//        parentNode->appendRow(item);
-//        modelList=item->index();
-//    }
-
-//    if(!modelList.isValid())
-//        return;
-
-//    foreach(Pin* pin, listPins) {
-//        pin->SetParentModelIndex(this,modelList);
-//    }
-//}
-
 void PinsList::AsyncAddPin(int nb)
 {
     if(listPins.contains(nb))
