@@ -52,8 +52,8 @@ public:
     explicit AudioDevices(MainHostHost *myHost, MsgController *msgCtrl, int objId);
     ~AudioDevices();
 //    ListAudioInterfacesModel * GetModel();
-    Connectables::AudioDevice * AddDevice(ObjectInfo &objInfo, QString *errMsg=0);
-    void RemoveDevice(PaDeviceIndex devId);
+    Connectables::AudioDevice * AddDevice(ObjectInfo &objInfo);
+    void RemoveDevice(Connectables::AudioDevice *dev);
 
 #ifdef CIRCULAR_BUFFER
     void PutPinsBuffersInRingBuffers();
@@ -76,7 +76,7 @@ private:
     bool closing;
 
     /// list of opened AudioDevice
-    QHash<qint32,Connectables::AudioDevice* >listAudioDevices;
+    QList<Connectables::AudioDevice* >listAudioDevices;
 
     /// model pointer
 //    ListAudioInterfacesModel *model;
@@ -93,10 +93,15 @@ private:
     QMutex mutexClosing;
     QList<qint32>listOpenedDevices;
 
+    QTimer timerRefreshDevices;
+
 public slots:
     void OnToggleDeviceInUse(PaHostApiIndex apiId, PaDeviceIndex devId, bool inUse, PaTime inLatency=0, PaTime outLatency=0, double sampleRate=0);
     void ConfigDevice(const ObjectInfo &info);
     void RendererTimeout();
+
+private slots:
+    void TryToOpenDevice();
 };
 
 #endif // AUDIODEVICES_H

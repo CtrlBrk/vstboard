@@ -77,6 +77,10 @@ AudioDevices::AudioDevices(MainHostHost *myHost, MsgController *msgCtrl, int obj
     fakeRenderTimer(0)
 {
     fakeRenderTimer = new FakeTimer(myHost);
+    timerRefreshDevices.setSingleShot(true);
+    timerRefreshDevices.setInterval(5000);
+    connect(&timerRefreshDevices, SIGNAL(timeout()),
+            this, SLOT(TryToOpenDevice()));
     OpenDevices();
 }
 
@@ -123,8 +127,6 @@ void AudioDevices::CloseDevices(bool close)
             LOG("Pa_Terminate"<<Pa_GetErrorText( err ));
         }
         paOpened=false;
-//        if(!close)
-//            model->invisibleRootItem()->removeRows(0, model->invisibleRootItem()->rowCount());
     }
 }
 
@@ -183,7 +185,7 @@ void AudioDevices::OpenDevices()
 
     if(MsgEnabled()) {
         BuildModel();
-        myHost->UpdateView();
+//        myHost->UpdateView();
     }
 }
 
@@ -191,13 +193,14 @@ void AudioDevices::ReceiveMsg(const MsgObject &msg)
 {
     SetMsgEnabled(true);
 
+    if(msg.prop.contains(MsgObject::GetUpdate)) {
+        BuildModel();
+        return;
+    }
+
     if(msg.prop.contains(MsgObject::Rescan)) {
         CloseDevices();
         OpenDevices();
-        return;
-    }
-    if(msg.prop.contains(MsgObject::GetUpdate)) {
-        BuildModel();
         return;
     }
 
@@ -306,8 +309,14 @@ void AudioDevices::OnToggleDeviceInUse(PaHostApiIndex apiId, PaDeviceIndex devId
         }
     } else {
         myHost->SetBufferSizeMs(FAKE_RENDER_TIMER_MS);
-        if(!fakeRenderTimer && !closing)
+        if(!fakeRenderTimer && !closing) {
             fakeRenderTimer = new FakeTimer(myHost);
+
+            if(!listAudioDevices.isEmpty() && !timerRefreshDevices.isActive()) {
+                //we need some devices but none can be initilized : try again
+                timerRefreshDevices.start();
+            }
+        }
     }
 
     MsgObject msg(GetIndex());
@@ -317,42 +326,40 @@ void AudioDevices::OnToggleDeviceInUse(PaHostApiIndex apiId, PaDeviceIndex devId
     msgCtrl->SendMsg(msg);
 }
 
-Connectables::AudioDevice * AudioDevices::AddDevice(ObjectInfo &objInfo, QString *errMsg)
+Connectables::AudioDevice * AudioDevices::AddDevice(ObjectInfo &objInfo)
 {
-    PaDeviceInfo PAinfo;
-
-    if(!FindPortAudioDevice(objInfo, &PAinfo)) {
-        errMsg->append(tr("Device not found"));
-        return 0;
+    {
+        //search in opened devices
+        QMutexLocker l(&mutexDevices);
+        foreach(Connectables::AudioDevice *d, listAudioDevices) {
+            if(d->IsAnInstanceOf(objInfo)) {
+                return d;
+            }
+        }
     }
+
+    //create a device
+    Connectables::AudioDevice *dev = new Connectables::AudioDevice(myHost,objInfo);
 
     mutexDevices.lock();
-    Connectables::AudioDevice *dev = listAudioDevices.value(objInfo.id,0);
+    listAudioDevices << dev;
     mutexDevices.unlock();
 
-    if(!dev) {
-        dev = new Connectables::AudioDevice(PAinfo, myHost,objInfo);
-        if(!dev->Open()) {
-            if(errMsg)
-                errMsg->append(dev->errorMessage);
-            delete dev;
-            return 0;
-        }
-        mutexDevices.lock();
-        listAudioDevices.insert(objInfo.id, dev);
-        mutexDevices.unlock();
+    if(!dev->Open()) {
+        //retry later
+        if(!timerRefreshDevices.isActive())
+            timerRefreshDevices.start();
     }
+
     return dev;
 }
 
-void AudioDevices::RemoveDevice(PaDeviceIndex devId)
+void AudioDevices::RemoveDevice(Connectables::AudioDevice *dev)
 {
     mutexDevices.lock();
-    Connectables::AudioDevice *dev = listAudioDevices.take(devId);
+    listAudioDevices.removeAll(dev);
     mutexDevices.unlock();
-    if(dev) {
-        delete dev;
-    }
+
 }
 
 #ifdef CIRCULAR_BUFFER
@@ -510,9 +517,25 @@ void AudioDevices::ConfigDevice(const ObjectInfo &info)
 
 void AudioDevices::RendererTimeout()
 {
-    LOG("renderer timeout")
+
     CloseDevices();
     OpenDevices();
-//    myHost->SetSolverUpdateNeeded();
-//    myHost->UpdateView();
+}
+
+//restart portaudio until a device is found
+void AudioDevices::TryToOpenDevice()
+{
+    //the fake render loop is not running anymore, leave
+    if(!fakeRenderTimer || listAudioDevices.isEmpty() || closing)
+        return;
+
+    if(paOpened)
+        CloseDevices();
+    OpenDevices();
+
+    //the fake render loop is still running, retry
+    if(fakeRenderTimer && !listAudioDevices.isEmpty() && !timerRefreshDevices.isActive() && !closing) {
+        CloseDevices();
+        timerRefreshDevices.start();
+    }
 }

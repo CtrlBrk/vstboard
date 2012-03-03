@@ -63,6 +63,9 @@ void ListAudioDevicesView::setModel(QAbstractItemModel *model)
             model, SLOT(ResetApis()));
     connect(this, SIGNAL(Config(QModelIndex)),
             model, SLOT(ConfigDevice(QModelIndex)));
+
+    connect(model, SIGNAL(rowsInserted ( const QModelIndex &, int, int )),
+            this, SLOT(expandAll()));
 }
 
 void ListAudioDevicesView::AudioDevContextMenu(const QPoint &pt)

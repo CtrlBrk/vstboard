@@ -316,7 +316,7 @@ bool VstPlugin::Open()
 
         if(!Load(objInfo.filename )) {
             VstPlugin::pluginLoading = 0;
-            errorMessage=tr("Error while loading the plugin");
+            SetErrorMessage( tr("Error while loading the plugin") );
             //return true to create a dummy object
             return true;
         }

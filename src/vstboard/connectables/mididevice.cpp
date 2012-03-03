@@ -72,7 +72,7 @@ bool MidiDevice::OpenStream()
     QMutexLocker l(&objMutex);
 
     if(!FindDeviceByName()){
-        errorMessage = tr("Device not found");
+        SetErrorMessage( tr("Device not found") );
         return false;
     }
 
@@ -95,7 +95,7 @@ bool MidiDevice::OpenStream()
                 LOG("openInput error"<<Pm_GetErrorText(err));
                 msgTxt=Pm_GetErrorText(err);
             }
-            errorMessage=tr("Error while opening midi device %1 %2").arg(objInfo.name).arg(msgTxt);
+            SetErrorMessage( tr("Error while opening midi device %1 %2").arg(objInfo.name).arg(msgTxt) );
             return false;
         }
 
@@ -112,7 +112,7 @@ bool MidiDevice::OpenStream()
                 msgTxt=Pm_GetErrorText(err);
                 LOG("setFilter error"<<Pm_GetErrorText(err));
             }
-            errorMessage=tr("Error while opening midi device %1 %2").arg(objInfo.name).arg(msgTxt);
+            SetErrorMessage( tr("Error while opening midi device %1 %2").arg(objInfo.name).arg(msgTxt) );
             return false;
         }
     }
@@ -131,7 +131,7 @@ bool MidiDevice::OpenStream()
                 LOG("openInput error"<<Pm_GetErrorText(err));
                 msgTxt=Pm_GetErrorText(err);
             }
-            errorMessage=tr("Error while opening midi device %1 %2").arg(objInfo.name).arg(msgTxt);
+            SetErrorMessage( tr("Error while opening midi device %1 %2").arg(objInfo.name).arg(msgTxt) );
             return false;
         }
     }
@@ -217,8 +217,7 @@ bool MidiDevice::FindDeviceByName()
             deviceNumber=canBe;
             devInfo = Pm_GetDeviceInfo(deviceNumber);
         } else {
-            errorMessage=tr("Error : device was deleted");
-            LOG("device not found"<<objInfo.apiName<<objInfo.name);
+            SetErrorMessage( tr("Error : device was deleted") );
             return false;
         }
     }
@@ -229,12 +228,12 @@ bool MidiDevice::FindDeviceByName()
 
 bool MidiDevice::Open()
 {
-    errorMessage="";
+    SetErrorMessage("");
     closed=false;
 
     //device not found, create a dummy object
     if(!FindDeviceByName()){
-        errorMessage = tr("Device not found");
+        SetErrorMessage( tr("Device not found") );
         return true;
     }
 

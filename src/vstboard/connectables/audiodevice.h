@@ -44,7 +44,7 @@ namespace Connectables {
     {
         Q_OBJECT
     public:
-        AudioDevice(PaDeviceInfo &devInfo, MainHostHost *myHost,const ObjectInfo &info, QObject *parent=0);
+        AudioDevice(MainHostHost *myHost,const ObjectInfo &info, QObject *parent=0);
         ~AudioDevice();
 
         bool Open();
@@ -56,16 +56,18 @@ namespace Connectables {
         int GetNbInputs() const { return devInfo.maxInputChannels; }
         int GetNbOutputs() const { return devInfo.maxOutputChannels; }
 
+        bool IsAnInstanceOf(const ObjectInfo &info);
+
     #ifdef CIRCULAR_BUFFER
         void PinsToRingBuffers();
     #endif
-
-        QString errorMessage;
 
         /// current buffre size
         unsigned long bufferSize;
         float **currentInputBuffer;
         float **currentOutputBuffer;
+
+        void GetErrMessage(QString &msg) {msg = errorMessage; }
 
     private:
         bool Close();
@@ -90,6 +92,9 @@ namespace Connectables {
         bool PinBuffersToDevice( void *outputBuffer, unsigned long framesPerBuffer );
 #endif
 
+        void SetErrorMsg(const QString &msg);
+        QString errorMessage;
+
         /// true if the device is currently closing
         bool isClosing;
 
@@ -98,8 +103,6 @@ namespace Connectables {
 
         /// current sample rate
         float sampleRate;
-
-
 
         /// pointer to PortAudio stream
         PaStream *stream;

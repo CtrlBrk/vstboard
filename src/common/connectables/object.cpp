@@ -323,6 +323,7 @@ void Object::LoadProgram(int prog)
 {
     //if prog is already loaded, update model
     if(prog==currentProgId && currentProgram) {
+//        LOG("load same program"<<prog)
         return;
     }
 
@@ -903,4 +904,16 @@ void Object::UpdateViewNow()
     MsgObject msg(containerId);
     GetInfos(msg);
     msgCtrl->SendMsg(msg);
+}
+
+void Object::SetErrorMessage(const QString &msg)
+{
+    errorMessage=msg;
+
+    if(!MsgEnabled())
+        return;
+
+    MsgObject m(GetIndex());
+    m.prop[MsgObject::Message] = errorMessage;
+    msgCtrl->SendMsg(m);
 }

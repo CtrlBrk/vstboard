@@ -71,16 +71,27 @@ bool AudioDeviceOut::Open()
     QMutexLocker l(&objMutex);
 
     closed=false;
-    errorMessage="";
+    SetErrorMessage("");
+
+    listAudioPinIn->EnableVuUpdates(false);
 
     //create the audiodevice if needed
     if(!parentDevice) {
         MainHostHost *host=static_cast<MainHostHost*>(myHost);
-        parentDevice=host->audioDevices->AddDevice(objInfo, &errorMessage);
+        parentDevice=host->audioDevices->AddDevice(objInfo);
         if(!parentDevice) {
-            errorMessage=tr("Device not found");
+            SetErrorMessage( tr("Device not created") );
             return true;
         }
+    }
+
+    //if parent device in error, return
+    QString msg;
+    parentDevice->GetErrMessage(msg);
+    if(!msg.isEmpty()) {
+        parentDevice->SetObjectOutput(this);
+        SetErrorMessage(msg);
+        return true;
     }
 
     //if no output channels
@@ -90,12 +101,15 @@ bool AudioDeviceOut::Open()
         return false;
     }
 
+    //enable dummy pins
+    listAudioPinIn->EnableVuUpdates(true);
+    //add new pins
     listAudioPinIn->ChangeNumberOfPins( parentDevice->GetNbOutputs() );
 
     //device already has a child
     if(!parentDevice->SetObjectOutput(this)) {
         parentDevice=0;
-        errorMessage=tr("Already in use");
+        SetErrorMessage( tr("Already in use") );
         return true;
     }
 

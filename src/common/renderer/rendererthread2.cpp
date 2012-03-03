@@ -48,8 +48,6 @@ RendererThread2::RendererThread2(Renderer2 *renderer, int id) :
 
 RendererThread2::~RendererThread2()
 {
-
-
     Stop();
 
     while(isRunning()) {
@@ -72,7 +70,7 @@ void RendererThread2::Stop()
 {
     QMutexLocker locker(&mutexStop);
     stop=true;
-    LOG("thread"<<id<<"stopped")
+//    LOG("thread"<<id<<"stopped")
 }
 
 bool RendererThread2::IsStopped()
@@ -118,6 +116,7 @@ void RendererThread2::run()
 
                 if(!renderer->stepCanStart.first()->WaitUnlock(1000)) {
                     LOG("thread"<<id<<"1st step timeout")
+//                    return;
 //                    emit Timeout();
                 }
 
@@ -136,7 +135,7 @@ void RendererThread2::run()
             }
         }
 
-        if(!renderer->waitThreadEnd.WaitAllThreads(1000)) {
+        if(!renderer->waitThreadEnd.WaitAllThreads(2000)) {
             LOG("thread"<<id<<"end timeout")
 //            QMutexLocker locker(&mutexStop);
 //            stop=true;

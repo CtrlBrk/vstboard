@@ -54,18 +54,19 @@ int AudioDevice::countInputDevices=0;
   /param info ObjectInfo describing the device
   /param parent a parent QObject (unused ?)
   */
-AudioDevice::AudioDevice(PaDeviceInfo &devInfo,MainHostHost *myHost,const ObjectInfo &info, QObject *parent) :
+AudioDevice::AudioDevice(MainHostHost *myHost,const ObjectInfo &info,QObject *parent) :
     QObject(parent),
     sampleRate(44100.0f),
     bufferSize(4096),
     stream(0),
     objInfo(info),
-    devInfo(devInfo),
     devIn(0),
     devOut(0),
     opened(false),
     myHost(myHost)
 {
+    memset(&devInfo, 0, sizeof(devInfo));
+
     devOutClosing=false;
     setObjectName(objInfo.name);
 
@@ -88,8 +89,6 @@ AudioDevice::~AudioDevice()
         devOut=0;
     }
     mutexDevicesInOut.unlock();
-
-    Close();
 
     LOG(objectName()<<"deleted");
 }
@@ -114,7 +113,8 @@ void AudioDevice::DeleteIfUnused()
 
     if(del) {
         SetSleep(true);
-        myHost->audioDevices->RemoveDevice(objInfo.id);
+        myHost->audioDevices->RemoveDevice(this);
+        delete this;
     }
 
 }
@@ -362,9 +362,7 @@ bool AudioDevice::OpenStream(double sampleRate)
     }
 
     if(Pa_IsFormatSupported( inputParameters, outputParameters, sampleRate ) != paFormatIsSupported) {
-        LOG("Pa_IsFormatSupported format not supported");
-        errorMessage = tr("Stream format not supported");
-        LOG(errorMessage)
+        SetErrorMsg( tr("Stream format not supported") );
         if(inputParameters)
             delete inputParameters;
         if(outputParameters)
@@ -384,9 +382,7 @@ bool AudioDevice::OpenStream(double sampleRate)
 
     if( err != paNoError ) {
         Pa_CloseStream(stream);
-        LOG("Pa_OpenStream"<<Pa_GetErrorText( err ));
-        errorMessage = Pa_GetErrorText( err );
-        LOG(errorMessage)
+        SetErrorMsg( Pa_GetErrorText( err ) );
         if(inputParameters)
             delete inputParameters;
         if(outputParameters)
@@ -439,10 +435,11 @@ bool AudioDevice::Open()
     isClosing=false;
     mutexOpenClose.unlock();
 
-    errorMessage="";
+    SetErrorMsg("");
 
-    //update infos if portaudio has changed
+    //get portaudio infos
     if(!myHost->audioDevices->FindPortAudioDevice(objInfo, &devInfo)) {
+        SetErrorMsg( tr("Device not found") );
         return false;
     }
 
@@ -453,6 +450,7 @@ bool AudioDevice::Open()
         //if it fails, try to open with the default rate
         sampleRate = devInfo.defaultSampleRate;
         if(!OpenStream(sampleRate)) {
+            SetErrorMsg( tr("Sample format not supported") );
             return false;
         }
 
@@ -466,8 +464,6 @@ bool AudioDevice::Open()
     //failed to open the stream
     if( err != paNoError ) {
 
-        LOG("open"<<Pa_GetErrorText( err ));
-
         if(stream)
         {
             Pa_StopStream(stream);
@@ -475,6 +471,7 @@ bool AudioDevice::Open()
             stream = 0;
         }
 
+        SetErrorMsg( Pa_GetErrorText( err ) );
         return false;
     }
 
@@ -495,9 +492,8 @@ bool AudioDevice::Open()
 bool AudioDevice::Close()
 {
     mutexOpenClose.lock();
-    if(isClosing || !opened) {
+    if(isClosing) {
         mutexOpenClose.unlock();
-//        debug("AudioDevice::CloseStream already closing")
         return false;
     }
     isClosing=true;
@@ -720,7 +716,9 @@ bool AudioDevice::DeviceToPinBuffers( const void *inputBuffer, unsigned long fra
 
     for(int cpt=0; cpt<lst->nbPins(); cpt++) {
         AudioBuffer *pinBuf = lst->GetBuffer(cpt);
-        pinBuf->SetBufferContent( ((float **) inputBuffer)[cpt], framesPerBuffer);
+        if(pinBuf) {
+            pinBuf->SetBufferContent( ((float **) inputBuffer)[cpt], framesPerBuffer);
+        }
     }
 
 //    mutexDevicesInOut.unlock();
@@ -746,9 +744,11 @@ bool AudioDevice::PinBuffersToDevice( void *outputBuffer, unsigned long framesPe
 
     for(int cpt=0; cpt<lst->nbPins(); cpt++) {
         AudioBuffer *pinBuf = lst->GetBuffer(cpt);
-        pinBuf->ConsumeStack();
-        pinBuf->DumpToBuffer( ((float **) outputBuffer)[cpt], framesPerBuffer);
-        pinBuf->ResetStackCounter();
+        if(pinBuf) {
+            pinBuf->ConsumeStack();
+            pinBuf->DumpToBuffer( ((float **) outputBuffer)[cpt], framesPerBuffer);
+            pinBuf->ResetStackCounter();
+        }
     }
 
     return true;
@@ -838,4 +838,34 @@ int AudioDevice::paCallback( const void *inputBuffer, void *outputBuffer,
 
 #endif
     return paContinue;
+}
+
+bool AudioDevice::IsAnInstanceOf(const ObjectInfo &info)
+{
+    if(objInfo.api != info.api)
+        return false;
+
+    if(objInfo.name != info.name)
+        return false;
+
+    if(objInfo.duplicateNamesCounter != info.duplicateNamesCounter)
+        return false;
+
+    return true;
+}
+
+void AudioDevice::SetErrorMsg(const QString &msg)
+{
+#ifndef QT_NO_DEBUG
+    if(!msg.isEmpty()) {
+        LOG(msg)
+    }
+#endif
+
+    errorMessage = msg;
+
+    if(devIn)
+        devIn->SetErrorMessage(msg);
+    if(devOut)
+        devOut->SetErrorMessage(msg);
 }

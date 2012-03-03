@@ -27,10 +27,10 @@ Renderer2::~Renderer2()
         th->Stop();
     }
 
-    if(!waitThreadEnd.WaitAllThreads(2000)) {
-        QString err("closing : renderer end timeout");
-        LOG(err)
-    }
+//    if(!waitThreadEnd.WaitAllThreads(2000)) {
+//        QString err("closing : renderer end timeout");
+//        LOG(err)
+//    }
 
     waitThreadReady.RemoveClient();
     waitThreadEnd.RemoveClient();

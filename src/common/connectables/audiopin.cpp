@@ -135,11 +135,9 @@ void AudioPin::SetBufferSize(unsigned long size)
 
 float AudioPin::GetValue()
 {
-//    float newVu=.0f;
     value=buffer->GetVu();
 
-    if(value>0.1) {
-//        value=newVu;
+    if(value>0.01) {
         valueChanged=true;
     }
     return value;

@@ -289,7 +289,7 @@ namespace Connectables {
         virtual void UserRemovePin(const ConnectionInfo &info);
         virtual void UserAddPin(const ConnectionInfo &info);
 
-        void SetErrorMessage(const QString &msg) {errorMessage=msg;}
+        void SetErrorMessage(const QString &msg);
         bool IsInError() { return (objInfo.objType == ObjType::dummy || !errorMessage.isEmpty()); }
         void UpdateView();
 

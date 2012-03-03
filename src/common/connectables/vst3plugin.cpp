@@ -87,7 +87,7 @@ bool Vst3Plugin::Open()
         }
     }
     if(countPlugins==0) {
-        errorMessage = tr("no plugin found in this dll");
+        SetErrorMessage( tr("no plugin found in this dll") );
         return true;
     }
     if(countPlugins>1) {
@@ -162,7 +162,7 @@ bool Vst3Plugin::initProcessor()
 {
     PClassInfo classInfo;
     if(factory->getClassInfo(objInfo.id, &classInfo)!=kResultOk) {
-        errorMessage = tr("can't get classInfo");
+        SetErrorMessage( tr("can't get classInfo") );
         return true;
     }
     setObjectName(classInfo.name);
@@ -171,11 +171,11 @@ bool Vst3Plugin::initProcessor()
     //create processor
     tresult result = factory->createInstance (classInfo.cid, Vst::IComponent::iid, (void**)&processorComponent);
     if (!processorComponent || (result != kResultOk)) {
-        errorMessage = tr("Processor not created");
+        SetErrorMessage( tr("Processor not created") );
         return true;
     }
     if(processorComponent->initialize(myHost->vst3Host) != kResultOk) {
-        errorMessage = tr("plugin not initialized");
+        SetErrorMessage( tr("plugin not initialized") );
         return true;
     }
 
@@ -194,7 +194,7 @@ bool Vst3Plugin::initProcessor()
         processSetup.sampleRate = myHost->GetSampleRate();
 
         if(audioEffect->setupProcessing(processSetup)!= kResultOk) {
-            errorMessage = tr("processSetup not accepted");
+            SetErrorMessage( tr("processSetup not accepted") );
             return true;
         }
     }
@@ -278,7 +278,7 @@ bool Vst3Plugin::initController()
         }
 
         if(!initOk) {
-            errorMessage = tr("can't init controller");
+            SetErrorMessage( tr("can't init controller") );
             return false;
         }
     }
@@ -301,7 +301,7 @@ bool Vst3Plugin::initController()
 
     // set the host handler
     if(editController->setComponentHandler(this) != kResultOk) {
-        errorMessage = tr("can't set comp. handler");
+        SetErrorMessage( tr("can't set comp. handler") );
         return true;
     }
 
