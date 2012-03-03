@@ -116,7 +116,8 @@ void VstPlugin::SetBufferSize(unsigned long size)
         return;
 
     bool wasSleeping = GetSleep();
-    SetSleep(true);
+    if(!wasSleeping)
+        SetSleep(true);
 
 //    debug("VstPlugin::SetBufferSize %d size %ld -> %ld",index,bufferSize,size)
     Object::SetBufferSize(size);
@@ -125,7 +126,8 @@ void VstPlugin::SetBufferSize(unsigned long size)
 
     bufferSize = size;
 
-    SetSleep(wasSleeping);
+    if(!wasSleeping)
+        SetSleep(false);
 }
 
 void VstPlugin::SetSampleRate(float rate)

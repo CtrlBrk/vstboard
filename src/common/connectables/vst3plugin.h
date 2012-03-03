@@ -61,6 +61,7 @@ private:
     bool initPlugin();
     bool initProcessor();
     bool initController();
+    bool initAudioBuffers(Vst::BusDirection dir);
 
     QLibrary *pluginLib;
     IPluginFactory* factory;
@@ -91,6 +92,7 @@ signals:
     void WindowSizeChange(int newWidth, int newHeight);
 
 public slots:
+    void SetBufferSize(unsigned long size);
     void OnParameterChanged(ConnectionInfo pinInfo, float value);
     void EditorDestroyed();
     void OnEditorClosed();

@@ -179,17 +179,9 @@ bool Vst3Plugin::initProcessor()
         return true;
     }
 
-    //init processor
-    tresult check = processorComponent->queryInterface (Vst::IAudioProcessor::iid, (void**)&audioEffect);
-    if (check == kResultTrue) {
-
-        processData.numSamples = myHost->GetBufferSize();
-        if(doublePrecision)
-            processData.symbolicSampleSize = Vst::kSample64;
-        else
-            processData.symbolicSampleSize = Vst::kSample32;
-
-
+    //init audio effect
+    tresult idAudioEff = processorComponent->queryInterface (Vst::IAudioProcessor::iid, (void**)&audioEffect);
+    if (idAudioEff == kResultTrue) {
         Vst::ProcessSetup processSetup;
         memset (&processSetup, 0, sizeof (Vst::ProcessSetup));
         processSetup.processMode = Vst::kRealtime;
@@ -201,8 +193,6 @@ bool Vst3Plugin::initProcessor()
         processSetup.maxSamplesPerBlock = myHost->GetBufferSize();
         processSetup.sampleRate = myHost->GetSampleRate();
 
-        processData.prepare (*processorComponent, myHost->GetBufferSize(), processSetup.symbolicSampleSize);
-
         if(audioEffect->setupProcessing(processSetup)!= kResultOk) {
             errorMessage = tr("processSetup not accepted");
             return true;
@@ -211,38 +201,14 @@ bool Vst3Plugin::initProcessor()
 
     closed=false;
 
-    //init busses
-
-    //audio in
-    qint32 cpt=0;
-    qint32 numBusIn = processorComponent->getBusCount(Vst::kAudio, Vst::kInput);
-    for (qint32 i = 0; i < numBusIn; i++) {
-        Vst::BusInfo busInfo = {0};
-        if(processorComponent->getBusInfo(Vst::kAudio, Vst::kInput, i, busInfo) == kResultTrue) {
-            for(qint32 j=0; j<busInfo.channelCount; j++) {
-                Pin *p = listAudioPinIn->AddPin(cpt++);
-                p->setObjectName( QString::fromUtf16(busInfo.name) );
-                static_cast<AudioPin*>(p)->GetBuffer()->SetBufferPointer(processData.inputs[i].channelBuffers32[j]);
-            }
-        }
-    }
-
-    //audio out
-    cpt=0;
-    qint32 numBusOut = processorComponent->getBusCount(Vst::kAudio, Vst::kOutput);
-    for (qint32 i = 0; i < numBusOut; i++) {
-        Vst::BusInfo busInfo = {0};
-        if(processorComponent->getBusInfo(Vst::kAudio, Vst::kOutput, i, busInfo) == kResultTrue) {
-            for(qint32 j=0; j<busInfo.channelCount; j++) {
-                Pin *p = listAudioPinOut->AddPin(cpt++);
-                p->setObjectName( QString::fromUtf16(busInfo.name) );
-                static_cast<AudioPin*>(p)->GetBuffer()->SetBufferPointer(processData.outputs[i].channelBuffers32[j]);
-            }
-        }
+    if (idAudioEff == kResultTrue) {
+        //init busses
+        initAudioBuffers(Vst::kInput);
+        initAudioBuffers(Vst::kOutput);
     }
 
     //midi in
-    cpt=0;
+    qint32 cpt=0;
     qint32 numBusEIn = processorComponent->getBusCount(Vst::kEvent, Vst::kInput);
     for (qint32 i = 0; i < numBusEIn; i++) {
         Vst::BusInfo busInfo = {0};
@@ -270,6 +236,33 @@ bool Vst3Plugin::initProcessor()
     return true;
 }
 
+bool Vst3Plugin::initAudioBuffers(Vst::BusDirection dir)
+{
+    qint32 cpt=0;
+    qint32 numBusIn = processorComponent->getBusCount(Vst::kAudio, dir);
+    for (qint32 i = 0; i < numBusIn; i++) {
+        Vst::BusInfo busInfo = {0};
+        if(processorComponent->getBusInfo(Vst::kAudio, dir, i, busInfo) == kResultTrue) {
+            for(qint32 j=0; j<busInfo.channelCount; j++) {
+                Pin *p = 0;
+                if(dir==Vst::kInput) {
+                    p = listAudioPinIn->AddPin(cpt++);
+                } else {
+                    p = listAudioPinOut->AddPin(cpt++);
+                }
+                p->setObjectName( QString::fromUtf16(busInfo.name) );
+                AudioBuffer* buff = static_cast<AudioPin*>(p)->GetBuffer();
+                if(doublePrecision) {
+                    processData.setChannelBuffer64(dir, i, j, (double*)buff->GetPointer());
+                } else {
+                    processData.setChannelBuffer(dir, i, j, (float*)buff->GetPointer());
+                }
+            }
+        }
+    }
+
+    return true;
+}
 
 bool Vst3Plugin::initController()
 {
@@ -524,6 +517,33 @@ void Vst3Plugin::RemoveGui()
     pView=0;
 
 //    objMutex.unlock();
+}
+
+
+void Vst3Plugin::SetBufferSize(unsigned long size)
+{
+    if(closed)
+        return;
+
+    bool wasSleeping = GetSleep();
+    if(!wasSleeping)
+        SetSleep(true);
+
+    Object::SetBufferSize(size);
+
+    //size = 0 : we're the owner
+    processData.prepare (*processorComponent);
+    if(doublePrecision)
+        processData.symbolicSampleSize = Vst::kSample64;
+    else
+        processData.symbolicSampleSize = Vst::kSample32;
+    processData.numSamples = size;
+
+    initAudioBuffers(Vst::kInput);
+    initAudioBuffers(Vst::kOutput);
+
+    if(!wasSleeping)
+        SetSleep(false);
 }
 
 void Vst3Plugin::SetSleep(bool sleeping)
@@ -782,9 +802,9 @@ void Vst3Plugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
 
 Pin* Vst3Plugin::CreatePin(const ConnectionInfo &info)
 {
-    if(info.type == PinType::Audio) {
-        return new AudioPin(this,info.direction,info.pinNumber,myHost->GetBufferSize(),doublePrecision,true);
-    }
+//    if(info.type == PinType::Audio) {
+//        return new AudioPin(this,info.direction,info.pinNumber,myHost->GetBufferSize(),doublePrecision,true);
+//    }
 
     Pin *newPin = Object::CreatePin(info);
     if(newPin)
