@@ -95,7 +95,7 @@ private:
 
 public slots:
     void OnToggleDeviceInUse(PaHostApiIndex apiId, PaDeviceIndex devId, bool inUse, PaTime inLatency=0, PaTime outLatency=0, double sampleRate=0);
-    void ConfigDevice(const QModelIndex &index);
+    void ConfigDevice(const ObjectInfo &info);
     void RendererTimeout();
 };
 

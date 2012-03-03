@@ -136,7 +136,6 @@ PaUtilStreamRepresentation *firstOpenStream_ = NULL;
 
 #define PA_IS_INITIALISED_ (initializationCount_ != 0)
 
-
 static int CountHostApiInitializers( void )
 {
     int result = 0;
@@ -193,30 +192,33 @@ static PaError InitializeHostApis( void )
 
         PA_DEBUG(( "before paHostApiInitializers[%d].\n",i));
 
-        result = paHostApiInitializers[i]( &hostApis_[hostApisCount_], hostApisCount_ );
-        if( result != paNoError )
-            goto error;
+        //ctrlbrk mod
+        if(paHostApiEnabled[i]!=99) {
+            result = paHostApiInitializers[i]( &hostApis_[hostApisCount_], hostApisCount_ );
+            if( result != paNoError )
+                goto error;
 
-        PA_DEBUG(( "after paHostApiInitializers[%d].\n",i));
+            PA_DEBUG(( "after paHostApiInitializers[%d].\n",i));
 
-        if( hostApis_[hostApisCount_] )
-        {
-            PaUtilHostApiRepresentation* hostApi = hostApis_[hostApisCount_];
-            assert( hostApi->info.defaultInputDevice < hostApi->info.deviceCount );
-            assert( hostApi->info.defaultOutputDevice < hostApi->info.deviceCount );
+            if( hostApis_[hostApisCount_] )
+            {
+                PaUtilHostApiRepresentation* hostApi = hostApis_[hostApisCount_];
+                assert( hostApi->info.defaultInputDevice < hostApi->info.deviceCount );
+                assert( hostApi->info.defaultOutputDevice < hostApi->info.deviceCount );
 
-            hostApi->privatePaFrontInfo.baseDeviceIndex = baseDeviceIndex;
+                hostApi->privatePaFrontInfo.baseDeviceIndex = baseDeviceIndex;
 
-            if( hostApi->info.defaultInputDevice != paNoDevice )
-                hostApi->info.defaultInputDevice += baseDeviceIndex;
+                if( hostApi->info.defaultInputDevice != paNoDevice )
+                    hostApi->info.defaultInputDevice += baseDeviceIndex;
 
-            if( hostApi->info.defaultOutputDevice != paNoDevice )
-                hostApi->info.defaultOutputDevice += baseDeviceIndex;
+                if( hostApi->info.defaultOutputDevice != paNoDevice )
+                    hostApi->info.defaultOutputDevice += baseDeviceIndex;
 
-            baseDeviceIndex += hostApi->info.deviceCount;
-            deviceCount_ += hostApi->info.deviceCount;
+                baseDeviceIndex += hostApi->info.deviceCount;
+                deviceCount_ += hostApi->info.deviceCount;
 
-            ++hostApisCount_;
+                ++hostApisCount_;
+            }
         }
     }
 

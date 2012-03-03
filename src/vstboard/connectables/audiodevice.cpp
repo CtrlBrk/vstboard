@@ -213,10 +213,11 @@ void AudioDevice::SetSampleRate(float rate)
   */
 bool AudioDevice::OpenStream(double sampleRate)
 {
-    if(Pa_GetDeviceInfo(objInfo.id)==0) {
-        errorMessage=tr("Device not found");
-        return false;
-    }
+//    if(Pa_GetDeviceInfo(objInfo.id)==0) {
+//        errorMessage=tr("Device not found");
+//        LOG(errorMessage)
+//        return false;
+//    }
 
     unsigned long framesPerBuffer = paFramesPerBufferUnspecified;
 
@@ -363,6 +364,7 @@ bool AudioDevice::OpenStream(double sampleRate)
     if(Pa_IsFormatSupported( inputParameters, outputParameters, sampleRate ) != paFormatIsSupported) {
         LOG("Pa_IsFormatSupported format not supported");
         errorMessage = tr("Stream format not supported");
+        LOG(errorMessage)
         if(inputParameters)
             delete inputParameters;
         if(outputParameters)
@@ -384,6 +386,7 @@ bool AudioDevice::OpenStream(double sampleRate)
         Pa_CloseStream(stream);
         LOG("Pa_OpenStream"<<Pa_GetErrorText( err ));
         errorMessage = Pa_GetErrorText( err );
+        LOG(errorMessage)
         if(inputParameters)
             delete inputParameters;
         if(outputParameters)
@@ -437,6 +440,11 @@ bool AudioDevice::Open()
     mutexOpenClose.unlock();
 
     errorMessage="";
+
+    //update infos if portaudio has changed
+    if(!myHost->audioDevices->FindPortAudioDevice(objInfo, &devInfo)) {
+        return false;
+    }
 
     //try to open at the host rate
     double sampleRate = myHost->GetSampleRate();

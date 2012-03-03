@@ -95,6 +95,73 @@ PaUtilHostApiInitializer *paHostApiInitializers[] =
         0   /* NULL terminated array */
     };
 
+//ctrlbrk mod
+    PaHostApiTypeId paHostApiEnabled[] =
+        {
+
+    #ifndef PA_NO_WMME
+            paMME,
+    #endif
+
+    #ifndef PA_NO_DS
+            paDirectSound,
+    #endif
+
+    #ifndef PA_NO_ASIO
+            paASIO,
+    #endif
+
+    #ifndef PA_NO_WASAPI
+            paWASAPI,
+    #endif
+
+            0
+        };
+
+    void Pa_EnableAllHostApis()
+    {
+        int cpt=0;
+   #ifndef PA_NO_WMME
+           paHostApiEnabled[cpt++] = paMME;
+   #endif
+
+   #ifndef PA_NO_DS
+           paHostApiEnabled[cpt++] = paDirectSound;
+   #endif
+
+   #ifndef PA_NO_ASIO
+           paHostApiEnabled[cpt++] = paASIO;
+   #endif
+
+   #ifndef PA_NO_WASAPI
+           paHostApiEnabled[cpt++] = paWASAPI;
+   #endif
+    }
+
+    void Pa_DisableHostApi(PaHostApiTypeId id)
+    {
+         int cpt=0;
+    #ifndef PA_NO_WMME
+            if(id==paMME) paHostApiEnabled[cpt] = 99;
+            ++cpt;
+    #endif
+
+    #ifndef PA_NO_DS
+            if(id==paDirectSound) paHostApiEnabled[cpt] = 99;
+            ++cpt;
+    #endif
+
+    #ifndef PA_NO_ASIO
+            if(id==paASIO) paHostApiEnabled[cpt] = 99;
+            ++cpt;
+    #endif
+
+    #ifndef PA_NO_WASAPI
+            if(id==paWASAPI) paHostApiEnabled[cpt] = 99;
+            ++cpt;
+    #endif
+
+    }
 
 int paDefaultHostApiIndex = 0;
 

@@ -33,6 +33,16 @@ ListAudioDevicesView::ListAudioDevicesView(QWidget *parent) :
             this, SLOT(ConfigCurrentDevice()));
     addAction(audioDevConfig);
 
+    disableApi = new QAction(QIcon(":/img16x16/edit_remove.png"), tr("Disable API"), this);
+    connect(disableApi, SIGNAL(triggered()),
+            this, SLOT(DisableApi()));
+    addAction(disableApi);
+
+    enableApis = new QAction(QIcon(":/img16x16/edit_add.png"), tr("Enable all APIs"), this);
+    connect(enableApis, SIGNAL(triggered()),
+            this, SLOT(EnableApis()));
+    addAction(enableApis);
+
     updateList = new QAction(QIcon(":/img16x16/viewmag+.png"), tr("Refresh list"), this);
     updateList->setShortcut(Qt::Key_F5);
     updateList->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -44,19 +54,48 @@ ListAudioDevicesView::ListAudioDevicesView(QWidget *parent) :
             this, SLOT(AudioDevContextMenu(const QPoint &)));
 }
 
+void ListAudioDevicesView::setModel(QAbstractItemModel *model)
+{
+    QTreeView::setModel(model);
+    connect(this, SIGNAL(ApiDisabled(QModelIndex)),
+            model,SLOT(ApiDisabled(QModelIndex)));
+    connect(this, SIGNAL(ResetApis()),
+            model, SLOT(ResetApis()));
+    connect(this, SIGNAL(Config(QModelIndex)),
+            model, SLOT(ConfigDevice(QModelIndex)));
+}
+
 void ListAudioDevicesView::AudioDevContextMenu(const QPoint &pt)
 {
     QList<QAction *> lstActions;
 
-    if(currentIndex().sibling(currentIndex().row(),0).data(UserRoles::objInfo).isValid())
+    if(currentIndex().parent().isValid() && currentIndex().parent().data(UserRoles::type).toString()=="api")
         lstActions << audioDevConfig;
 
     lstActions << updateList;
+
+    if(currentIndex().data(UserRoles::type).toString()=="api") {
+        disableApi->setChecked( indexAt(pt).data(UserRoles::enable).toBool() );
+        lstActions << disableApi;
+    }
+
+    lstActions << enableApis;
+
     QMenu::exec(lstActions, mapToGlobal(pt));
 }
 
 void ListAudioDevicesView::ConfigCurrentDevice()
 {
-    if(currentIndex().sibling(currentIndex().row(),0).data(UserRoles::objInfo).isValid())
+    if(currentIndex().parent().isValid() && currentIndex().parent().data(UserRoles::type).toString()=="api")
         emit Config(currentIndex().sibling(currentIndex().row(),0));
+}
+
+void ListAudioDevicesView::DisableApi()
+{
+    emit ApiDisabled(currentIndex());
+}
+
+void ListAudioDevicesView::EnableApis()
+{
+    emit ResetApis();
 }

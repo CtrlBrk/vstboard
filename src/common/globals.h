@@ -63,7 +63,8 @@ namespace UserRoles {
         type,
         bankFile,
         programFile,
-        isDoublePrecision
+        isDoublePrecision,
+        enable
     };
 }
 namespace NodeType {

@@ -88,6 +88,7 @@ void ListAudioInterfacesModel::ReceiveMsg(const MsgObject &msg)
         foreach(const MsgObject &msgApi, msg.children) {
             QStandardItem *apiItem = new QStandardItem(msgApi.prop[MsgObject::Name].toString());
             apiItem->setData( msgApi.objIndex, UserRoles::value );
+            apiItem->setData( "api", UserRoles::type );
             apiItem->setDragEnabled(false);
             apiItem->setSelectable(false);
 //            if(msgApi.prop.contains("expand"))
@@ -138,5 +139,27 @@ void ListAudioInterfacesModel::Rescan()
 {
     MsgObject msg(GetIndex());
     msg.prop[MsgObject::Rescan]=1;
+    msgCtrl->SendMsg(msg);
+}
+
+void ListAudioInterfacesModel::ApiDisabled(const QModelIndex &api)
+{
+    MsgObject msg(GetIndex());
+    msg.prop[MsgObject::State]=api.data(UserRoles::value).toInt();
+    msgCtrl->SendMsg(msg);
+}
+
+void ListAudioInterfacesModel::ResetApis()
+{
+    MsgObject msg(GetIndex());
+    msg.prop[MsgObject::State]=-1;
+    msgCtrl->SendMsg(msg);
+}
+
+void ListAudioInterfacesModel::ConfigDevice(const QModelIndex &dev)
+{
+    MsgObject msg(GetIndex());
+    ObjectInfo info = dev.data(UserRoles::objInfo).value<ObjectInfo>();
+    msg.prop[MsgObject::Setup]=QVariant::fromValue(info);
     msgCtrl->SendMsg(msg);
 }

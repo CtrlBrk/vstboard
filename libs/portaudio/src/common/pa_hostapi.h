@@ -244,6 +244,10 @@ typedef PaError PaUtilHostApiInitializer( PaUtilHostApiRepresentation**, PaHostA
 */
 extern PaUtilHostApiInitializer *paHostApiInitializers[];
 
+//ctrlbrk mod
+extern PaHostApiTypeId paHostApiEnabled[];
+extern void Pa_EnableAllHostApis();
+extern void Pa_DisableHostApi(PaHostApiTypeId id);
 
 /** The index of the default host API in the paHostApiInitializers array.
  

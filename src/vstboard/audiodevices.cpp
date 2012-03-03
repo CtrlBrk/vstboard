@@ -130,7 +130,21 @@ void AudioDevices::CloseDevices(bool close)
 
 void AudioDevices::OpenDevices()
 {
-//    model=0;
+    Pa_EnableAllHostApis();
+
+    QStringList disabled = myHost->settings->GetSetting("disabledAudioApis").toStringList();
+    QList<int>disabledApis;
+    foreach(const QString &str, disabled) {
+        disabledApis << str.toInt();
+    }
+
+    int i=0;
+    while(paHostApiEnabled[i]!=0) {
+        if(disabledApis.contains(paHostApiEnabled[i]))
+            Pa_DisableHostApi(paHostApiEnabled[i]);
+        ++i;
+    }
+
     PaError paRet =Pa_Initialize();
     if(paRet!=paNoError) {
         QMessageBox msgBox;
@@ -173,17 +187,6 @@ void AudioDevices::OpenDevices()
     }
 }
 
-/*!
-  Get the view model of the list
-  \return pointer to the model
-  */
-//ListAudioInterfacesModel * AudioDevices::GetModel()
-//{
-//    CloseDevices();
-//    OpenDevices();
-//    return model;
-//}
-
 void AudioDevices::ReceiveMsg(const MsgObject &msg)
 {
     SetMsgEnabled(true);
@@ -195,6 +198,28 @@ void AudioDevices::ReceiveMsg(const MsgObject &msg)
     }
     if(msg.prop.contains(MsgObject::GetUpdate)) {
         BuildModel();
+        return;
+    }
+
+    if(msg.prop.contains(MsgObject::Setup)) {
+        ObjectInfo info = msg.prop[MsgObject::Setup].value<ObjectInfo>();
+        ConfigDevice(info);
+        return;
+    }
+
+    if(msg.prop.contains(MsgObject::State)) {
+        if( msg.prop[MsgObject::State].toInt() == -1 ) {
+            //reset apis
+            myHost->settings->SetSetting("disabledAudioApis",QStringList());
+        } else {
+            //disable an api
+            QStringList disabled = myHost->settings->GetSetting("disabledAudioApis").toStringList();
+            disabled << msg.prop[MsgObject::State].toString();
+            myHost->settings->SetSetting("disabledAudioApis",disabled);
+        }
+
+        CloseDevices();
+        OpenDevices();
         return;
     }
 }
@@ -367,6 +392,9 @@ bool AudioDevices::FindPortAudioDevice(ObjectInfo &objInfo, PaDeviceInfo *dInfo)
     PaHostApiIndex apiIndex = Pa_HostApiTypeIdToHostApiIndex( apiType );
     const PaHostApiInfo *apiInfo = Pa_GetHostApiInfo( apiIndex );
 
+    if(!apiInfo)
+        return false;
+
     for (int i=0; i<apiInfo->deviceCount; i++) {
         PaDeviceIndex devIndex = Pa_HostApiDeviceIndexToDeviceIndex( apiIndex, i);
         const PaDeviceInfo *info = Pa_GetDeviceInfo( devIndex );
@@ -424,12 +452,8 @@ bool AudioDevices::FindPortAudioDevice(ObjectInfo &objInfo, PaDeviceInfo *dInfo)
     return true;
 }
 
-void AudioDevices::ConfigDevice(const QModelIndex &index)
+void AudioDevices::ConfigDevice(const ObjectInfo &info)
 {
-    if(!index.data(UserRoles::objInfo).isValid())
-        return;
-
-    ObjectInfo info = index.data(UserRoles::objInfo).value<ObjectInfo>();
     PaDeviceIndex configDevId = (PaDeviceIndex)info.id;
     PaHostApiTypeId configApiIndex = (PaHostApiTypeId)info.api;
 

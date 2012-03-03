@@ -26,6 +26,7 @@
 
 class ListAudioInterfacesModel : public QStandardItemModel, public MsgHandler
 {
+    Q_OBJECT
 public:
     ListAudioInterfacesModel(MsgController *msgCtrl, int objId, QObject *parent=0);
     Qt::ItemFlags flags ( const QModelIndex & index ) const;
@@ -34,6 +35,11 @@ public:
     void Update();
     void Rescan();
     QModelIndexList expandedIndex;
+
+public slots:
+    void ApiDisabled(const QModelIndex &api);
+    void ResetApis();
+    void ConfigDevice(const QModelIndex &dev);
 };
 
 #endif // AUDIOINTERFACESMODEL_H

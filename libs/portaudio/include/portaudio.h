@@ -131,7 +131,6 @@ const char *Pa_GetErrorText( PaError errorCode );
 */
 PaError Pa_Initialize( void );
 
-
 /** Library termination function - call this when finished using PortAudio.
  This function deallocates all resources allocated by PortAudio since it was
  initializied by a call to Pa_Initialize(). In cases where Pa_Initialise() has
@@ -238,6 +237,12 @@ typedef enum PaHostApiTypeId
     paWASAPI=13,
     paAudioScienceHPI=14
 } PaHostApiTypeId;
+
+
+//ctrlbrk mod
+PaHostApiTypeId paHostApiEnabled[];
+void Pa_EnableAllHostApis();
+void Pa_DisableHostApi(PaHostApiTypeId id);
 
 
 /** A structure containing information about a particular host API. */

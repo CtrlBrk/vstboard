@@ -173,7 +173,7 @@ void MainWindow::UpdateSolverMap(const MsgObject &msg)
     foreach(const MsgObject &thread, msg.children) {
         foreach(const MsgObject &step, thread.children) {
             QString strStep;
-            int end=step.objIndex;
+//            int end=step.objIndex;
             foreach(const MsgObject &node, step.children) {
                 QString str = QString("[%1:%2][%3:%4](%5)")
                     .arg(node.prop[MsgObject::Value].toInt())
