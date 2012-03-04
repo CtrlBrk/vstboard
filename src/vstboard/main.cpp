@@ -61,12 +61,14 @@ int main(int argc, char *argv[])
 {
     qRegisterMetaType<ConnectionInfo>("ConnectionInfo");
     qRegisterMetaType<ObjectInfo>("ObjectInfo");
+    qRegisterMetaType<ObjectContainerAttribs>("ObjectContainerAttribs");
     qRegisterMetaType<MsgObject>("MsgObject");
     qRegisterMetaType<int>("ObjType::Enum");
     qRegisterMetaType<QVariant>("QVariant");
     qRegisterMetaType<AudioBuffer*>("AudioBuffer*");
 
     qRegisterMetaTypeStreamOperators<ObjectInfo>("ObjectInfo");
+    qRegisterMetaTypeStreamOperators<ObjectContainerAttribs>("ObjectContainerAttribs");
 
 #ifndef QT_NO_DEBUG
     qInstallMsgHandler(myMessageOutput);
@@ -91,7 +93,12 @@ int main(int argc, char *argv[])
         app.installTranslator(&myappTranslator);
 #endif
 
-    Settings *set = new Settings("",qApp);
+#if defined(_M_X64) || defined(__amd64__)
+    Settings *set = new Settings("x64/",qApp);
+#else
+    Settings *set = new Settings("x86/",qApp);
+#endif
+
 
     MainHostHost host(set);
 //    QThread th;

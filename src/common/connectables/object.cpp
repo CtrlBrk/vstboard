@@ -790,7 +790,7 @@ void Object::GetInfos(MsgObject &msg)
 
     msg.prop[MsgObject::Add]=info().nodeType;
     msg.prop[MsgObject::Type]=info().objType;
-    msg.prop[MsgObject::Name]=info().name;
+    msg.prop[MsgObject::Name]=objectName();//info().name;
 
     if(!errorMessage.isEmpty()) {
         msg.prop[MsgObject::Message]=errorMessage;

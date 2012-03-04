@@ -46,7 +46,6 @@ public:
     static const float defaultSampleRate(Settings *settings);
     static const int defaultBufferSize(Settings *settings);
     static const bool defaultDoublePrecision(Settings *settings);
-    static const int defaultNumberOfThreads(Settings *settings);
 
 protected:
     void changeEvent(QEvent *e);
@@ -56,6 +55,7 @@ protected:
 
 public slots:
     void accept();
+    void reject();
 
 private slots:
     void on_browseProject_clicked();

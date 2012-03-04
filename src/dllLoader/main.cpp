@@ -41,64 +41,60 @@ HMODULE Hplugin=0;
 
 bool InitModule()
 {
+#if defined(_M_X64) || defined(__amd64__)
+    std::wstring regBaseKey(L"Software\\CtrlBrk\\VstBoard\\x64");
+#else
+    std::wstring regBaseKey(L"Software\\CtrlBrk\\VstBoard\\x86");
+#endif
+
     HKEY  hKey;
-    if(::RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\CtrlBrk\\VstBoard", 0, KEY_QUERY_VALUE, &hKey) != ERROR_SUCCESS) {
-        MessageBox(NULL,L"Can't open HKCU\\Software\\CtrlBrk\\VstBoard",L"VstBoard", MB_OK | MB_ICONERROR);
-        return 0;
+    if(::RegOpenKeyEx(HKEY_CURRENT_USER, regBaseKey.c_str(), 0, KEY_QUERY_VALUE, &hKey) != ERROR_SUCCESS) {
+        MessageBox(NULL,(L"Registry key not found : HKCU\\"+regBaseKey).c_str(),L"VstBoard", MB_OK | MB_ICONERROR);
+        return false;
     }
+
+#ifndef QT_NO_DEBUG
+    std::wstring installKey(L"DebugLocation");
+#else
+    std::wstring installKey(L"InstallLocation");
+#endif
+
     DWORD dwSize     = 1000;
     DWORD dwDataType = 0;
-
     BYTE value[1000];
-#ifndef QT_NO_DEBUG
-    if(::RegQueryValueEx(hKey, L"DebugLocation", 0, &dwDataType, (LPBYTE)value, &dwSize) != ERROR_SUCCESS) {
+    if(::RegQueryValueEx(hKey, installKey.c_str(), 0, &dwDataType, (LPBYTE)value, &dwSize) != ERROR_SUCCESS) {
         ::RegCloseKey(hKey);
-        MessageBox(NULL,L"Can't read HKCU\\Software\\CtrlBrk\\VstBoard\\DebugLocation",L"VstBoard", MB_OK | MB_ICONERROR);
-        return 0;
+        MessageBox(NULL,(L"Registry key not found : HKCU\\"+regBaseKey+L"\\"+installKey).c_str(),L"VstBoard", MB_OK | MB_ICONERROR);
+        return false;
     }
-#else
-    if(::RegQueryValueEx(hKey, L"InstallLocation", 0, &dwDataType, (LPBYTE)value, &dwSize) != ERROR_SUCCESS) {
-        ::RegCloseKey(hKey);
-        MessageBox(NULL,L"Can't read HKCU\\Software\\CtrlBrk\\VstBoard\\InstallLocation",L"VstBoard", MB_OK | MB_ICONERROR);
-        return 0;
-    }
-#endif
+
     ::RegCloseKey(hKey);
     std::wstring instDir((TCHAR*)value);
-    instDir.erase(
-        remove( instDir.begin(), instDir.end(), '\"' ),
-        instDir.end()
-        );
+    instDir.erase( remove( instDir.begin(), instDir.end(), '\"' ), instDir.end() );
 
-    if(GetFileAttributes((instDir).c_str()) == 0xffffffff)
-    {
-      MessageBox(NULL,(L"The path \""+instDir+L"\" defined in HKCU\\Software\\CtrlBrk\\VstBoard\\InstallLocation is not valid").c_str(),L"VstBoard", MB_OK | MB_ICONERROR);
-      return 0;
+    if(GetFileAttributes((instDir).c_str()) == 0xffffffff) {
+        MessageBox(NULL,(L"The path \""+instDir+L"\" defined in \"HKCU\\"+regBaseKey+L"\\"+installKey+L"\" is not valid").c_str(),L"VstBoard", MB_OK | MB_ICONERROR);
+        return false;
     }
 
-    if(GetFileAttributes((instDir+L"\\VstBoardPlugin.dll").c_str()) == 0xffffffff)
-    {
+    if(GetFileAttributes((instDir+L"\\VstBoardPlugin.dll").c_str()) == 0xffffffff) {
       MessageBox(NULL,(instDir+L"\\VstBoardPlugin.dll : file not found").c_str(),L"VstBoard", MB_OK | MB_ICONERROR);
       return false;
     }
 
 #ifndef QT_NO_DEBUG
-    Hcore = LoadLibrary((instDir+L"\\QtCored4.dll").c_str());
-    Hgui = LoadLibrary((instDir+L"\\QtGuid4.dll").c_str());
-    #ifdef SCRIPTENGINE
-        Hscript = LoadLibrary((instDir+L"\\QtScriptd4.dll").c_str());
-    #endif
-    HwinMigrate = LoadLibrary((instDir+L"\\QtSolutions_MFCMigrationFramework-headd.dll").c_str());
-    Hplugin = LoadLibrary((instDir+L"\\VstBoardPlugin.dll").c_str());
+    std::wstring dbgSuffix(L"d");
 #else
-    Hcore = LoadLibrary((instDir+L"\\QtCore4.dll").c_str());
-    Hgui = LoadLibrary((instDir+L"\\QtGui4.dll").c_str());
-    #ifdef SCRIPTENGINE
-        Hscript = LoadLibrary((instDir+L"\\QtScript4.dll").c_str());
-    #endif
-    HwinMigrate = LoadLibrary((instDir+L"\\QtSolutions_MFCMigrationFramework-head.dll").c_str());
-    Hplugin = LoadLibrary((instDir+L"\\VstBoardPlugin.dll").c_str());
+    std::wstring dbgSuffix(L"");
 #endif
+
+    Hcore = LoadLibrary((instDir+L"\\QtCore"+dbgSuffix+L"4.dll").c_str());
+    Hgui = LoadLibrary((instDir+L"\\QtGui"+dbgSuffix+L"4.dll").c_str());
+    #ifdef SCRIPTENGINE
+        Hscript = LoadLibrary((instDir+L"\\QtScriptd4"+dbgSuffix+L".dll").c_str());
+    #endif
+    HwinMigrate = LoadLibrary((instDir+L"\\QtSolutions_MFCMigrationFramework-head"+dbgSuffix+L".dll").c_str());
+    Hplugin = LoadLibrary((instDir+L"\\VstBoardPlugin.dll").c_str());
 
     if(!Hplugin) {
         FreeLibrary(Hplugin);
@@ -194,7 +190,7 @@ extern "C" {
 
     VST_EXPORT AEffect* VSTPluginMain (audioMasterCallback audioMaster)
     {
-        if(InitModule()) {
+        if(!InitModule()) {
             DeinitModule();
             return 0;
         }
@@ -202,11 +198,11 @@ extern "C" {
 #ifdef AS_INSTRUMENT
         vstPluginFuncPtr entryPoint = (vstPluginFuncPtr)GetProcAddress(Hplugin, "VSTInstrumentMain");
 #else
-        vstPluginFuncPtr entryPoint = (vstPluginFuncPtr)GetProcAddress(Hplugin, "VSTEffectMain");
+        vstPluginFuncPtr entryPoint = (vstPluginFuncPtr)GetProcAddress(Hplugin, "VSTPluginMain");
 #endif
         if(!entryPoint) {
             DeinitModule();
-            MessageBox(NULL,L"\\VstBoardPlugin.dll is not valid",L"VstBoard", MB_OK | MB_ICONERROR);
+            MessageBox(NULL,L"VstBoardPlugin.dll is not valid",L"VstBoard", MB_OK | MB_ICONERROR);
             return 0;
         }
 

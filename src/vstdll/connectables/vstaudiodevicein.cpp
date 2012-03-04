@@ -60,8 +60,10 @@ void VstAudioDeviceIn::SetBufferSize(unsigned long size)
 
 bool VstAudioDeviceIn::Open()
 {
-    if(!static_cast<VstBoardProcessor*>(myHost)->addAudioIn(this))
-        return false;
+    if(!static_cast<VstBoardProcessor*>(myHost)->addAudioIn(this)) {
+        SetErrorMessage( tr("No available bus") );
+        return true;
+    }
 
     listAudioPinOut->ChangeNumberOfPins(2);
     SetBufferSize(myHost->GetBufferSize());

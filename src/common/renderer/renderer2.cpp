@@ -8,6 +8,8 @@ Renderer2::Renderer2(QObject *parent) :
     nbThreads(0),
     nbSteps(0)
 {
+    setObjectName("renderer");
+
     waitThreadReady.AddClient();
     waitThreadEnd.AddClient();
 
@@ -145,6 +147,12 @@ void Renderer2::ThreadCleanup()
 
 void Renderer2::OnThreadTimeout()
 {
+    stepCanStart.first()->Unlock(999);
+    waitThreadReady.WakeAll();
+    if(!waitThreadEnd.WaitAllThreads(1000)) {
+        waitThreadEnd.WakeAll();
+    }
+
     if(signalTimeoutTimer.isActive())
         return;
     signalTimeoutTimer.start();

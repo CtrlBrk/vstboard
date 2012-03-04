@@ -58,7 +58,12 @@ public:
         tresult PLUGIN_API process (Vst::ProcessData& data);
 
         static FUnknown* createInstance (void*) {
-            Settings *set = new Settings("plugin/",qApp);
+
+#if defined(_M_X64) || defined(__amd64__)
+            Settings *set = new Settings("x64/plugin/",qApp);
+#else
+            Settings *set = new Settings("x86/plugin/",qApp);
+#endif
             return (Vst::IAudioProcessor*)new VstBoardProcessor (set);
         }
 

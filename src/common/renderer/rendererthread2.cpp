@@ -10,6 +10,7 @@ RendererThread2::RendererThread2(Renderer2 *renderer, int id) :
     stop(false),
     id(id)
 {
+    setObjectName("rendererThread");
     renderer->waitThreadReady.AddClient();
     renderer->waitThreadEnd.AddClient();
 

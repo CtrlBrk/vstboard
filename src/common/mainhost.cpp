@@ -226,7 +226,10 @@ void MainHost::SetupMainContainer()
 
 void MainHost::SetupHostContainer()
 {
+    bool msgWasEnabled=false;
+
     if(hostContainer) {
+        msgWasEnabled = hostContainer->MsgEnabled();
         mainContainer->ParkObject( hostContainer );
         hostContainer.clear();
         UpdateSolver(true);
@@ -318,19 +321,22 @@ void MainHost::SetupHostContainer()
         projectContainer->parentContainer=hostContainer;
     }
 
-    hostContainer->SetMsgEnabled(true);
-//    MsgObject msg(FixedObjId::mainContainer);
-//    hostContainer->GetInfos(msg);
-//    SendMsg(msg);
-
     hostContainer->SetLoadingMode(false);
     hostContainer->UpdateModificationTime();
     SetSolverUpdateNeeded();
+
+    if(msgWasEnabled) {
+        hostContainer->SetMsgEnabled(true);
+        hostContainer->UpdateView();
+    }
 }
 
 void MainHost::SetupProjectContainer()
 {
+    bool msgWasEnabled=false;
+
     if(projectContainer) {
+        msgWasEnabled=projectContainer->MsgEnabled();
         mainContainer->ParkObject( projectContainer );
         projectContainer.clear();
         UpdateSolver(true);
@@ -433,22 +439,26 @@ void MainHost::SetupProjectContainer()
         groupContainer->parentContainer=projectContainer;
     }
 
-    projectContainer->SetMsgEnabled(true);
-//    MsgObject msg(FixedObjId::mainContainer);
-//    projectContainer->GetInfos(msg);
-//    SendMsg(msg);
-
     projectContainer->SetLoadingMode(false);
     projectContainer->UpdateModificationTime();
     SetSolverUpdateNeeded();
+
+    if(msgWasEnabled) {
+        projectContainer->SetMsgEnabled(true);
+        projectContainer->UpdateView();
+    }
 }
 
 void MainHost::SetupProgramContainer()
 {
+    bool msgWasEnabled=false;
+
     if(programContainer) {
-        MsgObject msg(FixedObjId::programParking);
-        msg.prop[MsgObject::Clear]=1;
-        SendMsg(msg);
+        msgWasEnabled=programContainer->MsgEnabled();
+
+//        MsgObject msg(FixedObjId::programParking);
+//        msg.prop[MsgObject::Clear]=1;
+//        SendMsg(msg);
 
         mainContainer->ParkObject( programContainer );
         programContainer.clear();
@@ -551,23 +561,26 @@ void MainHost::SetupProgramContainer()
         programContainer->parentContainer=groupContainer;
     }
 
-    programContainer->SetMsgEnabled(true);
-//    MsgObject msg(FixedObjId::mainContainer);
-//    programContainer->GetInfos(msg);
-//    SendMsg(msg);
-
     programContainer->SetLoadingMode(false);
     programContainer->UpdateModificationTime();
     SetSolverUpdateNeeded();
+
+    if(msgWasEnabled) {
+        programContainer->SetMsgEnabled(true);
+        programContainer->UpdateView();
+    }
 }
 
 void MainHost::SetupGroupContainer()
 {
-    if(groupContainer) {
-        MsgObject msg(FixedObjId::groupParking);
-        msg.prop[MsgObject::Clear]=1;
-        SendMsg(msg);
+    bool msgWasEnabled=false;
 
+    if(groupContainer) {
+        msgWasEnabled=groupContainer->MsgEnabled();
+
+//        MsgObject msg(FixedObjId::groupParking);
+//        msg.prop[MsgObject::Clear]=1;
+//        SendMsg(msg);
 
         mainContainer->ParkObject( groupContainer );
         groupContainer.clear();
@@ -672,14 +685,14 @@ void MainHost::SetupGroupContainer()
         programContainer->parentContainer=groupContainer;
     }
 
-    groupContainer->SetMsgEnabled(true);
-//    MsgObject msg(FixedObjId::mainContainer);
-//    groupContainer->GetInfos(msg);
-//    SendMsg(msg);
-
     groupContainer->SetLoadingMode(false);
     groupContainer->UpdateModificationTime();
     SetSolverUpdateNeeded();
+
+    if(msgWasEnabled) {
+        groupContainer->SetMsgEnabled(true);
+        groupContainer->UpdateView();
+    }
 }
 
 void MainHost::EnableSolverUpdate(bool enable)

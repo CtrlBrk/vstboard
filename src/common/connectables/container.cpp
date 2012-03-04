@@ -321,10 +321,10 @@ void Container::LoadProgram(int prog)
         delete oldProg;
     }
 
-//    if(msgWasEnabled) {
+    if(msgWasEnabled) {
         SetMsgEnabled(true);
         UpdateView();
-//    }
+    }
 }
 
 const QTime Container::GetLastModificationTime() {
@@ -1150,6 +1150,7 @@ void Container::ReceiveMsg(const MsgObject &msg)
 //        GetInfos(ans);
 //        msgCtrl->SendMsg(ans);
         SetMsgEnabled( msg.prop[MsgObject::Update].toBool() );
+        UpdateView();
         return;
     }
 

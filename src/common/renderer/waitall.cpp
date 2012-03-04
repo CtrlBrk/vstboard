@@ -2,8 +2,7 @@
 
 
 WaitAll::WaitAll() :
-    cptAtStart(0),
-    cptRunning(0)
+    cptAtStart(0)
 {
 }
 
@@ -11,27 +10,23 @@ WaitAll::~WaitAll()
 {
     QMutexLocker l(&mutex);
     condStart.wakeAll();
-    condRunning.wakeAll();
 }
 
 void WaitAll::AddClient()
 {
     QMutexLocker l(&mutex);
-//    if(loopStarted) {
-//        ++cptAtEnd;
-//    } else {
-        ++cptAtStart;
-//    }
+    ++cptAtStart;
+}
+
+void WaitAll::WakeAll()
+{
+    condStart.wakeAll();
 }
 
 void WaitAll::RemoveClient()
 {
     QMutexLocker l(&mutex);
-//    if(loopStarted) {
-//        --cptAtEnd;
-//    } else {
-        --cptAtStart;
-//    }
+    --cptAtStart;
     if(cptAtStart<=0) {
         condStart.wakeAll();
     }
@@ -50,7 +45,6 @@ bool WaitAll::WaitAllThreads(int timeout)
 
     if(cptAtStart<=1) {
         cptAtStart=1;
-//        ++cptRunning;
         condStart.wakeAll();
         return true;
     }
@@ -64,43 +58,6 @@ bool WaitAll::WaitAllThreads(int timeout)
     }
 
     ++cptAtStart;
-//    ++cptRunning;
     return true;
 }
 
-bool WaitAll::EndPointWait(int timeout)
-{
-    QMutexLocker l(&mutex);
-
-    --cptAtStart;
-    if(cptAtStart==0) {
-        ++cptAtStart;
-        ++cptRunning;
-        condStart.wakeAll();
-        return true;
-    }
-    if(!condStart.wait(&mutex,timeout)) {
-        ++cptAtStart;
-        return false;
-    }
-
-    QMutexLocker r(&mutexRun);
-    ++cptAtStart;
-    ++cptRunning;
-
-    while(cptRunning!=1) {
-        if(!condRunning.wait(&mutexRun,timeout)) {
-            --cptRunning;
-            return false;
-        }
-    }
-    --cptRunning;
-    return true;
-}
-
-void WaitAll::EndPoint()
-{
-    QMutexLocker l(&mutex);
-    --cptRunning;
-    condRunning.wakeAll();
-}

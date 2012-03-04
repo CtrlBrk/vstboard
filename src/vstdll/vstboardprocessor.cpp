@@ -62,12 +62,14 @@ tresult PLUGIN_API VstBoardProcessor::initialize (FUnknown* context)
 
     qRegisterMetaType<ConnectionInfo>("ConnectionInfo");
     qRegisterMetaType<ObjectInfo>("ObjectInfo");
+    qRegisterMetaType<ObjectContainerAttribs>("ObjectContainerAttribs");
     qRegisterMetaType<MsgObject>("MsgObject");
     qRegisterMetaType<int>("ObjType::Enum");
     qRegisterMetaType<QVariant>("QVariant");
     qRegisterMetaType<AudioBuffer*>("AudioBuffer*");
 
     qRegisterMetaTypeStreamOperators<ObjectInfo>("ObjectInfo");
+    qRegisterMetaTypeStreamOperators<ObjectContainerAttribs>("ObjectContainerAttribs");
 
     QCoreApplication::setOrganizationName("CtrlBrk");
     QCoreApplication::setApplicationName("VstBoard");
@@ -215,14 +217,19 @@ tresult PLUGIN_API VstBoardProcessor::setActive (TBool state)
 tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
 {
     unsigned long bSize = (unsigned long)data.numSamples;
-    if(bufferSize != bSize) {
+    if(bSize>0 && bufferSize != bSize) {
         SetBufferSize(bSize);
     }
 
     int cpt=0;
     Vst::AudioBusBuffers *buf = data.inputs;
     foreach(Connectables::VstAudioDeviceIn* dev, lstAudioIn) {
-        dev->SetBuffers(buf,data.numSamples);
+        if(cpt==data.numInputs)
+            break;
+
+        if(buf)
+            dev->SetBuffers(buf,data.numSamples);
+
         ++buf;
         ++cpt;
     }
@@ -232,9 +239,15 @@ tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
     cpt=0;
     buf = data.outputs;
     foreach(Connectables::VstAudioDeviceOut* dev, lstAudioOut) {
-        dev->GetBuffers(buf,data.numSamples);
+        if(cpt==data.numOutputs)
+            break;
+
+        if(buf)
+            dev->GetBuffers(buf,data.numSamples);
+
         ++buf;
         ++cpt;
+
     }
 
     return kResultTrue;
@@ -290,8 +303,10 @@ bool VstBoardProcessor::addAudioIn(Connectables::VstAudioDeviceIn *dev)
     if(lstAudioIn.contains(dev))
         return false;
 
+    if(lstAudioIn.count() == NB_MAIN_BUSES_IN)
+        return false;
+
     dev->setObjectName( QString("Audio in %1").arg( lstAudioIn.count()+1 ) );
-    activateBus(Vst::kAudio, Vst::kInput, lstAudioIn.count(), true);
     lstAudioIn << dev;
     return true;
 }
@@ -303,8 +318,10 @@ bool VstBoardProcessor::addAudioOut(Connectables::VstAudioDeviceOut *dev)
     if(lstAudioOut.contains(dev))
         return false;
 
+    if(lstAudioOut.count() == NB_MAIN_BUSES_OUT)
+        return false;
+
     dev->setObjectName( QString("Audio out %1").arg( lstAudioOut.count()+1 ) );
-    activateBus(Vst::kAudio, Vst::kOutput, lstAudioOut.count(), true);
     lstAudioOut << dev;
     return true;
 }

@@ -311,21 +311,6 @@ const bool ConfigDialog::defaultDoublePrecision(Settings *settings)
     return settings->GetSetting("doublePrecision",false).toBool();
 }
 
-const int ConfigDialog::defaultNumberOfThreads(Settings *settings)
-{
-    int th = settings->GetSetting("NbThreads",0).toInt();
-    if(th>0 && th<=32)
-        return th;
-
-#ifdef _WIN32
-    SYSTEM_INFO info;
-    GetSystemInfo(&info);
-    return info.dwNumberOfProcessors;
-#endif
-
-    return 2;
-}
-
 void ConfigDialog::AddRecentSetupFile(const QString &file,Settings *settings)
 {
     if(!file.isEmpty()) {
@@ -472,6 +457,17 @@ void ConfigDialog::accept()
         msg.setIcon(QMessageBox::Information);
         msg.exec();
     }
+}
+
+void ConfigDialog::reject()
+{
+    //reset nb threads
+    if(myHost) {
+        int th = settings->GetSetting("NbThreads",0).toInt();
+        myHost->ChangeNbThreads(th);
+    }
+
+    QDialog::reject();
 }
 
 void ConfigDialog::changeEvent(QEvent *e)
