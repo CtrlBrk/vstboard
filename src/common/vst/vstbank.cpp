@@ -1,6 +1,6 @@
 /******************************************************************************
 #   Copyright 2006 Hermann Seib
-#   Copyright 2010 Raphaël François
+#   Copyright 2010 RaphaÃ«l FranÃ§ois
 #
 #    This file is part of VstBoard.
 #

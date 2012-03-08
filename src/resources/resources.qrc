@@ -15,8 +15,6 @@
         <file>img16x16/documentinfo.png</file>
         <file>img32x32/agt_action_fail.png</file>
         <file>img16x16/delete.png</file>
-        <file>vst.png</file>
-        <file>asio.png</file>
         <file>lgplv3-88x31.png</file>
         <file>vstboard16_8.png</file>
         <file>vstboard24_8.png</file>
@@ -41,5 +39,7 @@
         <file>img16x16/move.png</file>
         <file>img16x16/14_layer_lowerlayer.png</file>
         <file>img16x16/14_layer_raiselayer.png</file>
+        <file>vst3.png</file>
+        <file>asio.png</file>
     </qresource>
 </RCC>

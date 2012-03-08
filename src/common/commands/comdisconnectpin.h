@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Rapha�l Fran�ois
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
