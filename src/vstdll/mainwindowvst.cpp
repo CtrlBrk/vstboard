@@ -21,7 +21,7 @@
 #include "views/configdialogvst.h"
 #include "vstboardcontroller.h"
 
-MainWindowVst::MainWindowVst(VstBoardController *controller,Settings *settings, QWidget *parent) :
+MainWindowVst::MainWindowVst(Vst::EditController *controller,Settings *settings, QWidget *parent) :
     MainWindow(settings,0,parent),
     controller(controller)
 {

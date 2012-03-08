@@ -174,7 +174,6 @@ SOURCES += \
     sceneview/bridgepinview.cpp
 
 HEADERS += \
-    _version.h \
     globals.h \
     mainhost.h \
     audiobuffer.h \

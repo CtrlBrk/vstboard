@@ -9,7 +9,7 @@ include(../config.pri)
 QMAKE_LFLAGS+="/DEF:$${_PRO_FILE_PWD_}/vstboard.def"
 
 DEFINES -= AS_INSTRUMENT
-TARGET = VstBoardEffect
+TARGET = VstBoardLoader
 TEMPLATE = lib
 
 QT       -= core gui

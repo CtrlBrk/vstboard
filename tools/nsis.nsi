@@ -11,8 +11,8 @@ XPStyle on
 SetCompressor lzma
 
 !define START_LINK_DIR "$SMPROGRAMS\VstBoard${ARCH}"
-!define START_LINK_RUN "$SMPROGRAMS\VstBoard${ARCH}\VstBoard.lnk"
-!define START_LINK_UNINSTALLER "$SMPROGRAMS\VstBoard${ARCH}\Uninstall VstBoard.lnk"
+!define START_LINK_RUN "$SMPROGRAMS\VstBoard${ARCH}\VstBoard ${ARCH}.lnk"
+!define START_LINK_UNINSTALLER "$SMPROGRAMS\VstBoard${ARCH}\Uninstall VstBoard ${ARCH}.lnk"
 !define REG_UNINSTALL "Software\Microsoft\Windows\CurrentVersion\Uninstall\VstBoard${ARCH}"
 !define REG_SETTINGS "Software\CtrlBrk\VstBoard\${ARCH}"
 !define UNINSTALLER_NAME "uninst.exe"
@@ -124,12 +124,11 @@ Section "VstBoard (required)"
     WriteRegStr HKCU "${REG_SETTINGS}" "pluginInstallDir" $VstDir
     WriteRegStr HKCU "${REG_SETTINGS}" "lastVstPath" $VstDir
     WriteRegStr HKCU "${REG_SETTINGS}\plugin" "lastVstPath" $VstDir
-    File "VstBoardEffect.dll"
-    #File "VstBoardInstrument.dll"
+    File "VstBoardLoader.dll"
 
     SetOutPath $Vst3Dir
     WriteRegStr HKCU "${REG_SETTINGS}" "pluginVst3InstallDir" $Vst3Dir
-    File "VstBoardEffect.vst3"
+    File "VstBoardLoader.vst3"
 SectionEnd
 
 Section "Start Menu Shortcuts"
@@ -152,11 +151,10 @@ Section "Uninstall"
     SetShellVarContext current
 
     ReadRegStr $VstDir HKCU "${REG_SETTINGS}" "pluginInstallDir"
-    Delete "$VstDir\VstBoardEffect.dll"
-#	Delete "$VstDir\VstBoardInstrument.dll"
+    Delete "$VstDir\VstBoardLoader.dll"
 
     ReadRegStr $Vst3Dir HKCU "${REG_SETTINGS}" "pluginVst3InstallDir"
-    Delete "$Vst3Dir\VstBoardEffect.vst3"
+    Delete "$Vst3Dir\VstBoardLoader.vst3"
 
     DeleteRegKey HKCU "${REG_UNINSTALL}"
     DeleteRegKey HKCU "${REG_SETTINGS}"

@@ -53,7 +53,8 @@ SOURCES += \
     $$VSTSDK_PATH/base/source/fstreamer.cpp \
     $$VSTSDK_PATH/base/source/fbuffer.cpp \
     $$VSTSDK_PATH/public.sdk/source/vst/hosting/eventlist.cpp \
-    $$VSTSDK_PATH/public.sdk/source/vst/vst2wrapper/vst2wrapper.cpp
+    $$VSTSDK_PATH/public.sdk/source/vst/vst2wrapper/vst2wrapper.cpp \
+    vst2shell.cpp
 
 HEADERS  += \
     gui.h \
@@ -69,7 +70,8 @@ HEADERS  += \
     ids.h \
     vstboardcontroller.h \
     vstboardprocessor.h \
-    vsttest.h
+    vsttest.h \
+    vst2shell.h
 
 
 PRECOMPILED_HEADER = ../common/precomp.h

@@ -1,3 +1,5 @@
+include(version.pri)
+
 DEFINES += APP_NAME=\\\"VstBoard\\\"
 
 PORTAUDIO_PATH 	= ../../libs/portaudio

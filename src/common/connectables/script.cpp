@@ -25,7 +25,7 @@
 
 using namespace Connectables;
 
-QMutex Script::mutexScript;
+//QMutex Script::mutexScript;
 
 Script::Script(MainHost *host, int index, const ObjectInfo &info) :
     Object(host,index,info),

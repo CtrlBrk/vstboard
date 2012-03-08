@@ -363,6 +363,7 @@ void VstPlugin::ReceiveMsg(const MsgObject &msg)
         if(objInfo.id == 0) {
             myHost->undoStack.undo();
         } else {
+            SetMsgEnabled(false);
             int lastProg = currentProgId;
             Object::LoadProgram(TEMP_PROGRAM);
             delete listPrograms.take(lastProg);

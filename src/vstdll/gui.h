@@ -29,22 +29,26 @@
 //#include "resizehandle.h"
 #include <qwinwidget.h>
 #include "pluginterfaces/gui/iplugview.h"
+#include "public.sdk/source/vst/vsteditcontroller.h"
 
+class Settings;
 namespace Steinberg
 {
 
 class Gui : public QObject, public FObject, public IPlugView
 {
     Q_OBJECT
-    QWinWidget *widget;
+
 //    AudioEffectX* effect;
 
 public:
-    Gui();
+    Gui(Vst::EditController *ctrl);
     ~Gui();
 
+    void ReceiveMsg(const MsgObject &msg);
+
 //    bool getRect (ERect** rect);
-    void SetMainWindow(MainWindowVst *win);
+//    void SetMainWindow(MainWindowVst *win);
 
     tresult PLUGIN_API isPlatformTypeSupported (FIDString type);
     tresult PLUGIN_API attached (void* parent, FIDString type);
@@ -70,7 +74,10 @@ public:
     REFCOUNT_METHODS(FObject)
 
 protected:
+    Vst::EditController *ctrl;
 //    bool hostCanSizeWindow;
+    Settings *settings;
+    QWinWidget *widget;
     MainWindowVst *myWindow;
 //    ResizeHandle *resizeH;
 //    QPoint widgetOffset;

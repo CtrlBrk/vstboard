@@ -122,6 +122,7 @@ void Vst3Plugin::ReceiveMsg(const MsgObject &msg)
         if(objInfo.id == FixedObjId::noContainer) {
             myHost->undoStack.undo();
         } else {
+            SetMsgEnabled(false);
             int lastProg = currentProgId;
             Object::LoadProgram(TEMP_PROGRAM);
             delete listPrograms.take(lastProg);

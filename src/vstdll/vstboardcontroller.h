@@ -23,8 +23,9 @@
 
 //#include "precomp.h"
 #include "public.sdk/source/vst/vsteditcontroller.h"
+//#include "settings.h"
 
-class MainWindowVst;
+//class MainWindowVst;
 namespace Steinberg {
     class Gui;
 }
@@ -36,7 +37,7 @@ class VstBoardController : public Vst::EditController
 {
 public:
     static FUnknown* createInstance (void*) { return (IEditController*)new VstBoardController (); }
-
+    ~VstBoardController();
     tresult PLUGIN_API initialize (FUnknown* context);
     IPlugView* PLUGIN_API createView (const char* name);
     void editorAttached (Vst::EditorView* editor);
@@ -45,7 +46,9 @@ public:
     tresult PLUGIN_API notify (Vst::IMessage* message);
 private:
     QList<Gui*> listGui;
-    MainWindowVst *mainWindow;
+//    MainWindowVst *mainWindow;
+//    Gui* view;
+//    Settings *settings;
 };
 
 

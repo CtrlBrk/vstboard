@@ -27,20 +27,20 @@
 
 #include "mainwindow.h"
 #include "../common/ui_mainwindow.h"
+#include "public.sdk/source/vst/vsteditcontroller.h"
 
 using namespace Steinberg;
 
-class VstBoardController;
 class MainWindowVst : public MainWindow {
     Q_OBJECT
 
 public:
-    MainWindowVst(VstBoardController *controller,Settings *settings, QWidget *parent = 0);
+    MainWindowVst(Vst::EditController *controller,Settings *settings, QWidget *parent = 0);
     ~MainWindowVst();
     void Init();
     void readSettings();
     void SendMsg(const MsgObject &msg);
-    VstBoardController *controller;
+    Vst::EditController *controller;
 
 private:
     void closeEvent(QCloseEvent *event);

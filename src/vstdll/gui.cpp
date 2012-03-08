@@ -19,10 +19,12 @@
 **************************************************************************/
 #include "gui.h"
 #include <QtGui/QHBoxLayout>
+#include "settings.h"
 
 namespace Steinberg
 {
-Gui::Gui() :
+Gui::Gui(Vst::EditController *ctrl) :
+    ctrl(ctrl),
     widget(0),
     myWindow(0),
     plugFrame(0)
@@ -41,15 +43,32 @@ Gui::Gui() :
 //    hostCanSizeWindow = (bool)effect->canHostDo("sizeWindow");
 //    if(!hostCanSizeWindow)
 //        qDebug()<<"host can't resize window";
+
+
+
+#if defined(_M_X64) || defined(__amd64__)
+    settings = new Settings("x64/plugin/",this);
+#else
+    settings = new Settings("x86/plugin/",this);
+#endif
+
+    myWindow = new MainWindowVst(ctrl,settings,0);
+    myWindow->Init();
+    connect( myWindow->viewConfig, SIGNAL(ColorChanged(ColorGroups::Enum,Colors::Enum,QColor)),
+         this, SLOT(UpdateColor(ColorGroups::Enum,Colors::Enum,QColor)),
+         Qt::UniqueConnection);
+
+
 }
 
 Gui::~Gui()
 {
     if(myWindow) {
         myWindow->writeSettings();
-        myWindow->deleteLater();
+////        myWindow->deleteLater();
+        myWindow->setParent(0);
+        delete myWindow;
         myWindow=0;
-//        myWindow->setParent(0);
     }
     if(widget) {
         delete widget;
@@ -66,19 +85,25 @@ void Gui::UpdateColor(ColorGroups::Enum groupId, Colors::Enum /*colorId*/, const
         widget->setPalette( myWindow->palette() );
 }
 
-void Gui::SetMainWindow(MainWindowVst *win)
+void Gui::ReceiveMsg(const MsgObject &msg)
 {
-    if(win==myWindow)
-        return;
-
-    myWindow = win;
-    if(!myWindow)
-        return;
-
-    connect( myWindow->viewConfig, SIGNAL(ColorChanged(ColorGroups::Enum,Colors::Enum,QColor)),
-             this, SLOT(UpdateColor(ColorGroups::Enum,Colors::Enum,QColor)),
-             Qt::UniqueConnection);
+    if(myWindow)
+        myWindow->ReceiveMsg(msg);
 }
+
+//void Gui::SetMainWindow(MainWindowVst *win)
+//{
+//    if(win==myWindow)
+//        return;
+
+//    myWindow = win;
+//    if(!myWindow)
+//        return;
+
+//    connect( myWindow->viewConfig, SIGNAL(ColorChanged(ColorGroups::Enum,Colors::Enum,QColor)),
+//             this, SLOT(UpdateColor(ColorGroups::Enum,Colors::Enum,QColor)),
+//             Qt::UniqueConnection);
+//}
 
 //void Gui::OnResizeHandleMove(const QPoint &pt)
 //{
@@ -118,21 +143,18 @@ tresult PLUGIN_API Gui::isPlatformTypeSupported (FIDString type)
 
 tresult PLUGIN_API Gui::attached (void* parent, FIDString /*type*/)
 {
-    if(!myWindow)
-        return kInternalError;
-
-//    AEffEditor::open(ptr);
     widget = new QWinWidget(static_cast<HWND>(parent));
     widget->setAutoFillBackground(false);
     widget->setObjectName("QWinWidget");
-
     myWindow->setParent(widget);
-
     myWindow->move(0,0);
-
     widget->move( 0, 0 );
     widget->resize( myWindow->size() );
     widget->setPalette( myWindow->palette() );
+
+//    AEffEditor::open(ptr);
+
+
 
 //    resizeH = new ResizeHandle(widget);
 //    QPoint pos( widget->geometry().bottomRight() );
@@ -151,10 +173,11 @@ tresult PLUGIN_API Gui::attached (void* parent, FIDString /*type*/)
 tresult PLUGIN_API Gui::removed ()
 {
     if(myWindow) {
-        myWindow->writeSettings();
-//        myWindow->setParent(0);
-        myWindow->deleteLater();
-        myWindow=0;
+//        myWindow->writeSettings();
+        myWindow->setParent(0);
+////        myWindow->deleteLater();
+//        delete myWindow;
+//        myWindow=0;
     }
     if(widget) {
         delete widget;

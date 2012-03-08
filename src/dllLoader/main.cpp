@@ -88,38 +88,56 @@ bool InitModule()
     std::wstring dbgSuffix(L"");
 #endif
 
-    Hcore = LoadLibrary((instDir+L"\\QtCore"+dbgSuffix+L"4.dll").c_str());
+    if(!Hcore)
+        Hcore = LoadLibrary((instDir+L"\\QtCore"+dbgSuffix+L"4.dll").c_str());
+    if(!Hcore) {
+        MessageBox(NULL,(instDir+L"\\QtCore"+dbgSuffix+L"4.dll : not loaded").c_str(),L"VstBoard", MB_OK | MB_ICONERROR);
+        return false;
+    }
+    if(!Hgui)
     Hgui = LoadLibrary((instDir+L"\\QtGui"+dbgSuffix+L"4.dll").c_str());
+    if(!Hgui) {
+        MessageBox(NULL,(instDir+L"\\QtGui"+dbgSuffix+L"4.dll : not loaded").c_str(),L"VstBoard", MB_OK | MB_ICONERROR);
+        return false;
+    }
     #ifdef SCRIPTENGINE
-        Hscript = LoadLibrary((instDir+L"\\QtScriptd4"+dbgSuffix+L".dll").c_str());
+        if(!Hscript)
+        Hscript = LoadLibrary((instDir+L"\\QtScript"+dbgSuffix+L"4.dll").c_str());
+        if(!Hscript) {
+            MessageBox(NULL,(instDir+L"\\QtScript"+dbgSuffix+L"4.dll : not loaded").c_str(),L"VstBoard", MB_OK | MB_ICONERROR);
+            return false;
+        }
     #endif
+    if(!HwinMigrate)
     HwinMigrate = LoadLibrary((instDir+L"\\QtSolutions_MFCMigrationFramework-head"+dbgSuffix+L".dll").c_str());
-    Hplugin = LoadLibrary((instDir+L"\\VstBoardPlugin.dll").c_str());
-
-    if(!Hplugin) {
-        FreeLibrary(Hplugin);
-        FreeLibrary(HwinMigrate);
-    #ifdef SCRIPTENGINE
-        FreeLibrary(Hscript);
-    #endif
-        FreeLibrary(Hgui);
-        FreeLibrary(Hcore);
-        MessageBox(NULL,(L"Error while loading "+instDir+L"\\VstBoardPlugin.dll").c_str(),L"VstBoard", MB_OK | MB_ICONERROR);
+    if(!HwinMigrate) {
+        MessageBox(NULL,(instDir+L"QtSolutions_MFCMigrationFramework-head"+dbgSuffix+L".dll : not loaded").c_str(),L"VstBoard", MB_OK | MB_ICONERROR);
         return false;
     }
 
+    if(!Hplugin)
+    Hplugin = LoadLibrary((instDir+L"\\VstBoardPlugin.dll").c_str());
+    if(!Hplugin) {
+        MessageBox(NULL,(instDir+L"\\VstBoardPlugin.dll : not loaded").c_str(),L"VstBoard", MB_OK | MB_ICONERROR);
+        return false;
+    }
     return true;
 }
 
 bool DeinitModule()
 {
     FreeLibrary(Hplugin);
-    FreeLibrary(HwinMigrate);
+    Hplugin=0;
+//    FreeLibrary(HwinMigrate);
+//    HwinMigrate=0;
 #ifdef SCRIPTENGINE
     FreeLibrary(Hscript);
+    Hscript=0;
 #endif
-    FreeLibrary(Hgui);
-    FreeLibrary(Hcore);
+//    FreeLibrary(Hgui);
+//    Hgui=0;
+//    FreeLibrary(Hcore);
+//    Hcore=0;
     return true;
 }
 
@@ -128,14 +146,16 @@ extern "C" {
 #endif
 bool DllExport InitDll ()
 {
-    if(Hplugin)
-        return true;
-
-    return InitModule();
+    if(!InitModule()) {
+        DeinitModule();
+        return false;
+    }
+    return true;
 }
 bool DllExport ExitDll ()
 {
-    return DeinitModule ();
+    DeinitModule ();
+    return true;
 }
 #ifdef __cplusplus
 } // extern "C"
@@ -146,31 +166,18 @@ bool DllExport ExitDll ()
 namespace Steinberg {
 EXPORT_FACTORY IPluginFactory* PLUGIN_API GetPluginFactory ()
 {
-    if(!Hplugin)
-        InitModule();
-    if(!Hplugin)
+    if(!InitModule()) {
+        DeinitModule();
         return 0;
+    }
 
     GetFactoryProc entryPoint = (GetFactoryProc)::GetProcAddress (Hplugin, "GetPluginFactory");
 
     if(!entryPoint) {
-        FreeLibrary(Hplugin);
-        FreeLibrary(HwinMigrate);
-#ifdef SCRIPTENGINE
-        FreeLibrary(Hscript);
-#endif
-        FreeLibrary(Hgui);
-        FreeLibrary(Hcore);
         MessageBox(NULL,L"VstBoardPlugin.dll is not valid",L"VstBoard", MB_OK | MB_ICONERROR);
+        DeinitModule();
         return 0;
     }
-
-    FreeLibrary(HwinMigrate);
-#ifdef SCRIPTENGINE
-    FreeLibrary(Hscript);
-#endif
-    FreeLibrary(Hgui);
-    FreeLibrary(Hcore);
 
     return entryPoint();
 }
@@ -191,28 +198,13 @@ extern "C" {
     VST_EXPORT AEffect* VSTPluginMain (audioMasterCallback audioMaster)
     {
         if(!InitModule()) {
-            DeinitModule();
             return 0;
         }
-
-#ifdef AS_INSTRUMENT
-        vstPluginFuncPtr entryPoint = (vstPluginFuncPtr)GetProcAddress(Hplugin, "VSTInstrumentMain");
-#else
         vstPluginFuncPtr entryPoint = (vstPluginFuncPtr)GetProcAddress(Hplugin, "VSTPluginMain");
-#endif
         if(!entryPoint) {
-            DeinitModule();
             MessageBox(NULL,L"VstBoardPlugin.dll is not valid",L"VstBoard", MB_OK | MB_ICONERROR);
             return 0;
         }
-
-        FreeLibrary(HwinMigrate);
-#ifdef SCRIPTENGINE
-        FreeLibrary(Hscript);
-#endif
-        FreeLibrary(Hgui);
-        FreeLibrary(Hcore);
-
         return entryPoint(audioMaster);
     }
 
@@ -233,10 +225,8 @@ extern "C" {
 
 BOOL WINAPI DllMain( HINSTANCE , DWORD dwReason, LPVOID )
 {
-    if(dwReason==DLL_PROCESS_DETACH) {
-        HMODULE Hplugin = GetModuleHandle(L"VstBoardPlugin");
-        if(Hplugin!=NULL)
-            FreeLibrary(Hplugin);
+    if ( dwReason == DLL_PROCESS_DETACH) {
+        DeinitModule();
     }
     return TRUE;
 }

@@ -21,9 +21,6 @@
 #ifndef SPLASH_H
 #define SPLASH_H
 
-//#include "precomp.h"
-#include "../_version.h"
-
 namespace Ui {
     class Splash;
 }

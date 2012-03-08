@@ -25,15 +25,12 @@ AboutDialog::AboutDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AboutDialog)
 {
-    QString ver = APP_VERSION;
-    ver=ver.section("-",0,1);
-    QString build = APP_VERSION;
-    build=build.section("-",2,2);
+//    QString ver(APP_VERSION_MAJOR);
 
     ui->setupUi(this);
     ui->labelApp->setText(APP_NAME);
-    ui->labelVersion->setText(" "+ver);
-    ui->labelBuild->setText(" "+build);
+    ui->labelVersion->setText( QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD) );
+//    ui->labelBuild->setText(ver.section("-",2,2));
 
     setWindowTitle(QString(tr("About %1")).arg(APP_NAME));
 

@@ -47,7 +47,7 @@ class VstBoardProcessor : public MainHost, public Vst::AudioEffect
 {
     Q_OBJECT
 public:
-        VstBoardProcessor (Settings *settings, QObject *parent = 0);
+        VstBoardProcessor (QObject *parent = 0);
         virtual ~VstBoardProcessor();
 
         tresult PLUGIN_API initialize (FUnknown* context);
@@ -58,13 +58,7 @@ public:
         tresult PLUGIN_API process (Vst::ProcessData& data);
 
         static FUnknown* createInstance (void*) {
-
-#if defined(_M_X64) || defined(__amd64__)
-            Settings *set = new Settings("x64/plugin/",qApp);
-#else
-            Settings *set = new Settings("x86/plugin/",qApp);
-#endif
-            return (Vst::IAudioProcessor*)new VstBoardProcessor (set);
+            return (Vst::IAudioProcessor*)new VstBoardProcessor ();
         }
 
         tresult PLUGIN_API notify (Vst::IMessage* message);

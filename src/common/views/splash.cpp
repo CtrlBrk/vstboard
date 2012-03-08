@@ -26,12 +26,11 @@ Splash::Splash(QWidget *parent) :
     ui(new Ui::Splash)
 {
     setAttribute(Qt::WA_DeleteOnClose);
-    QString ver = APP_VERSION;
-    ver=ver.section("-",0,1);
+//    QString ver(APP_VERSION);
 
     ui->setupUi(this);
     ui->labelApp->setText(APP_NAME);
-    ui->labelVersion->setText(" "+ver);
+    ui->labelVersion->setText( QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD) );
 
     setWindowTitle(APP_NAME);
 

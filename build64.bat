@@ -8,15 +8,15 @@ set QMAKESPEC=win32-msvc2010
 call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat"
 call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /xp /x64 /Release
 
-rem mkdir "%BUILD_PATH%/installer"
-rem copy /y "*.txt" "%BUILD_PATH%/installer"
-rem copy /y ".\tools\nsis.nsi" "%BUILD_PATH%/installer"
+mkdir "%BUILD_PATH%/installer"
+copy /y "*.txt" "%BUILD_PATH%/installer"
+copy /y ".\tools\nsis.nsi" "%BUILD_PATH%/installer"
 
-rem pushd "libs\qtwinmigrate\buildlib"
-rem %QTDIR%\bin\qmake -r buildlib.pro
-rem %JOM_PATH% clean
-rem %JOM_PATH% release
-rem popd
+pushd "libs\qtwinmigrate\buildlib"
+%QTDIR%\bin\qmake -r buildlib.pro
+%JOM_PATH% clean
+%JOM_PATH% release
+popd
 
 cd "%BUILD_PATH%"
 %QTDIR%\bin\qmake -r %SRC_PATH%\src\buildall.pro
@@ -25,8 +25,8 @@ cd "%BUILD_PATH%"
 
 pause
 
-copy /y ".\dllLoader\release\VstBoardEffect.dll" ".\installer\VstBoardEffect.dll"
-copy /y ".\dllLoader\release\VstBoardEffect.dll" ".\installer\VstBoardEffect.vst3"
+copy /y ".\dllLoader\release\VstBoardLoader.dll" ".\installer\VstBoardLoader.dll"
+copy /y ".\dllLoader\release\VstBoardLoader.dll" ".\installer\VstBoardLoader.vst3"
 copy /y ".\vstboard\release\vstboard.exe" ".\installer"
 copy /y ".\vstdll\release\VstBoardPlugin.dll" ".\installer"
 copy /y "%QTDIR%\bin\QtCore4.dll" ".\installer"

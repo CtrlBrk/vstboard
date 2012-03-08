@@ -33,12 +33,18 @@
 
 #include "pluginterfaces/base/ibstream.h"
 
-VstBoardProcessor::VstBoardProcessor (Settings *settings,QObject *parent) :
-    MainHost(settings,parent),
+VstBoardProcessor::VstBoardProcessor (QObject *parent) :
+    MainHost(0,parent),
     Vst::AudioEffect()
 {
-        setControllerClass (VstBoardControllerUID);
 
+#if defined(_M_X64) || defined(__amd64__)
+    settings = new Settings("x64/plugin/",this);
+#else
+    settings = new Settings("x86/plugin/",this);
+#endif
+
+    setControllerClass (VstBoardControllerUID);
 }
 
 VstBoardProcessor::~VstBoardProcessor()

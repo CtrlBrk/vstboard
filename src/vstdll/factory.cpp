@@ -23,9 +23,6 @@
 #include "ids.h"
 #include "vsttest.h"
 
-#define stringPluginName "VstBoard"
-
-
 BEGIN_FACTORY_DEF ("CtrlBrk",
                    "http://vstboard.blogspot.com",
                    "mailto:ctrlbrk76@gmail.com")
@@ -33,33 +30,42 @@ BEGIN_FACTORY_DEF ("CtrlBrk",
         DEF_CLASS2 (INLINE_UID_FROM_FUID(VstBoardProcessorUID),
                                 PClassInfo::kManyInstances,
                                 kVstAudioEffectClass,
-                                stringPluginName,
+                                "VstBoard Effect",
                                 Vst::kDistributable,
-                                "Fx",
-                                "FULL_VERSION_STR",
+                                Vst::PlugType::kFx,
+                                QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toAscii(),
+                                kVstVersionString,
+                                VstBoardProcessor::createInstance)
+
+        DEF_CLASS2 (INLINE_UID_FROM_FUID(VstBoardInstProcessorUID),
+                                PClassInfo::kManyInstances,
+                                kVstAudioEffectClass,
+                                "VstBoard Instrument",
+                                Vst::kDistributable,
+                                Vst::PlugType::kInstrument,
+                                QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toAscii(),
                                 kVstVersionString,
                                 VstBoardProcessor::createInstance)
 
         DEF_CLASS2 (INLINE_UID_FROM_FUID(VstBoardControllerUID),
                                 PClassInfo::kManyInstances,
                                 kVstComponentControllerClass,
-                                stringPluginName "Controller",	// controller name (could be the same than component name)
-                                0,						// not used here
-                                "",						// not used here
-                                "FULL_VERSION_STR",		// Plug-in version (to be changed)
+                                "VstBoard",
+                                0,
+                                "",
+                                QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toAscii(),
                                 kVstVersionString,
                                 VstBoardController::createInstance)
 
-        // add Test Factory
-        DEF_CLASS2 (INLINE_UID_FROM_FUID(VstBoardTestFactory::cid),
-                                PClassInfo::kManyInstances,
-                                kTestClass,
-                                stringPluginName "Test Factory",
-                                0,
-                                "",
-                                "",
-                                "",
-                                VstBoardTestFactory::createInstance)
+//        DEF_CLASS2 (INLINE_UID_FROM_FUID(VstBoardTestFactory::cid),
+//                                PClassInfo::kManyInstances,
+//                                kTestClass,
+//                                "VstBoard Test",
+//                                0,
+//                                "",
+//                                "",
+//                                "",
+//                                VstBoardTestFactory::createInstance)
 
 END_FACTORY
 

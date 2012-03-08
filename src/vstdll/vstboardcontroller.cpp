@@ -23,12 +23,14 @@
 #include "pluginterfaces/base/ustring.h"
 #include "gui.h"
 #include "mainwindowvst.h"
-#include "settings.h"
 
 //-----------------------------------------------------------------------------
 tresult PLUGIN_API VstBoardController::initialize (FUnknown* context)
 {
-    mainWindow=0;
+
+
+//    mainWindow=0;
+//    view=0;
 
     tresult result = EditController::initialize (context);
     if (result != kResultTrue)
@@ -42,16 +44,21 @@ tresult PLUGIN_API VstBoardController::initialize (FUnknown* context)
     return kResultTrue;
 }
 
+VstBoardController::~VstBoardController()
+{
+//    if(view)
+//        delete view;
+//    if(mainWindow)
+//        delete mainWindow;
+
+
+}
+
 IPlugView* PLUGIN_API VstBoardController::createView (const char* name)
 {
     if (name && strcmp (name, "editor") == 0)
     {
-        Gui* view = new Gui();
-        Settings *set = new Settings("plugin/",qApp);
-        mainWindow = new MainWindowVst(this,set);
-        mainWindow->Init();
-        view->SetMainWindow(mainWindow);
-        return view;
+        return new Gui(this);
     }
     return 0;
 }
@@ -72,7 +79,9 @@ void VstBoardController::editorRemoved (Vst::EditorView* editor)
 
 void VstBoardController::editorDestroyed (Vst::EditorView* editor)
 {
-
+    Gui* view = dynamic_cast<Gui*> (editor);
+    if (view)
+        listGui.removeAll(view);
 }
 
 tresult PLUGIN_API VstBoardController::notify (Vst::IMessage* message)
@@ -86,20 +95,20 @@ tresult PLUGIN_API VstBoardController::notify (Vst::IMessage* message)
         uint32 size;
         if (message->getAttributes ()->getBinary ("data", data, size) == kResultOk)
         {
-            if(!mainWindow)
+//            if(!mainWindow)
+//                return kResultOk;
+            if(listGui.isEmpty())
                 return kResultOk;
-
-    //        if (!strcmp (message->getMessageID (), "msglist")) {
-    //            QByteArray ba((char*)data,size);
-    //            mainWindow->ReceiveMsg(message->getMessageID(),ba);
-    //            return kResultOk;
-    //        }
 
             QByteArray br((char*)data,size);
             QDataStream str(&br, QIODevice::ReadOnly);
             MsgObject msg;
             str >> msg;
-            mainWindow->ReceiveMsg( msg );
+            foreach(Gui *g, listGui) {
+                g->ReceiveMsg( msg );
+            }
+
+//            mainWindow->ReceiveMsg( msg );
             return kResultOk;
         }
     }

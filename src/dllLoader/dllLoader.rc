@@ -1,6 +1,5 @@
 #include <winver.h>
 #include <verrsrc.h>
-#include "../common/_version.h"
 
 VS_VERSION_INFO VERSIONINFO
 FILEVERSION APP_VERSION_MAJOR,APP_VERSION_MINOR,APP_VERSION_BUILD //,APP_VERSION_PATCH
@@ -20,13 +19,13 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "CompanyName", "CtrlBrk"
-            VALUE "LegalCopyright", "Copyright (c) 2010-2011 Raphaël François"
+            VALUE "LegalCopyright", "Copyright (c) 2010-2012 Raphaël François"
             VALUE "FileDescription", APP_NAME
-            VALUE "FileVersion", APP_VERSION
+            VALUE "FileVersion", APP_VERSION_MAJOR "." APP_VERSION_MINOR "." APP_VERSION_BUILD
             VALUE "InternalName", APP_NAME
             VALUE "OriginalFilename", APP_NAME ".dll"
             VALUE "ProductName", "VstBoard"
-            VALUE "ProductVersion", APP_VERSION
+            VALUE "ProductVersion", APP_VERSION_MAJOR "." APP_VERSION_MINOR "." APP_VERSION_BUILD
         END
     END
     BLOCK "VarFileInfo"

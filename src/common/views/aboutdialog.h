@@ -21,9 +21,6 @@
 #ifndef ABOUTDIALOG_H
 #define ABOUTDIALOG_H
 
-//#include "precomp.h"
-#include "../_version.h"
-
 namespace Ui {
     class AboutDialog;
 }

@@ -273,15 +273,12 @@ VstIntPtr VSTCALLBACK CVSTHost::AudioMasterCallback(AEffect *effect, VstInt32 op
         return 0L;
     }
 
-    if(!effect) {
-        LOG("mastercallback from a null plugin ?");
-        return 0L;
+    if(effect) {
+        //send it to the connectable object
+        Connectables::VstPlugin *obj = Connectables::VstPlugin::mapPlugins.value(effect,0);
+        if(obj)
+            return obj->OnMasterCallback(opcode,index,value,ptr,opt,retValue);
     }
-
-    //send it to the connectable object
-    Connectables::VstPlugin *obj = Connectables::VstPlugin::mapPlugins.value(effect,0);
-    if(obj)
-        return obj->OnMasterCallback(opcode,index,value,ptr,opt,retValue);
 
     //unknown pointer, it must be the plugin currently loading
     if(Connectables::VstPlugin::pluginLoading) {

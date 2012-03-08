@@ -20,7 +20,7 @@
 #include "pluginterfaces/base/ftypes.h"
 #include "public.sdk/source/vst/vst2wrapper/vst2wrapper.h"
 #include "ids.h"
-
+#include "vst2shell.h"
 #include <windows.h>
 #include <QMfcApp>
 
@@ -34,6 +34,25 @@
 #define tstrrchr strrchr
 #endif
 
+AudioEffect *createShell(audioMasterCallback audioMaster);
+
+::AudioEffect* createEffectInstance(audioMasterCallback audioMaster)
+{
+    long id = audioMaster(0,audioMasterCurrentId,0,0,0,0);
+
+    switch(id) {
+    case uniqueIDEffect:
+        return Steinberg::Vst::Vst2Wrapper::create (GetPluginFactory (), VstBoardProcessorUID, uniqueIDEffect, audioMaster);
+    case uniqueIDInstrument:
+        return Steinberg::Vst::Vst2Wrapper::create (GetPluginFactory (), VstBoardInstProcessorUID, uniqueIDInstrument, audioMaster);
+    default:
+        return createShell(audioMaster);
+    }
+
+
+}
+
+
 //------------------------------------------------------------------------
 HINSTANCE ghInst = 0;
 void* moduleHandle = 0;
@@ -46,17 +65,9 @@ Steinberg::tchar gPath[MAX_PATH] = {0};
 extern bool InitModule ();		///< must be provided by Plug-in: called when the library is loaded
 extern bool DeinitModule ();	///< must be provided by Plug-in: called when the library is unloaded
 
-bool asIntrument=false;
-::AudioEffect* createEffectInstance(audioMasterCallback audioMaster)
-{
-    return Steinberg::Vst::Vst2Wrapper::create (GetPluginFactory (), VstBoardProcessorUID, uniqueIDEffect, audioMaster);
-}
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-
 
     bool DllExport InitDll () ///< must be called from host right after loading dll
     {
@@ -75,32 +86,34 @@ BOOL WINAPI DllMain (HINSTANCE hInst, DWORD dwReason, LPVOID /*lpvReserved*/)
 {
     static bool ownApplication = FALSE;
 
-        if (dwReason == DLL_PROCESS_ATTACH)
-        {
-            ownApplication = QMfcApp::pluginInstance( hInst );
+    if (dwReason == DLL_PROCESS_ATTACH)
+    {
+        ownApplication = QMfcApp::pluginInstance( 0 );
 
-        #if defined (_MSC_VER) && defined (DEVELOPMENT)
-                _CrtSetReportMode ( _CRT_WARN, _CRTDBG_MODE_DEBUG );
-                _CrtSetReportMode ( _CRT_ERROR, _CRTDBG_MODE_DEBUG );
-                _CrtSetReportMode ( _CRT_ASSERT, _CRTDBG_MODE_DEBUG );
-                int flag = _CrtSetDbgFlag (_CRTDBG_REPORT_FLAG);
-                _CrtSetDbgFlag (flag | _CRTDBG_LEAK_CHECK_DF);
-        #endif
+    #if defined (_MSC_VER) && defined (DEVELOPMENT)
+        _CrtSetReportMode ( _CRT_WARN, _CRTDBG_MODE_DEBUG );
+        _CrtSetReportMode ( _CRT_ERROR, _CRTDBG_MODE_DEBUG );
+        _CrtSetReportMode ( _CRT_ASSERT, _CRTDBG_MODE_DEBUG );
+        int flag = _CrtSetDbgFlag (_CRTDBG_REPORT_FLAG);
+        _CrtSetDbgFlag (flag | _CRTDBG_LEAK_CHECK_DF);
+    #endif
 
-                moduleHandle = ghInst = hInst;
+        moduleHandle = ghInst = hInst;
 
-                // gets the path of the component
-                GetModuleFileName (ghInst, gPath, MAX_PATH);
-                Steinberg::tchar* bkslash = tstrrchr (gPath, TEXT ('\\'));
-                if (bkslash)
-                        gPath[bkslash - gPath + 1] = 0;
-        }
+        // gets the path of the component
+        GetModuleFileName (ghInst, gPath, MAX_PATH);
+        Steinberg::tchar* bkslash = tstrrchr (gPath, TEXT ('\\'));
+        if (bkslash)
+            gPath[bkslash - gPath + 1] = 0;
+    }
 
-        if ( dwReason == DLL_PROCESS_DETACH && ownApplication ) {
-            delete qApp;
-        }
+    //there's no way to know if another plugin is using our qapp
+//        if ( dwReason == DLL_PROCESS_DETACH && ownApplication ) {
+//            if(qApp)
+//                delete qApp;
+//        }
 
-        return TRUE;
+    return TRUE;
 }
 
 /*
