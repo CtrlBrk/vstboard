@@ -120,6 +120,8 @@ public slots:
     void OnHideEditor();
     void UserRemovePin(const ConnectionInfo &info);
     void UserAddPin(const ConnectionInfo &info);
+
+    friend class View::VstPluginWindow;
 };
 }
 

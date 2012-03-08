@@ -27,9 +27,8 @@ Gui::Gui(Vst::EditController *ctrl) :
     ctrl(ctrl),
     widget(0),
     myWindow(0),
-    plugFrame(0)
-//    effect(effect),
-//    resizeH(0)
+    plugFrame(0),
+    resizeH(0)
 {
 
 
@@ -105,20 +104,26 @@ void Gui::ReceiveMsg(const MsgObject &msg)
 //             Qt::UniqueConnection);
 //}
 
-//void Gui::OnResizeHandleMove(const QPoint &pt)
-//{
-//    widget->resize( pt.x(), pt.y() );
+void Gui::OnResizeHandleMove(const QPoint &pt)
+{
+    widget->resize( pt.x(), pt.y() );
 //    widget->move(widgetOffset);
 
-//    if(myWindow)
-//        myWindow->resize(pt.x(), pt.y());
+    if(myWindow)
+        myWindow->resize(pt.x(), pt.y());
 
 ////    if(effect)
 ////        effect->sizeWindow(pt.x(), pt.y());
 
 //    rectangle.right = pt.x();
 //    rectangle.bottom = pt.y();
-//}
+
+    if(!plugFrame)
+        return;
+
+    ViewRect size(0,0,pt.x(),pt.y());
+    plugFrame->resizeView(this,&size);
+}
 
 tresult PLUGIN_API Gui::isPlatformTypeSupported (FIDString type)
 {
@@ -156,15 +161,15 @@ tresult PLUGIN_API Gui::attached (void* parent, FIDString /*type*/)
 
 
 
-//    resizeH = new ResizeHandle(widget);
-//    QPoint pos( widget->geometry().bottomRight() );
-//    pos.rx()-=resizeH->width();
-//    pos.ry()-=resizeH->height();
-//    resizeH->move(pos);
-//    resizeH->show();
+    resizeH = new ResizeHandle(widget);
+    QPoint pos( widget->geometry().bottomRight() );
+    pos.rx()-=resizeH->width();
+    pos.ry()-=resizeH->height();
+    resizeH->move(pos);
+    resizeH->show();
 
-//    connect(resizeH, SIGNAL(Moved(QPoint)),
-//            this, SLOT(OnResizeHandleMove(QPoint)));
+    connect(resizeH, SIGNAL(Moved(QPoint)),
+            this, SLOT(OnResizeHandleMove(QPoint)));
 
     widget->show();
     return kResultOk;
@@ -216,6 +221,13 @@ tresult PLUGIN_API Gui::onSize (ViewRect* newSize)
     if(widget) {
         widget->resize(newSize->getWidth(),newSize->getHeight());
 //        widget->move(widgetOffset);
+
+        if(resizeH) {
+            QPoint pos( widget->geometry().bottomRight() );
+            pos.rx()-=resizeH->width();
+            pos.ry()-=resizeH->height();
+            resizeH->move(pos);
+        }
     }
 
     return kResultTrue;

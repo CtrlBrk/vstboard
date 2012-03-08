@@ -90,13 +90,13 @@ BOOL WINAPI DllMain (HINSTANCE hInst, DWORD dwReason, LPVOID /*lpvReserved*/)
     {
         ownApplication = QMfcApp::pluginInstance( 0 );
 
-    #if defined (_MSC_VER) && defined (DEVELOPMENT)
-        _CrtSetReportMode ( _CRT_WARN, _CRTDBG_MODE_DEBUG );
-        _CrtSetReportMode ( _CRT_ERROR, _CRTDBG_MODE_DEBUG );
-        _CrtSetReportMode ( _CRT_ASSERT, _CRTDBG_MODE_DEBUG );
-        int flag = _CrtSetDbgFlag (_CRTDBG_REPORT_FLAG);
-        _CrtSetDbgFlag (flag | _CRTDBG_LEAK_CHECK_DF);
-    #endif
+//    #if defined (_MSC_VER) && defined (DEVELOPMENT)
+//        _CrtSetReportMode ( _CRT_WARN, _CRTDBG_MODE_DEBUG );
+//        _CrtSetReportMode ( _CRT_ERROR, _CRTDBG_MODE_DEBUG );
+//        _CrtSetReportMode ( _CRT_ASSERT, _CRTDBG_MODE_DEBUG );
+//        int flag = _CrtSetDbgFlag (_CRTDBG_REPORT_FLAG);
+//        _CrtSetDbgFlag (flag | _CRTDBG_LEAK_CHECK_DF);
+//    #endif
 
         moduleHandle = ghInst = hInst;
 

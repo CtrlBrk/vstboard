@@ -83,6 +83,7 @@ namespace View {
 
     private:
         Ui::VstPluginWindow *ui;
+        bool canResize;
 
     signals:
         void Hide();

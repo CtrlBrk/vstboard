@@ -26,7 +26,7 @@
 
 //#include "aeffeditor.h"
 #include "mainwindowvst.h"
-//#include "resizehandle.h"
+#include "resizehandle.h"
 #include <qwinwidget.h>
 #include "pluginterfaces/gui/iplugview.h"
 #include "public.sdk/source/vst/vsteditcontroller.h"
@@ -79,7 +79,7 @@ protected:
     Settings *settings;
     QWinWidget *widget;
     MainWindowVst *myWindow;
-//    ResizeHandle *resizeH;
+    ResizeHandle *resizeH;
 //    QPoint widgetOffset;
     IPlugFrame* plugFrame;
 
@@ -88,7 +88,7 @@ signals:
 
 public slots:
     void UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color);
-//    void OnResizeHandleMove(const QPoint &pt);
+    void OnResizeHandleMove(const QPoint &pt);
 
 };
 }

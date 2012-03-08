@@ -32,7 +32,8 @@ VstPluginWindow::VstPluginWindow(QWidget *parent) :
     QFrame(parent),
     IPlugFrame(),
     ui(new Ui::VstPluginWindow),
-    plugin(0)
+    plugin(0),
+    canResize(false)
 {
     setAttribute(Qt::WA_DeleteOnClose);
     setAttribute(Qt::WA_ShowWithoutActivating);
@@ -70,6 +71,7 @@ void  VstPluginWindow::UnsetPlugin()
 bool VstPluginWindow::SetPlugin(Connectables::Vst3Plugin *plug)
 {
     plugin = plug;
+    canResize = (plug->pView->canResize() == kResultTrue);
     return true;
 }
 
@@ -147,8 +149,10 @@ void VstPluginWindow::closeEvent( QCloseEvent * event )
 
 void VstPluginWindow::SetWindowSize(int newWidth, int newHeight)
 {
-    ui->scrollAreaWidgetContents->setFixedSize(newWidth,newHeight);
-    setMaximumSize(newWidth,newHeight);
+    if(!canResize) {
+        ui->scrollAreaWidgetContents->setFixedSize(newWidth,newHeight);
+        setMaximumSize(newWidth,newHeight);
+    }
     resize(newWidth,newHeight);
 }
 
@@ -158,11 +162,24 @@ void VstPluginWindow::showEvent ( QShowEvent * event )
     ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     int w = ui->scrollAreaWidgetContents->width();
     int h = ui->scrollAreaWidgetContents->height();
-    setMaximumSize(w,h);
+    if(!canResize) {
+        setMaximumSize(w,h);
+    }
 }
 
 void VstPluginWindow::resizeEvent ( QResizeEvent * event )
 {
+    Connectables::Vst3Plugin* p = qobject_cast<Connectables::Vst3Plugin*>(plugin);
+    if(p) {
+        if(canResize) {
+            ViewRect r(0,0,event->size().width(),event->size().height());
+            if(p->pView->checkSizeConstraint(&r) == kResultTrue) {
+                p->pView->onSize(&r);
+                return;
+            }
+        }
+    }
+
     int maxH=ui->scrollAreaWidgetContents->height();
     int maxW=ui->scrollAreaWidgetContents->width();
 
@@ -195,7 +212,6 @@ void VstPluginWindow::resizeEvent ( QResizeEvent * event )
 
 tresult PLUGIN_API VstPluginWindow::resizeView (IPlugView* view, ViewRect* newSize)
 {
-    LOG("resize view")
     SetWindowSize(newSize->getWidth(), newSize->getHeight());
     return kResultOk;
 }
