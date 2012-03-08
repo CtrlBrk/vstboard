@@ -1,3 +1,5 @@
+call version.bat
+
 set SRC_PATH=%CD%
 set NSIS_PATH="c:\Program Files (x86)\NSIS\makensis.exe"
 set BUILD_PATH=..\vstboard.build\Qt_4_8_0_msvc10_64_Release

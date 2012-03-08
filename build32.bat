@@ -1,27 +1,14 @@
-set APP_VERSION_MAJOR=0
-set APP_VERSION_MINOR=6
-set APP_VERSION_BUILD=0
-set APP_VERSION_PATCH=0
+call version.bat
 
 set SRC_PATH=%CD%
 set NSIS_PATH="c:\Program Files (x86)\NSIS\makensis.exe"
 set BUILD_PATH=..\vstboard.build\Qt_4_8_0_msvc10_32_Release
 set JOM_PATH="E:\Qt\qtcreator-2.4.0\bin\jom"
 
-
-echo DEFINES += 'APP_VERSION_MAJOR=%APP_VERSION_MAJOR%' > %SRC_PATH%\src\version.pri
-echo DEFINES += 'APP_VERSION_MINOR=%APP_VERSION_MINOR%' >> %SRC_PATH%\src\version.pri
-echo DEFINES += 'APP_VERSION_BUILD=%APP_VERSION_BUILD%' >> %SRC_PATH%\src\version.pri
-echo DEFINES += 'APP_VERSION_PATCH=%APP_VERSION_PATCH%' >> %SRC_PATH%\src\version.pri
-
-pause
-
-
 set QTDIR=e:\Qt\4.8.0_msvc10_32
 set QMAKESPEC=win32-msvc2010
 call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat"
 call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /xp /x86 /Release
-
 
 mkdir "%BUILD_PATH%/installer"
 copy /y "*.txt" "%BUILD_PATH%/installer"
