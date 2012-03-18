@@ -888,6 +888,7 @@ void MainHost::SetTempo(int tempo, int sign1, int sign2)
 {
 #ifdef VSTSDK
     vstHost->SetTempo(tempo,sign1,sign2);
+    vst3Host->SetTempo(tempo,sign1,sign2);
 //    CheckTempo();
 #endif
 }
@@ -899,7 +900,7 @@ void MainHost::CheckTempo()
     int sign1=0;
     int sign2=0;
 
-    vstHost->GetTempo(tempo,sign1,sign2);
+    vst3Host->GetTempo(tempo,sign1,sign2);
     if(tempo!=currentTempo
        || sign1!=currentTimeSig1
        || sign2!=currentTimeSig2) {

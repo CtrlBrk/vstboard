@@ -29,20 +29,20 @@
 #include "resizehandle.h"
 #include <qwinwidget.h>
 #include "pluginterfaces/gui/iplugview.h"
-#include "public.sdk/source/vst/vsteditcontroller.h"
+//#include "public.sdk/source/vst/vsteditcontroller.h"
 
 class Settings;
 namespace Steinberg
 {
 
-class Gui : public QObject, public FObject, public IPlugView
+class Gui : public QObject, public Vst::EditorView
 {
     Q_OBJECT
 
 //    AudioEffectX* effect;
 
 public:
-    Gui(Vst::EditController *ctrl);
+    Gui(Vst::EditController *ctrl, ViewRect *size=0);
     ~Gui();
 
     void ReceiveMsg(const MsgObject &msg);
@@ -74,7 +74,6 @@ public:
     REFCOUNT_METHODS(FObject)
 
 protected:
-    Vst::EditController *ctrl;
 //    bool hostCanSizeWindow;
     Settings *settings;
     QWinWidget *widget;

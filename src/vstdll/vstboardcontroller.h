@@ -44,6 +44,9 @@ public:
     void editorRemoved (Vst::EditorView* editor);
     void editorDestroyed (Vst::EditorView* editor);
     tresult PLUGIN_API notify (Vst::IMessage* message);
+    tresult PLUGIN_API setState (IBStream* state);
+    tresult PLUGIN_API getState (IBStream* state);
+
 private:
     QList<Gui*> listGui;
 //    MainWindowVst *mainWindow;

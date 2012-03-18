@@ -32,9 +32,11 @@
 #include "msgobject.h"
 
 #include "pluginterfaces/base/ibstream.h"
+#include "pluginterfaces/vst/ivstparameterchanges.h"
+#include "pluginterfaces/vst/ivstevents.h"
 
-VstBoardProcessor::VstBoardProcessor (QObject *parent) :
-    MainHost(0,parent),
+VstBoardProcessor::VstBoardProcessor () :
+    MainHost(0,0),
     Vst::AudioEffect()
 {
 
@@ -56,6 +58,10 @@ void VstBoardProcessor::Init()
 {
     MainHost::Init();
     objFactory = new Connectables::ObjectFactoryVst(this);
+    QObject::connect(this, SIGNAL(ChangeProg(quint16)),
+            programManager, SLOT(UserChangeProg(quint16)));
+    QObject::connect(this, SIGNAL(ChangeGroup(quint16)),
+            programManager, SLOT(UserChangeGroup(quint16)));
 }
 
 tresult PLUGIN_API VstBoardProcessor::initialize (FUnknown* context)
@@ -111,10 +117,10 @@ tresult PLUGIN_API VstBoardProcessor::initialize (FUnknown* context)
     }
 
     for(int i=0; i<NB_MIDI_BUSES_IN; i++) {
-        addEventInput(QString("MidiIn%1").arg(i+1).utf16(), 16, Vst::kMain, 0);
+        addEventInput(QString("MidiIn%1").arg(i+1).utf16(), 4, Vst::kMain, 0);
     }
     for(int i=0; i<NB_MIDI_BUSES_OUT; i++) {
-        addEventOutput(QString("MidiOut%1").arg(i+1).utf16(), 16, Vst::kMain, 0);
+        addEventOutput(QString("MidiOut%1").arg(i+1).utf16(), 4, Vst::kMain, 0);
     }
 
     return kResultTrue;
@@ -222,6 +228,67 @@ tresult PLUGIN_API VstBoardProcessor::setActive (TBool state)
 
 tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
 {
+    //timer
+    if(data.processContext) {
+        vst3Host->SetTimeInfo(data.processContext);
+        vst3Host->GetTimeInfo(&vstHost->vstTimeInfo);
+    }
+
+    //param changes
+    Vst::IParameterChanges* paramChanges = data.inputParameterChanges;
+    if (paramChanges)
+    {
+        int32 numParamsChanged = paramChanges->getParameterCount ();
+        for (int32 i = 0; i < numParamsChanged; i++)
+        {
+            Vst::IParamValueQueue* paramQueue = paramChanges->getParameterData (i);
+            if (paramQueue)
+            {
+                int32 offsetSamples;
+                double value;
+                int32 numPoints = paramQueue->getPointCount ();
+                switch (paramQueue->getParameterId ())
+                {
+                    case paramByPass:
+                        break;
+                    case paramProgChange:
+                        if (paramQueue->getPoint (numPoints - 1,  offsetSamples, value) == kResultTrue) {
+                            emit ChangeProg( (quint16)value );
+                        }
+                        break;
+                    case paramGroupChange:
+                        if (paramQueue->getPoint (numPoints - 1,  offsetSamples, value) == kResultTrue) {
+                            emit ChangeGroup( (quint16)value );
+                        }
+                        break;
+                }
+            }
+        }
+    }
+
+    //notes on/off
+    Vst::IEventList* eventList = data.inputEvents;
+    if (eventList)
+    {
+        int32 numEvent = eventList->getEventCount ();
+        for (int32 i = 0; i < numEvent; i++)
+        {
+            Vst::Event event;
+            if (eventList->getEvent (i, event) == kResultOk)
+            {
+                switch (event.type)
+                {
+                    case Vst::Event::kNoteOnEvent:
+                        break;
+
+                    case Vst::Event::kNoteOffEvent:
+                        break;
+                }
+            }
+        }
+    }
+
+    //render audio
     unsigned long bSize = (unsigned long)data.numSamples;
     if(bSize>0 && bufferSize != bSize) {
         SetBufferSize(bSize);

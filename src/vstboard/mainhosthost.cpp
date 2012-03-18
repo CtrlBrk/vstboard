@@ -53,6 +53,7 @@ void MainHostHost::Render()
 {
     #ifdef VSTSDK
         vstHost->UpdateTimeInfo(timeFromStart.elapsed(), bufferSize, sampleRate);
+        vst3Host->UpdateTime(bufferSize, sampleRate);
     #endif
 
     MainHost::Render();

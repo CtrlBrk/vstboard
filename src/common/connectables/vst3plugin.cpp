@@ -54,7 +54,9 @@ Vst3Plugin::Vst3Plugin(MainHost *host, int index, const ObjectInfo &info) :
     hasEditor(false),
     editorWnd(0),
     pView(0),
-    bypass(false)
+    bypass(false),
+    progChangeParameter(-1),
+    bypassParameter(FixedPinNumber::bypass)
 {
     for(int i=0;i<128;i++) {
         listValues << i;
@@ -147,6 +149,7 @@ void Vst3Plugin::ReceiveMsg(const MsgObject &msg)
             Object::LoadProgram(TEMP_PROGRAM);
             delete listPrograms.take(lastProg);
             initPlugin();
+            SetSleep(false);
             Object::LoadProgram(lastProg);
 
             SetMsgEnabled(true);
@@ -306,13 +309,23 @@ bool Vst3Plugin::initController()
 
     hasEditor=true;
 
+    bypassParameter = FixedPinNumber::bypass;
+    progChangeParameter = -1;
+
     //init parameters
     qint32 numParameters = editController->getParameterCount ();
     for (qint32 i = 0; i < numParameters; i++) {
         Vst::ParameterInfo paramInfo = {0};
         tresult result = editController->getParameterInfo (i, paramInfo);
         if (result == kResultOk) {
-             if(paramInfo.flags & Vst::ParameterInfo::kIsReadOnly) {
+            if(paramInfo.flags & Vst::ParameterInfo::kIsBypass) {
+                bypassParameter = i;
+            }
+            if(paramInfo.flags & Vst::ParameterInfo::kIsProgramChange) {
+                progChangeParameter = i;
+            }
+
+            if(paramInfo.flags & Vst::ParameterInfo::kIsReadOnly) {
                 listParameterPinOut->AddPin(i);
             } else {
                 listParameterPinIn->AddPin(i);
@@ -357,8 +370,11 @@ bool Vst3Plugin::initController()
     listIsLearning << "unlearn";
     listParameterPinIn->AddPin(FixedPinNumber::learningMode);
 
-    listParameterPinIn->AddPin(FixedPinNumber::vstProgNumber);
-    listParameterPinIn->AddPin(FixedPinNumber::bypass);
+//    listParameterPinIn->AddPin(FixedPinNumber::vstProgNumber);
+
+    if(bypassParameter==FixedPinNumber::bypass) {
+        listParameterPinIn->AddPin(FixedPinNumber::bypass);
+    }
 
     return true;
 }
@@ -659,16 +675,14 @@ void Vst3Plugin::Unload()
     }
 
 
-
-    ExitModuleProc exitProc = (ExitModuleProc)pluginLib->resolve("ExitDll");
-    if (exitProc) {
-        if(!exitProc()) {
-            LOG("exitProc error")
-        }
-    }
-
-
     if(pluginLib) {
+        ExitModuleProc exitProc = (ExitModuleProc)pluginLib->resolve("ExitDll");
+        if (exitProc) {
+            if(!exitProc()) {
+                LOG("exitProc error")
+            }
+        }
+
         if(pluginLib->isLoaded())
             if(!pluginLib->unload()) {
 //                LOG("can't unload plugin"<< objInfo.filename);
@@ -760,6 +774,8 @@ void Vst3Plugin::Render()
     paramLock.unlock();
     processData.inputParameterChanges = &vstParamChanges;
 
+    processData.processContext = &myHost->vst3Host->processContext;
+
 //    audioEffect->setProcessing (true);
     tresult result = audioEffect->process (processData);
     if (result != kResultOk) {
@@ -779,6 +795,64 @@ void Vst3Plugin::Render()
         static_cast<AudioPin*>(pin)->GetBuffer()->ConsumeStack();
         static_cast<AudioPin*>(pin)->SendAudioBuffer();
     }
+}
+
+void Vst3Plugin::MidiMsgFromInput(long msg)
+{
+    if(closed)
+        return;
+
+    int command = MidiStatus(msg) & MidiConst::codeMask;
+
+    switch(command) {
+//        case MidiConst::ctrl: {
+//            ChangeValue(MidiData1(msg),MidiData2(msg));
+//            break;
+//        }
+        case MidiConst::prog :
+            if(progChangeParameter!=-1) {
+                Pin* p = listParameterPinIn->GetPin(progChangeParameter,false);
+                if(p) {
+                    static_cast<ParameterPin*>(p)->ChangeValue( (int)MidiData1(msg) );
+                }
+            }
+            break;
+
+//        case MidiConst::noteOn : {
+//            ChangeValue(para_velocity, MidiData2(msg) );
+//            ChangeValue(para_notes+MidiData1(msg), MidiData2(msg) );
+//            ChangeValue(para_notepitch, MidiData1(msg) );
+//            break;
+//        }
+//        case MidiConst::noteOff : {
+//            ChangeValue(para_notepitch, MidiData1(msg) );
+//            ChangeValue(para_notes+MidiData1(msg), MidiData2(msg) );
+//            break;
+//        }
+//        case MidiConst::pitchbend : {
+//            ChangeValue(para_pitchbend, MidiData2(msg) );
+//            break;
+//        }
+//        case MidiConst::chanpressure : {
+//            ChangeValue(para_chanpress, MidiData1(msg) );
+//            break;
+//        }
+//        case MidiConst::aftertouch : {
+//            ChangeValue(para_velocity, MidiData1(msg) );
+//            ChangeValue(para_aftertouch, MidiData2(msg) );
+//        }
+    }
+
+//    Vst::Event *evnt = new Vst::Event;
+//    memset(evnt, 0, sizeof(Vst::Event));
+//    evnt->type = Vst::Event::kNoteOnEvent;
+//    evnt->byteSize = sizeof(VstMidiEvent);
+//    memcpy(evnt->midiData, &msg, sizeof(evnt->midiData));
+//    evnt->flags = kVstMidiEventIsRealtime;
+
+//    midiEventsMutex.lock();
+//    listVstMidiEvents << evnt;
+//    midiEventsMutex.unlock();
 }
 
 void Vst3Plugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
@@ -832,19 +906,26 @@ Pin* Vst3Plugin::CreatePin(const ConnectionInfo &info)
         return newPin;
 
     if(info.type == PinType::Parameter) {
+
+        if(info.pinNumber==progChangeParameter) {
+            return new ParameterPinIn(this,info.pinNumber,0,&listValues,"prog");
+        }
+
+        if(info.pinNumber==bypassParameter) {
+            return new ParameterPinIn(this,info.pinNumber,"On",&listBypass);
+        }
+
         switch(info.pinNumber) {
-            case FixedPinNumber::vstProgNumber :
-                return new ParameterPinIn(this,info.pinNumber,0,&listValues,"prog");
             case FixedPinNumber::editorVisible :
                 if(!hasEditor && !IsInError())
                     return 0;
                 return new ParameterPinIn(this,info.pinNumber,"show",&listEditorVisible,tr("Editor"));
+
             case FixedPinNumber::learningMode :
                 if(!hasEditor && !IsInError())
                     return 0;
                 return new ParameterPinIn(this,info.pinNumber,"off",&listIsLearning,tr("Learn"));
-            case FixedPinNumber::bypass :
-                return new ParameterPinIn(this,info.pinNumber,"On",&listBypass);
+
             default : {
                 ParameterPin *pin=0;
                 Vst::ParameterInfo paramInfo = {0};

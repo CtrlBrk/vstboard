@@ -182,13 +182,6 @@ void CVSTHost::UpdateTimeInfo(double timer, int addSamples, double sampleRate)
     vstTimeInfo.barStartPos = barLengthq*currentBar;
 }
 
-float CVSTHost::GetCurrentBarTic()
-{
-    float step = floor((vstTimeInfo.ppqPos-vstTimeInfo.barStartPos)*vstTimeInfo.timeSigDenominator/4);
-    float total = ((barLengthq*vstTimeInfo.timeSigDenominator/4)-1);
-    return step / total;
-}
-
 /*****************************************************************************/
 /* AudioMasterCallback : callback to be called by plugins                    */
 /*****************************************************************************/

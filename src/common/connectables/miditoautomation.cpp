@@ -20,7 +20,7 @@
 
 #include "miditoautomation.h"
 #include "midipinin.h"
-#include "../globals.h"
+#include "globals.h"
 #include "mainhost.h"
 #include "commands/comaddpin.h"
 #include "commands/comremovepin.h"

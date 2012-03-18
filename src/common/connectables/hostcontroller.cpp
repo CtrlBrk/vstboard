@@ -127,7 +127,7 @@ void HostController::Render()
 #ifdef VSTSDK
     pin=static_cast<ParameterPin*>(listParameterPinOut->listPins.value(Param_Bar));
     if(pin)
-        pin->ChangeValue( myHost->vstHost->GetCurrentBarTic() );
+        pin->ChangeValue( myHost->vst3Host->GetCurrentBarTic() );
 #endif
 }
 
@@ -226,7 +226,7 @@ void HostController::TapTempo()
 //    LOG(fractPart);
 
 #ifdef VSTSDK
-    myHost->vstHost->vstTimeInfo.ppqPos = (int)myHost->vstHost->vstTimeInfo.ppqPos;
+    myHost->vst3Host->processContext.projectTimeMusic = (int)myHost->vst3Host->processContext.projectTimeMusic;
 #endif
 
     if(taps.size()>2) {

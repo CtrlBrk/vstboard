@@ -368,6 +368,7 @@ void VstPlugin::ReceiveMsg(const MsgObject &msg)
             Object::LoadProgram(TEMP_PROGRAM);
             delete listPrograms.take(lastProg);
             Open();
+            SetSleep(false);
             Object::LoadProgram(lastProg);
 
             SetMsgEnabled(true);

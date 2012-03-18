@@ -39,7 +39,9 @@ tresult PLUGIN_API VstBoardController::initialize (FUnknown* context)
     QCoreApplication::setOrganizationName("CtrlBrk");
     QCoreApplication::setApplicationName("VstBoard");
 
-//    parameters.addParameter (STR16 ("Delay"), STR16 ("sec"), 0, 1, Vst::ParameterInfo::kCanAutomate, kDelayTag);
+    parameters.addParameter (STR16 ("Bypass"), 0, 1, 0, Vst::ParameterInfo::kCanAutomate | Vst::ParameterInfo::kIsBypass, paramByPass);
+    parameters.addParameter (STR16 ("Program"), 0, 127, 0, Vst::ParameterInfo::kCanAutomate | Vst::ParameterInfo::kIsProgramChange, paramProgChange);
+    parameters.addParameter (STR16 ("Group"), 0, 127, 0, Vst::ParameterInfo::kCanAutomate, paramGroupChange);
 
     return kResultTrue;
 }
@@ -114,4 +116,14 @@ tresult PLUGIN_API VstBoardController::notify (Vst::IMessage* message)
     }
 
     return EditController::notify(message);
+}
+
+tresult PLUGIN_API VstBoardController::setState (IBStream* state)
+{
+    return kResultOk;
+}
+
+tresult PLUGIN_API VstBoardController::getState (IBStream* state)
+{
+    return kResultOk;
 }

@@ -33,6 +33,7 @@
 #include "pluginterfaces/vst/ivstaudioprocessor.h"
 #include "pluginterfaces/vst/ivsthostapplication.h"
 #include "pluginterfaces/gui/iplugview.h"
+#include "pluginterfaces/vst/ivstevents.h"
 
 namespace View {
     class VstPluginWindow;
@@ -66,6 +67,8 @@ public:
 //    tresult PLUGIN_API requestOpenEditor (FIDString name=Vst::ViewType::kEditor);
 //    tresult PLUGIN_API startGroupEdit ();
 //    tresult PLUGIN_API finishGroupEdit ();
+
+    void MidiMsgFromInput(long msg);
 
     QDataStream & toStream (QDataStream &) const;
     bool fromStream (QDataStream &);
@@ -107,6 +110,9 @@ private:
 //    quint32 savedChunkSize;
     QByteArray savedState;
     bool bypass;
+
+    qint32 progChangeParameter;
+    qint32 bypassParameter;
 
 signals:
     void WindowSizeChange(int newWidth, int newHeight);

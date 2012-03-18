@@ -21,7 +21,7 @@
 #ifndef MIDITOAUTOMATION_H
 #define MIDITOAUTOMATION_H
 
-#include "../precomp.h"
+//#include "precomp.h"
 #include "object.h"
 
 namespace Connectables {

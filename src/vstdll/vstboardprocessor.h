@@ -35,8 +35,8 @@
 
 #define NB_MAIN_BUSES_IN 4
 #define NB_MAIN_BUSES_OUT 4
-#define NB_AUX_BUSES_IN 4
-#define NB_AUX_BUSES_OUT 4
+#define NB_AUX_BUSES_IN 1
+#define NB_AUX_BUSES_OUT 1
 #define NB_MIDI_BUSES_IN 1
 #define NB_MIDI_BUSES_OUT 1
 
@@ -47,7 +47,7 @@ class VstBoardProcessor : public MainHost, public Vst::AudioEffect
 {
     Q_OBJECT
 public:
-        VstBoardProcessor (QObject *parent = 0);
+        VstBoardProcessor ();
         virtual ~VstBoardProcessor();
 
         tresult PLUGIN_API initialize (FUnknown* context);
@@ -89,6 +89,9 @@ protected:
 //        ParamValue delay;
 //        float** buffer;
 //        int32 bufferPos;
+signals:
+        void ChangeProg(quint16 prog);
+        void ChangeGroup(quint16 group);
 
 public slots:
         void Init();

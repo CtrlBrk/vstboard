@@ -30,4 +30,9 @@ static const Steinberg::FUID VstBoardProcessorUID       (0x6183A41C, 0x584C4795,
 static const Steinberg::FUID VstBoardInstProcessorUID   (0x302F1D1A, 0x68A511E1, 0x9D995F2E, 0x4924019B);
 static const Steinberg::FUID VstBoardControllerUID      (0x999B210E, 0x45964a25, 0x91A5ACDC, 0xF8EB9481);
 
+enum {
+    paramByPass=0,
+    paramProgChange,
+    paramGroupChange
+};
 #endif // IDS_H

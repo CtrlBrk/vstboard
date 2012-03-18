@@ -23,8 +23,8 @@
 
 namespace Steinberg
 {
-Gui::Gui(Vst::EditController *ctrl) :
-    ctrl(ctrl),
+Gui::Gui(Vst::EditController *ctrl, ViewRect *size) :
+    Vst::EditorView(ctrl,size),
     widget(0),
     myWindow(0),
     plugFrame(0),
@@ -172,6 +172,8 @@ tresult PLUGIN_API Gui::attached (void* parent, FIDString /*type*/)
             this, SLOT(OnResizeHandleMove(QPoint)));
 
     widget->show();
+
+    Vst::EditorView::attachedToParent();
     return kResultOk;
 }
 
@@ -189,6 +191,7 @@ tresult PLUGIN_API Gui::removed ()
         widget=0;
     }
 
+    Vst::EditorView::removedFromParent();
     return kResultOk;
 }
 
