@@ -63,8 +63,6 @@ void VstPluginView::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId,
 
 void VstPluginView::Init(const MsgObject &msg)
 {
-    ObjectView::Init(msg);
-
     actSaveBank = new QAction(QIcon(":/img16x16/filesave.png"),tr("Save Bank"),this);
     actSaveBank->setShortcutContext(Qt::WidgetShortcut);
     connect(actSaveBank,SIGNAL(triggered()),
@@ -90,6 +88,8 @@ void VstPluginView::Init(const MsgObject &msg)
             this,SLOT(SaveProgramAs()));
     actSaveProgramAs->setEnabled(false);
     addAction(actSaveProgramAs);
+
+    ObjectView::Init(msg);
 }
 
 void VstPluginView::UpdateKeyBinding()
@@ -99,6 +99,23 @@ void VstPluginView::UpdateKeyBinding()
     if(actSaveBankAs) actSaveBankAs->setShortcut( config->keyBinding->GetMainShortcut(KeyBind::saveBankAs) );
     if(actSaveProgram) actSaveProgram->setShortcut( config->keyBinding->GetMainShortcut(KeyBind::saveProgram) );
     if(actSaveProgramAs) actSaveProgramAs->setShortcut( config->keyBinding->GetMainShortcut(KeyBind::saveProgramAs) );
+}
+
+void VstPluginView::ReceiveMsg(const MsgObject &msg)
+{
+    if(msg.prop.contains(MsgObject::Load)) {
+        QString name = msg.prop[MsgObject::Load].toString();
+        if(name.endsWith("fxp",Qt::CaseInsensitive)) {
+            currentProgFile = name;
+            actSaveProgramAs->setEnabled(true);
+            actSaveBankAs->setEnabled(false);
+        } else if(name.endsWith("fxb",Qt::CaseInsensitive)) {
+            currentBankFile = name;
+            actSaveProgramAs->setEnabled(false);
+            actSaveBankAs->setEnabled(true);
+        }
+    }
+    ConnectableObjectView::ReceiveMsg(msg);
 }
 
 void VstPluginView::SaveBankAs()
@@ -113,13 +130,18 @@ void VstPluginView::SaveBankAs()
     }
 
     config->settings->SetSetting("lastBankPath",QFileInfo(filename).absolutePath());
-//    model->setData(objIndex,filename,UserRoles::bankFile);
+
+    MsgObject msg(GetIndex());
+    msg.prop[MsgObject::Save] =  filename;
+    msgCtrl->SendMsg(msg);
 }
 
 void VstPluginView::SaveBank()
 {
-    if(objIndex.data(UserRoles::bankFile).isValid() && !objIndex.data(UserRoles::bankFile).toString().isEmpty()) {
-//        model->setData(objIndex, objIndex.data(UserRoles::bankFile).toString(), UserRoles::bankFile);
+    if(actSaveBankAs->isEnabled()) {
+        MsgObject msg(GetIndex());
+        msg.prop[MsgObject::Save] =  currentBankFile;
+        msgCtrl->SendMsg(msg);
     } else {
         SaveBankAs();
     }
@@ -137,13 +159,18 @@ void VstPluginView::SaveProgramAs()
     }
 
     config->settings->SetSetting("lastBankPath",QFileInfo(filename).absolutePath());
-//    model->setData(objIndex,filename,UserRoles::programFile);
+
+    MsgObject msg(GetIndex());
+    msg.prop[MsgObject::Save] =  filename;
+    msgCtrl->SendMsg(msg);
 }
 
 void VstPluginView::SaveProgram()
 {
-    if(objIndex.data(UserRoles::programFile).isValid() && !objIndex.data(UserRoles::programFile).toString().isEmpty()) {
-//        model->setData(objIndex, objIndex.data(UserRoles::programFile).toString(), UserRoles::programFile);
+    if(actSaveProgramAs->isEnabled()) {
+        MsgObject msg(GetIndex());
+        msg.prop[MsgObject::Save] =  currentProgFile;
+        msgCtrl->SendMsg(msg);
     } else {
         SaveProgramAs();
     }

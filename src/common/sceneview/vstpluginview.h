@@ -30,6 +30,7 @@ namespace View {
     public:
         VstPluginView(ViewConfig *config,MsgController *msgCtrl, int objId, MainContainerView * parent = 0);
         void Init(const MsgObject &msg);
+        void ReceiveMsg(const MsgObject &msg);
 
     protected:
         void dragEnterEvent( QGraphicsSceneDragDropEvent *event);
@@ -39,6 +40,8 @@ namespace View {
         QAction *actSaveBankAs;
         QAction *actSaveProgram;
         QAction *actSaveProgramAs;
+        QString currentProgFile;
+        QString currentBankFile;
 
     public slots:
         void SaveBankAs();

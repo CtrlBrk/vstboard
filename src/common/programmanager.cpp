@@ -270,8 +270,9 @@ bool ProgramManager::userWantsToUnloadGroup()
         return true;
 
     //no changes
-    if(!myHost->groupContainer->IsDirty())
-        return true;
+    //plugins internal state may ahve changed
+//    if(!myHost->groupContainer->IsDirty())
+//        return true;
 
     //auto save
     if(groupAutosaveState == Qt::Checked) {
@@ -301,8 +302,9 @@ bool ProgramManager::userWantsToUnloadProgram()
         return true;
 
     //no changes
-    if(!myHost->programContainer->IsDirty())
-        return true;
+    //plugins internal state may ahve changed
+//    if(!myHost->programContainer->IsDirty())
+//        return true;
 
     //auto save
     if(progAutosaveState == Qt::Checked) {
@@ -342,8 +344,8 @@ bool ProgramManager::userWantsToUnloadProject()
         return false;
 
     //no changes
-    if(!IsDirty())
-        return true;
+//    if(!IsDirty())
+//        return true;
 
     //auto save
     if(onUnsaved == Qt::Checked) {
@@ -372,8 +374,8 @@ bool ProgramManager::userWantsToUnloadSetup()
         return true;
 
     //no changes
-    if(!myHost->hostContainer->IsDirty())
-        return true;
+//    if(!myHost->hostContainer->IsDirty())
+//        return true;
 
     //auto save
     if(onUnsaved == Qt::Checked) {

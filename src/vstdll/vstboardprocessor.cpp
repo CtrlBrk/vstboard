@@ -136,6 +136,9 @@ tresult PLUGIN_API VstBoardProcessor::setState (IBStream* state)
     SWAP_32 (size)
 #endif
 
+    if(size==0)
+        return kResultFalse;
+
     char *buf = new char[size];
     if (state->read (buf, size) != kResultOk) {
         delete[] buf;

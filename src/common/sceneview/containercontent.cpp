@@ -90,20 +90,6 @@ void ContainerContent::dragEnterEvent( QGraphicsSceneDragDropEvent *event)
     QString fName;
     QFileInfo info;
 
-//    QStringList acceptedFiles;
-//    acceptedFiles << "fxb" << "fxp" ;
-
-//    foreach(QUrl url,event->mimeData()->urls()) {
-//        fName = url.toLocalFile();
-//        info.setFile( fName );
-//        if ( info.isFile() && info.isReadable() ) {
-//            if( acceptedFiles.contains( info.suffix(), Qt::CaseInsensitive) ) {
-//                event->setDropAction(Qt::CopyAction);
-//                event->accept();
-//                return;
-//            }
-//        }
-//    }
 
     ObjectDropZone::dragEnterEvent(event);
 }

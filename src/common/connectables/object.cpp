@@ -853,23 +853,6 @@ void Object::ReceiveMsg(const MsgObject &msg)
         return;
     }
 
-    if(msg.prop.contains(MsgObject::FilesToLoad)) {
-        QStringList lstFiles = msg.prop[MsgObject::FilesToLoad].toStringList();
-        foreach(const QString filename, lstFiles) {
-            QFileInfo info;
-            info.setFile( filename );
-            if ( info.isFile() && info.isReadable() ) {
-                QString fileType(info.suffix().toLower());
-
-                //fxb file
-                if( fileType == VST_BANK_FILE_EXTENSION || fileType == VST_PROGRAM_FILE_EXTENSION) {
-                    continue;
-                }
-            }
-        }
-        return;
-    }
-
     if(msg.prop.contains(MsgObject::State)) {
         currentViewAttr.position = msg.prop[MsgObject::State].toPointF();
         return;

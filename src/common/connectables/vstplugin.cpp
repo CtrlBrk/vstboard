@@ -314,6 +314,9 @@ bool VstPlugin::Open()
             }
         }
 
+        QFileInfo inf(objInfo.filename);
+        setObjectName(inf.baseName());
+
         if(!Load(objInfo.filename )) {
             VstPlugin::pluginLoading = 0;
             SetErrorMessage( tr("Error while loading the plugin") );
@@ -373,6 +376,28 @@ void VstPlugin::ReceiveMsg(const MsgObject &msg)
 
             SetMsgEnabled(true);
             UpdateView();
+        }
+        return;
+    }
+
+    if(msg.prop.contains(MsgObject::FilesToLoad)) {
+        QStringList lstFiles = msg.prop[MsgObject::FilesToLoad].toStringList();
+        foreach(const QString filename, lstFiles) {
+            if ( filename.endsWith("fxp",Qt::CaseInsensitive) ) {
+                LoadProgramFile(filename);
+            } else if ( filename.endsWith("fxb",Qt::CaseInsensitive) ) {
+                LoadBank(filename);
+            }
+        }
+        return;
+    }
+
+    if(msg.prop.contains(MsgObject::Save)) {
+        QString filename = msg.prop[MsgObject::Save].toString();
+        if( filename.endsWith("fxp",Qt::CaseInsensitive) ) {
+            SaveProgramFile(filename);
+        } else if ( filename.endsWith("fxb",Qt::CaseInsensitive) ) {
+            SaveBank(filename);
         }
         return;
     }
@@ -960,7 +985,12 @@ bool VstPlugin::LoadBank(const QString &filename)
     if(!CEffect::LoadBank(&str))
         return false;
     onVstProgramChanged();
-//    myHost->GetModel()->setData( modelIndex, filename, UserRoles::bankFile);
+
+    currentBankFile=filename;
+    MsgObject msg(GetIndex());
+    msg.prop[MsgObject::Load] = currentBankFile;
+    msgCtrl->SendMsg(msg);
+
     return true;
 }
 
@@ -975,6 +1005,11 @@ void VstPlugin::SaveBank(const QString &filename)
     std::string str = filename.toStdString();
     if(!CEffect::SaveBank(&str))
         return;
+
+    currentBankFile=filename;
+    MsgObject msg(GetIndex());
+    msg.prop[MsgObject::Load] = currentBankFile;
+    msgCtrl->SendMsg(msg);
 }
 
 /**
@@ -988,7 +1023,12 @@ bool VstPlugin::LoadProgramFile(const QString &filename)
     if(!CEffect::LoadProgram(&str))
         return false;
     onVstProgramChanged();
-//    myHost->GetModel()->setData( modelIndex, filename, UserRoles::programFile);
+
+    currentBankFile=filename;
+    MsgObject msg(GetIndex());
+    msg.prop[MsgObject::Load] = currentBankFile;
+    msgCtrl->SendMsg(msg);
+
     return true;
 }
 
@@ -1003,6 +1043,11 @@ void VstPlugin::SaveProgramFile(const QString &filename)
     std::string str = filename.toStdString();
     if(!CEffect::SaveProgram(&str))
         return;
+
+    currentBankFile=filename;
+    MsgObject msg(GetIndex());
+    msg.prop[MsgObject::Load] = currentBankFile;
+    msgCtrl->SendMsg(msg);
 }
 
 /**
@@ -1096,6 +1141,12 @@ bool VstPlugin::fromStream(QDataStream & in)
         }
     }
     return true;
+}
+
+void VstPlugin::GetInfos(MsgObject &msg)
+{
+    Object::GetInfos(msg);
+    msg.prop[MsgObject::Load] = currentBankFile;
 }
 
 #endif

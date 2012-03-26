@@ -1154,6 +1154,26 @@ void Container::ReceiveMsg(const MsgObject &msg)
         return;
     }
 
+    if(msg.prop.contains(MsgObject::FilesToLoad)) {
+        QStringList lstFiles = msg.prop[MsgObject::FilesToLoad].toStringList();
+        foreach(const QString filename, lstFiles) {
+            if(filename.endsWith("fxb", Qt::CaseInsensitive) || filename.endsWith("fxp", Qt::CaseInsensitive)) {
+                int insertType = msg.prop[MsgObject::Type].toInt();
+                QSharedPointer<Object> targetObj = myHost->objFactory->GetObjectFromId( GetIndex() );
+
+                ObjectInfo infoVst;
+                infoVst.nodeType = NodeType::object;
+                infoVst.objType = ObjType::VstPlugin;
+                infoVst.filename = filename;
+                infoVst.name = filename;
+                ComAddObject *com = new ComAddObject(myHost, infoVst, targetObj.staticCast<Container>(), targetObj, static_cast<InsertionType::Enum>(insertType) );
+                myHost->undoStack.push( com );
+                continue;
+            }
+        }
+        return;
+    }
+
     Object::ReceiveMsg(msg);
 }
 

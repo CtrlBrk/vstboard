@@ -54,6 +54,9 @@ public:
     void Render();
     Pin* CreatePin(const ConnectionInfo &info);
     void SetSleep(bool sleeping);
+    void SaveProgram();
+    void LoadProgram(int prog);
+
     View::VstPluginWindow *editorWnd;
 
     tresult PLUGIN_API queryInterface (const TUID iid, void** obj);

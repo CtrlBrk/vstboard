@@ -379,6 +379,59 @@ bool Vst3Plugin::initController()
     return true;
 }
 
+void Vst3Plugin::SaveProgram()
+{
+    if(!currentProgram)// || !currentProgram->IsDirty())
+        return;
+
+    MemoryStream state;
+    if(processorComponent->getState(&state)!=kResultOk) {
+        LOG("error saving state")
+        return;
+    }
+    state.seek(0,IBStream::kIBSeekSet,0);
+    QByteArray ba(state.getData(), state.getSize());
+    currentProgram->listOtherValues.insert(0, ba );
+
+    Object::SaveProgram();
+}
+
+void Vst3Plugin::LoadProgram(int prog)
+{
+
+    if(prog==currentProgId && currentProgram)
+        return;
+
+    bool msgWasEnabled=MsgEnabled();
+    SetMsgEnabled(false);
+
+    Object::LoadProgram(prog);
+
+    QByteArray ba = currentProgram->listOtherValues.value(0,QByteArray()).toByteArray();
+    if(ba.size()==0)
+        return;
+
+    MemoryStream state;
+    int32 nbWritten=0;
+    state.write(ba.data(),ba.size(),&nbWritten);
+    if(nbWritten!=ba.size()) {
+        LOG("stream error")
+        return;
+    }
+
+    if(processorComponent) {
+        state.seek(0,IBStream::kIBSeekSet,0);
+        processorComponent->setState(&state);
+    }
+    if(editController) {
+        state.seek(0,IBStream::kIBSeekSet,0);
+        editController->setState(&state);
+    }
+
+    if(msgWasEnabled)
+        SetMsgEnabled(true);
+}
+
 void Vst3Plugin::CreateEditorWindow()
 {
     QMutexLocker l(&objMutex);

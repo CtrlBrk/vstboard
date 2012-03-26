@@ -70,6 +70,7 @@ namespace Connectables {
 
         void AddPluginToDatabase();
         void ReceiveMsg(const MsgObject &msg);
+        void GetInfos(MsgObject &msg);
 
     protected:
         void SetId(int id) {objInfo.id = id;}
@@ -80,6 +81,7 @@ namespace Connectables {
         VstInt32 IdFromFxb(const QString &fxbFile);
 
         QString bankToLoad;
+        QString currentBankFile;
         float sampleRate;
         unsigned long bufferSize;
         VstEvents *listEvnts;
