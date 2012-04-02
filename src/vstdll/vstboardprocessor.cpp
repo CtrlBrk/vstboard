@@ -37,7 +37,10 @@
 
 VstBoardProcessor::VstBoardProcessor () :
     MainHost(0,0),
-    Vst::AudioEffect()
+    Vst::AudioEffect(),
+    listEvnts(0),
+    currentProg(0),
+    currentGroup(0)
 {
 
 #if defined(_M_X64) || defined(__amd64__)
@@ -52,6 +55,11 @@ VstBoardProcessor::VstBoardProcessor () :
 VstBoardProcessor::~VstBoardProcessor()
 {
     Close();
+
+    if(listEvnts) {
+        free(listEvnts);
+        listEvnts = 0;
+    }
 }
 
 void VstBoardProcessor::Init()
@@ -250,20 +258,26 @@ tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
                 int32 offsetSamples;
                 double value;
                 int32 numPoints = paramQueue->getPointCount ();
-                switch (paramQueue->getParameterId ())
-                {
-                    case paramByPass:
-                        break;
-                    case paramProgChange:
-                        if (paramQueue->getPoint (numPoints - 1,  offsetSamples, value) == kResultTrue) {
-                            emit ChangeProg( (quint16)value );
-                        }
-                        break;
-                    case paramGroupChange:
-                        if (paramQueue->getPoint (numPoints - 1,  offsetSamples, value) == kResultTrue) {
-                            emit ChangeGroup( (quint16)value );
-                        }
-                        break;
+
+                if (paramQueue->getPoint (numPoints - 1,  offsetSamples, value) == kResultTrue) {
+//                    LOG(paramQueue->getParameterId () << value)
+                    switch (paramQueue->getParameterId ())
+                    {
+                        case paramByPass:
+                            break;
+                        case paramProgChange:
+//                            LOG("prgChn"<<value)
+                            emit ChangeProg( value*128 );
+                            break;
+                        case paramGroupChange:
+                            emit ChangeGroup( value*128 );
+                            break;
+                        default:
+                            foreach(Connectables::VstAutomation *dev, lstVstAutomation) {
+                                dev->ValueFromHost(paramQueue->getParameterId(),value);
+                            }
+                            break;
+                    }
                 }
             }
         }
@@ -326,6 +340,30 @@ tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
 
     }
 
+    //output params
+    Vst::IParameterChanges* paramOutChanges = data.outputParameterChanges;
+    if(paramOutChanges) {
+        quint16 prg = programManager->GetCurrentMidiProg();
+        if(prg!=currentProg) {
+            int32 index = 0;
+            Vst::IParamValueQueue* paramQueue = paramOutChanges->addParameterData(paramProgChange, index);
+            if(paramQueue) {
+                int32 index2 = 0;
+                paramQueue->addPoint(0, (Vst::ParamValue)prg/128, index2);
+            }
+            currentProg=prg;
+        }
+        quint16 grp = programManager->GetCurrentMidiGroup();
+        if(grp!=currentGroup) {
+            int32 index = 0;
+            Vst::IParamValueQueue* paramQueue = paramOutChanges->addParameterData(paramGroupChange, index);
+            if(paramQueue) {
+                int32 index2 = 0;
+                paramQueue->addPoint(0, (Vst::ParamValue)grp/128, index2);
+            }
+            currentGroup=grp;
+        }
+    }
     return kResultTrue;
 }
 
@@ -372,6 +410,30 @@ void VstBoardProcessor::SendMsg(const MsgObject &msg)
     }
 }
 
+bool VstBoardProcessor::addMidiIn(Connectables::VstMidiDevice *dev)
+{
+    lstMidiIn << dev;
+    return true;
+}
+
+bool VstBoardProcessor::addMidiOut(Connectables::VstMidiDevice *dev)
+{
+    lstMidiOut << dev;
+    return true;
+}
+
+bool VstBoardProcessor::removeMidiIn(Connectables::VstMidiDevice *dev)
+{
+    lstMidiIn.removeAll(dev);
+    return true;
+}
+
+bool VstBoardProcessor::removeMidiOut(Connectables::VstMidiDevice *dev)
+{
+    lstMidiOut.removeAll(dev);
+    return true;
+}
+
 bool VstBoardProcessor::addAudioIn(Connectables::VstAudioDeviceIn *dev)
 {
     QMutexLocker l(&mutexDevices);
@@ -416,4 +478,77 @@ bool VstBoardProcessor::removeAudioOut(Connectables::VstAudioDeviceOut *dev)
     int id = lstAudioOut.indexOf(dev);
     lstAudioOut.removeAt(id);
     return true;
+}
+
+
+void VstBoardProcessor::addVstAutomation(Connectables::VstAutomation *dev)
+{
+    lstVstAutomation << dev;
+}
+
+void VstBoardProcessor::removeVstAutomation(Connectables::VstAutomation *dev)
+{
+    lstVstAutomation.removeAll(dev);
+}
+
+VstInt32 VstBoardProcessor::processEvents(VstEvents* events)
+{
+    if(!events)
+        return 0;
+
+    VstEvent *evnt=0;
+
+    for(int i=0; i<events->numEvents; i++) {
+        evnt=events->events[i];
+        if( evnt->type==kVstMidiType) {
+            VstMidiEvent *midiEvnt = (VstMidiEvent*)evnt;
+
+            foreach(Connectables::VstMidiDevice *dev, lstMidiIn) {
+                long msg;
+                memcpy(&msg, midiEvnt->midiData, sizeof(midiEvnt->midiData));
+                dev->midiQueue << msg;
+            }
+        } else {
+            LOG("other vst event");
+        }
+    }
+
+    return 1;
+}
+
+bool VstBoardProcessor::processOutputEvents()
+{
+    //free last buffer
+    if(listEvnts) {
+        free(listEvnts);
+        listEvnts = 0;
+    }
+
+    int cpt=0;
+    foreach(Connectables::VstMidiDevice *dev, lstMidiOut) {
+        foreach(long msg, dev->midiQueue) {
+
+            //allocate a new buffer
+            if(!listEvnts)
+                listEvnts = (VstEvents*)malloc(sizeof(VstEvents) + sizeof(VstEvents*)*(VST_EVENT_BUFFER_SIZE-2));
+
+            VstMidiEvent *evnt = new VstMidiEvent;
+            memset(evnt, 0, sizeof(VstMidiEvent));
+            evnt->type = kVstMidiType;
+            evnt->flags = kVstMidiEventIsRealtime;
+            evnt->byteSize = sizeof(VstMidiEvent);
+            //memcpy(evnt->midiData, &msg.message, sizeof(evnt->midiData));
+            memcpy(evnt->midiData, &msg, sizeof(evnt->midiData));
+            listEvnts->events[cpt]=(VstEvent*)evnt;
+            cpt++;
+        }
+        dev->midiQueue.clear();
+    }
+
+    if(cpt>0) {
+        listEvnts->numEvents=cpt;
+//        sendVstEventsToHost(listEvnts);
+        return true;
+    }
+    return false;
 }

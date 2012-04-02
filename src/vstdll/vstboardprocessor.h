@@ -39,6 +39,7 @@
 #define NB_AUX_BUSES_OUT 1
 #define NB_MIDI_BUSES_IN 1
 #define NB_MIDI_BUSES_OUT 1
+#define VST_EVENT_BUFFER_SIZE 1000
 
 using namespace Steinberg;
 
@@ -70,10 +71,22 @@ public:
         bool removeAudioIn(Connectables::VstAudioDeviceIn *dev);
         bool removeAudioOut(Connectables::VstAudioDeviceOut *dev);
 
+        bool addMidiIn(Connectables::VstMidiDevice *dev);
+        bool addMidiOut(Connectables::VstMidiDevice *dev);
+        bool removeMidiIn(Connectables::VstMidiDevice *dev);
+        bool removeMidiOut(Connectables::VstMidiDevice *dev);
+
+        void addVstAutomation(Connectables::VstAutomation *dev);
+        void removeVstAutomation(Connectables::VstAutomation *dev);
+
         tresult PLUGIN_API setupProcessing (Vst::ProcessSetup& setup);
 
         tresult PLUGIN_API setState (IBStream* state);
         tresult PLUGIN_API getState (IBStream* state);
+
+        VstInt32 processEvents(VstEvents* events);
+        bool processOutputEvents();
+        VstEvents * getEvents() {return listEvnts;}
 
 protected:
         QApplication *myApp;
@@ -85,6 +98,10 @@ protected:
         QList<Connectables::VstAutomation*>lstVstAutomation;
 
         QMutex mutexDevices;
+
+        VstEvents *listEvnts;
+        quint16 currentProg;
+        quint16 currentGroup;
 
 //        ParamValue delay;
 //        float** buffer;

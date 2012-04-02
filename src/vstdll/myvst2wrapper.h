@@ -18,23 +18,26 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 
-#ifndef IDS_H
-#define IDS_H
+#include "public.sdk/source/vst/vst2wrapper/vst2wrapper.h"
 
-#include "pluginterfaces/base/funknown.h"
+#ifndef MYVST2WRAPPER_H
+#define MYVST2WRAPPER_H
 
-#define uniqueIDEffect CCONST('V','b','P','l')
-#define uniqueIDInstrument CCONST('V','b','I','s')
+using namespace Steinberg;
 
-static const Steinberg::FUID VstBoardProcessorUID       (0x6183A41C, 0x584C4795, 0xA819AB96, 0xF04CBA61);
-static const Steinberg::FUID VstBoardInstProcessorUID   (0x302F1D1A, 0x68A511E1, 0x9D995F2E, 0x4924019B);
-static const Steinberg::FUID VstBoardControllerUID      (0x999B210E, 0x45964a25, 0x91A5ACDC, 0xF8EB9481);
+class MyVst2Wrapper : public Vst::Vst2Wrapper
+{
+public:
+    static AudioEffect* crt (IPluginFactory* factory, const TUID vst3ComponentID, VstInt32 vst2ID, audioMasterCallback audioMaster);
+    MyVst2Wrapper (Vst::IAudioProcessor* processor, Vst::IEditController* controller, audioMasterCallback audioMaster, const TUID vst3ComponentID, VstInt32 vst2ID, IPluginFactory* factory = 0);
+    VstInt32 processEvents (VstEvents* events);
+    void processReplacing (float** inputs, float** outputs, VstInt32 sampleFrames);
+    void processDoubleReplacing (double** inputs, double** outputs, VstInt32 sampleFrames);
+    void onTimer (Timer* timer);
 
-#define NB_PARAM 32
-
-enum {
-    paramProgChange=NB_PARAM,
-    paramGroupChange,
-    paramByPass
+private:
+    void doProcess (VstInt32 sampleFrames);
+    void processOutputEvents ();
 };
-#endif // IDS_H
+
+#endif // MYVST2WRAPPER_H

@@ -827,6 +827,9 @@ void Vst3Plugin::Render()
     paramLock.unlock();
     processData.inputParameterChanges = &vstParamChanges;
 
+    Vst::ParameterChanges vstParamOutChanges;
+    processData.outputParameterChanges = &vstParamOutChanges;
+
     processData.processContext = &myHost->vst3Host->processContext;
 
 //    audioEffect->setProcessing (true);
@@ -834,6 +837,21 @@ void Vst3Plugin::Render()
     if (result != kResultOk) {
         LOG("error while processing")
     }
+
+    //output params
+    if(processData.outputParameterChanges) {
+        Vst::ParamValue value;
+        int32 sampleOffset;
+        for (int32 i = 0; i < processData.outputParameterChanges->getParameterCount (); i++) {
+            Vst::IParamValueQueue* queue = processData.outputParameterChanges->getParameterData (i);
+            if (queue) {
+                if (queue->getPoint (queue->getPointCount()-1, sampleOffset, value) == kResultTrue) {
+                    performEdit( queue->getParameterId(), value);
+                }
+            }
+        }
+    }
+
 //    audioEffect->setProcessing (false);
 
 //    for(int32 i=0; i<vstParamChanges.getParameterCount(); i++) {

@@ -133,6 +133,7 @@ void MainContainerView::AddObject(const MsgObject &msg)
     } else {
         objView = new ConnectableObjectView(config, msgCtrl, objId, this);
     }
+    objView->objType = static_cast<ObjType::Enum>(msg.prop[MsgObject::Type].toInt());
     objView->Init(msg);
 
     if(msg.prop.contains(MsgObject::State)) {

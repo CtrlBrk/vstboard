@@ -57,12 +57,13 @@ VstAutomation::~VstAutomation()
 void VstAutomation::Render()
 {
     if(!listChanged.isEmpty()) {
-//        Steinberg::Vst::VstBoardProcessor *vst=static_cast<MainHostVst*>(myHost)->myVstPlugin;
+//        VstBoardProcessor *vst=static_cast<VstBoardProcessor*>(myHost);
         QHash<int,float>::const_iterator i = listChanged.constBegin();
         while(i!=listChanged.constEnd()) {
             if(listParameterPinOut->listPins.contains(i.key())) {
                 static_cast<ParameterPin*>( listParameterPinOut->listPins.value(i.key()) )->ChangeValue(i.value());
             }
+
 //            vst->updateParameter(i.key(),i.value());
             ++i;
         }
@@ -162,19 +163,19 @@ void VstAutomation::OnParameterChanged(ConnectionInfo pinInfo, float value)
         return;
     }
 
-    if(pinInfo.direction==PinDirection::Input && pinInfo.pinNumber<200)
-        listChanged.insert(pinInfo.pinNumber,value);
+//    if(pinInfo.direction==PinDirection::Input && pinInfo.pinNumber<200)
+//        listChanged.insert(pinInfo.pinNumber,value);
 }
 
 bool VstAutomation::Close()
 {
-//    static_cast<MainHostVst*>(myHost)->myVstPlugin->removeVstAutomation(this);
+    static_cast<VstBoardProcessor*>(myHost)->removeVstAutomation(this);
     return Object::Close();
 }
 
 bool VstAutomation::Open()
 {
-//    static_cast<MainHostVst*>(myHost)->myVstPlugin->addVstAutomation(this);
+    static_cast<VstBoardProcessor*>(myHost)->addVstAutomation(this);
     return Object::Open();
 }
 

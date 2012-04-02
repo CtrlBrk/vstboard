@@ -51,7 +51,7 @@ public:
     virtual void Init();
     virtual void readSettings();
     void writeSettings();
-    void ReceiveMsg(const MsgObject &msg);
+    virtual void ReceiveMsg(const MsgObject &msg);
 //    void ReceiveMsg(const QString &type, const QVariant &data);
 //    void ProcessMsg(const ListMsgObj &lstMsg);
 

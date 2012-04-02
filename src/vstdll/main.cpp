@@ -18,7 +18,7 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 #include "pluginterfaces/base/ftypes.h"
-#include "public.sdk/source/vst/vst2wrapper/vst2wrapper.h"
+#include "myvst2wrapper.h"
 #include "ids.h"
 #include "vst2shell.h"
 #include <windows.h>
@@ -42,9 +42,9 @@ AudioEffect *createShell(audioMasterCallback audioMaster);
 
     switch(id) {
     case uniqueIDEffect:
-        return Steinberg::Vst::Vst2Wrapper::create (GetPluginFactory (), VstBoardProcessorUID, uniqueIDEffect, audioMaster);
+        return MyVst2Wrapper::crt (GetPluginFactory (), VstBoardProcessorUID, uniqueIDEffect, audioMaster);
     case uniqueIDInstrument:
-        return Steinberg::Vst::Vst2Wrapper::create (GetPluginFactory (), VstBoardInstProcessorUID, uniqueIDInstrument, audioMaster);
+        return MyVst2Wrapper::crt (GetPluginFactory (), VstBoardInstProcessorUID, uniqueIDInstrument, audioMaster);
     default:
         return createShell(audioMaster);
     }

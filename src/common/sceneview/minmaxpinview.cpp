@@ -19,7 +19,7 @@
 **************************************************************************/
 #include "precomp.h"
 #include "minmaxpinview.h"
-#include "objectview.h"
+#include "connectableobjectview.h"
 
 using namespace View;
 
@@ -51,7 +51,7 @@ void MinMaxPinView::ReceiveMsg(const MsgObject &msg)
     if(msg.prop.contains(MsgObject::Value)) {
         UpdateScaleView();
 
-        ObjectView *parentObj = static_cast<ObjectView*>(parentWidget()->parentWidget());
+        ConnectableObjectView *parentObj = static_cast<ConnectableObjectView*>(parentWidget()->parentWidget());
         if(parentObj) {
             if(connectInfo.pinNumber == FixedPinNumber::editorVisible) {
                 parentObj->SetEditorPin(this, value);
@@ -62,6 +62,8 @@ void MinMaxPinView::ReceiveMsg(const MsgObject &msg)
             if(connectInfo.pinNumber == FixedPinNumber::bypass) {
                 parentObj->SetBypassPin(this, value);
             }
+
+            parentObjType = parentObj->objType;
         }
     }
 }
@@ -201,6 +203,8 @@ void MinMaxPinView::ValueChanged(float newVal)
     if(newVal<0.0f) newVal=0.0f;
 
     MsgObject msg(GetIndex());
+    msg.prop[MsgObject::Type]=parentObjType;
+    msg.prop[MsgObject::Id]=connectInfo.pinNumber;
     msg.prop[MsgObject::Value]=newVal;
     msgCtrl->SendMsg(msg);
 }

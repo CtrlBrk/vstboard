@@ -20,6 +20,7 @@
 #include "mainwindowvst.h"
 #include "views/configdialogvst.h"
 #include "vstboardcontroller.h"
+#include "ids.h"
 
 MainWindowVst::MainWindowVst(Vst::EditController *controller,Settings *settings, QWidget *parent) :
     MainWindow(settings,0,parent),
@@ -57,6 +58,16 @@ void MainWindowVst::Init()
 
 void MainWindowVst::SendMsg(const MsgObject &msg)
 {
+    if(msg.prop.contains(MsgObject::Type)) {
+        if(msg.prop[MsgObject::Type].toInt() == ObjType::VstAutomation) {
+            int32 tag = msg.prop[MsgObject::Id].toInt();
+            controller->beginEdit(tag);
+            controller->performEdit(tag, msg.prop[MsgObject::Value].toFloat());
+            controller->endEdit(tag);
+//            return;
+        }
+    }
+
     OPtr<Vst::IMessage> message = controller->allocateMessage();
     if (message)
     {

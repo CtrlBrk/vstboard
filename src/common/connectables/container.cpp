@@ -464,7 +464,7 @@ void Container::UserAddObject(const QSharedPointer<Object> &objPtr,
     objPtr->SetMsgEnabled(MsgEnabled());
 
     if(MsgEnabled())
-        objPtr->UpdateView();
+        objPtr->UpdateViewNow();
 
     if(targetPtr) {
         currentContainerProgram->CollectCableUpdates( listOfAddedCables, listOfRemovedCables );

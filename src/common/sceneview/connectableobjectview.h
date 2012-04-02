@@ -25,6 +25,7 @@
 #include "cableview.h"
 #include "objectdropzone.h"
 #include "maincontainerview.h"
+#include "globals.h"
 
 class MainHost;
 namespace View {
@@ -35,6 +36,7 @@ namespace View {
     public:
         ConnectableObjectView(ViewConfig *config,MsgController *msgCtrl,int objId, MainContainerView *parent);
         void ReportPosChange();
+        ObjType::Enum objType;
 
     protected:
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
