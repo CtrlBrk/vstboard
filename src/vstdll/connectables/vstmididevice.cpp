@@ -61,22 +61,22 @@ void VstMidiDevice::MidiMsgFromInput(long msg) {
 
 bool VstMidiDevice::Close()
 {
-//    if(objInfo.inputs>0)
-//        static_cast<MainHostVst*>(myHost)->myVstPlugin->removeMidiIn(this);
+    if(objInfo.inputs>0)
+        static_cast<VstBoardProcessor*>(myHost)->removeMidiIn(this);
 
-//    if(objInfo.outputs>0)
-//        static_cast<MainHostVst*>(myHost)->myVstPlugin->removeMidiOut(this);
+    if(objInfo.outputs>0)
+        static_cast<VstBoardProcessor*>(myHost)->removeMidiOut(this);
 
     return Object::Close();
 }
 
 bool VstMidiDevice::Open()
 {
-//    if(objInfo.inputs>0)
-//        static_cast<MainHostVst*>(myHost)->myVstPlugin->addMidiIn(this);
+    if(objInfo.inputs>0)
+        static_cast<VstBoardProcessor*>(myHost)->addMidiIn(this);
 
-//    if(objInfo.outputs>0)
-//        static_cast<MainHostVst*>(myHost)->myVstPlugin->addMidiOut(this);
+    if(objInfo.outputs>0)
+        static_cast<VstBoardProcessor*>(myHost)->addMidiOut(this);
 
     listMidiPinOut->ChangeNumberOfPins(objInfo.inputs);
     listMidiPinIn->ChangeNumberOfPins(objInfo.outputs);

@@ -126,14 +126,14 @@ bool InitModule()
 
 bool DeinitModule()
 {
-    FreeLibrary(Hplugin);
-    Hplugin=0;
+//    FreeLibrary(Hplugin);
+//    Hplugin=0;
 //    FreeLibrary(HwinMigrate);
 //    HwinMigrate=0;
-#ifdef SCRIPTENGINE
-    FreeLibrary(Hscript);
-    Hscript=0;
-#endif
+//#ifdef SCRIPTENGINE
+//    FreeLibrary(Hscript);
+//    Hscript=0;
+//#endif
 //    FreeLibrary(Hgui);
 //    Hgui=0;
 //    FreeLibrary(Hcore);

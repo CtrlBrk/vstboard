@@ -43,6 +43,9 @@ tresult PLUGIN_API VstBoardController::initialize (FUnknown* context)
     parameters.addParameter (STR16 ("Program"), 0, 127, 0, Vst::ParameterInfo::kCanAutomate | Vst::ParameterInfo::kIsProgramChange, paramProgChange);
     parameters.addParameter (STR16 ("Group"), 0, 127, 0, Vst::ParameterInfo::kCanAutomate, paramGroupChange);
 
+    for(int i=0; i<32; i++) {
+        parameters.addParameter( QString("Param%1").arg(i).utf16(), 0, 127, 0, Vst::ParameterInfo::kCanAutomate, paramGeneric+i);
+    }
     return kResultTrue;
 }
 

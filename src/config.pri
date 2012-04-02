@@ -14,7 +14,6 @@ win32|macx {
 }
 
 CONFIG += scriptengine
-DEFINES += SCRIPTENGINE
 
 #use ring buffers to sync multiple audio inputs
 #DEFINES += CIRCULAR_BUFFER
@@ -26,6 +25,7 @@ DEFINES += SCRIPTENGINE
 #DEFINES += SIMPLE_CABLES
 
 scriptengine {
+    DEFINES += SCRIPTENGINE
     QT += script
 }
 

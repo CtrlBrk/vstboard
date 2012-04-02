@@ -37,7 +37,8 @@
 
 VstBoardProcessor::VstBoardProcessor () :
     MainHost(0,0),
-    Vst::AudioEffect()
+    Vst::AudioEffect(),
+    listEvnts(0)
 {
 
 #if defined(_M_X64) || defined(__amd64__)
@@ -52,6 +53,11 @@ VstBoardProcessor::VstBoardProcessor () :
 VstBoardProcessor::~VstBoardProcessor()
 {
     Close();
+
+    if(listEvnts) {
+        free(listEvnts);
+        listEvnts = 0;
+    }
 }
 
 void VstBoardProcessor::Init()
@@ -264,6 +270,11 @@ tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
                             emit ChangeGroup( (quint16)value );
                         }
                         break;
+                    default:
+                        foreach(Connectables::VstAutomation *dev, lstVstAutomation) {
+                            dev->ValueFromHost(paramQueue->getParameterId (),value);
+                        }
+                        break;
                 }
             }
         }
@@ -372,6 +383,30 @@ void VstBoardProcessor::SendMsg(const MsgObject &msg)
     }
 }
 
+bool VstBoardProcessor::addMidiIn(Connectables::VstMidiDevice *dev)
+{
+    lstMidiIn << dev;
+    return true;
+}
+
+bool VstBoardProcessor::addMidiOut(Connectables::VstMidiDevice *dev)
+{
+    lstMidiOut << dev;
+    return true;
+}
+
+bool VstBoardProcessor::removeMidiIn(Connectables::VstMidiDevice *dev)
+{
+    lstMidiIn.removeAll(dev);
+    return true;
+}
+
+bool VstBoardProcessor::removeMidiOut(Connectables::VstMidiDevice *dev)
+{
+    lstMidiOut.removeAll(dev);
+    return true;
+}
+
 bool VstBoardProcessor::addAudioIn(Connectables::VstAudioDeviceIn *dev)
 {
     QMutexLocker l(&mutexDevices);
@@ -416,4 +451,77 @@ bool VstBoardProcessor::removeAudioOut(Connectables::VstAudioDeviceOut *dev)
     int id = lstAudioOut.indexOf(dev);
     lstAudioOut.removeAt(id);
     return true;
+}
+
+
+void VstBoardProcessor::addVstAutomation(Connectables::VstAutomation *dev)
+{
+    lstVstAutomation << dev;
+}
+
+void VstBoardProcessor::removeVstAutomation(Connectables::VstAutomation *dev)
+{
+    lstVstAutomation.removeAll(dev);
+}
+
+VstInt32 VstBoardProcessor::processEvents(VstEvents* events)
+{
+    if(!events)
+        return 0;
+
+    VstEvent *evnt=0;
+
+    for(int i=0; i<events->numEvents; i++) {
+        evnt=events->events[i];
+        if( evnt->type==kVstMidiType) {
+            VstMidiEvent *midiEvnt = (VstMidiEvent*)evnt;
+
+            foreach(Connectables::VstMidiDevice *dev, lstMidiIn) {
+                long msg;
+                memcpy(&msg, midiEvnt->midiData, sizeof(midiEvnt->midiData));
+                dev->midiQueue << msg;
+            }
+        } else {
+            LOG("other vst event");
+        }
+    }
+
+    return 1;
+}
+
+bool VstBoardProcessor::processOutputEvents()
+{
+    //free last buffer
+    if(listEvnts) {
+        free(listEvnts);
+        listEvnts = 0;
+    }
+
+    int cpt=0;
+    foreach(Connectables::VstMidiDevice *dev, lstMidiOut) {
+        foreach(long msg, dev->midiQueue) {
+
+            //allocate a new buffer
+            if(!listEvnts)
+                listEvnts = (VstEvents*)malloc(sizeof(VstEvents) + sizeof(VstEvents*)*(VST_EVENT_BUFFER_SIZE-2));
+
+            VstMidiEvent *evnt = new VstMidiEvent;
+            memset(evnt, 0, sizeof(VstMidiEvent));
+            evnt->type = kVstMidiType;
+            evnt->flags = kVstMidiEventIsRealtime;
+            evnt->byteSize = sizeof(VstMidiEvent);
+            //memcpy(evnt->midiData, &msg.message, sizeof(evnt->midiData));
+            memcpy(evnt->midiData, &msg, sizeof(evnt->midiData));
+            listEvnts->events[cpt]=(VstEvent*)evnt;
+            cpt++;
+        }
+        dev->midiQueue.clear();
+    }
+
+    if(cpt>0) {
+        listEvnts->numEvents=cpt;
+//        sendVstEventsToHost(listEvnts);
+        return true;
+    }
+    return false;
 }
