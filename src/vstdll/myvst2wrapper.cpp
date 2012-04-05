@@ -20,7 +20,6 @@
 
 #include "myvst2wrapper.h"
 #include "vstboardprocessor.h"
-#include "ids.h"
 
 MyVst2Wrapper::MyVst2Wrapper(Vst::IAudioProcessor *processor, Vst::IEditController *controller, audioMasterCallback audioMaster, const TUID vst3ComponentID, VstInt32 vst2ID, IPluginFactory *factory) :
     Vst2Wrapper(processor,controller,audioMaster,vst3ComponentID,vst2ID,factory)
@@ -137,10 +136,6 @@ inline void MyVst2Wrapper::doProcess (VstInt32 sampleFrames)
 
         inputTransfer.transferChangesTo (inputChanges);
 
-//        if(curProgram!=oldProg) {
-//            addParameterChange (paramProgChange, (Vst::ParamValue)curProgram, 0);
-//            oldProg=curProgram;
-//        }
         processData.inputParameterChanges = &inputChanges;
         processData.outputParameterChanges = &outputChanges;
         outputChanges.clearQueue ();
