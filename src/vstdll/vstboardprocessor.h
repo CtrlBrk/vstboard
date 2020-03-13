@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -24,7 +24,7 @@
 #include "public.sdk/source/vst/vstaudioeffect.h"
 
 #include <QObject>
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QTranslator>
 #include "connectables/vstaudiodevicein.h"
 #include "connectables/vstaudiodeviceout.h"

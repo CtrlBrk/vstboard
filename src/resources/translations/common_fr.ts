@@ -47,7 +47,7 @@
     <message>
         <location filename="../../common/views/configdialog.ui" line="35"/>
         <source>Default files and directories</source>
-        <translation>Fichiers et dossier par défaut</translation>
+        <translation>Fichiers et dossier par dÃ©faut</translation>
     </message>
     <message>
         <location filename="../../common/views/configdialog.ui" line="47"/>
@@ -72,7 +72,7 @@
     <message>
         <location filename="../../common/views/configdialog.ui" line="265"/>
         <source>Fast plugins windows open/close</source>
-        <translation>Ouverture rapide des fenêtres</translation>
+        <translation>Ouverture rapide des fenÃªtres</translation>
     </message>
     <message>
         <location filename="../../common/views/configdialog.ui" line="320"/>
@@ -82,7 +82,7 @@
     <message>
         <location filename="../../common/views/configdialog.ui" line="326"/>
         <source>Sample rate</source>
-        <translation>Fréquence</translation>
+        <translation>FrÃ©quence</translation>
     </message>
     <message>
         <location filename="../../common/views/configdialog.ui" line="356"/>
@@ -92,7 +92,7 @@
     <message>
         <location filename="../../common/views/configdialog.ui" line="343"/>
         <source>Precision</source>
-        <translation>Précision</translation>
+        <translation>PrÃ©cision</translation>
     </message>
     <message>
         <location filename="../../common/views/configdialog.ui" line="235"/>
@@ -135,7 +135,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/views/configdialog.cpp" line="34"/>
         <source>System default</source>
-        <translation>Defaut système</translation>
+        <translation>Defaut systÃ¨me</translation>
     </message>
     <message>
         <location filename="../../common/views/configdialog.cpp" line="35"/>
@@ -143,13 +143,13 @@ p, li { white-space: pre-wrap; }
         <location filename="../../common/views/configdialog.cpp" line="73"/>
         <location filename="../../common/views/configdialog.cpp" line="95"/>
         <source>From last session</source>
-        <translation>Dernier utilisé</translation>
+        <translation>Dernier utilisÃ©</translation>
     </message>
     <message>
         <location filename="../../common/views/configdialog.cpp" line="36"/>
         <location filename="../../common/views/configdialog.cpp" line="55"/>
         <source>Custom path</source>
-        <translation>Emplacement personnalisé</translation>
+        <translation>Emplacement personnalisÃ©</translation>
     </message>
     <message>
         <location filename="../../common/views/configdialog.cpp" line="72"/>
@@ -159,7 +159,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/views/configdialog.cpp" line="74"/>
         <source>Custom setup file</source>
-        <translation>Emplacement personnalisé</translation>
+        <translation>Emplacement personnalisÃ©</translation>
     </message>
     <message>
         <location filename="../../common/views/configdialog.cpp" line="94"/>
@@ -169,7 +169,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/views/configdialog.cpp" line="96"/>
         <source>Custom project file</source>
-        <translation>Emplacement personnalisé</translation>
+        <translation>Emplacement personnalisÃ©</translation>
     </message>
     <message>
         <location filename="../../common/views/configdialog.cpp" line="131"/>
@@ -220,12 +220,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/views/configdialog.cpp" line="468"/>
         <source>You must restart VstBoard for the changes to take effect</source>
-        <translation>VstBoard doit être redémarré pour que les modifications prennent effet</translation>
+        <translation>VstBoard doit Ãªtre redÃ©marrÃ© pour que les modifications prennent effet</translation>
     </message>
     <message>
         <location filename="../../common/views/configdialog.cpp" line="488"/>
         <source>Default Vst path</source>
-        <translation>Dossier Vst par défaut</translation>
+        <translation>Dossier Vst par dÃ©faut</translation>
     </message>
     <message>
         <location filename="../../common/views/configdialog.cpp" line="488"/>
@@ -236,7 +236,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/views/configdialog.cpp" line="506"/>
         <source>Default setup file</source>
-        <translation>Fichier Config par défaut</translation>
+        <translation>Fichier Config par dÃ©faut</translation>
     </message>
     <message>
         <location filename="../../common/views/configdialog.cpp" line="506"/>
@@ -252,7 +252,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/views/configdialog.cpp" line="537"/>
         <source>Default project file</source>
-        <translation>Projet par défaut</translation>
+        <translation>Projet par dÃ©faut</translation>
     </message>
     <message>
         <location filename="../../common/views/configdialog.cpp" line="537"/>
@@ -262,7 +262,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/views/configdialog.cpp" line="568"/>
         <source>Default Bank path</source>
-        <translation>Dossier banque par défaut</translation>
+        <translation>Dossier banque par dÃ©faut</translation>
     </message>
 </context>
 <context>
@@ -270,7 +270,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/connectables/buffer.cpp" line="27"/>
         <source>Delay</source>
-        <translation>Délai</translation>
+        <translation>DÃ©lai</translation>
     </message>
 </context>
 <context>
@@ -278,7 +278,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/connectables/hostcontroller.cpp" line="29"/>
         <source>HostController</source>
-        <translation>Contrôleur d&apos;hôte</translation>
+        <translation>ContrÃ´leur d&apos;hÃ´te</translation>
     </message>
 </context>
 <context>
@@ -286,7 +286,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/connectables/midisender.cpp" line="28"/>
         <source>MidiSender</source>
-        <translation>Générateur Midi</translation>
+        <translation>GÃ©nÃ©rateur Midi</translation>
     </message>
 </context>
 <context>
@@ -294,7 +294,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/connectables/miditoautomation.cpp" line="31"/>
         <source>Midi to Parameter</source>
-        <translation>Midi vers Paramètres</translation>
+        <translation>Midi vers ParamÃ¨tres</translation>
     </message>
     <message>
         <location filename="../../common/connectables/miditoautomation.cpp" line="151"/>
@@ -400,7 +400,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/views/filebrowser.cpp" line="227"/>
         <source>Permanently delete %1 ?</source>
-        <translation>Supprimer définitivement %1 ?</translation>
+        <translation>Supprimer dÃ©finitivement %1 ?</translation>
     </message>
     <message>
         <location filename="../../common/views/filebrowser.cpp" line="239"/>
@@ -415,12 +415,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/views/filebrowser.cpp" line="295"/>
         <source>Can&apos;t create folder</source>
-        <translation>Impossible de créer le dossier</translation>
+        <translation>Impossible de crÃ©er le dossier</translation>
     </message>
     <message>
         <location filename="../../common/views/filebrowser.cpp" line="295"/>
         <source>Unable to create folder %1</source>
-        <translation>Erreur lors de la création du dossier %1</translation>
+        <translation>Erreur lors de la crÃ©ation du dossier %1</translation>
     </message>
 </context>
 <context>
@@ -451,7 +451,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/views/keybind.cpp" line="64"/>
         <source>Controller</source>
-        <translation>Contrôleur</translation>
+        <translation>ContrÃ´leur</translation>
     </message>
     <message>
         <location filename="../../common/views/keybind.cpp" line="65"/>
@@ -484,12 +484,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/views/keybindingdialog.cpp" line="204"/>
         <source>Restore default</source>
-        <translation>Réinitialiser</translation>
+        <translation>RÃ©initialiser</translation>
     </message>
     <message>
         <location filename="../../common/views/keybindingdialog.cpp" line="204"/>
         <source>Restore default mapping ?</source>
-        <translation>Retour au paramètre par défaut ?</translation>
+        <translation>Retour au paramÃ¨tre par dÃ©faut ?</translation>
     </message>
 </context>
 <context>
@@ -502,7 +502,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/views/listaudiodevicesview.cpp" line="36"/>
         <source>Refresh list</source>
-        <translation>Rafraîchir la liste</translation>
+        <translation>RafraÃ®chir la liste</translation>
     </message>
 </context>
 <context>
@@ -515,12 +515,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/views/maingraphicsview.cpp" line="42"/>
         <source>Zoom out</source>
-        <translation>Zoom arrière</translation>
+        <translation>Zoom arriÃ¨re</translation>
     </message>
     <message>
         <location filename="../../common/views/maingraphicsview.cpp" line="48"/>
         <source>Zoom reset</source>
-        <translation>Zoom réinitialiser</translation>
+        <translation>Zoom rÃ©initialiser</translation>
     </message>
 </context>
 <context>
@@ -568,7 +568,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/mainwindow.ui" line="59"/>
         <source>Host Panel</source>
-        <translation>Panneau Hôte</translation>
+        <translation>Panneau HÃ´te</translation>
     </message>
     <message>
         <location filename="../../common/mainwindow.ui" line="100"/>
@@ -608,12 +608,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/mainwindow.ui" line="329"/>
         <source>Recent Setups</source>
-        <translation>Config récentes</translation>
+        <translation>Config rÃ©centes</translation>
     </message>
     <message>
         <location filename="../../common/mainwindow.ui" line="334"/>
         <source>Recent Projects</source>
-        <translation>Projets récents</translation>
+        <translation>Projets rÃ©cents</translation>
     </message>
     <message>
         <location filename="../../common/mainwindow.ui" line="351"/>
@@ -709,7 +709,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/mainwindow.ui" line="926"/>
         <source>Clear the Program and Group panels</source>
-        <translation>Réinitialisation des panneaux Programme et Groupe</translation>
+        <translation>RÃ©initialisation des panneaux Programme et Groupe</translation>
     </message>
     <message>
         <location filename="../../common/mainwindow.ui" line="929"/>
@@ -746,7 +746,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/mainwindow.ui" line="976"/>
         <source>Save the Host panel in a setup file</source>
-        <translation>Enregistre le panneau Hôte dans un fichier Config</translation>
+        <translation>Enregistre le panneau HÃ´te dans un fichier Config</translation>
     </message>
     <message>
         <location filename="../../common/mainwindow.ui" line="979"/>
@@ -761,7 +761,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/mainwindow.ui" line="991"/>
         <source>Clear the Host panel</source>
-        <translation>Réinitialisation du panneau Hôte</translation>
+        <translation>RÃ©initialisation du panneau HÃ´te</translation>
     </message>
     <message>
         <location filename="../../common/mainwindow.ui" line="994"/>
@@ -771,12 +771,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/mainwindow.ui" line="1009"/>
         <source>Toggle Host panel</source>
-        <translation>Affichier/Masquer le panneau Hôte</translation>
+        <translation>Affichier/Masquer le panneau HÃ´te</translation>
     </message>
     <message>
         <location filename="../../common/mainwindow.ui" line="1012"/>
         <source>Show or hide the host panel</source>
-        <translation>Affichier/Masquer le panneau Hôte</translation>
+        <translation>Affichier/Masquer le panneau HÃ´te</translation>
     </message>
     <message>
         <location filename="../../common/mainwindow.ui" line="1015"/>
@@ -857,22 +857,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/mainwindow.ui" line="1107"/>
         <source>Refresh Audio devices</source>
-        <translation>Màj interfaces audio</translation>
+        <translation>MÃ j interfaces audio</translation>
     </message>
     <message>
         <location filename="../../common/mainwindow.ui" line="1112"/>
         <source>Refresh Midi devices</source>
-        <translation>Màj interfaces Midi</translation>
+        <translation>MÃ j interfaces Midi</translation>
     </message>
     <message>
         <location filename="../../common/mainwindow.ui" line="1117"/>
         <source>Restore default layout</source>
-        <translation>Retour à l&apos;affichage par défaut</translation>
+        <translation>Retour Ã  l&apos;affichage par dÃ©faut</translation>
     </message>
     <message>
         <location filename="../../common/mainwindow.ui" line="1181"/>
         <source>Cable</source>
-        <translation>Câble</translation>
+        <translation>CÃ¢ble</translation>
     </message>
     <message>
         <location filename="../../common/mainwindow.ui" line="1184"/>
@@ -902,12 +902,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/mainwindow.ui" line="1219"/>
         <source>Hide all plugins editors</source>
-        <translation>Masquer toutes les fenêtres de plugin</translation>
+        <translation>Masquer toutes les fenÃªtres de plugin</translation>
     </message>
     <message>
         <location filename="../../common/mainwindow.ui" line="1234"/>
         <source>Auto-open plugins editors</source>
-        <translation>Ouvrir automatiquement les fenêtres des plugins</translation>
+        <translation>Ouvrir automatiquement les fenÃªtres des plugins</translation>
     </message>
     <message>
         <location filename="../../common/mainwindow.ui" line="1237"/>
@@ -958,22 +958,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/mainwindow.cpp" line="183"/>
         <source>Midi to parameter</source>
-        <translation>Midi vers Paramètres</translation>
+        <translation>Midi vers ParamÃ¨tres</translation>
     </message>
     <message>
         <location filename="../../common/mainwindow.cpp" line="190"/>
         <source>Midi sender</source>
-        <translation>Générateur Midi</translation>
+        <translation>GÃ©nÃ©rateur Midi</translation>
     </message>
     <message>
         <location filename="../../common/mainwindow.cpp" line="197"/>
         <source>Host Controller</source>
-        <translation>Contrôleur d&apos;hôte</translation>
+        <translation>ContrÃ´leur d&apos;hÃ´te</translation>
     </message>
     <message>
         <location filename="../../common/mainwindow.cpp" line="204"/>
         <source>Delay Buffer</source>
-        <translation>Délai</translation>
+        <translation>DÃ©lai</translation>
     </message>
 </context>
 <context>
@@ -1086,7 +1086,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../common/models/programsmodel.cpp" line="267"/>
         <source>Move programs</source>
-        <translation>Déplacer programme</translation>
+        <translation>DÃ©placer programme</translation>
     </message>
     <message>
         <location filename="../../common/models/programsmodel.cpp" line="383"/>
@@ -1107,7 +1107,7 @@ Drag &amp; drop some programs here to enable it.</source>
     <message>
         <location filename="../../common/models/programsmodel.cpp" line="665"/>
         <source>The group has been modified.</source>
-        <translation>Le Groupe a été modifié.</translation>
+        <translation>Le Groupe a Ã©tÃ© modifiÃ©.</translation>
     </message>
     <message>
         <location filename="../../common/models/programsmodel.cpp" line="666"/>
@@ -1120,17 +1120,17 @@ Drag &amp; drop some programs here to enable it.</source>
     <message>
         <location filename="../../common/models/programsmodel.cpp" line="706"/>
         <source>The progarm has been modified.</source>
-        <translation>Le Programme a été modifié.</translation>
+        <translation>Le Programme a Ã©tÃ© modifiÃ©.</translation>
     </message>
     <message>
         <location filename="../../common/models/programsmodel.cpp" line="754"/>
         <source>The project has been modified.</source>
-        <translation>Le Projet a été modifié.</translation>
+        <translation>Le Projet a Ã©tÃ© modifiÃ©.</translation>
     </message>
     <message>
         <location filename="../../common/models/programsmodel.cpp" line="795"/>
         <source>The setup has been modified.</source>
-        <translation>La Config a été modifiée.</translation>
+        <translation>La Config a Ã©tÃ© modifiÃ©e.</translation>
     </message>
 </context>
 <context>
@@ -1150,17 +1150,17 @@ Drag &amp; drop some programs here to enable it.</source>
     <message>
         <location filename="../../common/projectfile/projectfile.cpp" line="174"/>
         <source>File format v%1 can&apos;t be converted to the current file format v%2</source>
-        <translation>Le fichier v%1 ne peut être converti au format actuel v%2</translation>
+        <translation>Le fichier v%1 ne peut Ãªtre converti au format actuel v%2</translation>
     </message>
     <message>
         <location filename="../../common/projectfile/projectfile.cpp" line="266"/>
         <source>The file is corrupted and cannot be loaded</source>
-        <translation>Le fichier est corrompu et ne peut être chargé</translation>
+        <translation>Le fichier est corrompu et ne peut Ãªtre chargÃ©</translation>
     </message>
     <message>
         <location filename="../../common/projectfile/projectfile.cpp" line="277"/>
         <source>The file is corrupted and cannot be fully loaded</source>
-        <translation>Le fichier est corrompu et n&apos;a pas pu être chargé entièrement</translation>
+        <translation>Le fichier est corrompu et n&apos;a pas pu Ãªtre chargÃ© entiÃ¨rement</translation>
     </message>
 </context>
 <context>
@@ -1174,47 +1174,47 @@ Drag &amp; drop some programs here to enable it.</source>
     <message>
         <location filename="../../common/vst/ceffect.cpp" line="149"/>
         <source>Bank file not designed for that plugin</source>
-        <translation>Le fichier banque n&apos;est pas conçu pour ce plugin</translation>
+        <translation>Le fichier banque n&apos;est pas conÃ§u pour ce plugin</translation>
     </message>
     <message>
         <location filename="../../common/vst/ceffect.cpp" line="243"/>
         <source>Program file not designed for that plugin</source>
-        <translation>Le fichier programme n&apos;est pas conçu pour ce plugin</translation>
+        <translation>Le fichier programme n&apos;est pas conÃ§u pour ce plugin</translation>
     </message>
     <message>
         <location filename="../../common/commands/comaddcable.cpp" line="18"/>
         <source>Add cable</source>
-        <translation>Cable ajouté</translation>
+        <translation>Cable ajoutÃ©</translation>
     </message>
     <message>
         <location filename="../../common/commands/comaddgroup.cpp" line="14"/>
         <source>Add group</source>
-        <translation>Groupe ajouté</translation>
+        <translation>Groupe ajoutÃ©</translation>
     </message>
     <message>
         <location filename="../../common/commands/comaddobject.cpp" line="22"/>
         <source>Add object</source>
-        <translation>Objet ajouté</translation>
+        <translation>Objet ajoutÃ©</translation>
     </message>
     <message>
         <location filename="../../common/commands/comaddobject.cpp" line="101"/>
         <source>Add %1</source>
-        <translation>%1 ajouté</translation>
+        <translation>%1 ajoutÃ©</translation>
     </message>
     <message>
         <location filename="../../common/commands/comaddpin.cpp" line="34"/>
         <source>Add pin</source>
-        <translation>Broche ajoutée</translation>
+        <translation>Broche ajoutÃ©e</translation>
     </message>
     <message>
         <location filename="../../common/commands/comaddprogram.cpp" line="16"/>
         <source>Add program</source>
-        <translation>Porgamme ajouté</translation>
+        <translation>Porgamme ajoutÃ©</translation>
     </message>
     <message>
         <location filename="../../common/commands/comchangeautosave.cpp" line="33"/>
         <source>Change Autosave</source>
-        <translation>Enreg. auto modifié</translation>
+        <translation>Enreg. auto modifiÃ©</translation>
     </message>
     <message>
         <location filename="../../common/commands/comchangeprogram.cpp" line="18"/>
@@ -1224,12 +1224,12 @@ Drag &amp; drop some programs here to enable it.</source>
     <message>
         <location filename="../../common/commands/comchangeprogramitem.cpp" line="20"/>
         <source>Rename program</source>
-        <translation>Programme renommé</translation>
+        <translation>Programme renommÃ©</translation>
     </message>
     <message>
         <location filename="../../common/commands/comchangeprogramitem.cpp" line="22"/>
         <source>Modif program</source>
-        <translation>Programme modifié</translation>
+        <translation>Programme modifiÃ©</translation>
     </message>
     <message>
         <location filename="../../common/commands/comdiscardchanges.cpp" line="35"/>
@@ -1239,27 +1239,27 @@ Drag &amp; drop some programs here to enable it.</source>
     <message>
         <location filename="../../common/commands/comdisconnectpin.cpp" line="16"/>
         <source>Disconnect pin</source>
-        <translation>Déconnexion</translation>
+        <translation>DÃ©connexion</translation>
     </message>
     <message>
         <location filename="../../common/commands/comremovegroup.cpp" line="12"/>
         <source>Remove group</source>
-        <translation>Groupe supprimé</translation>
+        <translation>Groupe supprimÃ©</translation>
     </message>
     <message>
         <location filename="../../common/commands/comremoveobject.cpp" line="24"/>
         <source>Remove %1</source>
-        <translation>%1 supprimé</translation>
+        <translation>%1 supprimÃ©</translation>
     </message>
     <message>
         <location filename="../../common/commands/comremovepin.cpp" line="34"/>
         <source>Remove pin</source>
-        <translation>Broche supprimée</translation>
+        <translation>Broche supprimÃ©e</translation>
     </message>
     <message>
         <location filename="../../common/commands/comremoveprogram.cpp" line="35"/>
         <source>Remove program</source>
-        <translation>Programme supprimé</translation>
+        <translation>Programme supprimÃ©</translation>
     </message>
 </context>
 <context>
@@ -1298,12 +1298,12 @@ Drag &amp; drop some programs here to enable it.</source>
     <message>
         <location filename="../../common/sceneview/objectview.cpp" line="150"/>
         <source>Remove with cables</source>
-        <translation>Supprimer avec les câbles</translation>
+        <translation>Supprimer avec les cÃ¢bles</translation>
     </message>
     <message>
         <location filename="../../common/sceneview/objectview.cpp" line="156"/>
         <source>Show Editor</source>
-        <translation>Afficher l&apos;éditeur</translation>
+        <translation>Afficher l&apos;Ã©diteur</translation>
     </message>
     <message>
         <location filename="../../common/sceneview/objectview.cpp" line="164"/>
@@ -1321,7 +1321,7 @@ Drag &amp; drop some programs here to enable it.</source>
     <message>
         <location filename="../../common/sceneview/pinview.cpp" line="66"/>
         <source>Unplug</source>
-        <translation>Déconnecter</translation>
+        <translation>DÃ©connecter</translation>
     </message>
 </context>
 <context>
@@ -1338,7 +1338,7 @@ Drag &amp; drop some programs here to enable it.</source>
         <location filename="../../common/views/viewconfig.cpp" line="42"/>
         <location filename="../../common/views/viewconfig.cpp" line="54"/>
         <source>-undefined-</source>
-        <translation>-non défini-</translation>
+        <translation>-non dÃ©fini-</translation>
     </message>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="47"/>
@@ -1358,7 +1358,7 @@ Drag &amp; drop some programs here to enable it.</source>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="50"/>
         <source>Parameter Pin</source>
-        <translation>Fiche paramètre</translation>
+        <translation>Fiche paramÃ¨tre</translation>
     </message>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="45"/>
@@ -1378,7 +1378,7 @@ Drag &amp; drop some programs here to enable it.</source>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="57"/>
         <source>Background</source>
-        <translation>Arrière-plan</translation>
+        <translation>ArriÃ¨re-plan</translation>
     </message>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="61"/>
@@ -1388,7 +1388,7 @@ Drag &amp; drop some programs here to enable it.</source>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="59"/>
         <source>Vu-meter</source>
-        <translation>VU-mètre</translation>
+        <translation>VU-mÃ¨tre</translation>
     </message>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="51"/>
@@ -1414,12 +1414,12 @@ Drag &amp; drop some programs here to enable it.</source>
         <location filename="../../common/views/viewconfig.cpp" line="43"/>
         <location filename="../../common/views/viewconfig.cpp" line="55"/>
         <source>Window</source>
-        <translation>Fenêtre</translation>
+        <translation>FenÃªtre</translation>
     </message>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="60"/>
         <source>Window Text</source>
-        <translation>Texte fenêtre</translation>
+        <translation>Texte fenÃªtre</translation>
     </message>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="56"/>
@@ -1429,7 +1429,7 @@ Drag &amp; drop some programs here to enable it.</source>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="58"/>
         <source>Highlight Background</source>
-        <translation>Arrière-plan en évidence</translation>
+        <translation>ArriÃ¨re-plan en Ã©vidence</translation>
     </message>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="62"/>
@@ -1449,7 +1449,7 @@ Drag &amp; drop some programs here to enable it.</source>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="121"/>
         <source>@</source>
-        <translation>é</translation>
+        <translation>Ã©</translation>
     </message>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="121"/>
@@ -1499,7 +1499,7 @@ Drag &amp; drop some programs here to enable it.</source>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="126"/>
         <source>&amp;</source>
-        <translation>è</translation>
+        <translation>Ã¨</translation>
     </message>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="126"/>
@@ -1519,7 +1519,7 @@ Drag &amp; drop some programs here to enable it.</source>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="128"/>
         <source>(</source>
-        <translation>ç</translation>
+        <translation>Ã§</translation>
     </message>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="128"/>
@@ -1529,7 +1529,7 @@ Drag &amp; drop some programs here to enable it.</source>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="129"/>
         <source>)</source>
-        <translation>à</translation>
+        <translation>Ã </translation>
     </message>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="129"/>
@@ -1544,7 +1544,7 @@ Drag &amp; drop some programs here to enable it.</source>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="130"/>
         <source>-</source>
-        <translation>°</translation>
+        <translation>Â°</translation>
     </message>
     <message>
         <location filename="../../common/views/viewconfig.cpp" line="177"/>
@@ -1678,7 +1678,7 @@ Drag &amp; drop some programs here to enable it.</source>
     <message>
         <location filename="../../common/views/viewconfigdialog.ui" line="132"/>
         <source>Elements :</source>
-        <translation>Eléments :</translation>
+        <translation>ElÃ©ments :</translation>
     </message>
     <message>
         <location filename="../../common/views/viewconfigdialog.ui" line="169"/>

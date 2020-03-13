@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -240,7 +240,7 @@ bool AudioDevice::OpenStream(double sampleRate)
                 ZeroMemory( &directSoundStreamInfo, sizeof( PaWinDirectSoundStreamInfo) );
                 directSoundStreamInfo.size = sizeof( PaWinDirectSoundStreamInfo);
                 directSoundStreamInfo.hostApiType = paDirectSound;
-                directSoundStreamInfo.version = 1;
+                directSoundStreamInfo.version = 2;
                 //directSoundStreamInfo.flags = paWinDirectSoundUseChannelMask;
                 //directSoundStreamInfo.channelMask = PAWIN_SPEAKER_5POINT1; /* request 5.1 output format */
                 inputParameters->hostApiSpecificStreamInfo = &directSoundStreamInfo;
@@ -308,7 +308,7 @@ bool AudioDevice::OpenStream(double sampleRate)
                 ZeroMemory( &directSoundStreamInfo, sizeof(PaWinDirectSoundStreamInfo) );
                 directSoundStreamInfo.size = sizeof(PaWinDirectSoundStreamInfo);
                 directSoundStreamInfo.hostApiType = paDirectSound;
-                directSoundStreamInfo.version = 1;
+                directSoundStreamInfo.version = 2;
                 //directSoundStreamInfo.flags = paWinDirectSoundUseChannelMask;
                 //directSoundStreamInfo.channelMask = PAWIN_SPEAKER_5POINT1; /* request 5.1 output format */
                 outputParameters->hostApiSpecificStreamInfo = &directSoundStreamInfo;

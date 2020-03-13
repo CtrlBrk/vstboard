@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -49,7 +49,7 @@ void MainWindowVst::Init()
 
     ui->actionRefresh_Audio_devices->setDisabled(true);
     ui->actionRefresh_Midi_devices->setDisabled(true);
-    setWindowTitle(APP_NAME);
+    setWindowTitle("VstBoard");
     BuildListTools();
     setAcceptDrops(false);
 

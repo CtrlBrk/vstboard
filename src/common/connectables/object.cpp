@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -796,7 +796,7 @@ void Object::GetInfos(MsgObject &msg)
         msg.prop[MsgObject::Message]=errorMessage;
     }
 
-    QMap<QString, PinsList*>::iterator i = pinLists.constBegin();
+    QMap<QString, PinsList*>::const_iterator i = pinLists.constBegin();
     while(i!=pinLists.constEnd()) {
         PinsList *lst = i.value();
         if(!lst->IsVisible()) {

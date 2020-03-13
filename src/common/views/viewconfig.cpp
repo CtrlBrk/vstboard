@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -119,17 +119,17 @@ void ViewConfig::InitPresets()
     */
 float ViewConfig::KeyboardNumber(int key)
 {
-    if(key==QKeySequence(tr("!")) || key==QKeySequence(tr("1"))) return 0.0f;
-    if(key==QKeySequence(tr("@")) || key==QKeySequence(tr("2"))) return 0.1f;
-    if(key==QKeySequence(tr("#")) || key==QKeySequence(tr("3"))) return 0.2f;
-    if(key==QKeySequence(tr("$")) || key==QKeySequence(tr("4"))) return 0.3f;
-    if(key==QKeySequence(tr("%")) || key==QKeySequence(tr("5"))) return 0.4f;
-    if(key==QKeySequence(tr("^")) || key==QKeySequence(tr("6"))) return 0.5f;
-    if(key==QKeySequence(tr("&")) || key==QKeySequence(tr("7"))) return 0.6f;
-    if(key==QKeySequence(tr("*")) || key==QKeySequence(tr("8"))) return 0.7f;
-    if(key==QKeySequence(tr("(")) || key==QKeySequence(tr("9"))) return 0.8f;
-    if(key==QKeySequence(tr(")")) || key==QKeySequence(tr("0"))) return 0.9f;
-    if(key==QKeySequence(tr("_")) || key==QKeySequence(tr("-"))) return 1.0f;
+    if(key==QKeySequence(tr("!"))[0] || key==QKeySequence(tr("1"))[0]) return 0.0f;
+    if(key==QKeySequence(tr("@"))[0] || key==QKeySequence(tr("2"))[0]) return 0.1f;
+    if(key==QKeySequence(tr("#"))[0] || key==QKeySequence(tr("3"))[0]) return 0.2f;
+    if(key==QKeySequence(tr("$"))[0] || key==QKeySequence(tr("4"))[0]) return 0.3f;
+    if(key==QKeySequence(tr("%"))[0] || key==QKeySequence(tr("5"))[0]) return 0.4f;
+    if(key==QKeySequence(tr("^"))[0] || key==QKeySequence(tr("6"))[0]) return 0.5f;
+    if(key==QKeySequence(tr("&"))[0] || key==QKeySequence(tr("7"))[0]) return 0.6f;
+    if(key==QKeySequence(tr("*"))[0] || key==QKeySequence(tr("8"))[0]) return 0.7f;
+    if(key==QKeySequence(tr("("))[0] || key==QKeySequence(tr("9"))[0]) return 0.8f;
+    if(key==QKeySequence(tr(")"))[0] || key==QKeySequence(tr("0"))[0]) return 0.9f;
+    if(key==QKeySequence(tr("_"))[0] || key==QKeySequence(tr("-"))[0]) return 1.0f;
     return -1.0f;
 }
 

@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2011 Raphaël François
+#    Copyright 2010-2011 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -37,19 +37,20 @@
     #include <cmath>
     #include <algorithm>
 
-    #include <QtGui/QAction>
+    #include <QAction>
     #include <QAbstractButton>
     #include <QAbstractItemView>
     #include <QtAlgorithms>
-    #include <QtGui/QApplication>
-    #include <QtGui/QButtonGroup>
-    #include <QtGui/QCheckBox>
-    #include <QtGui/QHBoxLayout>
-    #include <QtGui/QHeaderView>
+    #include <QApplication>
+    #include <QButtonGroup>
+    #include <QCheckBox>
+    #include <QHBoxLayout>
+    #include <QHeaderView>
     #include <QClipboard>
     #include <QComboBox>
     #include <QDialog>
     #include <QDir>
+    #include <QDrag>
     #include <QDragEnterEvent>
     #include <QDropEvent>
     #include <QElapsedTimer>
@@ -72,7 +73,7 @@
     #include <QGraphicsView>
     #include <QGraphicsWidget>
     #include <QHBoxLayout>
-    #include <QtGui/QLabel>
+    #include <QLabel>
     #include <QLibrary>
     #include <QLibraryInfo>
     #include <QLineEdit>
@@ -87,10 +88,10 @@
     #include <QMimeData>
     #include <QMultiHash>
     #include <QMutex>
-    #include <QtGui/QMouseEvent>
+    #include <QMouseEvent>
     #include <QObject>
-    #include <QtGui/QPainter>
-    #include <QtGui/QPen>
+    #include <QPainter>
+    #include <QPen>
     #include <QPushButton>
     #include <QReadWriteLock>
     #include <QScrollBar>
@@ -100,8 +101,8 @@
     #include <QSharedPointer>
     #include <QSignalMapper>
     #include <QSize>
-    #include <QtGui/QSpacerItem>
-    #include <QtGui/QSplitter>
+    #include <QSpacerItem>
+    #include <QSplitter>
     #include <QStandardItemModel>
     #include <QStringList>
     #include <QStringListModel>
@@ -109,16 +110,16 @@
     #include <QThread>
     #include <QTime>
     #include <QTimer>
-    #include <QtGui/QToolButton>
+    #include <QToolButton>
     #include <QTranslator>
     #include <QTreeWidget>
     #include <QUndoCommand>
     #include <QUndoStack>
     #include <QUrl>
-    #include <QtCore/QVariant>
-    #include <QtGui/QVBoxLayout>
+    #include <QVariant>
+    #include <QVBoxLayout>
     #include <QWaitCondition>
-    #include <QtGui/QWidget>
+    #include <QWidget>
 
     #ifdef SCRIPTENGINE
         #include <QtScript>

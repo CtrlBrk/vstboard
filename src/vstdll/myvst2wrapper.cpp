@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -29,7 +29,7 @@ MyVst2Wrapper::MyVst2Wrapper(Vst::IAudioProcessor *processor, Vst::IEditControll
 
 VstInt32 MyVst2Wrapper::processEvents(VstEvents* events)
 {
-    VstBoardProcessor* proc = static_cast<VstBoardProcessor*>(processor);
+    VstBoardProcessor* proc = static_cast<VstBoardProcessor*>(mProcessor);
     if(!proc)
         return 0;
 
@@ -102,7 +102,7 @@ AudioEffect* MyVst2Wrapper::crt (IPluginFactory* factory, const TUID vst3Compone
 
 void MyVst2Wrapper::processReplacing (float** inputs, float** outputs, VstInt32 sampleFrames)
 {
-    if (processData.symbolicSampleSize != Vst::kSample32)
+    if (mProcessData.symbolicSampleSize != Vst::kSample32)
         return;
 
     setProcessingBuffers<float> (inputs, outputs);
@@ -112,7 +112,7 @@ void MyVst2Wrapper::processReplacing (float** inputs, float** outputs, VstInt32 
 //-------------------------------------------------------------------------------------------------------
 void MyVst2Wrapper::processDoubleReplacing (double** inputs, double** outputs, VstInt32 sampleFrames)
 {
-    if (processData.symbolicSampleSize != Vst::kSample64)
+    if (mProcessData.symbolicSampleSize != Vst::kSample64)
         return;
 
     setProcessingBuffers<double> (inputs, outputs);
@@ -121,41 +121,41 @@ void MyVst2Wrapper::processDoubleReplacing (double** inputs, double** outputs, V
 
 inline void MyVst2Wrapper::doProcess (VstInt32 sampleFrames)
 {
-    if (processor)
+    if (mProcessor)
     {
-        processData.numSamples = sampleFrames;
+        mProcessData.numSamples = sampleFrames;
 
         if (processing == false)
             startProcess ();
 
-        processData.inputEvents = inputEvents;
-        processData.outputEvents = outputEvents;
+        mProcessData.inputEvents = mInputEvents;
+        mProcessData.outputEvents = mOutputEvents;
 
         setupProcessTimeInfo ();
         setEventPPQPositions ();
 
-        inputTransfer.transferChangesTo (inputChanges);
+        mInputTransfer.transferChangesTo (mInputChanges);
 
-        processData.inputParameterChanges = &inputChanges;
-        processData.outputParameterChanges = &outputChanges;
-        outputChanges.clearQueue ();
+        mProcessData.inputParameterChanges = &mInputChanges;
+        mProcessData.outputParameterChanges = &mOutputChanges;
+        mOutputChanges.clearQueue ();
 
         // vst 3 process call
-        processor->process (processData);
+        mProcessor->process (mProcessData);
 
-        outputTransfer.transferChangesFrom (outputChanges);
+        mOutputTransfer.transferChangesFrom (mOutputChanges);
         processOutputEvents ();
 
         // clear input parameters and events
-        inputChanges.clearQueue ();
-        if (inputEvents)
-            inputEvents->clear ();
+        mInputChanges.clearQueue ();
+        if (mInputEvents)
+            mInputEvents->clear ();
     }
 }
 
 inline void MyVst2Wrapper::processOutputEvents ()
 {
-    VstBoardProcessor* proc = static_cast<VstBoardProcessor*>(processor);
+    VstBoardProcessor* proc = static_cast<VstBoardProcessor*>(mProcessor);
     if(!proc)
         return;
 
@@ -165,20 +165,20 @@ inline void MyVst2Wrapper::processOutputEvents ()
 
 void MyVst2Wrapper::onTimer (Timer* timer)
 {
-    if (controller)
+    if (mController)
     {
         Vst::ParamID id;
         Vst::ParamValue value;
         int32 sampleOffset;
 
-        while (outputTransfer.getNextChange (id, value, sampleOffset))
+        while (mOutputTransfer.getNextChange (id, value, sampleOffset))
         {
             setParameterAutomated(id,value);
-            controller->setParamNormalized (id, value);
+            mController->setParamNormalized (id, value);
         }
-        while (guiTransfer.getNextChange (id, value, sampleOffset))
+        while (mGuiTransfer.getNextChange (id, value, sampleOffset))
         {
-            controller->setParamNormalized (id, value);
+            mController->setParamNormalized (id, value);
         }
     }
 }

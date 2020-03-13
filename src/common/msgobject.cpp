@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -51,7 +51,9 @@ QDataStream & MsgObject::toStream (QDataStream &out) const
 
 QDataStream & MsgObject::fromStream (QDataStream &in)
 {
-    in >> (qint32)objIndex;
+    qint32 idx;
+    in >> idx;
+    objIndex=idx;
 //    in >> (qint32)parentIndex;
     qint32 c;
     in >> c;

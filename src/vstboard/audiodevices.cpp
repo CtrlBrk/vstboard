@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -69,12 +69,12 @@ void FakeTimer::run()
 AudioDevices::AudioDevices(MainHostHost *myHost, MsgController *msgCtrl, int objId) :
     QObject(myHost),
     MsgHandler(msgCtrl, objId),
-    closing(false),
-    paOpened(false),
 //    model(0),
 //    countActiveDevices(0),
-    myHost(myHost),
-    fakeRenderTimer(0)
+    fakeRenderTimer(0),
+    closing(false),
+    paOpened(false),
+    myHost(myHost)
 {
     fakeRenderTimer = new FakeTimer(myHost);
     timerRefreshDevices.setSingleShot(true);
@@ -132,7 +132,9 @@ void AudioDevices::CloseDevices(bool close)
 
 void AudioDevices::OpenDevices()
 {
-    Pa_EnableAllHostApis();
+//    Pa_EnableAllHostApis();
+
+
 
     QStringList disabled = myHost->settings->GetSetting("disabledAudioApis").toStringList();
     QList<int>disabledApis;
@@ -140,12 +142,12 @@ void AudioDevices::OpenDevices()
         disabledApis << str.toInt();
     }
 
-    int i=0;
-    while(paHostApiEnabled[i]!=0) {
-        if(disabledApis.contains(paHostApiEnabled[i]))
-            Pa_DisableHostApi(paHostApiEnabled[i]);
-        ++i;
-    }
+//    int i=0;
+//    while(paHostApiEnabled[i]!=0) {
+//        if(disabledApis.contains(paHostApiEnabled[i]))
+//            Pa_DisableHostApi(paHostApiEnabled[i]);
+//        ++i;
+//    }
 
     PaError paRet =Pa_Initialize();
     if(paRet!=paNoError) {
@@ -156,6 +158,14 @@ void AudioDevices::OpenDevices()
         return;
     }
     paOpened=true;
+
+    int numDevices;
+    numDevices = Pa_GetDeviceCount();
+    if( numDevices < 0 )
+    {
+        printf( "ERROR: Pa_CountDevices returned 0x%x\n", numDevices );
+
+    }
 
     mutexClosing.lock();
     closing=true;
@@ -534,7 +544,7 @@ void AudioDevices::TryToOpenDevice()
     OpenDevices();
 
     //the fake render loop is still running, retry
-    if(fakeRenderTimer && !listAudioDevices.isEmpty() && !timerRefreshDevices.isActive() && !closing) {
+    if(fakeRenderTimer && listAudioDevices.isEmpty() && !timerRefreshDevices.isActive() && !closing) {
         CloseDevices();
         timerRefreshDevices.start();
     }

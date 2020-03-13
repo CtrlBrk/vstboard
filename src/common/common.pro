@@ -1,6 +1,6 @@
 include(../config.pri)
 
-QT += core gui
+QT += core gui widgets
 
 TEMPLATE = lib
 CONFIG += staticlib

@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -359,7 +359,7 @@ void MainWindow::BuildListTools()
     parentItem->appendRow(item);
 
     ui->treeTools->setModel(listToolsModel);
-    ui->treeTools->header()->setResizeMode(0,QHeaderView::Stretch);
+    ui->treeTools->header()->setSectionResizeMode(0,QHeaderView::Stretch);
 }
 
 void MainWindow::on_actionLoad_triggered()

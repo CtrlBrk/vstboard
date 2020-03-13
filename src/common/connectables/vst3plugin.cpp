@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -239,7 +239,7 @@ bool Vst3Plugin::initProcessor()
         if(processorComponent->getBusInfo(Vst::kEvent, Vst::kInput, i, busInfo) == kResultTrue) {
             for(qint32 j=0; j<busInfo.channelCount; j++) {
                 Pin *p = listMidiPinIn->AddPin(cpt++);
-                p->setObjectName( QString::fromUtf16(busInfo.name) );
+                p->setObjectName( QString::fromUtf16((char16_t*)busInfo.name) );
             }
         }
     }
@@ -252,7 +252,7 @@ bool Vst3Plugin::initProcessor()
         if(processorComponent->getBusInfo(Vst::kEvent, Vst::kOutput, i, busInfo) == kResultTrue) {
             for(qint32 j=0; j<busInfo.channelCount; j++) {
                 Pin *p = listMidiPinOut->AddPin(cpt++);
-                p->setObjectName( QString::fromUtf16(busInfo.name) );
+                p->setObjectName( QString::fromUtf16((char16_t*)busInfo.name) );
             }
         }
     }
@@ -274,7 +274,7 @@ bool Vst3Plugin::initAudioBuffers(Vst::BusDirection dir)
                 } else {
                     p = listAudioPinOut->AddPin(cpt++);
                 }
-                p->setObjectName( QString::fromUtf16(busInfo.name) );
+                p->setObjectName( QString::fromUtf16((char16_t*)busInfo.name) );
                 AudioBuffer* buff = static_cast<AudioPin*>(p)->GetBuffer();
                 if(doublePrecision) {
                     processData.setChannelBuffer64(dir, i, j, (double*)buff->GetPointer());
@@ -479,7 +479,7 @@ void Vst3Plugin::CreateEditorWindow()
     if(result!=kResultOk) {
         LOG("frame not set")
     }
-    result = pView->attached(editorWnd->GetWinId(),kPlatformString);
+    result = pView->attached((void*)editorWnd->GetWinId(),kPlatformString);
     if(result!=kResultOk) {
         LOG("editor not attached")
     }
@@ -1005,9 +1005,9 @@ Pin* Vst3Plugin::CreatePin(const ConnectionInfo &info)
                     return 0;
 
                 if(info.direction==PinDirection::Output) {
-                    pin = new ParameterPinOut(this,info.pinNumber,(float)paramInfo.defaultNormalizedValue,QString::fromUtf16(paramInfo.title),hasEditor,hasEditor);
+                    pin = new ParameterPinOut(this,info.pinNumber,(float)paramInfo.defaultNormalizedValue,QString::fromUtf16((char16_t*)paramInfo.title),hasEditor,hasEditor);
                 } else {
-                    pin = new ParameterPinIn(this,info.pinNumber,(float)paramInfo.defaultNormalizedValue,QString::fromUtf16(paramInfo.title),hasEditor,hasEditor);
+                    pin = new ParameterPinIn(this,info.pinNumber,(float)paramInfo.defaultNormalizedValue,QString::fromUtf16((char16_t*)paramInfo.title),hasEditor,hasEditor);
                 }
                 if(!hasEditor || (paramInfo.flags & Vst::ParameterInfo::kIsReadOnly))
                     pin->SetDefaultVisible(true);

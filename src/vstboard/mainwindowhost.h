@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -21,9 +21,6 @@
 #ifndef MAINWINDOWHOST_H
 #define MAINWINDOWHOST_H
 
-#ifndef APP_NAME
-#define APP_NAME "noname ?"
-#endif
 
 #include "mainwindow.h"
 #include "../common/ui_mainwindow.h"

@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -238,7 +238,7 @@ void ObjectView::SetErrorMessage(const QString & msg)
     } else {
         if(!errorMessage) {
             QPixmap pix(":/img32x32/agt_action_fail.png");
-            errorMessage = new QGraphicsPixmapItem(pix,this,scene());
+            errorMessage = new QGraphicsPixmapItem(pix,this);
 //            QPointF pt = geometry().center();
 //            pt.rx() -= pix.width()/2;
 //            pt.ry() -= pix.height()/2;

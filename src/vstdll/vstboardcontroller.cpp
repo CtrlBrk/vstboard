@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -40,7 +40,7 @@ tresult PLUGIN_API VstBoardController::initialize (FUnknown* context)
     QCoreApplication::setApplicationName("VstBoard");
 
     for(int32 i=0; i<NB_PARAM; i++) {
-        parameters.addParameter( QString("Param%1").arg(i).utf16(), 0, 127, 0, Vst::ParameterInfo::kCanAutomate, i);
+        parameters.addParameter( (char16*)QString("Param%1").arg(i).utf16(), 0, 127, 0, Vst::ParameterInfo::kCanAutomate, i);
     }
     parameters.addParameter (STR16 ("Program"), 0, 127, 0, Vst::ParameterInfo::kCanAutomate, paramProgChange);
     parameters.addParameter (STR16 ("Group"), 0, 127, 0, Vst::ParameterInfo::kCanAutomate, paramGroupChange);

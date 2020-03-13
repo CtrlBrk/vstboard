@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -21,8 +21,9 @@
 #include "buffer.h"
 #include "mainhost.h"
 
-using namespace Connectables;
-
+//using namespace Connectables;
+namespace Connectables
+{
 Buffer::Buffer(MainHost *host, int index, const ObjectInfo &info) :
     Object(host,index,ObjectInfo(NodeType::object, ObjType::Buffer, tr("Delay"))),
     delayChanged(false),
@@ -130,4 +131,5 @@ void Buffer::OnParameterChanged(ConnectionInfo pinInfo, float value)
     Object::OnParameterChanged(pinInfo,value);
     desiredSize = listParameterPinIn->listPins.value(0)->GetValue()*50000;
     delayChanged=10;
+}
 }

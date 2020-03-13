@@ -1,6 +1,6 @@
 include(../config.pri)
 
-QT += core gui
+QT += core gui widgets
 
 QMAKE_LFLAGS+="/DEF:$${_PRO_FILE_PWD_}/vstboard.def"
 
@@ -30,7 +30,7 @@ win32-msvc* {
 
 INCLUDEPATH += ../common
 
-CONFIG += qtwinmigrate-uselib
+#CONFIG += qtwinmigrate-uselib
 include($${_PRO_FILE_PWD_}/../../libs/qtwinmigrate/src/qtwinmigrate.pri)
 
 SOURCES += \

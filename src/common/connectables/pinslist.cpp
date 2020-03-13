@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -287,7 +287,7 @@ void PinsList::GetInfos(MsgObject &msg)
     msg.prop[MsgObject::Type]=objInfo.objType;
     msg.prop[MsgObject::Name]=objectName();
 
-    QMap<quint16,Pin*>::iterator i = listPins.constBegin();
+    QMap<quint16,Pin*>::const_iterator i = listPins.constBegin();
     while(i!=listPins.constEnd()) {
         Pin *p = i.value();
         if(!p->GetVisible()) {

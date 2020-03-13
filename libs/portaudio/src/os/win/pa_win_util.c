@@ -1,5 +1,5 @@
 /*
- * $Id: pa_win_util.c 1437 2009-12-10 08:10:08Z rossb $
+ * $Id$
  * Portable Audio I/O Library
  * Win32 platform-specific support functions
  *
@@ -41,20 +41,20 @@
  @ingroup win_src
 
  @brief Win32 implementation of platform-specific PaUtil support functions.
-
-    @todo Implement workaround for QueryPerformanceCounter() skipping forward
-    bug. (see msdn kb Q274323).
 */
  
 #include <windows.h>
-#include <mmsystem.h> /* for timeGetTime() */
 
-#include "pa_util.h"
-
-#if (defined(WIN32) && (defined(_MSC_VER) && (_MSC_VER >= 1200))) && !defined(_WIN32_WCE) /* MSC version 6 and above */
-#pragma comment( lib, "winmm.lib" )
+#if defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)
+	#include <sys/timeb.h> /* for _ftime_s() */
+#else
+	#include <mmsystem.h> /* for timeGetTime() */
+	#if (defined(WIN32) && (defined(_MSC_VER) && (_MSC_VER >= 1200))) && !defined(_WIN32_WCE) /* MSC version 6 and above */
+	#pragma comment( lib, "winmm.lib" )
+	#endif
 #endif
 
+#include "pa_util.h"
 
 /*
    Track memory allocations to avoid leaks.
@@ -129,21 +129,30 @@ double PaUtil_GetTime( void )
 
     if( usePerformanceCounter_ )
     {
-        /* FIXME:
-            according to this knowledge-base article, QueryPerformanceCounter
-            can skip forward by seconds!
+        /*
+            Note: QueryPerformanceCounter has a known issue where it can skip forward
+            by a few seconds (!) due to a hardware bug on some PCI-ISA bridge hardware.
+            This is documented here:
             http://support.microsoft.com/default.aspx?scid=KB;EN-US;Q274323&
 
-            it may be better to use the rtdsc instruction using inline asm,
-            however then a method is needed to calculate a ticks/seconds ratio.
+            The work-arounds are not very paletable and involve querying GetTickCount 
+            at every time step.
+
+            Using rdtsc is not a good option on multi-core systems.
+
+            For now we just use QueryPerformanceCounter(). It's good, most of the time.
         */
         QueryPerformanceCounter( &time );
         return time.QuadPart * secondsPerTick_;
     }
     else
     {
-#ifndef UNDER_CE    	
+#ifndef UNDER_CE
+	#if defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)
+        return GetTickCount64() * .001;
+	#else
         return timeGetTime() * .001;
+	#endif
 #else
         return GetTickCount() * .001;
 #endif                

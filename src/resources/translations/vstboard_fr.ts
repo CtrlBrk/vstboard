@@ -6,12 +6,12 @@
     <message>
         <location filename="../../vstboard/connectables/audiodevice.cpp" line="218"/>
         <source>Device not found</source>
-        <translation>Interface non trouvée</translation>
+        <translation>Interface non trouvÃ©e</translation>
     </message>
     <message>
         <location filename="../../vstboard/connectables/audiodevice.cpp" line="366"/>
         <source>Stream format not supported</source>
-        <translation>Format stream non supporté</translation>
+        <translation>Format stream non supportÃ©</translation>
     </message>
 </context>
 <context>
@@ -40,7 +40,7 @@
     <message>
         <location filename="../../vstboard/audiodevices.cpp" line="355"/>
         <source>Device not found</source>
-        <translation>Interface non trouvée</translation>
+        <translation>Interface non trouvÃ©e</translation>
     </message>
     <message>
         <location filename="../../vstboard/audiodevices.cpp" line="509"/>
@@ -63,7 +63,7 @@
     <message>
         <location filename="../../vstboard/mainwindowhost.cpp" line="59"/>
         <source>Refresh list</source>
-        <translation>Rafraîchir la liste</translation>
+        <translation>RafraÃ®chir la liste</translation>
     </message>
 </context>
 <context>
@@ -72,7 +72,7 @@
         <location filename="../../vstboard/connectables/mididevice.cpp" line="75"/>
         <location filename="../../vstboard/connectables/mididevice.cpp" line="237"/>
         <source>Device not found</source>
-        <translation>Interface non trouvée</translation>
+        <translation>Interface non trouvÃ©e</translation>
     </message>
     <message>
         <location filename="../../vstboard/connectables/mididevice.cpp" line="98"/>
@@ -84,7 +84,7 @@
     <message>
         <location filename="../../vstboard/connectables/mididevice.cpp" line="220"/>
         <source>Error : device was deleted</source>
-        <translation>Erreur : l&apos;interface a été supprimée</translation>
+        <translation>Erreur : l&apos;interface a Ã©tÃ© supprimÃ©e</translation>
     </message>
 </context>
 <context>
@@ -97,7 +97,7 @@
     <message>
         <location filename="../../vstboard/mididevices.cpp" line="75"/>
         <source>Unable to start midi engine</source>
-        <translation>Impossible de démarrer le moteur Midi</translation>
+        <translation>Impossible de dÃ©marrer le moteur Midi</translation>
     </message>
 </context>
 <context>
@@ -110,7 +110,7 @@
     <message>
         <location filename="../../vstboard/views/mmeconfigdialog.ui" line="20"/>
         <source>Buffers</source>
-        <translation>Mémoire tampon</translation>
+        <translation>MÃ©moire tampon</translation>
     </message>
     <message>
         <location filename="../../vstboard/views/mmeconfigdialog.ui" line="36"/>
@@ -135,7 +135,7 @@
     <message>
         <location filename="../../vstboard/views/mmeconfigdialog.ui" line="73"/>
         <source>Don&apos;t Throttle Overloaded Processing Thread</source>
-        <translation>Ne pas limiter même en cas de surcharge</translation>
+        <translation>Ne pas limiter mÃªme en cas de surcharge</translation>
     </message>
     <message>
         <location filename="../../vstboard/views/mmeconfigdialog.cpp" line="31"/>
@@ -153,7 +153,7 @@
     <message>
         <location filename="../../vstboard/views/wasapiconfigdialog.ui" line="20"/>
         <source>Input latency (0=auto)</source>
-        <translation>Latence d&apos;entrée 0=auto</translation>
+        <translation>Latence d&apos;entrÃ©e 0=auto</translation>
     </message>
     <message>
         <location filename="../../vstboard/views/wasapiconfigdialog.ui" line="34"/>

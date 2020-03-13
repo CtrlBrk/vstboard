@@ -1,9 +1,9 @@
 include(../config.pri)
 
-QT += core gui
+QT += core gui widgets
 
 TEMPLATE = app
-TARGET = $${APP_NAME}
+TARGET = "VstBoard"
 
 LIBS += -lportmidi
 
@@ -83,8 +83,8 @@ INCLUDEPATH += $$PWD/../common
 DEPENDPATH += $$PWD/../common
 
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../common/release/libcommon.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../common/debug/libcommon.a
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../common/libcommon.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../common/libcommon.a
 else:win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../common/release/common.lib
 else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../common/debug/common.lib
 else:unix:!symbian: PRE_TARGETDEPS += $$OUT_PWD/../common/libcommon.a
@@ -96,8 +96,8 @@ else:unix:!symbian: LIBS += -L$$OUT_PWD/../portaudio/ -lportaudio
 INCLUDEPATH += $$PWD/../portaudio
 DEPENDPATH += $$PWD/../portaudio
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../portaudio/release/libportaudio.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../portaudio/debug/libportaudio.a
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../portaudio/libportaudio.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../portaudio/libportaudio.a
 else:win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../portaudio/release/portaudio.lib
 else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../portaudio/debug/portaudio.lib
 else:unix:!symbian: PRE_TARGETDEPS += $$OUT_PWD/../portaudio/libportaudio.a
@@ -109,8 +109,8 @@ else:unix:!symbian: LIBS += -L$$OUT_PWD/../portmidi/ -lportmidi
 INCLUDEPATH += $$PWD/../portmidi
 DEPENDPATH += $$PWD/../portmidi
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../portmidi/release/libportmidi.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../portmidi/debug/libportmidi.a
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../portmidi/libportmidi.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../portmidi/libportmidi.a
 else:win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../portmidi/release/portmidi.lib
 else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../portmidi/debug/portmidi.lib
 else:unix:!symbian: PRE_TARGETDEPS += $$OUT_PWD/../portmidi/libportmidi.a

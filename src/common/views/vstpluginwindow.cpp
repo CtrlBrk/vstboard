@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -95,7 +95,7 @@ bool VstPluginWindow::SetPlugin(Connectables::VstPlugin *plugin)
 
     //try to open the window
 //    plugin->objMutex.lock();
-    res = plugin->EffEditOpen(ui->scrollAreaWidgetContents->winId());
+    res = plugin->EffEditOpen((void *)ui->scrollAreaWidgetContents->winId());
 //    plugin->objMutex.unlock();
 
     if(res == 1L)

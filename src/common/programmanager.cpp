@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -60,7 +60,7 @@ void ProgramManager::Clear()
     currentProgId=0;
     currentMidiGroup=0;
     currentMidiProg=0;
-    dirtyFlag=false;
+    SetDirty(false);
     listGroups.clear();
 }
 
@@ -271,8 +271,8 @@ bool ProgramManager::userWantsToUnloadGroup()
 
     //no changes
     //plugins internal state may ahve changed
-//    if(!myHost->groupContainer->IsDirty())
-//        return true;
+    if(!myHost->groupContainer->IsDirty())
+        return true;
 
     //auto save
     if(groupAutosaveState == Qt::Checked) {
@@ -302,9 +302,9 @@ bool ProgramManager::userWantsToUnloadProgram()
         return true;
 
     //no changes
-    //plugins internal state may ahve changed
-//    if(!myHost->programContainer->IsDirty())
-//        return true;
+    //plugins internal state may have changed
+    if(!myHost->programContainer->IsDirty())
+        return true;
 
     //auto save
     if(progAutosaveState == Qt::Checked) {
@@ -344,8 +344,8 @@ bool ProgramManager::userWantsToUnloadProject()
         return false;
 
     //no changes
-//    if(!IsDirty())
-//        return true;
+    if(!IsDirty())
+        return true;
 
     //auto save
     if(onUnsaved == Qt::Checked) {
@@ -374,8 +374,8 @@ bool ProgramManager::userWantsToUnloadSetup()
         return true;
 
     //no changes
-//    if(!myHost->hostContainer->IsDirty())
-//        return true;
+    if(!myHost->hostContainer->IsDirty())
+        return true;
 
     //auto save
     if(onUnsaved == Qt::Checked) {

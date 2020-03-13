@@ -1,4 +1,4 @@
-#    Copyright 2010 Raphaël François
+#    Copyright 2010 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.

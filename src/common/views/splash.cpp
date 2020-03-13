@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -29,10 +29,10 @@ Splash::Splash(QWidget *parent) :
 //    QString ver(APP_VERSION);
 
     ui->setupUi(this);
-    ui->labelApp->setText(APP_NAME);
+    ui->labelApp->setText("VstBoard");
     ui->labelVersion->setText( QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD) );
 
-    setWindowTitle(APP_NAME);
+    setWindowTitle("VstBoard");
 
     setFixedSize(size());
 

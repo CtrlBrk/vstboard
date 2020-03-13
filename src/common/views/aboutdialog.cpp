@@ -28,11 +28,11 @@ AboutDialog::AboutDialog(QWidget *parent) :
 //    QString ver(APP_VERSION_MAJOR);
 
     ui->setupUi(this);
-    ui->labelApp->setText(APP_NAME);
+    ui->labelApp->setText("VstBoard");
     ui->labelVersion->setText( QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD) );
 //    ui->labelBuild->setText(ver.section("-",2,2));
 
-    setWindowTitle(QString(tr("About %1")).arg(APP_NAME));
+    setWindowTitle("About VstBoard");
 
     setFixedSize(size());
 }

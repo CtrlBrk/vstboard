@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -111,24 +111,24 @@ tresult PLUGIN_API VstBoardProcessor::initialize (FUnknown* context)
     }
 
     for(int i=0; i<NB_MAIN_BUSES_IN; i++) {
-        addAudioInput(QString("AudioIn%1").arg(i+1).utf16(), Vst::SpeakerArr::kStereo, Vst::kMain, 0);
+        addAudioInput((char16*)QString("AudioIn%1").arg(i+1).utf16(), Vst::SpeakerArr::kStereo, Vst::kMain, 0);
     }
     for(int i=0; i<NB_MAIN_BUSES_OUT; i++) {
-        addAudioOutput(QString("AudioOut%1").arg(i+1).utf16(), Vst::SpeakerArr::kStereo, Vst::kMain, 0);
+        addAudioOutput((char16*)QString("AudioOut%1").arg(i+1).utf16(), Vst::SpeakerArr::kStereo, Vst::kMain, 0);
     }
 
     for(int i=0; i<NB_AUX_BUSES_IN; i++) {
-        addAudioInput(QString("AuxIn%1").arg(i+1).utf16(), Vst::SpeakerArr::kStereo, Vst::kAux, 0);
+        addAudioInput((char16*)QString("AuxIn%1").arg(i+1).utf16(), Vst::SpeakerArr::kStereo, Vst::kAux, 0);
     }
     for(int i=0; i<NB_AUX_BUSES_OUT; i++) {
-        addAudioOutput(QString("AuxOut%1").arg(i+1).utf16(), Vst::SpeakerArr::kStereo, Vst::kAux, 0);
+        addAudioOutput((char16*)QString("AuxOut%1").arg(i+1).utf16(), Vst::SpeakerArr::kStereo, Vst::kAux, 0);
     }
 
     for(int i=0; i<NB_MIDI_BUSES_IN; i++) {
-        addEventInput(QString("MidiIn%1").arg(i+1).utf16(), 4, Vst::kMain, 0);
+        addEventInput((char16*)QString("MidiIn%1").arg(i+1).utf16(), 4, Vst::kMain, 0);
     }
     for(int i=0; i<NB_MIDI_BUSES_OUT; i++) {
-        addEventOutput(QString("MidiOut%1").arg(i+1).utf16(), 4, Vst::kMain, 0);
+        addEventOutput((char16*)QString("MidiOut%1").arg(i+1).utf16(), 4, Vst::kMain, 0);
     }
 
     return kResultTrue;

@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -62,6 +62,7 @@ namespace View {
         void ParkingChanged(QWidget *parking);
 
     public slots:
+        void UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color);
         void ObjectDropped(QGraphicsSceneDragDropEvent *event, MsgObject msg);
         void OnViewChanged(QRectF rect);
 

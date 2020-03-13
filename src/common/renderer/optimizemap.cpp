@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -57,7 +57,8 @@ void OptimizeMap::GetBestMap(OptMap &map)
     currentMapTime=0;
 
     QList<OptimizerNode*> testingNodes = nodes;
-    MapNodes(testingNodes, OptMap());
+    OptMap tmpmap;
+    MapNodes(testingNodes, tmpmap);
     solvingDone=true;
     map = bestMap;
 }
@@ -232,7 +233,7 @@ long OptimizeMap::GetRenderingTime(const OptMap &map)
     //step, thread, time
     QMap<int, QMap<int, long> >stepThreadLength;
 
-    OptMap::iterator step = map.begin();
+    OptMap::const_iterator step = map.begin();
     while(step != map.end()) {
 
         long maxStepLength=0;
@@ -315,12 +316,12 @@ QString OptimizeMap::OptMap2Txt(const OptMap& map)
     QMap<int, QMap<int,QString> >str;
     str[0][0] = "       ";
 
-    QMap<int, QMap<int, QList<OptimizerNode> > >::iterator step = map.begin();
+    QMap<int, QMap<int, QList<OptimizerNode> > >::const_iterator step = map.begin();
     while(step!=map.end()) {
         str[step.key()+1][0]=QString("step:%1").arg(step.key());
 
 
-        QMap<int, QList<OptimizerNode> >::iterator th = step.value().begin();
+        QMap<int, QList<OptimizerNode> >::const_iterator th = step.value().begin();
         while(th!=step.value().end()) {
             str[0][th.key()+1]=QString("thread:%1").arg(th.key());
 

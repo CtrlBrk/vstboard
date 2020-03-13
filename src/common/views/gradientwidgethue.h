@@ -1,8 +1,8 @@
 #ifndef GRADIENTWIDGETHUE_H
 #define GRADIENTWIDGETHUE_H
 
-#include <QtGui/QWidget>
-#include <QtGui/QPen>
+#include <QWidget>
+#include <QPen>
 
 namespace View {
 
@@ -48,10 +48,10 @@ namespace View {
 
     private:
         qreal hue,saturation,value,alpha;
-        QColor m_selected_color;    // Couleur sélectionné dans le dégradé
-        QImage m_gradient_image;    // Image contenant le degradé à afficher
-        QPoint m_cursor_position;   // Position du point de sélection
-        bool m_left_button_pressed; // Bouton gauche de la souris pressé ou non
+        QColor m_selected_color;    // Couleur sÃ©lectionnÃ© dans le dÃ©gradÃ©
+        QImage m_gradient_image;    // Image contenant le degradÃ© Ã  afficher
+        QPoint m_cursor_position;   // Position du point de sÃ©lection
+        bool m_left_button_pressed; // Bouton gauche de la souris pressÃ© ou non
 
         void updateGradientImage();
         void cursorMoved();

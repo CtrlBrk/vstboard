@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -33,7 +33,7 @@ BEGIN_FACTORY_DEF ("CtrlBrk",
                                 "VstBoard Effect",
                                 Vst::kDistributable,
                                 Vst::PlugType::kFx,
-                                QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toAscii(),
+                                QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toLatin1(),
                                 kVstVersionString,
                                 VstBoardProcessor::createInstance)
 
@@ -43,7 +43,7 @@ BEGIN_FACTORY_DEF ("CtrlBrk",
                                 "VstBoard Instrument",
                                 Vst::kDistributable,
                                 Vst::PlugType::kInstrument,
-                                QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toAscii(),
+                                QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toLatin1(),
                                 kVstVersionString,
                                 VstBoardProcessor::createInstance)
 
@@ -53,7 +53,7 @@ BEGIN_FACTORY_DEF ("CtrlBrk",
                                 "VstBoard",
                                 0,
                                 "",
-                                QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toAscii(),
+                                QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toLatin1(),
                                 kVstVersionString,
                                 VstBoardController::createInstance)
 

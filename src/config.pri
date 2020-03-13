@@ -1,19 +1,23 @@
-include(version.pri)
-
 DEFINES += APP_NAME=\\\"VstBoard\\\"
+DEFINES += APP_VERSION_MAJOR=0
+DEFINES += APP_VERSION_MINOR=6
+DEFINES += APP_VERSION_BUILD=0
+DEFINES += APP_VERSION_PATCH=0
+
 
 PORTAUDIO_PATH 	= ../../libs/portaudio
 PORTMIDI_PATH 	= ../../libs/portmidi
 
 win32|macx {
-    VSTSDK_PATH	= ../../libs/VST3SDK
+    VSTSDK_PATH	= "../../libs/VST3SDK"
     CONFIG += vstsdk
     DEFINES += VSTSDK
-    INCLUDEPATH += $$VSTSDK_PATH \
-        $$VSTSDK_PATH/public.sdk/source/vst2.x
+    INCLUDEPATH += $$VSTSDK_PATH
+    INCLUDEPATH += $$VSTSDK_PATH/public.sdk/source/vst2.x/
 }
 
-CONFIG += scriptengine
+#deprecated
+#CONFIG += scriptengine
 
 #use ring buffers to sync multiple audio inputs
 #DEFINES += CIRCULAR_BUFFER

@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -30,7 +30,7 @@ MainWindowHost::MainWindowHost(Settings *settings, MainHostHost * myHost, QWidge
 {
     myHost->mainWindow=this;
 
-    setWindowTitle(APP_NAME);
+    setWindowTitle("VstBoard");
 }
 
 void MainWindowHost::Kill()
@@ -45,10 +45,10 @@ void MainWindowHost::Init()
     //audio devices
     listAudioDevModel = new ListAudioInterfacesModel(this,FixedObjId::audioDevices,this);
     ui->treeAudioInterfaces->setModel(listAudioDevModel);
-    ui->treeAudioInterfaces->header()->setResizeMode(0,QHeaderView::Stretch);
-    ui->treeAudioInterfaces->header()->setResizeMode(1,QHeaderView::Fixed);
-    ui->treeAudioInterfaces->header()->setResizeMode(2,QHeaderView::Fixed);
-    ui->treeAudioInterfaces->header()->setResizeMode(3,QHeaderView::Fixed);
+    ui->treeAudioInterfaces->header()->setSectionResizeMode(0,QHeaderView::Stretch);
+    ui->treeAudioInterfaces->header()->setSectionResizeMode(1,QHeaderView::Fixed);
+    ui->treeAudioInterfaces->header()->setSectionResizeMode(2,QHeaderView::Fixed);
+    ui->treeAudioInterfaces->header()->setSectionResizeMode(3,QHeaderView::Fixed);
     ui->treeAudioInterfaces->header()->resizeSection(1,30);
     ui->treeAudioInterfaces->header()->resizeSection(2,30);
     ui->treeAudioInterfaces->header()->resizeSection(3,40);
@@ -60,10 +60,10 @@ void MainWindowHost::Init()
     //midi devices
     listMidiDevModel = new ListMidiInterfacesModel(this,FixedObjId::midiDevices,this);
     ui->treeMidiInterfaces->setModel(listMidiDevModel);
-    ui->treeMidiInterfaces->header()->setResizeMode(0,QHeaderView::Stretch);
-    ui->treeMidiInterfaces->header()->setResizeMode(1,QHeaderView::Fixed);
-    ui->treeMidiInterfaces->header()->setResizeMode(2,QHeaderView::Fixed);
-    ui->treeMidiInterfaces->header()->setResizeMode(3,QHeaderView::Fixed);
+    ui->treeMidiInterfaces->header()->setSectionResizeMode(0,QHeaderView::Stretch);
+    ui->treeMidiInterfaces->header()->setSectionResizeMode(1,QHeaderView::Fixed);
+    ui->treeMidiInterfaces->header()->setSectionResizeMode(2,QHeaderView::Fixed);
+    ui->treeMidiInterfaces->header()->setSectionResizeMode(3,QHeaderView::Fixed);
     ui->treeMidiInterfaces->header()->resizeSection(1,30);
     ui->treeMidiInterfaces->header()->resizeSection(2,30);
     ui->treeMidiInterfaces->header()->resizeSection(3,40);

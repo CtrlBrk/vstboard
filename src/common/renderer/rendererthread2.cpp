@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -26,8 +26,8 @@
 
 RendererThread2::RendererThread2(Renderer2 *renderer, int id) :
     QThread(renderer),
-    renderer(renderer),
     stop(false),
+    renderer(renderer),
     id(id)
 {
     setObjectName("rendererThread");
@@ -51,16 +51,18 @@ RendererThread2::RendererThread2(Renderer2 *renderer, int id) :
     /* If we have access to AVRT.DLL (Vista and later), use it */
     if (FunctionAvSetMmThreadCharacteristics != NULL) {
         DWORD dwTask = 0;
-        HANDLE hMmTask = FunctionAvSetMmThreadCharacteristics(QString("vstboard%1").arg(id).toStdString().c_str(), &dwTask);
+        hMmTask = FunctionAvSetMmThreadCharacteristics("Pro Audio", &dwTask);
         if (hMmTask != NULL && hMmTask != INVALID_HANDLE_VALUE) {
             BOOL bret = FunctionAvSetMmThreadPriority(hMmTask, PA_AVRT_PRIORITY_CRITICAL);
             if (!bret) {
                 LOG("can't set msc priority");
             }
+        } else {
+            LOG("can't set msc priority, hMmTask null");
         }
-        else {
-            LOG("can't set msc priority, avrt.dll not loaded");
-        }
+
+    } else {
+        LOG("can't set msc priority, avrt.dll not loaded");
     }
 #endif
 

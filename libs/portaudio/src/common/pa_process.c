@@ -1,5 +1,5 @@
 /*
- * $Id: pa_process.c 1555 2010-11-12 17:16:21Z richard_ash $
+ * $Id$
  * Portable Audio I/O Library
  * streamCallback <-> host buffer processing adapter
  *
@@ -41,41 +41,6 @@
  @ingroup common_src
 
  @brief Buffer Processor implementation.
-    
- The code in this file is not optimised yet - although it's not clear that
- it needs to be. there may appear to be redundancies
- that could be factored into common functions, but the redundanceis are left
- intentionally as each appearance may have different optimisation possibilities.
-
- The optimisations which are planned involve only converting data in-place
- where possible, rather than copying to the temp buffer(s).
-
- Note that in the extreme case of being able to convert in-place, and there
- being no conversion necessary there should be some code which short-circuits
- the operation.
-
-    @todo Consider cache tilings for intereave<->deinterleave.
-
-    @todo specify and implement some kind of logical policy for handling the
-        underflow and overflow stream flags when the underflow/overflow overlaps
-        multiple user buffers/callbacks.
-
-	@todo provide support for priming the buffers with data from the callback.
-        The client interface is now implemented through PaUtil_SetNoInput()
-        which sets bp->hostInputChannels[0][0].data to zero. However this is
-        currently only implemented in NonAdaptingProcess(). It shouldn't be
-        needed for AdaptingInputOnlyProcess() (no priming should ever be
-        requested for AdaptingInputOnlyProcess()).
-        Not sure if additional work should be required to make it work with
-        AdaptingOutputOnlyProcess, but it definitely is required for
-        AdaptingProcess.
-
-    @todo implement PaUtil_SetNoOutput for AdaptingProcess
-
-    @todo don't allocate temp buffers for blocking streams unless they are
-        needed. At the moment they are needed, but perhaps for host APIs
-        where the implementation passes a buffer to the host they could be
-        used.
 */
 
 
@@ -137,6 +102,7 @@ PaError PaUtil_InitializeBufferProcessor( PaUtilBufferProcessor* bp,
     PaError result = paNoError;
     PaError bytesPerSample;
     unsigned long tempInputBufferSize, tempOutputBufferSize;
+    PaStreamFlags tempInputStreamFlags;
 
     if( streamFlags & paNeverDropInput )
     {
@@ -257,10 +223,22 @@ PaError PaUtil_InitializeBufferProcessor( PaUtilBufferProcessor* bp,
             goto error;
         }
 
-        bp->inputConverter =
-            PaUtil_SelectConverter( hostInputSampleFormat, userInputSampleFormat, streamFlags );
+        /* Under the assumption that no ADC in existence delivers better than 24bits resolution,
+            we disable dithering when host input format is paInt32 and user format is paInt24, 
+            since the host samples will just be padded with zeros anyway. */
 
-        bp->inputZeroer = PaUtil_SelectZeroer( hostInputSampleFormat );
+        tempInputStreamFlags = streamFlags;
+        if( !(tempInputStreamFlags & paDitherOff) /* dither is on */
+                && (hostInputSampleFormat & paInt32) /* host input format is int32 */
+                && (userInputSampleFormat & paInt24) /* user requested format is int24 */ ){
+
+            tempInputStreamFlags = tempInputStreamFlags | paDitherOff;
+        }
+
+        bp->inputConverter =
+            PaUtil_SelectConverter( hostInputSampleFormat, userInputSampleFormat, tempInputStreamFlags );
+
+        bp->inputZeroer = PaUtil_SelectZeroer( userInputSampleFormat );
             
         bp->userInputIsInterleaved = (userInputSampleFormat & paNonInterleaved)?0:1;
 		
@@ -450,13 +428,13 @@ void PaUtil_ResetBufferProcessor( PaUtilBufferProcessor* bp )
 }
 
 
-unsigned long PaUtil_GetBufferProcessorInputLatency( PaUtilBufferProcessor* bp )
+unsigned long PaUtil_GetBufferProcessorInputLatencyFrames( PaUtilBufferProcessor* bp )
 {
     return bp->initialFramesInTempInputBuffer;
 }
 
 
-unsigned long PaUtil_GetBufferProcessorOutputLatency( PaUtilBufferProcessor* bp )
+unsigned long PaUtil_GetBufferProcessorOutputLatencyFrames( PaUtilBufferProcessor* bp )
 {
     return bp->initialFramesInTempOutputBuffer;
 }
@@ -590,6 +568,8 @@ void PaUtil_SetNoOutput( PaUtilBufferProcessor* bp )
     assert( bp->outputChannelCount > 0 );
 
     bp->hostOutputChannels[0][0].data = 0;
+
+    /* note that only NonAdaptingProcess is able to deal with no output at this stage. not implemented for AdaptingProcess */
 }
 
 
@@ -763,8 +743,10 @@ static unsigned long NonAdaptingProcess( PaUtilBufferProcessor *bp,
                     destSampleStrideSamples = bp->inputChannelCount;
                     destChannelStrideBytes = bp->bytesPerUserInputSample;
 
-                    /* process host buffer directly, or use temp buffer if formats differ or host buffer non-interleaved */
-                    if( bp->userInputSampleFormatIsEqualToHost && bp->hostInputIsInterleaved && bp->hostInputChannels[0][0].data)
+                    /* process host buffer directly, or use temp buffer if formats differ or host buffer non-interleaved,
+                     * or if num channels differs between the host (set in stride) and the user (eg with some Alsa hw:) */
+                    if( bp->userInputSampleFormatIsEqualToHost && bp->hostInputIsInterleaved
+                        && bp->hostInputChannels[0][0].data && bp->inputChannelCount == hostInputChannels[0].stride )
                     {
                         userInput = hostInputChannels[0].data;
                         destBytePtr = (unsigned char *)hostInputChannels[0].data;
@@ -852,8 +834,10 @@ static unsigned long NonAdaptingProcess( PaUtilBufferProcessor *bp,
             {
                 if( bp->userOutputIsInterleaved )
                 {
-                    /* process host buffer directly, or use temp buffer if formats differ or host buffer non-interleaved */
-                    if( bp->userOutputSampleFormatIsEqualToHost && bp->hostOutputIsInterleaved )
+                    /* process host buffer directly, or use temp buffer if formats differ or host buffer non-interleaved,
+                     * or if num channels differs between the host (set in stride) and the user (eg with some Alsa hw:) */
+                    if( bp->userOutputSampleFormatIsEqualToHost && bp->hostOutputIsInterleaved
+                          && bp->outputChannelCount == hostOutputChannels[0].stride )
                     {
                         userOutput = hostOutputChannels[0].data;
                         skipOutputConvert = 1;
@@ -1703,9 +1687,9 @@ unsigned long PaUtil_CopyInput( PaUtilBufferProcessor* bp,
                                 hostInputChannels[i].stride,
                                 framesToCopy, &bp->ditherGenerator );
 
-            destBytePtr += destChannelStrideBytes;  /* skip to next source channel */
+            destBytePtr += destChannelStrideBytes;  /* skip to next dest channel */
 
-            /* advance dest ptr for next iteration */
+            /* advance source ptr for next iteration */
             hostInputChannels[i].data = ((unsigned char*)hostInputChannels[i].data) +
                     framesToCopy * hostInputChannels[i].stride * bp->bytesPerHostInputSample;
         }
@@ -1735,7 +1719,7 @@ unsigned long PaUtil_CopyInput( PaUtilBufferProcessor* bp,
             destBytePtr += bp->bytesPerUserInputSample * framesToCopy;
             nonInterleavedDestPtrs[i] = destBytePtr;
             
-            /* advance dest ptr for next iteration */
+            /* advance source ptr for next iteration */
             hostInputChannels[i].data = ((unsigned char*)hostInputChannels[i].data) +
                     framesToCopy * hostInputChannels[i].stride * bp->bytesPerHostInputSample;
         }

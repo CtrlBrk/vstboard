@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -167,6 +167,7 @@ void Renderer2::ThreadCleanup()
 
 void Renderer2::OnThreadTimeout()
 {
+    LOG("thread timeout");
     stepCanStart.first()->Unlock(999);
     waitThreadReady.WakeAll();
     if(!waitThreadEnd.WaitAllThreads(1000)) {

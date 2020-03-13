@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -52,7 +52,7 @@ CableView::CableView(MsgController *msgCtrl, int objId, PinView *pinOut, const Q
     PtIn(PtIn),
     config(config)
 {
-
+    setPen( config->GetColor(ColorGroups::Panel,Colors::Lines) );
 }
 
 CableView::~CableView()

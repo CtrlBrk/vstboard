@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -31,30 +31,29 @@
 
 #ifndef QT_NO_DEBUG
 
-    void myMessageOutput(QtMsgType type, const char *msg)
-     {
-        qInstallMsgHandler(0);
-
+    void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+    {
+        QByteArray localMsg = msg.toLocal8Bit();
+        const char *file = context.file ? context.file : "";
+        const char *function = context.function ? context.function : "";
         switch (type) {
-
-            case QtWarningMsg:
-                qDebug(msg);
-                break;
-
-            case QtCriticalMsg:
-            case QtFatalMsg:
-                qDebug(msg);
-                abort();
-                break;
-
-            default:
-                qDebug(msg);
-                break;
-
+        case QtDebugMsg:
+            fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), file, context.line, function);
+            break;
+        case QtInfoMsg:
+            fprintf(stderr, "Info: %s (%s:%u, %s)\n", localMsg.constData(), file, context.line, function);
+            break;
+        case QtWarningMsg:
+            fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), file, context.line, function);
+            break;
+        case QtCriticalMsg:
+            fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), file, context.line, function);
+            break;
+        case QtFatalMsg:
+            fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), file, context.line, function);
+            break;
         }
-
-         qInstallMsgHandler(myMessageOutput);
-     }
+    }
 #endif
 
 int main(int argc, char *argv[])
@@ -71,7 +70,7 @@ int main(int argc, char *argv[])
     qRegisterMetaTypeStreamOperators<ObjectContainerAttribs>("ObjectContainerAttribs");
 
 #ifndef QT_NO_DEBUG
-    qInstallMsgHandler(myMessageOutput);
+    qInstallMessageHandler(myMessageOutput);
 #endif
 
     QCoreApplication::setOrganizationName("CtrlBrk");

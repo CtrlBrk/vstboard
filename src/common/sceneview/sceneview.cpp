@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphaël François
+#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -67,10 +67,14 @@ SceneView::SceneView(MainWindow *mainWindow, MsgController *msgCtrl, int objId, 
     viewGroup->SetViewConfig(mainWindow->viewConfig);
 
     //we need a root object to avoid a bug when the scene is empty
-    rootObjHost = new QGraphicsRectItem(0, sceneHost);
-    rootObjProject = new QGraphicsRectItem(0, sceneProject);
-    rootObjProgram = new QGraphicsRectItem(0, sceneProgram);
-    rootObjGroup = new QGraphicsRectItem(0, sceneGroup);
+    rootObjHost = new QGraphicsRectItem(0);
+    sceneHost->addItem(rootObjHost);
+    rootObjProject = new QGraphicsRectItem(0);
+    sceneProject->addItem(rootObjProject);
+    rootObjProgram = new QGraphicsRectItem(0);
+    sceneProgram->addItem(rootObjProgram);
+    rootObjGroup = new QGraphicsRectItem(0);
+    sceneGroup->addItem(rootObjGroup);
 
     viewHost->setScene(sceneHost);
     viewProject->setScene(sceneProject);

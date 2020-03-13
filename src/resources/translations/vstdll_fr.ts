@@ -11,17 +11,17 @@
     <message>
         <location filename="../../vstdll/connectables/vstautomation.cpp" line="84"/>
         <source>Remove pin</source>
-        <translation>Broche supprimée</translation>
+        <translation>Broche supprimÃ©e</translation>
     </message>
     <message>
         <location filename="../../vstdll/connectables/vstautomation.cpp" line="99"/>
         <source>Add pin</source>
-        <translation>Broche ajoutée</translation>
+        <translation>Broche ajoutÃ©e</translation>
     </message>
     <message>
         <location filename="../../vstdll/connectables/vstautomation.cpp" line="130"/>
         <source>Change number of pins</source>
-        <translation>Nb. broches modifié</translation>
+        <translation>Nb. broches modifiÃ©</translation>
     </message>
     <message>
         <location filename="../../vstdll/connectables/vstautomation.cpp" line="197"/>
@@ -44,7 +44,7 @@
     <message>
         <location filename="../../vstdll/mainwindowvst.cpp" line="54"/>
         <source>Vst audio input</source>
-        <translation>Entrée audio VST</translation>
+        <translation>EntrÃ©e audio VST</translation>
     </message>
     <message>
         <location filename="../../vstdll/mainwindowvst.cpp" line="63"/>
@@ -54,7 +54,7 @@
     <message>
         <location filename="../../vstdll/mainwindowvst.cpp" line="75"/>
         <source>Vst midi input</source>
-        <translation>Entrée Midi VST</translation>
+        <translation>EntrÃ©e Midi VST</translation>
     </message>
     <message>
         <location filename="../../vstdll/mainwindowvst.cpp" line="85"/>
