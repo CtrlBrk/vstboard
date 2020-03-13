@@ -3,3 +3,7 @@
 Thumbs.db
 .DS_Store
 src/version.pri
+build-*
+libs/VST3SDK/
+libs/vstsdk2.4/
+libs/VST3 SDK/
