@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 Raphael Francois
+#    Copyright 2010-2020 Raphael Francois
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
