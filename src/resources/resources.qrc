@@ -1,20 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>img16x16/empty.png</file>
-        <file>img16x16/folder.png</file>
-        <file>img16x16/file_project.png</file>
-        <file>img16x16/file_setup.png</file>
-        <file>img16x16/filenew.png</file>
-        <file>img16x16/fileopen.png</file>
-        <file>img16x16/filesave.png</file>
-        <file>img16x16/filesaveas.png</file>
-        <file>img16x16/configure.png</file>
-        <file>img16x16/viewmag-.png</file>
-        <file>img16x16/viewmag+.png</file>
-        <file>img16x16/viewmagfit.png</file>
-        <file>img16x16/documentinfo.png</file>
-        <file>img32x32/agt_action_fail.png</file>
-        <file>img16x16/delete.png</file>
         <file>lgplv3-88x31.png</file>
         <file>vstboard16_8.png</file>
         <file>vstboard24_8.png</file>
@@ -26,20 +11,47 @@
         <file>translations/qt_fr.qm</file>
         <file>translations/common_fr.qm</file>
         <file>translations/vstdll_fr.qm</file>
-        <file>img16x16/appearance.png</file>
-        <file>img16x16/editcut.png</file>
-        <file>img16x16/edit_add.png</file>
-        <file>img16x16/edit_remove.png</file>
-        <file>img16x16/redo.png</file>
-        <file>img16x16/undo.png</file>
-        <file>img16x16/editcopy.png</file>
-        <file>img16x16/editpaste.png</file>
-        <file>img16x16/cell_edit.png</file>
-        <file>img16x16/key_bindings.png</file>
-        <file>img16x16/move.png</file>
-        <file>img16x16/14_layer_lowerlayer.png</file>
-        <file>img16x16/14_layer_raiselayer.png</file>
         <file>vst3.png</file>
         <file>asio.png</file>
+        <file>light/arrow-down.svg</file>
+        <file>light/arrow-up.svg</file>
+        <file>light/configure.svg</file>
+        <file>light/document-new.svg</file>
+        <file>light/document-open.svg</file>
+        <file>light/document-save-as.svg</file>
+        <file>light/document-save.svg</file>
+        <file>light/edit-paste-style.svg</file>
+        <file>light/edit-redo.svg</file>
+        <file>light/edit-undo-history.svg</file>
+        <file>light/edit-undo.svg</file>
+        <file>light/key-enter.svg</file>
+        <file>light/layer-visible-on.svg</file>
+        <file>light/object-locked.svg</file>
+        <file>light/help-about.svg</file>
+        <file>light/plugins.svg</file>
+        <file>light/object-unlocked.svg</file>
+        <file>light/contact-new.svg</file>
+        <file>light/filename-dash-amarok.svg</file>
+        <file>dark/arrow-down.svg</file>
+        <file>dark/arrow-up.svg</file>
+        <file>dark/configure.svg</file>
+        <file>dark/contact-new.svg</file>
+        <file>dark/document-new.svg</file>
+        <file>dark/document-open.svg</file>
+        <file>dark/document-save-as.svg</file>
+        <file>dark/document-save.svg</file>
+        <file>dark/edit-paste-style.svg</file>
+        <file>dark/edit-redo.svg</file>
+        <file>dark/edit-undo-history.svg</file>
+        <file>dark/edit-undo.svg</file>
+        <file>dark/filename-dash-amarok.svg</file>
+        <file>dark/help-about.svg</file>
+        <file>dark/key-enter.svg</file>
+        <file>dark/layer-visible-on.svg</file>
+        <file>dark/object-locked.svg</file>
+        <file>dark/object-unlocked.svg</file>
+        <file>dark/plugins.svg</file>
+        <file>light/process-stop.svg</file>
+        <file>dark/process-stop.svg</file>
     </qresource>
 </RCC>
