@@ -293,6 +293,13 @@ void MainWindow::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, co
     QPalette pal=palette();
     pal.setColor(role, color);
     setPalette(pal);
+
+    //style is not applied to undocked widgets => apply palette
+    QList<QDockWidget *> dockWidgets = findChildren<QDockWidget *>();
+    while (!dockWidgets.isEmpty()) {
+        dockWidgets.takeFirst()->setPalette(pal);
+    }
+    ui->mainToolBar->setPalette(pal);
 }
 
 void MainWindow::changeEvent(QEvent *e)

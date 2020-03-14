@@ -23,7 +23,8 @@
 
 #include <QLibraryInfo>
 #include <QTranslator>
-
+#include <QStyleFactory>
+#include <QProxyStyle>
 #include "mainhosthost.h"
 #include "mainwindowhost.h"
 #include "connectables/objectinfo.h"
@@ -77,6 +78,9 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("VstBoard");
 
     QApplication app(argc, argv);
+
+    QStyle *style = new QProxyStyle (QStyleFactory::create("fusion"));
+    if(style!=nullptr) QApplication::setStyle(style);
 
 #ifdef QT_NO_DEBUG
     QTranslator qtTranslator;

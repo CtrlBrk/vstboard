@@ -39,9 +39,6 @@ MainContainerView::MainContainerView(ViewConfig *config, MsgController *msgCtrl,
     bridgeReturn = new BridgeView(config, msgCtrl, -1, this);
 
     setGeometry(0,0,0,0);
-
-    connect( config, SIGNAL(ColorChanged(ColorGroups::Enum,Colors::Enum,QColor)),
-            this, SLOT(UpdateColor(ColorGroups::Enum,Colors::Enum,QColor)) );
 }
 
 MainContainerView::~MainContainerView()
@@ -213,12 +210,4 @@ void MainContainerView::ObjectDropped(QGraphicsSceneDragDropEvent *event, MsgObj
     msg.objIndex=GetIndex();
     msg.prop[MsgObject::Type]=InsertionType::NoInsertion;
     msgCtrl->SendMsg(msg);
-}
-
-void MainContainerView::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color)
-{
-    if(groupId==ColorGroups::Panel && colorId==Colors::Background) {
-//        HighlightStop();
-        return;
-    }
 }

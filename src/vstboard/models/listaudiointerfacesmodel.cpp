@@ -30,6 +30,11 @@ ListAudioInterfacesModel::ListAudioInterfacesModel(MsgController *msgCtrl, int o
     headerLabels << "Out";
     headerLabels << "InUse";
     setHorizontalHeaderLabels(  headerLabels );
+
+//    QBrush my_brush;
+//    QColor red(Qt::red);
+//    setHeaderData(1,Qt::Horizontal,my_brush,Qt::BackgroundRole);
+//    setHeaderData(1,Qt::Horizontal,my_brush,Qt::ForegroundRole);
 }
 
 Qt::ItemFlags ListAudioInterfacesModel::flags ( const QModelIndex & index ) const

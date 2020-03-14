@@ -52,6 +52,9 @@ void MainWindowHost::Init()
     ui->treeAudioInterfaces->header()->resizeSection(1,30);
     ui->treeAudioInterfaces->header()->resizeSection(2,30);
     ui->treeAudioInterfaces->header()->resizeSection(3,40);
+
+
+
 //    foreach(const QModelIndex &idx, listAudioDevModel->expandedIndex) {
 //        ui->treeAudioInterfaces->expand( idx );
 //    }
@@ -131,16 +134,16 @@ void MainWindowHost::resetSettings()
 {
     MainWindow::resetSettings();
 
-    QList<QDockWidget*>listDocksVisible;
-    listDocksVisible << ui->dockMidiDevices;
-    listDocksVisible << ui->dockAudioDevices;
-    foreach(QDockWidget *dock, listDocksVisible) {
-        dock->setFloating(false);
-        dock->setVisible(true);
-    }
+//    QList<QDockWidget*>listDocksVisible;
+//    listDocksVisible << ui->dockMidiDevices;
+//    listDocksVisible << ui->dockAudioDevices;
+//    foreach(QDockWidget *dock, listDocksVisible) {
+//        dock->setFloating(false);
+//        dock->setVisible(true);
+//    }
 
     addDockWidget(Qt::LeftDockWidgetArea,  ui->dockMidiDevices);
-    addDockWidget(Qt::LeftDockWidgetArea,  ui->dockAudioDevices);
+//    addDockWidget(Qt::LeftDockWidgetArea,  ui->dockAudioDevices);
 
     tabifyDockWidget(ui->dockTools,ui->dockMidiDevices);
     tabifyDockWidget(ui->dockMidiDevices,ui->dockAudioDevices);

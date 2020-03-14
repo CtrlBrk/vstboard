@@ -62,7 +62,6 @@ namespace View {
         void ParkingChanged(QWidget *parking);
 
     public slots:
-        void UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color);
         void ObjectDropped(QGraphicsSceneDragDropEvent *event, MsgObject msg);
         void OnViewChanged(QRectF rect);
 

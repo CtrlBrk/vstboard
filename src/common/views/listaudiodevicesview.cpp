@@ -21,11 +21,15 @@
 #include "listaudiodevicesview.h"
 #include "globals.h"
 
+
 ListAudioDevicesView::ListAudioDevicesView(QWidget *parent) :
     QTreeView(parent),
     audioDevConfig(0),
     updateList(0)
 {
+
+
+
     audioDevConfig = new QAction(QIcon(":/img16x16/configure.png"), tr("Config device"), this);
     audioDevConfig->setShortcut(Qt::Key_F2);
     audioDevConfig->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -102,3 +106,5 @@ void ListAudioDevicesView::EnableApis()
 {
     emit ResetApis();
 }
+
+

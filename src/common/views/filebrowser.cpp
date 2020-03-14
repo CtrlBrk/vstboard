@@ -301,3 +301,7 @@ void FileBrowser::NewFolder()
     }
 }
 
+void FileBrowser::setPalette(const QPalette &pal) {
+    QWidget::setPalette(pal);
+    ui->path->setPalette(pal);
+}

@@ -33,6 +33,7 @@ public:
 
     void setModel(QFileSystemModel *model=0);
     void setPath(QString dir);
+    void setPalette(const QPalette &pal);
     QString path();
 
 protected:

@@ -53,7 +53,7 @@ namespace Colors {
         Text,
         Lines,
         Button,
-        ButtonText
+        ButtonText,
 //            AlternateBase,
 //            ToolTipBase,
 //            ToolTipText,
