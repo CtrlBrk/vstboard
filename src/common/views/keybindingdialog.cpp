@@ -24,6 +24,18 @@
 #include "ui_keybindingdialog.h"
 #include "buttonswidget.h"
 #include "modifierswidget.h"
+#include "keypressedwidget.h"
+
+KeyPressedDelegate::KeyPressedDelegate(QObject *parent) : QStyledItemDelegate (parent)
+{
+}
+
+QWidget *KeyPressedDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/* option */, const QModelIndex &/* index */) const
+{
+    KeypressedWidget *editor = new KeypressedWidget(parent);
+
+    return editor;
+}
 
 //mode type delegate
 
@@ -68,11 +80,11 @@ void MouseButtonsDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     QString str;
     int mb = index.data().toInt();
     if(mb & Qt::LeftButton)
-        str.append("L ");
+        str.append("Left ");
     if(mb & Qt::MiddleButton)
-        str.append("M ");
+        str.append("Mid ");
     if(mb & Qt::RightButton)
-        str.append("R ");
+        str.append("Right ");
     if(mb & Qt::XButton1)
         str.append("4 ");
     if(mb & Qt::XButton2)
@@ -166,6 +178,7 @@ void KeyBindingDialog::Init()
     modelMain = bind->GetMainBindingModel();
     ui->tableMain->setModel(modelMain);
     ui->tableMain->resizeColumnsToContents();
+    ui->tableMain->setItemDelegateForColumn(1,&keyPressedDelegate);
 
     modelModes = bind->GetModesModel();
     ui->listModes->setModel(modelModes);

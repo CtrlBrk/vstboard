@@ -27,6 +27,15 @@ namespace Ui {
     class KeyBindingDialog;
 }
 
+class KeyPressedDelegate : public QStyledItemDelegate
+ {
+     Q_OBJECT
+
+public:
+    KeyPressedDelegate(QObject *parent = 0);
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+};
+
 class MoveTypeDelegate : public QStyledItemDelegate
  {
      Q_OBJECT
@@ -87,6 +96,7 @@ private:
     Ui::KeyBindingDialog *ui;
     KeyBind *bind;
     QStandardItemModel *modelMain;
+    KeyPressedDelegate keyPressedDelegate;
     QStandardItemModel *modelModes;
     MoveTypeDelegate moveDelegate;
     MouseButtonsDelegate buttonsDelegate;

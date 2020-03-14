@@ -26,7 +26,16 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -66,13 +75,7 @@
            </property>
            <property name="icon">
             <iconset resource="../../resources/resources.qrc">
-             <normaloff>:/img16x16/edit_add.png</normaloff>:/img16x16/edit_add.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>10</width>
-             <height>10</height>
-            </size>
+             <normaloff>:/light/contact-new.svg</normaloff>:/light/contact-new.svg</iconset>
            </property>
           </widget>
          </item>
@@ -92,13 +95,7 @@
            </property>
            <property name="icon">
             <iconset resource="../../resources/resources.qrc">
-             <normaloff>:/img16x16/edit_remove.png</normaloff>:/img16x16/edit_remove.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>10</width>
-             <height>10</height>
-            </size>
+             <normaloff>:/light/filename-dash-amarok.svg</normaloff>:/light/filename-dash-amarok.svg</iconset>
            </property>
           </widget>
          </item>
@@ -208,13 +205,7 @@
            </property>
            <property name="icon">
             <iconset resource="../../resources/resources.qrc">
-             <normaloff>:/img16x16/edit_add.png</normaloff>:/img16x16/edit_add.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>10</width>
-             <height>10</height>
-            </size>
+             <normaloff>:/light/contact-new.svg</normaloff>:/light/contact-new.svg</iconset>
            </property>
           </widget>
          </item>
@@ -234,13 +225,7 @@
            </property>
            <property name="icon">
             <iconset resource="../../resources/resources.qrc">
-             <normaloff>:/img16x16/edit_remove.png</normaloff>:/img16x16/edit_remove.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>10</width>
-             <height>10</height>
-            </size>
+             <normaloff>:/light/filename-dash-amarok.svg</normaloff>:/light/filename-dash-amarok.svg</iconset>
            </property>
           </widget>
          </item>
@@ -352,7 +337,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../resources/resources.qrc"/>
   <include location="../../resources/resources.qrc"/>
   <include location="../../resources/resources.qrc"/>
  </resources>

@@ -1,13 +1,16 @@
 #ifndef KEYPRESSEDWIDGET_H
 #define KEYPRESSEDWIDGET_H
 
-#include <QWidget>
+#include <QLineEdit>
 
 class KeypressedWidget : public QLineEdit
 {
     Q_OBJECT
 public:
-    KeypressedWidget();
+    explicit KeypressedWidget(QWidget *parent = 0);
+    ~KeypressedWidget();
+protected:
+    void keyPressEvent(QKeyEvent *event);
 };
 
 #endif // KEYPRESSEDWIDGET_H

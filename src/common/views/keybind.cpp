@@ -269,6 +269,7 @@ void KeyBind::SetDefaults()
 
     mapMainShortcuts.insert(unplugPin,          "Backspace");
     mapMainShortcuts.insert(deletePin,          "Delete");
+    mapMainShortcuts.insert(fullScreen,         "F11");
 
     {
         QMap<MovesBindings, MoveBind>mapMv;

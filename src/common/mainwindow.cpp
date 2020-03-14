@@ -57,8 +57,9 @@ void MainWindow::Init()
 //            this,SLOT(programParkingModelChanges(QStandardItemModel*)));
 //    connect(myHost,SIGNAL(groupParkingModelChanged(QStandardItemModel*)),
 //            this,SLOT(groupParkingModelChanges(QStandardItemModel*)));
-
+    geometryBeforeFullscreen = geometry();
     ui->setupUi(this);
+
     ui->statusBar->hide();
     ui->dockUndo->hide();
 
@@ -456,6 +457,7 @@ void MainWindow::UpdateKeyBinding()
     ui->actionRedo->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::redo));
     ui->actionRefresh_Audio_devices->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::refreashAudioDevices));
     ui->actionRefresh_Midi_devices->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::refreashMidiDevices));
+    ui->actionFullscreen->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::fullScreen));
 }
 
 void MainWindow::writeSettings()
@@ -874,4 +876,18 @@ void MainWindow::on_dockSolver_visibilityChanged(bool visible)
     MsgObject msg(FixedObjId::renderer);
     msg.prop[MsgObject::Update]=visible;
     SendMsg(msg);
+}
+
+void MainWindow::on_actionFullscreen_toggled(bool arg1)
+{
+    if(arg1) {
+        geometryBeforeFullscreen = geometry();
+        setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+        showFullScreen();
+    } else {
+        setWindowFlags(Qt::Window);
+        setGeometry(geometryBeforeFullscreen);
+        show();
+    }
+
 }

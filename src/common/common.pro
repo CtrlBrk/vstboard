@@ -135,7 +135,8 @@ SOURCES += \
     models/listtoolsmodel.cpp \
     models/groupsprogramsmodel.cpp \
     models/parkingmodel.cpp \
-    renderer/pathsolver.cpp
+    renderer/pathsolver.cpp \
+    views/keypressedwidget.cpp
 
 SOURCES += \
     views/programlist.cpp \
@@ -238,7 +239,8 @@ HEADERS += \
     commands/comremovepin.h \
     commands/comaddpin.h \
     commands/comprogramstate.h \
-    renderer/pathsolver.h
+    renderer/pathsolver.h \
+    views/keypressedwidget.h
 
 HEADERS += \
     views/configdialog.h \

@@ -78,7 +78,8 @@ public:
         zoomOut,
         zoomReset,
         hideAllEditors,
-        autoOpenEditors
+        autoOpenEditors,
+        fullScreen
         /*
         increaseValue,
         decreaseValue

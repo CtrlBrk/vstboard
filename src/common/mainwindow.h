@@ -96,6 +96,8 @@ protected:
 
     View::VstShellSelect *shellSelect;
 
+    QRect geometryBeforeFullscreen;
+
 public slots:
     void OnViewConfigClosed();
     void LoadDefaultFiles();
@@ -132,6 +134,7 @@ private slots:
     void on_actionProgram_panel_toggled(bool arg1);
     void on_actionProject_panel_toggled(bool arg1);
     void on_dockSolver_visibilityChanged(bool visible);
+    void on_actionFullscreen_toggled(bool arg1);
 };
 
 #endif // MAINWINDOW_H
