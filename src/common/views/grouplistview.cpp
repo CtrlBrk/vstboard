@@ -38,42 +38,42 @@ QStringList GroupListView::MimeTypes()
 
 void GroupListView::CreateActions()
 {
-    actRename = new QAction(QIcon(":/img16x16/cell_edit.png"),tr("Rename"),this);
+    actRename = new QAction( QIcon::fromTheme("edit-rename") ,tr("Rename"),this);
     actRename->setShortcut( Qt::Key_F2 );
     actRename->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     connect(actRename,SIGNAL(triggered()),
             this,SLOT(EditItem()));
     addAction(actRename);
 
-    actAddNew = new QAction(QIcon(":/img16x16/edit_add.png"),tr("Insert new"),this);
+    actAddNew = new QAction( QIcon::fromTheme("plus") ,tr("Insert new"),this);
     actAddNew->setShortcut( Qt::Key_Insert );
     actAddNew->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     connect(actAddNew,SIGNAL(triggered()),
             this,SLOT(InsertItem()));
     addAction(actAddNew);
 
-    actDel = new QAction(QIcon(":/img16x16/edit_remove.png"),tr("Delete"),this);
+    actDel = new QAction( QIcon::fromTheme("dash") ,tr("Delete"),this);
     actDel->setShortcut(QKeySequence::Delete);
     actDel->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     connect(actDel,SIGNAL(triggered()),
             this,SLOT(DeleteItem()));
     addAction(actDel);
 
-    actCopy = new QAction( QIcon(":/img16x16/editcopy.png"), "Copy", this);
+    actCopy = new QAction( QIcon::fromTheme("edit-copy") , "Copy", this);
     actCopy->setShortcuts(QKeySequence::Copy);
     actCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     connect(actCopy, SIGNAL(triggered()),
             this, SLOT(Copy()));
     addAction(actCopy);
 
-    actPaste = new QAction( QIcon(":/img16x16/editpaste.png"), "Paste", this);
+    actPaste = new QAction( QIcon::fromTheme("edit-paste") , "Paste", this);
     actPaste->setShortcuts(QKeySequence::Paste);
     actPaste->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     connect(actPaste, SIGNAL(triggered()),
             this, SLOT(Paste()));
     addAction(actPaste);
 
-    actCut = new QAction( QIcon(":/img16x16/editcut.png"), "Cut", this);
+    actCut = new QAction( QIcon::fromTheme("edit-cut") , "Cut", this);
     actCut->setShortcuts(QKeySequence::Cut);
     actCut->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     connect(actCut, SIGNAL(triggered()),

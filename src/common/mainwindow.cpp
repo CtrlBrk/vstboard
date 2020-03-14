@@ -1,5 +1,5 @@
 /**************************************************************************
-#    Copyright 2010-2012 RaphaÃ«l FranÃ§ois
+#    Copyright 2010-2020 Raphaël François
 #    Contact : ctrlbrk76@gmail.com
 #
 #    This file is part of VstBoard.
@@ -18,6 +18,8 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 
+#include <QStyleFactory>
+#include <QProxyStyle>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "globals.h"
@@ -52,6 +54,12 @@ MainWindow::MainWindow(Settings *settings, MainHost * myHost, QWidget *parent) :
 
 void MainWindow::Init()
 {
+    QStyle *style = new QProxyStyle (QStyleFactory::create("fusion"));
+    if(style!=nullptr) QApplication::setStyle(style);
+    QIcon::setThemeName("light");
+    QIcon::setThemeSearchPaths(QStringList(":light"));
+
+
     //myHost->mainWindow=this;
 //    connect(myHost,SIGNAL(programParkingModelChanged(QStandardItemModel*)),
 //            this,SLOT(programParkingModelChanges(QStandardItemModel*)));
@@ -98,18 +106,6 @@ void MainWindow::Init()
 
     connect(viewConfig->keyBinding, SIGNAL(BindingChanged()),
             this, SLOT(UpdateKeyBinding()));
-
-//    actUndo = myHost->undoStack.createUndoAction(ui->mainToolBar);
-//    actUndo->setIcon(QIcon(":/img16x16/undo.png"));
-//    actUndo->setShortcutContext(Qt::ApplicationShortcut);
-//    ui->mainToolBar->addAction( actUndo );
-
-//    actRedo = myHost->undoStack.createRedoAction(ui->mainToolBar);
-//    actRedo->setIcon(QIcon(":/img16x16/redo.png"));
-//    actRedo->setShortcutContext(Qt::ApplicationShortcut);
-//    ui->mainToolBar->addAction( actRedo );
-
-//    ui->listUndo->setStack(&myHost->undoStack);
 
     UpdateKeyBinding();
     shellSelect = new View::VstShellSelect(this, FixedObjId::shellselect, this);
@@ -286,6 +282,22 @@ MainWindow::~MainWindow()
 
 void MainWindow::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color)
 {
+    if(groupId==ColorGroups::Theme) {
+        if(colorId == Colors::Dark) {
+            QIcon::setThemeName("dark");
+            QIcon::setThemeSearchPaths(QStringList(":dark"));
+        } else {
+            QIcon::setThemeName("light");
+            QIcon::setThemeSearchPaths(QStringList(":light"));
+        }
+
+//        QList<QDockWidget *> dockWidgets = findChildren<QDockWidget *>();
+//        while (!dockWidgets.isEmpty()) {
+//            dockWidgets.takeFirst()->up
+//        }
+        return;
+    }
+
     if(groupId!=ColorGroups::Window)
         return;
 
@@ -305,10 +317,14 @@ void MainWindow::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, co
 
 void MainWindow::changeEvent(QEvent *e)
 {
+    QString st;
     QMainWindow::changeEvent(e);
     switch (e->type()) {
     case QEvent::LanguageChange:
         ui->retranslateUi(this);
+        break;
+    case QEvent::StyleChange:
+        st = styleSheet();
         break;
     default:
         break;

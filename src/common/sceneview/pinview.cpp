@@ -54,7 +54,7 @@ PinView::PinView(int listPinId, float angle, MsgController *msgCtrl, int objId, 
     connect( config, SIGNAL(ColorChanged(ColorGroups::Enum,Colors::Enum,QColor)) ,
             this, SLOT(UpdateColor(ColorGroups::Enum,Colors::Enum,QColor)) );
 
-    actDel = new QAction(QIcon(":/img16x16/delete.png"),tr("Remove"),this);
+    actDel = new QAction( QIcon::fromTheme("process-stop") ,tr("Remove"),this);
     actDel->setShortcutContext(Qt::WidgetShortcut);
     connect(actDel,SIGNAL(triggered()),
             this,SLOT(RemovePin()));
@@ -62,7 +62,7 @@ PinView::PinView(int listPinId, float angle, MsgController *msgCtrl, int objId, 
     if(connectInfo.isRemoveable)
         addAction(actDel);
 
-    actUnplug = new QAction(QIcon(":/img16x16/editcut.png"),tr("Unplug"),this);
+    actUnplug = new QAction( QIcon::fromTheme("edit-cut") ,tr("Unplug"),this);
     actUnplug->setShortcutContext(Qt::WidgetShortcut);
     actUnplug->setEnabled(false);
     connect(actUnplug,SIGNAL(triggered()),

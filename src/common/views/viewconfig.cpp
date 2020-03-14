@@ -261,6 +261,12 @@ void ViewConfig::AddColor(const QString &preset, ColorGroups::Enum groupId, Colo
     emit ColorChanged(groupId,colorId,color);
 }
 
+void ViewConfig::SetTheme(Colors::Enum colorId) {
+    (*GetCurrentPreset())[ColorGroups::Theme].clear();
+    (*GetCurrentPreset())[ColorGroups::Theme].insert(colorId,QColor());
+    emit ColorChanged(ColorGroups::Theme,colorId,QColor());
+}
+
 /*!
   Modifiy a color, don't create it if not found
   \param groupId group Id

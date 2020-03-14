@@ -74,8 +74,7 @@
             <string>...</string>
            </property>
            <property name="icon">
-            <iconset resource="../../resources/resources.qrc">
-             <normaloff>:/light/contact-new.svg</normaloff>:/light/contact-new.svg</iconset>
+            <iconset theme="plus"/>
            </property>
           </widget>
          </item>
@@ -94,8 +93,7 @@
             <string>...</string>
            </property>
            <property name="icon">
-            <iconset resource="../../resources/resources.qrc">
-             <normaloff>:/light/filename-dash-amarok.svg</normaloff>:/light/filename-dash-amarok.svg</iconset>
+            <iconset theme="dash"/>
            </property>
           </widget>
          </item>
@@ -204,8 +202,7 @@
             <string>...</string>
            </property>
            <property name="icon">
-            <iconset resource="../../resources/resources.qrc">
-             <normaloff>:/light/contact-new.svg</normaloff>:/light/contact-new.svg</iconset>
+            <iconset theme="plus"/>
            </property>
           </widget>
          </item>
@@ -224,8 +221,7 @@
             <string>...</string>
            </property>
            <property name="icon">
-            <iconset resource="../../resources/resources.qrc">
-             <normaloff>:/light/filename-dash-amarok.svg</normaloff>:/light/filename-dash-amarok.svg</iconset>
+            <iconset theme="dash"/>
            </property>
           </widget>
          </item>
@@ -336,10 +332,7 @@
    </slots>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../../resources/resources.qrc"/>
-  <include location="../../resources/resources.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>btAddGroup</sender>

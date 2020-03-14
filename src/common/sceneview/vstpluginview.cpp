@@ -63,26 +63,26 @@ void VstPluginView::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId,
 
 void VstPluginView::Init(const MsgObject &msg)
 {
-    actSaveBank = new QAction(QIcon(":/img16x16/filesave.png"),tr("Save Bank"),this);
+    actSaveBank = new QAction( QIcon::fromTheme("document-save") ,tr("Save Bank"),this);
     actSaveBank->setShortcutContext(Qt::WidgetShortcut);
     connect(actSaveBank,SIGNAL(triggered()),
             this,SLOT(SaveBank()));
     addAction(actSaveBank);
 
-    actSaveBankAs = new QAction(QIcon(":/img16x16/filesaveas.png"),tr("Save Bank As..."),this);
+    actSaveBankAs = new QAction( QIcon::fromTheme("document-save") ,tr("Save Bank As..."),this);
     actSaveBankAs->setShortcutContext(Qt::WidgetShortcut);
     connect(actSaveBankAs,SIGNAL(triggered()),
             this,SLOT(SaveBankAs()));
     actSaveBankAs->setEnabled(false);
     addAction(actSaveBankAs);
 
-    actSaveProgram = new QAction(QIcon(":/img16x16/filesave.png"),tr("Save Program"),this);
+    actSaveProgram = new QAction( QIcon::fromTheme("document-save") ,tr("Save Program"),this);
     actSaveProgram->setShortcutContext(Qt::WidgetShortcut);
     connect(actSaveProgram,SIGNAL(triggered()),
             this,SLOT(SaveProgram()));
     addAction(actSaveProgram);
 
-    actSaveProgramAs = new QAction(QIcon(":/img16x16/filesaveas.png"),tr("Save Program As..."),this);
+    actSaveProgramAs = new QAction( QIcon::fromTheme("document-save") ,tr("Save Program As..."),this);
     actSaveProgramAs->setShortcutContext(Qt::WidgetShortcut);
     connect(actSaveProgramAs,SIGNAL(triggered()),
             this,SLOT(SaveProgramAs()));

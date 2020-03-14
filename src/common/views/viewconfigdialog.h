@@ -110,6 +110,8 @@ namespace View {
         void on_fontProgSize_valueChanged(double arg1);
         void on_fontProgFamily_currentIndexChanged(const QString &arg1);
         void on_fontProgBold_clicked(bool checked);
+        void on_themeLight_toggled(bool checked);
+
     };
 }
 #endif // VIEWCONFIGDIALOG_H

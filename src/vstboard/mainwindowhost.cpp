@@ -79,7 +79,7 @@ void MainWindowHost::Init()
     connect(ui->treeAudioInterfaces, SIGNAL(UpdateList()),
             this, SLOT(UpdateAudioDevices()));
 
-    QAction *updateMidiList = new QAction(QIcon(":/img16x16/viewmag+.png"), tr("Refresh list"), ui->treeMidiInterfaces);
+    QAction *updateMidiList = new QAction( QIcon::fromTheme("view-refresh") , tr("Refresh list"), ui->treeMidiInterfaces);
     updateMidiList->setShortcut(Qt::Key_F5);
     updateMidiList->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     connect( updateMidiList, SIGNAL(triggered()),

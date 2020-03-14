@@ -32,8 +32,8 @@ ConfigDialog::ConfigDialog(Settings *settings, MainHost *myHost, QWidget *parent
     ui->setupUi(this);
 
 //vst path
-    ui->defaultVstPath->addItem(QIcon(":/img16x16/folder.png"), tr("System default"), "systemDefault");
-    ui->defaultVstPath->addItem(QIcon(":/img16x16/folder.png"), tr("From last session"), "fromLastSession");
+    ui->defaultVstPath->addItem( QIcon::fromTheme("document-open") , tr("System default"), "systemDefault");
+    ui->defaultVstPath->addItem( QIcon::fromTheme("document-open") , tr("From last session"), "fromLastSession");
     ui->defaultVstPath->addItem(tr("Custom path"));
 
     connect( ui->defaultVstPath, SIGNAL(currentIndexChanged(int)),
@@ -52,7 +52,7 @@ ConfigDialog::ConfigDialog(Settings *settings, MainHost *myHost, QWidget *parent
 
 
 //bank path
-    ui->defaultBankPath->addItem(QIcon(":/img16x16/folder.png"), tr("From last session"), "fromLastSession");
+    ui->defaultBankPath->addItem( QIcon::fromTheme("document-open") , tr("From last session"), "fromLastSession");
     ui->defaultBankPath->addItem(tr("Custom path"));
 
     connect( ui->defaultBankPath, SIGNAL(currentIndexChanged(int)),
@@ -70,8 +70,8 @@ ConfigDialog::ConfigDialog(Settings *settings, MainHost *myHost, QWidget *parent
     onBankPathIndexChanged(ui->defaultBankPath->currentIndex());
 
 //setup file
-    ui->defaultSetup->addItem(QIcon(":/img16x16/empty.png"), tr("Empty setup"), "empty");
-    ui->defaultSetup->addItem(QIcon(":/img16x16/file_setup.png"), tr("From last session"), "fromLastSession");
+    ui->defaultSetup->addItem( QIcon::fromTheme("document-new") , tr("Empty setup"), "empty");
+    ui->defaultSetup->addItem( QIcon::fromTheme("document-open") , tr("From last session"), "fromLastSession");
     ui->defaultSetup->addItem(tr("Custom setup file"));
     foreach(const QString &str, settings->GetSetting("recentSetupFiles").toStringList()) {
         ui->defaultSetup->addItem(str);
@@ -92,8 +92,8 @@ ConfigDialog::ConfigDialog(Settings *settings, MainHost *myHost, QWidget *parent
     onSetupIndexChanged(ui->defaultSetup->currentIndex());
 
 //project file
-    ui->defaultProject->addItem(QIcon(":/img16x16/empty.png"), tr("Empty project"), "empty");
-    ui->defaultProject->addItem(QIcon(":/img16x16/file_project.png"), tr("From last session"), "fromLastSession");
+    ui->defaultProject->addItem( QIcon::fromTheme("document-new") , tr("Empty project"), "empty");
+    ui->defaultProject->addItem( QIcon::fromTheme("document-open") , tr("From last session"), "fromLastSession");
     ui->defaultProject->addItem(tr("Custom project file"));
     foreach(const QString &str, settings->GetSetting("recentProjectFiles").toStringList()) {
         ui->defaultProject->addItem(str);

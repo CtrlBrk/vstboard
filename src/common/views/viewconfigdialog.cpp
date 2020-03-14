@@ -182,9 +182,18 @@ void ViewConfigDialog::LoadPreset(const QString &presetName)
     ui->listPalettes->clear();
     viewConfigPreset::iterator i = conf->GetCurrentPreset()->begin();
     while(i!=conf->GetCurrentPreset()->end()) {
-        QListWidgetItem *item = new QListWidgetItem( conf->GetColorGroupName(i.key()) );
-        item->setData(Qt::UserRole+1,i.key());
-        ui->listPalettes->addItem( item );
+
+        if(i.key() == ColorGroups::Theme) {
+            if(i.value().firstKey() == Colors::Dark) {
+                ui->themeDark->setChecked( true );
+            } else {
+                ui->themeLight->setChecked( true );
+            }
+        } else {
+            QListWidgetItem *item = new QListWidgetItem( conf->GetColorGroupName(i.key()) );
+            item->setData(Qt::UserRole+1,i.key());
+            ui->listPalettes->addItem( item );
+        }
         ++i;
     }
 
@@ -465,27 +474,34 @@ void ViewConfigDialog::UpdateProgramsFont()
     myHost->mainWindow->SetProgramsFont(f);
 }
 
-void View::ViewConfigDialog::on_fontProgItalic_clicked(bool checked)
+void View::ViewConfigDialog::on_fontProgItalic_clicked(bool /*checked*/)
 {
     UpdateProgramsFont();
 }
 
-void View::ViewConfigDialog::on_fontProgStretch_valueChanged(double arg1)
+void View::ViewConfigDialog::on_fontProgStretch_valueChanged(double /*arg1*/)
 {
     UpdateProgramsFont();
 }
 
-void View::ViewConfigDialog::on_fontProgSize_valueChanged(double arg1)
+void View::ViewConfigDialog::on_fontProgSize_valueChanged(double /*arg1*/)
 {
     UpdateProgramsFont();
 }
 
-void View::ViewConfigDialog::on_fontProgFamily_currentIndexChanged(const QString &arg1)
+void View::ViewConfigDialog::on_fontProgFamily_currentIndexChanged(const QString &/*arg1*/)
 {
     UpdateProgramsFont();
 }
 
-void View::ViewConfigDialog::on_fontProgBold_clicked(bool checked)
+void View::ViewConfigDialog::on_fontProgBold_clicked(bool /*checked*/)
 {
     UpdateProgramsFont();
 }
+
+void View::ViewConfigDialog::on_themeLight_toggled(bool checked)
+{
+    modified=true;
+    conf->SetTheme(checked ? Colors::Light : Colors::Dark);
+}
+

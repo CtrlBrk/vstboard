@@ -30,24 +30,24 @@ ListAudioDevicesView::ListAudioDevicesView(QWidget *parent) :
 
 
 
-    audioDevConfig = new QAction(QIcon(":/img16x16/configure.png"), tr("Config device"), this);
+    audioDevConfig = new QAction( QIcon::fromTheme("configure") , tr("Config device"), this);
     audioDevConfig->setShortcut(Qt::Key_F2);
     audioDevConfig->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     connect(audioDevConfig, SIGNAL(triggered()),
             this, SLOT(ConfigCurrentDevice()));
     addAction(audioDevConfig);
 
-    disableApi = new QAction(QIcon(":/img16x16/edit_remove.png"), tr("Disable API"), this);
+    disableApi = new QAction( QIcon::fromTheme("dash") , tr("Disable API"), this);
     connect(disableApi, SIGNAL(triggered()),
             this, SLOT(DisableApi()));
     addAction(disableApi);
 
-    enableApis = new QAction(QIcon(":/img16x16/edit_add.png"), tr("Enable all APIs"), this);
+    enableApis = new QAction( QIcon::fromTheme("plus") , tr("Enable all APIs"), this);
     connect(enableApis, SIGNAL(triggered()),
             this, SLOT(EnableApis()));
     addAction(enableApis);
 
-    updateList = new QAction(QIcon(":/img16x16/viewmag+.png"), tr("Refresh list"), this);
+    updateList = new QAction( QIcon::fromTheme("view-refresh") , tr("Refresh list"), this);
     updateList->setShortcut(Qt::Key_F5);
     updateList->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     connect(updateList, SIGNAL(triggered()),

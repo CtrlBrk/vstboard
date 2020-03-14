@@ -132,19 +132,19 @@ void ObjectView::Init(const MsgObject &msg)
 {
     if(msg.prop.contains(MsgObject::Add) && msg.prop[MsgObject::Add].toInt() != NodeType::bridge) {
 
-        actRemoveBridge = new QAction(QIcon(":/img16x16/delete.png"),tr("Remove"),this);
+        actRemoveBridge = new QAction( QIcon::fromTheme("process-stop") ,tr("Remove"),this);
         actRemoveBridge->setShortcutContext(Qt::WidgetShortcut);
         connect(actRemoveBridge,SIGNAL(triggered()),
                 this,SLOT(RemoveWithBridge()));
         addAction(actRemoveBridge);
 
-        actRemove = new QAction(QIcon(":/img16x16/delete.png"),tr("Remove with cables"),this);
+        actRemove = new QAction( QIcon::fromTheme("process-stop") ,tr("Remove with cables"),this);
         actRemove->setShortcutContext(Qt::WidgetShortcut);
         connect(actRemove,SIGNAL(triggered()),
                 this,SLOT(close()));
         addAction(actRemove);
 
-        actShowEditor = new QAction(tr("Show Editor"),this);
+        actShowEditor = new QAction( QIcon::fromTheme("configure"), tr("Show Editor"),this);
         actShowEditor->setShortcutContext(Qt::WidgetWithChildrenShortcut);
         actShowEditor->setEnabled(false);
         actShowEditor->setCheckable(true);
@@ -152,7 +152,7 @@ void ObjectView::Init(const MsgObject &msg)
                 this,SLOT(SwitchEditor(bool)));
         addAction(actShowEditor);
 
-        actLearnSwitch = new QAction(tr("Learn Mode"),this);
+        actLearnSwitch = new QAction( QIcon::fromTheme("games-hint"), tr("Learn Mode"),this);
         actLearnSwitch->setShortcutContext(Qt::WidgetWithChildrenShortcut);
         actLearnSwitch->setEnabled(false);
         actLearnSwitch->setCheckable(true);
@@ -160,7 +160,7 @@ void ObjectView::Init(const MsgObject &msg)
                 this,SLOT(SwitchLearnMode(bool)));
         addAction(actLearnSwitch);
 
-        actToggleBypass = new QAction("Bypass",this);
+        actToggleBypass = new QAction( QIcon::fromTheme("gtk-stop"), tr("Bypass"),this);
         actToggleBypass->setShortcutContext(Qt::WidgetShortcut);
         actToggleBypass->setEnabled(false);
         actToggleBypass->setCheckable(true);

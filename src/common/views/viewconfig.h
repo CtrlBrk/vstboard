@@ -37,7 +37,8 @@ namespace ColorGroups {
         MidiPin,
         ParameterPin,
         Cursor,
-        Programs
+        Programs,
+        Theme
     };
 }
 
@@ -58,6 +59,8 @@ namespace Colors {
 //            ToolTipBase,
 //            ToolTipText,
 //            BrightText,
+        Light,
+        Dark
     };
 }
 
@@ -83,6 +86,7 @@ namespace View {
     public:
         ViewConfig( Settings *settings,  QObject *parent=0 );
 
+        void SetTheme(Colors::Enum colorId);
         void SetColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color);
         QColor GetColor(ColorGroups::Enum groupId, Colors::Enum colorId);
         QString GetColorGroupName(ColorGroups::Enum groupId);
@@ -160,7 +164,6 @@ namespace View {
             \param color the new color
         */
         void ColorChanged(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color);
-
         void NewSetupLoaded();
     };
 

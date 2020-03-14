@@ -36,14 +36,14 @@ FileBrowser::FileBrowser(QWidget *parent) :
     connect(actRename,SIGNAL(triggered()),
             this,SLOT(Rename()));
 
-    actDel = new QAction(QIcon(":/img16x16/delete.png"),tr("Delete"),ui->treeFiles);
+    actDel = new QAction( QIcon::fromTheme("process-stop") ,tr("Delete"),ui->treeFiles);
     actDel->setShortcut(Qt::Key_Delete);
     actDel->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     connect(actDel,SIGNAL(triggered()),
             this,SLOT(DeleteSelectedFile()));
     ui->treeFiles->addAction(actDel);
 
-    actNewFolder = new QAction(QIcon(":img16x16/folder.png"),tr("New Folder"),ui->treeFiles);
+    actNewFolder = new QAction( QIcon::fromTheme("folder-new") ,tr("New Folder"),ui->treeFiles);
     connect(actNewFolder,SIGNAL(triggered()),
             this,SLOT(NewFolder()));
     ui->treeFiles->addAction(actNewFolder);

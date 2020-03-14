@@ -23,8 +23,6 @@
 
 #include <QLibraryInfo>
 #include <QTranslator>
-#include <QStyleFactory>
-#include <QProxyStyle>
 #include "mainhosthost.h"
 #include "mainwindowhost.h"
 #include "connectables/objectinfo.h"
@@ -71,7 +69,7 @@ int main(int argc, char *argv[])
     qRegisterMetaTypeStreamOperators<ObjectContainerAttribs>("ObjectContainerAttribs");
 
 #ifndef QT_NO_DEBUG
-    qInstallMessageHandler(myMessageOutput);
+//    qInstallMessageHandler(myMessageOutput);
 #endif
 
     QCoreApplication::setOrganizationName("CtrlBrk");
@@ -79,8 +77,7 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
 
-    QStyle *style = new QProxyStyle (QStyleFactory::create("fusion"));
-    if(style!=nullptr) QApplication::setStyle(style);
+
 
 #ifdef QT_NO_DEBUG
     QTranslator qtTranslator;
