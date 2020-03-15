@@ -296,6 +296,16 @@ QColor ViewConfig::GetColor(ColorGroups::Enum groupId, Colors::Enum colorId)
     return GetCurrentPreset()->value(groupId).value(colorId,QColor());
 }
 
+QString ViewConfig::GetSyleSheet() {
+//    foreach(auto c, GetCurrentPreset()[ColorGroups::Window]) {
+
+//    }
+    return QString("color: blue;"
+                            "background-color: yellow;"
+                            "selection-color: yellow;"
+                            "selection-background-color: blue;");
+}
+
 void ViewConfig::AddPreset(QString &presetName)
 {
     int count=2;

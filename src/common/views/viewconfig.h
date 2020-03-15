@@ -100,6 +100,7 @@ namespace View {
         void SaveInRegistry();
         void LoadFromRegistry();
 
+        QString GetSyleSheet();
 
         void LoadPreset(const QString &presetName);
         inline const QString & GetPresetName() const {return currentPresetName;}

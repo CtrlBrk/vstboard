@@ -57,14 +57,8 @@ void MainWindow::Init()
     QStyle *style = new QProxyStyle (QStyleFactory::create("fusion"));
     if(style!=nullptr) QApplication::setStyle(style);
     QIcon::setThemeName("light");
-    QIcon::setThemeSearchPaths(QStringList(":light"));
+    QIcon::setThemeSearchPaths(QStringList(":/light"));
 
-
-    //myHost->mainWindow=this;
-//    connect(myHost,SIGNAL(programParkingModelChanged(QStandardItemModel*)),
-//            this,SLOT(programParkingModelChanges(QStandardItemModel*)));
-//    connect(myHost,SIGNAL(groupParkingModelChanged(QStandardItemModel*)),
-//            this,SLOT(groupParkingModelChanges(QStandardItemModel*)));
     geometryBeforeFullscreen = geometry();
     ui->setupUi(this);
 
@@ -75,7 +69,6 @@ void MainWindow::Init()
             ui->actionTool_bar, SLOT(setChecked(bool)));
 
     //programs
-//    ui->Programs->SetModel( myHost->programsModel );
     ui->Programs->SetModel(progModel);
     progModel->Update();
 
@@ -83,29 +76,20 @@ void MainWindow::Init()
 
     mySceneView = new View::SceneView(this, this, FixedObjId::mainContainer, ui->hostView, ui->projectView, ui->programView, ui->groupView, this);
     mySceneView->SetParkings(ui->programParkList, ui->groupParkList);
-//    mySceneView->setModel(myHost->GetModel());
 
     groupParking = new ParkingModel(this, FixedObjId::groupParking);
     ui->groupParkList->setModel(groupParking);
     programParking = new ParkingModel(this, FixedObjId::programParking);
     ui->programParkList->setModel(programParking);
 
-//    ui->solverView->setModel(myHost->GetRendererModel());
-//    connect(myHost->GetRendererModel(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
-//            ui->solverView, SLOT(resizeColumnsToContents()));
-//    connect(myHost->GetRendererModel(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
-//            ui->solverView, SLOT(resizeRowsToContents()));
-
-//    ui->treeHostModel->setModel(myHost->GetModel());
-
-    setPalette( viewConfig->GetPaletteFromColorGroup( ColorGroups::Window, palette() ));
+//    setPalette( viewConfig->GetPaletteFromColorGroup( ColorGroups::Window, palette() ));
     connect( viewConfig, SIGNAL(ColorChanged(ColorGroups::Enum,Colors::Enum,QColor)),
              progModel, SLOT(UpdateColor(ColorGroups::Enum,Colors::Enum,QColor)) );
     connect( viewConfig, SIGNAL(ColorChanged(ColorGroups::Enum,Colors::Enum,QColor)),
              this, SLOT(UpdateColor(ColorGroups::Enum,Colors::Enum,QColor)));
 
-    connect(viewConfig->keyBinding, SIGNAL(BindingChanged()),
-            this, SLOT(UpdateKeyBinding()));
+//    connect(viewConfig->keyBinding, SIGNAL(BindingChanged()),
+//            this, SLOT(UpdateKeyBinding()));
 
     UpdateKeyBinding();
     shellSelect = new View::VstShellSelect(this, FixedObjId::shellselect, this);
@@ -283,20 +267,16 @@ MainWindow::~MainWindow()
 void MainWindow::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color)
 {
     if(groupId==ColorGroups::Theme) {
-        if(colorId == Colors::Dark) {
-            QIcon::setThemeName("dark");
-            QIcon::setThemeSearchPaths(QStringList(":dark"));
-        } else {
-            QIcon::setThemeName("light");
-            QIcon::setThemeSearchPaths(QStringList(":light"));
-        }
+//        setStyleSheet(viewConfig->GetSyleSheet());
+//        return;
 
-//        QList<QDockWidget *> dockWidgets = findChildren<QDockWidget *>();
-//        while (!dockWidgets.isEmpty()) {
-//            dockWidgets.takeFirst()->up
-//        }
+        QString thName = QString("%1").arg(colorId == Colors::Dark ? "dark" : "light");
+        QIcon::setThemeName(thName);
+        QIcon::setThemeSearchPaths(QStringList(":/" + thName));
+
         return;
     }
+
 
     if(groupId!=ColorGroups::Window)
         return;
@@ -307,12 +287,12 @@ void MainWindow::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, co
     pal.setColor(role, color);
     setPalette(pal);
 
-    //style is not applied to undocked widgets => apply palette
-    QList<QDockWidget *> dockWidgets = findChildren<QDockWidget *>();
-    while (!dockWidgets.isEmpty()) {
-        dockWidgets.takeFirst()->setPalette(pal);
+    //apply to undocked widgets and menus
+    QList<QWidget *> dockWidgets = findChildren<QWidget *>();
+    foreach(auto w, dockWidgets) {
+        w->setPalette(pal);
     }
-    ui->mainToolBar->setPalette(pal);
+
 }
 
 void MainWindow::changeEvent(QEvent *e)

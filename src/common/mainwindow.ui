@@ -1011,7 +1011,8 @@
   </widget>
   <action name="actionSave">
    <property name="icon">
-    <iconset theme="document-save"/>
+    <iconset theme="document-save">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Save Project</string>
@@ -1028,7 +1029,8 @@
   </action>
   <action name="actionLoad">
    <property name="icon">
-    <iconset theme="document-open"/>
+    <iconset theme="document-open">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Open Project</string>
@@ -1048,7 +1050,8 @@
   </action>
   <action name="actionNew">
    <property name="icon">
-    <iconset theme="document-new"/>
+    <iconset theme="document-new">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>New Project</string>
@@ -1065,7 +1068,8 @@
   </action>
   <action name="actionConfig">
    <property name="icon">
-    <iconset theme="configure"/>
+    <iconset theme="configure">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Configuration</string>
@@ -1079,8 +1083,7 @@
   </action>
   <action name="actionDelete">
    <property name="icon">
-    <iconset>
-     <normaloff>:/light/process-stop.svg</normaloff>:/light/process-stop.svg</iconset>
+    <iconset theme="process-stop"/>
    </property>
    <property name="text">
     <string>Delete</string>
@@ -1094,7 +1097,8 @@
   </action>
   <action name="actionSave_Setup">
    <property name="icon">
-    <iconset theme="document-save"/>
+    <iconset theme="document-save">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Save Setup</string>
@@ -1111,7 +1115,8 @@
   </action>
   <action name="actionNew_Setup">
    <property name="icon">
-    <iconset theme="document-new"/>
+    <iconset theme="document-new">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>New Setup</string>
@@ -1134,7 +1139,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="layer-visible-on"/>
+    <iconset theme="layer-visible-on">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Toggle Host panel</string>
@@ -1151,7 +1157,8 @@
   </action>
   <action name="actionAbout">
    <property name="icon">
-    <iconset theme="help-about"/>
+    <iconset theme="help-about">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>About...</string>
@@ -1165,7 +1172,8 @@
   </action>
   <action name="actionSave_Project_As">
    <property name="icon">
-    <iconset theme="document_saveas"/>
+    <iconset theme="document_saveas">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Save Project As ...</string>
@@ -1182,7 +1190,8 @@
   </action>
   <action name="actionSave_Setup_As">
    <property name="icon">
-    <iconset theme="document-savas"/>
+    <iconset theme="document-savas">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Save Setup As ...</string>
@@ -1205,7 +1214,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="layer-visible-on"/>
+    <iconset theme="layer-visible-on">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Toggle Group panel</string>
@@ -1231,7 +1241,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="layer-visible-on"/>
+    <iconset theme="layer-visible-on">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Toggle Program panel</string>
@@ -1248,7 +1259,8 @@
   </action>
   <action name="actionRefresh_Audio_devices">
    <property name="icon">
-    <iconset theme="view-refresh"/>
+    <iconset theme="view-refresh">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Refresh Audio devices</string>
@@ -1259,7 +1271,8 @@
   </action>
   <action name="actionRefresh_Midi_devices">
    <property name="icon">
-    <iconset theme="view-refresh"/>
+    <iconset theme="view-refresh">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Refresh Midi devices</string>
@@ -1270,7 +1283,8 @@
   </action>
   <action name="actionRestore_default_layout">
    <property name="icon">
-    <iconset theme="view-refresh"/>
+    <iconset theme="view-refresh">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Restore default layout</string>
@@ -1298,7 +1312,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="layer-visible-on"/>
+    <iconset theme="layer-visible-on">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Toggle Project panel</string>
@@ -1309,7 +1324,8 @@
   </action>
   <action name="actionLoad_Setup">
    <property name="icon">
-    <iconset theme="document-load"/>
+    <iconset theme="document-load">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Open Setup</string>
@@ -1332,7 +1348,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="edit-paste-style"/>
+    <iconset theme="edit-paste-style">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Appearance</string>
@@ -1349,7 +1366,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="object-unlocked"/>
+    <iconset theme="object-unlocked">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Cable</string>
@@ -1366,7 +1384,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="object-locked"/>
+    <iconset theme="object-locked">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Value</string>
@@ -1380,7 +1399,8 @@
   </action>
   <action name="actionKeyBinding">
    <property name="icon">
-    <iconset theme="key-enter"/>
+    <iconset theme="key-enter">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Keyboard mapping</string>
@@ -1397,7 +1417,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="arrow-down"/>
+    <iconset theme="arrow-down">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Hide all plugins editors</string>
@@ -1414,7 +1435,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="arrow-up"/>
+    <iconset theme="arrow-up">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Auto-open plugins editors</string>
@@ -1428,7 +1450,8 @@
   </action>
   <action name="actionUndo">
    <property name="icon">
-    <iconset theme="edit-undo"/>
+    <iconset theme="edit-undo">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Undo</string>
@@ -1439,7 +1462,8 @@
   </action>
   <action name="actionRedo">
    <property name="icon">
-    <iconset theme="edit-redo"/>
+    <iconset theme="edit-redo">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Redo</string>
@@ -1453,7 +1477,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="view-fullscreen"/>
+    <iconset theme="view-fullscreen">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Fullscreen</string>

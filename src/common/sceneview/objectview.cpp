@@ -237,12 +237,8 @@ void ObjectView::SetErrorMessage(const QString & msg)
         }
     } else {
         if(!errorMessage) {
-            QPixmap pix(":/img32x32/agt_action_fail.png");
+            QPixmap pix( QIcon::themeSearchPaths().first() + "/actions/24/process-stop");
             errorMessage = new QGraphicsPixmapItem(pix,this);
-//            QPointF pt = geometry().center();
-//            pt.rx() -= pix.width()/2;
-//            pt.ry() -= pix.height()/2;
-//            errorMessage->setPos(pt);
             errorMessage->setPos(0,0);
         }
         setToolTip(msg);
