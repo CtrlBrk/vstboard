@@ -48,6 +48,7 @@ FileBrowser::FileBrowser(QWidget *parent) :
             this,SLOT(NewFolder()));
     ui->treeFiles->addAction(actNewFolder);
 
+    setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->treeFiles, SIGNAL(customContextMenuRequested(QPoint)),
             this, SLOT(OnContextMenu(QPoint)));
 }
@@ -187,8 +188,7 @@ void FileBrowser::on_nextDir_clicked()
 void FileBrowser::OnContextMenu(const QPoint & pos)
 {
     if(ui->treeFiles->indexAt(pos).isValid()) {
-        QMenu menu(this);
-        menu.exec(ui->treeFiles->actions(), mapToGlobal(pos));
+        QMenu::exec(ui->treeFiles->actions(), mapToGlobal(pos),nullptr,this);
         return;
     }
 

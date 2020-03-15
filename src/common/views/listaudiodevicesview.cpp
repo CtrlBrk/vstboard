@@ -54,6 +54,7 @@ ListAudioDevicesView::ListAudioDevicesView(QWidget *parent) :
             this, SIGNAL(UpdateList()));
     addAction(updateList);
 
+    setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, SIGNAL(customContextMenuRequested( const QPoint& )),
             this, SLOT(AudioDevContextMenu(const QPoint &)));
 }
@@ -88,7 +89,7 @@ void ListAudioDevicesView::AudioDevContextMenu(const QPoint &pt)
 
     lstActions << enableApis;
 
-    QMenu::exec(lstActions, mapToGlobal(pt));
+    QMenu::exec(lstActions, mapToGlobal(pt),nullptr,this);
 }
 
 void ListAudioDevicesView::ConfigCurrentDevice()

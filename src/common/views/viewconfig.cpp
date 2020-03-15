@@ -300,10 +300,16 @@ QString ViewConfig::GetSyleSheet() {
 //    foreach(auto c, GetCurrentPreset()[ColorGroups::Window]) {
 
 //    }
-    return QString("color: blue;"
-                            "background-color: yellow;"
-                            "selection-color: yellow;"
-                            "selection-background-color: blue;");
+    return QString(
+                "color: " + GetColor(ColorGroups::Window,Colors::WindowText).name() + ";"
+                "background-color: " + GetColor(ColorGroups::Window,Colors::Window).name() + ";"
+                "selection-color: " + GetColor(ColorGroups::Window,Colors::Text).name() + ";"
+                "selection-background-color: " + GetColor(ColorGroups::Window,Colors::Base).name() + ";" //todo
+                "QScrollBar {"
+                "   color: " + GetColor(ColorGroups::Window,Colors::ButtonText).name() + ";"
+                "   background-color: " + GetColor(ColorGroups::Window,Colors::Button).name() + ";"
+                "}"
+                );
 }
 
 void ViewConfig::AddPreset(QString &presetName)

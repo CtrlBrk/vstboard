@@ -267,8 +267,8 @@ MainWindow::~MainWindow()
 void MainWindow::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color)
 {
     if(groupId==ColorGroups::Theme) {
-//        setStyleSheet(viewConfig->GetSyleSheet());
-//        return;
+        setStyleSheet(viewConfig->GetSyleSheet());
+        return;
 
         QString thName = QString("%1").arg(colorId == Colors::Dark ? "dark" : "light");
         QIcon::setThemeName(thName);
@@ -278,7 +278,7 @@ void MainWindow::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, co
     }
 
 
-    if(groupId!=ColorGroups::Window)
+//    if(groupId!=ColorGroups::Window)
         return;
 
     QPalette::ColorRole role = viewConfig->GetPaletteRoleFromColor(colorId);
@@ -656,7 +656,7 @@ void MainWindow::resetSettings()
 
 void MainWindow::on_actionAbout_triggered()
 {
-    AboutDialog about;
+    AboutDialog about(this);
     about.exec();
 }
 
@@ -709,22 +709,13 @@ void MainWindow::openRecentProject()
     myHost->LoadProjectFile( action->data().toString() );
 }
 
-//void MainWindow::programParkingModelChanges(QStandardItemModel *model)
-//{
-//    ui->programParkList->setModel(model);
-//}
-
-//void MainWindow::groupParkingModelChanges(QStandardItemModel *model)
-//{
-//    ui->groupParkList->setModel(model);
-//}
 
 void MainWindow::on_actionRestore_default_layout_triggered()
 {
     resetSettings();
 }
 
-void MainWindow::on_solverView_clicked(const QModelIndex &index)
+void MainWindow::on_solverView_clicked(const QModelIndex &/*index*/)
 {
     MsgObject msg(FixedObjId::renderer);
     msg.prop[MsgObject::GetUpdate]=1;

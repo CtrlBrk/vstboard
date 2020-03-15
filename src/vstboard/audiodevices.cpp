@@ -27,6 +27,7 @@
 #include "views/wasapiconfigdialog.h"
 #include "connectables/audiodevicein.h"
 #include "connectables/audiodeviceout.h"
+#include "mainwindow.h"
 
 FakeTimer::FakeTimer(MainHostHost *myHost) :
     QThread(myHost),
@@ -297,7 +298,7 @@ void AudioDevices::BuildModel()
   \param objInfo object description
   \param opened true if opened, false if closed
   */
-void AudioDevices::OnToggleDeviceInUse(PaHostApiIndex apiId, PaDeviceIndex devId, bool inUse, PaTime inLatency, PaTime outLatency, double sampleRate)
+void AudioDevices::OnToggleDeviceInUse(PaHostApiIndex apiId, PaDeviceIndex devId, bool inUse, PaTime /*inLatency*/, PaTime /*outLatency*/, double /*sampleRate*/)
 {
     bool oldState = listOpenedDevices.contains(apiId*1000+devId);
     if(oldState == inUse)
@@ -494,20 +495,22 @@ void AudioDevices::ConfigDevice(const ObjectInfo &info)
                 QMessageBox msg(QMessageBox::Warning,
                                 tr("Error"),
                                 Pa_GetErrorText( err ),
-                                QMessageBox::Ok);
+                                QMessageBox::Ok,
+                                myHost->mainWindow);
                 msg.exec();
             }
             break;
         }
 
         case paMME: {
-            MmeConfigDialog dlg( myHost );
+
+            MmeConfigDialog dlg( myHost, myHost->mainWindow );
             dlg.exec();
             break;
         }
 
         case paWASAPI: {
-            WasapiConfigDialog dlg( myHost );
+            WasapiConfigDialog dlg( myHost, myHost->mainWindow );
             dlg.exec();
             break;
         }
@@ -516,7 +519,8 @@ void AudioDevices::ConfigDevice(const ObjectInfo &info)
             QMessageBox msg(QMessageBox::Information,
                 tr("No config"),
                 tr("No config dialog for this device"),
-                QMessageBox::Ok);
+                QMessageBox::Ok,
+                myHost->mainWindow);
             msg.exec();
             break;
         }

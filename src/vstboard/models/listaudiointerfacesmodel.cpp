@@ -88,7 +88,7 @@ void ListAudioInterfacesModel::ReceiveMsg(const MsgObject &msg)
 
     if(msg.prop.contains(MsgObject::Update)) {
         invisibleRootItem()->removeRows(0, rowCount());
-        expandedIndex.clear();
+//        expandedIndex.clear();
 
         foreach(const MsgObject &msgApi, msg.children) {
             QStandardItem *apiItem = new QStandardItem(msgApi.prop[MsgObject::Name].toString());
@@ -126,6 +126,7 @@ void ListAudioInterfacesModel::ReceiveMsg(const MsgObject &msg)
                 listItems << inUseItem;
 
                 apiItem->appendRow( listItems );
+
             }
 
             invisibleRootItem()->appendRow(apiItem);

@@ -34,7 +34,7 @@ public:
     void ReceiveMsg(const MsgObject &msg);
     void Update();
     void Rescan();
-    QModelIndexList expandedIndex;
+//    QModelIndexList expandedIndex;
 
 public slots:
     void ApiDisabled(const QModelIndex &api);

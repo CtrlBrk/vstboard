@@ -53,12 +53,7 @@ void MainWindowHost::Init()
     ui->treeAudioInterfaces->header()->resizeSection(2,30);
     ui->treeAudioInterfaces->header()->resizeSection(3,40);
 
-
-
-//    foreach(const QModelIndex &idx, listAudioDevModel->expandedIndex) {
-//        ui->treeAudioInterfaces->expand( idx );
-//    }
-//    listAudioDevModel->Update();
+    listAudioDevModel->Update();
 
     //midi devices
     listMidiDevModel = new ListMidiInterfacesModel(this,FixedObjId::midiDevices,this);
@@ -71,25 +66,19 @@ void MainWindowHost::Init()
     ui->treeMidiInterfaces->header()->resizeSection(2,30);
     ui->treeMidiInterfaces->header()->resizeSection(3,40);
 
-
-    BuildListTools();
-
-//    connect(ui->treeAudioInterfaces, SIGNAL(Config(const QModelIndex &)),
-//            myHost->audioDevices, SLOT(ConfigDevice(const QModelIndex &)));
-    connect(ui->treeAudioInterfaces, SIGNAL(UpdateList()),
-            this, SLOT(UpdateAudioDevices()));
-
     QAction *updateMidiList = new QAction( QIcon::fromTheme("view-refresh") , tr("Refresh list"), ui->treeMidiInterfaces);
     updateMidiList->setShortcut(Qt::Key_F5);
     updateMidiList->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    connect( updateMidiList, SIGNAL(triggered()),
-             this, SLOT(UpdateMidiDevices()));
     ui->treeMidiInterfaces->addAction( updateMidiList );
 
-    myHost->SetSampleRate( ConfigDialog::defaultSampleRate(settings) );
+    connect( updateMidiList, SIGNAL(triggered()),
+             this, SLOT(UpdateMidiDevices()));
 
-    listAudioDevModel->Update();
     listMidiDevModel->Update();
+
+    BuildListTools();
+
+    myHost->SetSampleRate( ConfigDialog::defaultSampleRate(settings) );
 }
 
 void MainWindowHost::closeEvent(QCloseEvent *event)
