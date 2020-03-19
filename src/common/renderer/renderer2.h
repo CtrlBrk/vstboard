@@ -33,7 +33,7 @@ public:
     Renderer2(QObject *parent=0);
     ~Renderer2();
     void SetMap(const RenderMap &rMap, int nbThreads);
-    void StartRender();
+    bool StartRender();
 //    void SetEnabled(bool enab) {LOG("enable here"<<enab)}
     RenderMap currentMap;
 
@@ -43,19 +43,18 @@ private:
     QList<RendererThread2*>threads;
     QList<RendererThread2*>threadsToDelete;
     QMutex mutexThreadList;
-    int nbThreads;
-    int nbSteps;
+//    int nbThreads;
 
     WaitAll waitThreadReady;
     WaitAll waitThreadEnd;
     QList<SemaphoreInverted*>stepCanStart;
 
-    QTimer signalTimeoutTimer;
+//    QTimer signalTimeoutTimer;
 
 signals:
     void Timeout();
-public slots:
-    void OnThreadTimeout();
+//public slots:
+//    void OnThreadTimeout();
 
 friend class RendererThread2;
 };

@@ -24,9 +24,7 @@
 #include "rendererthread2.h"
 
 Renderer2::Renderer2(QObject *parent) :
-    QObject(parent),
-    nbThreads(0),
-    nbSteps(0)
+    QObject(parent)
 {
     setObjectName("renderer");
 
@@ -35,10 +33,10 @@ Renderer2::Renderer2(QObject *parent) :
 
     stepCanStart << new SemaphoreInverted();
 
-    signalTimeoutTimer.setSingleShot(true);
-    signalTimeoutTimer.setInterval(100);
-    connect(&signalTimeoutTimer, SIGNAL(timeout()),
-            this, SIGNAL(Timeout()));
+//    signalTimeoutTimer.setSingleShot(true);
+//    signalTimeoutTimer.setInterval(100);
+//    connect(&signalTimeoutTimer, SIGNAL(timeout()),
+//            this, SIGNAL(Timeout()));
 }
 
 Renderer2::~Renderer2()
@@ -49,10 +47,10 @@ Renderer2::~Renderer2()
         th->Stop();
     }
 
-//    if(!waitThreadEnd.WaitAllThreads(2000)) {
-//        QString err("closing : renderer end timeout");
-//        LOG(err)
-//    }
+    if(!waitThreadEnd.WaitAllThreads(2000)) {
+        QString err("closing : renderer end timeout");
+        LOG(err)
+    }
 
     waitThreadReady.RemoveClient();
     waitThreadEnd.RemoveClient();
@@ -67,6 +65,8 @@ void Renderer2::SetMap(const RenderMap &rMap, int nbThreads)
 {
     QMutexLocker l(&mutexThreadList);
     currentMap = rMap;
+
+    LOG("set map");
 
     ChangeNbOfThreads( nbThreads );
     ThreadCleanup();
@@ -93,41 +93,46 @@ void Renderer2::SetMap(const RenderMap &rMap, int nbThreads)
     }
 }
 
-void Renderer2::StartRender()
+bool Renderer2::StartRender()
 {
     QMutexLocker l(&mutexThreadList);
-    stepCanStart.first()->AddLock(nbThreads);
+    stepCanStart.first()->AddLock(threads.count());
 
-    if(!waitThreadReady.WaitAllThreads(10000)) {
+    if(!waitThreadReady.WaitAllThreads(500)) {
         QString err("renderer start timeout");
+//        waitThreadReady.WakeAll()
 //        waitThreadReady.RemoveClient();
 //        waitThreadReady.AddClient();
         LOG(err)
-//        ChangeNbOfThreads(0);
-//        emit Timeout();
-//        return;
+        ChangeNbOfThreads(0);
+        emit Timeout();
+        return false;
     }
 
-    if(!waitThreadEnd.WaitAllThreads(2000)) {
+    if(!waitThreadEnd.WaitAllThreads(500)) {
+//        waitThreadEnd.WakeAll();
         QString err("renderer end timeout");
 //        waitThreadEnd.RemoveClient();
 //        waitThreadEnd.AddClient();
         LOG(err)
 //        ChangeNbOfThreads(0);
-//        emit Timeout();
-//        return;
+        ChangeNbOfThreads(0);
+        emit Timeout();
+        return false;
     }
 
+
+    return true;
 }
 
 void Renderer2::ChangeNbOfThreads(int newNbThreads)
 {
     //remove crashed threads
-    for(int i=nbThreads-1; i>=0; i--) {
+    for(int i=threads.count()-1; i>=0; i--) {
         RendererThread2* th = threads[i];
         if(!th->isRunning() && !th->IsStopped()) {
             LOG("remove crashed thread"<<i)
-            --nbThreads;
+//            --nbThreads;
             threads.removeAt(i);
             threadsToDelete << th;
         }
@@ -143,12 +148,12 @@ void Renderer2::ChangeNbOfThreads(int newNbThreads)
     }
 
     //add threads if needed
-    while(nbThreads < newNbThreads) {
-        ++nbThreads;
+    while(threads.count() < newNbThreads) {
+//        ++nbThreads;
         RendererThread2 *th = new RendererThread2(this,threads.count());
         threads << th;
-        connect(th,SIGNAL(Timeout()),
-                this,SLOT(OnThreadTimeout()));
+//        connect(th,SIGNAL(Timeout()),
+//                this,SLOT(OnThreadTimeout()));
     }
 }
 
@@ -165,16 +170,16 @@ void Renderer2::ThreadCleanup()
     }
 }
 
-void Renderer2::OnThreadTimeout()
-{
-    LOG("thread timeout");
-    stepCanStart.first()->Unlock(999);
-    waitThreadReady.WakeAll();
-    if(!waitThreadEnd.WaitAllThreads(1000)) {
-        waitThreadEnd.WakeAll();
-    }
+//void Renderer2::OnThreadTimeout()
+//{
+//    LOG("thread timeout");
+//    stepCanStart.first()->Unlock(999);
+//    waitThreadReady.WakeAll();
+//    if(!waitThreadEnd.WaitAllThreads(1000)) {
+//        waitThreadEnd.WakeAll();
+//    }
 
-    if(signalTimeoutTimer.isActive())
-        return;
-    signalTimeoutTimer.start();
-}
+//    if(signalTimeoutTimer.isActive())
+//        return;
+//    signalTimeoutTimer.start();
+//}

@@ -531,7 +531,6 @@ void AudioDevices::ConfigDevice(const ObjectInfo &info)
 
 void AudioDevices::RendererTimeout()
 {
-
     CloseDevices();
     OpenDevices();
 }

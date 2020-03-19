@@ -37,14 +37,13 @@ quint32 MainHost::currentFileVersion=PROJECT_AND_SETUP_FILE_VERSION;
 
 MainHost::MainHost(Settings *settings, QObject *parent) :
     QObject(parent),
+    programManager(0),
     objFactory(0),
     mainWindow(0),
+    settings(settings),
     solverNeedAnUpdate(false),
     solverUpdateEnabled(true),
-//    mutexListCables(new QMutex(QMutex::Recursive)),
-    settings(settings),
     undoProgramChangesEnabled(false),
-    programManager(0),
     globalDelay(0L),
     nbThreads(1)
 {
@@ -73,24 +72,10 @@ void MainHost::Close()
         updateViewTimer=0;
     }
 
-//    mutexListCables->lock();
-//    workingListOfCables.clear();
-//    mutexListCables->unlock();
-
-//    mutexRender.lock();
     if(renderer) {
-//        hashCables lstCables;
-//        long newDelay = solver->Resolve(objFactory->GetListObjects(), lstCables, renderer);
-//        if(newDelay!=globalDelay) {
-//            globalDelay=newDelay;
-//            emit DelayChanged(globalDelay);
-//        }
-
-    //    solver->Resolve(workingListOfCables, renderer);
         delete renderer;
         renderer=0;
     }
-//    mutexRender.unlock();
 
     hostContainer.clear();
     projectContainer.clear();
@@ -117,7 +102,6 @@ void MainHost::Close()
         delete vst3Host;
 #endif
 
-//    delete mutexListCables;
     if(programManager) {
         delete programManager;
         programManager=0;
@@ -156,10 +140,6 @@ void MainHost::Init()
 
     solver = new Solver();
 
-//    model = new HostModel(this);
-//    model->setObjectName("MainModel");
-//    model->setColumnCount(1);
-
     sampleRate = 44100.0;
     bufferSize = 100;
 
@@ -170,8 +150,8 @@ void MainHost::Init()
     ChangeNbThreads(-1);
 
     renderer = new Renderer2(this);
-
-//    programsModel = new ProgramsModel(this);
+    connect(renderer, SIGNAL(Timeout()),
+            this, SLOT(OnRenderTimeout()));
 
     //timer
     timeFromStart.start();
@@ -248,8 +228,6 @@ void MainHost::SetupHostContainer()
         return;
 
     hostContainer->SetLoadingMode(true);
-
-//    hostContainer->LoadProgram(0);
     mainContainer->AddObject(hostContainer);
 
     QSharedPointer<Connectables::Object> bridge;
@@ -264,7 +242,6 @@ void MainHost::SetupHostContainer()
 
     bridge = objFactory->NewObject(in);
     hostContainer->AddObject( bridge );
-//    bridge->SetBridgePinsInVisible(false);
     hostContainer->bridgeIn = bridge;
 
     //bridge out
@@ -276,7 +253,6 @@ void MainHost::SetupHostContainer()
 
     bridge = objFactory->NewObject(out);
     hostContainer->AddObject( bridge );
-//    bridge->SetBridgePinsOutVisible(false);
     hostContainer->bridgeOut = bridge;
 
     //connect with groupContainer
@@ -294,7 +270,6 @@ void MainHost::SetupHostContainer()
 
     bridge = objFactory->NewObject(send);
     hostContainer->AddObject( bridge );
-//    bridge->SetBridgePinsOutVisible(false);
     hostContainer->bridgeSend = bridge;
 
     //return bridge
@@ -306,7 +281,6 @@ void MainHost::SetupHostContainer()
 
     bridge = objFactory->NewObject(retrn);
     hostContainer->AddObject( bridge );
-//    bridge->SetBridgePinsInVisible(false);
     hostContainer->bridgeReturn = bridge;
 
     //connect with projectContainer
@@ -357,8 +331,6 @@ void MainHost::SetupProjectContainer()
         return;
 
     projectContainer->SetLoadingMode(true);
-
-//    projectContainer->LoadProgram(0);
     mainContainer->AddObject(projectContainer);
 
     QSharedPointer<Connectables::Object> bridge;
@@ -372,7 +344,6 @@ void MainHost::SetupProjectContainer()
 
     bridge = objFactory->NewObject(in);
     projectContainer->AddObject( bridge );
-//    bridge->SetBridgePinsInVisible(false);
     projectContainer->bridgeIn = bridge;
 
     //bridge out
@@ -384,7 +355,6 @@ void MainHost::SetupProjectContainer()
 
     bridge = objFactory->NewObject(out);
     projectContainer->AddObject( bridge );
-//    bridge->SetBridgePinsOutVisible(false);
     projectContainer->bridgeOut = bridge;
 
     //connect with hostContainer
@@ -403,7 +373,6 @@ void MainHost::SetupProjectContainer()
 
     bridge = objFactory->NewObject(send);
     projectContainer->AddObject( bridge );
-//    bridge->SetBridgePinsOutVisible(false);
     projectContainer->bridgeSend = bridge;
 
     //bridge return
@@ -415,7 +384,6 @@ void MainHost::SetupProjectContainer()
 
     bridge = objFactory->NewObject(retrn);
     projectContainer->AddObject( bridge );
-//    bridge->SetBridgePinsInVisible(false);
     projectContainer->bridgeReturn = bridge;
 
     //connect with programContainer
@@ -456,10 +424,6 @@ void MainHost::SetupProgramContainer()
     if(programContainer) {
         msgWasEnabled=programContainer->MsgEnabled();
 
-//        MsgObject msg(FixedObjId::programParking);
-//        msg.prop[MsgObject::Clear]=1;
-//        SendMsg(msg);
-
         mainContainer->ParkObject( programContainer );
         programContainer.clear();
         UpdateSolver(true);
@@ -481,7 +445,6 @@ void MainHost::SetupProgramContainer()
     programContainer->SetLoadingMode(true);
 
     programContainer->SetOptimizerFlag(true);
-//    programContainer->LoadProgram(0);
     mainContainer->AddObject(programContainer);
 
     QSharedPointer<Connectables::Object> bridge;
@@ -495,7 +458,6 @@ void MainHost::SetupProgramContainer()
 
     bridge = objFactory->NewObject(in);
     programContainer->AddObject( bridge );
-//    bridge->SetBridgePinsInVisible(false);
     programContainer->bridgeIn = bridge;
 
     //bridge out
@@ -507,7 +469,6 @@ void MainHost::SetupProgramContainer()
 
     bridge = objFactory->NewObject(out);
     programContainer->AddObject( bridge );
-//    bridge->SetBridgePinsOutVisible(false);
     programContainer->bridgeOut = bridge;
 
     //connect with projectContainer
@@ -526,7 +487,6 @@ void MainHost::SetupProgramContainer()
 
     bridge = objFactory->NewObject(send);
     programContainer->AddObject( bridge );
-//    bridge->SetBridgePinsOutVisible(false);
     programContainer->bridgeSend = bridge;
 
     //bridge return
@@ -538,7 +498,6 @@ void MainHost::SetupProgramContainer()
 
     bridge = objFactory->NewObject(retrn);
     programContainer->AddObject( bridge );
-//    bridge->SetBridgePinsInVisible(false);
     programContainer->bridgeReturn = bridge;
 
     //connect with groupContainer
@@ -553,8 +512,6 @@ void MainHost::SetupProgramContainer()
             programContainer.data(), SLOT(RemoveProgram(quint32)));
     connect(this,SIGNAL(Rendered()),
             programContainer.data(), SLOT(PostRender()));
-
-//    emit programParkingModelChanged(&programContainer->parkModel);
 
     if(groupContainer) {
         groupContainer->childContainer=programContainer;
@@ -578,10 +535,6 @@ void MainHost::SetupGroupContainer()
     if(groupContainer) {
         msgWasEnabled=groupContainer->MsgEnabled();
 
-//        MsgObject msg(FixedObjId::groupParking);
-//        msg.prop[MsgObject::Clear]=1;
-//        SendMsg(msg);
-
         mainContainer->ParkObject( groupContainer );
         groupContainer.clear();
         UpdateSolver(true);
@@ -602,7 +555,6 @@ void MainHost::SetupGroupContainer()
     groupContainer->containersParkingId = FixedObjId::groupParking;
     groupContainer->SetLoadingMode(true);
 
-//    groupContainer->LoadProgram(0);
     mainContainer->AddObject(groupContainer);
 
     QSharedPointer<Connectables::Object> bridge;
@@ -616,7 +568,6 @@ void MainHost::SetupGroupContainer()
 
     bridge = objFactory->NewObject(in);
     groupContainer->AddObject( bridge );
-//    bridge->SetBridgePinsInVisible(false);
     groupContainer->bridgeIn = bridge;
 
     //bridge out
@@ -628,7 +579,6 @@ void MainHost::SetupGroupContainer()
 
     bridge = objFactory->NewObject(out);
     groupContainer->AddObject( bridge );
-//    bridge->SetBridgePinsOutVisible(false);
     groupContainer->bridgeOut = bridge;
 
     //connect with programContainer
@@ -646,7 +596,6 @@ void MainHost::SetupGroupContainer()
 
     bridge = objFactory->NewObject(send);
     groupContainer->AddObject( bridge );
-//    bridge->SetBridgePinsOutVisible(false);
     groupContainer->bridgeSend = bridge;
 
     //bridge return
@@ -658,7 +607,6 @@ void MainHost::SetupGroupContainer()
 
     bridge = objFactory->NewObject(retrn);
     groupContainer->AddObject( bridge );
-//    bridge->SetBridgePinsInVisible(false);
     groupContainer->bridgeReturn = bridge;
 
     //connect with hostContainer
@@ -673,8 +621,6 @@ void MainHost::SetupGroupContainer()
             groupContainer.data(), SLOT(RemoveProgram(quint32)));
     connect(this,SIGNAL(Rendered()),
             groupContainer.data(), SLOT(PostRender()));
-
-//    emit groupParkingModelChanged(&groupContainer->parkModel);
 
     if(projectContainer) {
         projectContainer->childContainer=groupContainer;
@@ -734,19 +680,6 @@ void MainHost::UpdateSolver(bool forceUpdate)
 
     solverMutex.unlock();
 
-//    //if forced : lock rendering
-//    if(forceUpdate) {
-//        mutexRender.lock();
-//    } else {
-//        //not forced : do it later if we can't do it now
-//        if(!mutexRender.tryLock()) {
-//            //can't lock, ask for a ne update
-//            SetSolverUpdateNeeded();
-//            EnableSolverUpdate(solverWasEnabled);
-//            return;
-//        }
-//    }
-
     //update the solver
     hashCables lstCables;
     if(mainContainer && mainContainer->GetCurrentProgram())
@@ -760,7 +693,6 @@ void MainHost::UpdateSolver(bool forceUpdate)
     if(programContainer && programContainer->GetCurrentProgram())
         programContainer->GetCurrentProgram()->AddToCableList(&lstCables);
 
-//    long newDelay = solver->Resolve(objFactory->GetListObjects(), lstCables, renderer);
     RenderMap rMap;
     long newDelay = solver->GetMap(objFactory->GetListObjects(), lstCables, nbThreads, rMap);
     if(newDelay!=globalDelay) {
@@ -768,16 +700,7 @@ void MainHost::UpdateSolver(bool forceUpdate)
         emit DelayChanged(globalDelay);
     }
     SetRenderMap(rMap);
-//    QTimer::singleShot(20, this, SLOT(UpdateRendererMap()));
-//    QTimer::singleShot(1000, this, SLOT(UpdateRendererMap()));
-
-//    mutexListCables->lock();
-//        solver->Resolve(workingListOfCables, renderer);
-//    mutexListCables->unlock();
-
-//    mutexRender.unlock();
     EnableSolverUpdate(solverWasEnabled);
-//    EnableSolverUpdate(true);
 }
 
 void MainHost::UpdateRendererMap()
@@ -795,8 +718,6 @@ void MainHost::UpdateRendererView()
 
 void MainHost::ChangeNbThreads(int nbTh)
 {
-//    if(!renderer)
-//            return;
     if(nbTh<=0 || nbTh>MAX_NB_THREADS) {
         nbTh = settings->GetSetting("NbThreads",-1).toInt();
     }
@@ -826,7 +747,6 @@ void MainHost::SetBufferSizeMs(unsigned int ms)
 
 void MainHost::SetBufferSize(unsigned long size)
 {
-//    qDebug()<<"MainHost::SetBufferSize"<<size;
     bufferSize = size;
     emit BufferSizeChanged(bufferSize);
 }
@@ -840,19 +760,12 @@ void MainHost::SetSampleRate(float rate)
     emit SampleRateChanged(sampleRate);
 }
 
-//void MainHost::OnNewRenderingOrder(orderedNodes * renderLines)
-//{
-//    emit NewSolver(renderLines);
-//}
-
 void MainHost::Render()
 {
 
 #ifdef VSTSDK
     CheckTempo();
 #endif
-
-//    mutexRender.lock();
 
     if(mainContainer)
         mainContainer->NewRenderLoop();
@@ -866,9 +779,9 @@ void MainHost::Render()
         programContainer->NewRenderLoop();
 
     if(renderer)
-        renderer->StartRender();
-
-//    mutexRender.unlock();
+        if(!renderer->StartRender()) {
+            LOG("render error");
+        }
 
     if(solverNeedAnUpdate && solverUpdateEnabled)
         emit SolverToUpdate();
@@ -876,11 +789,16 @@ void MainHost::Render()
     emit Rendered();
 }
 
+void MainHost::OnRenderTimeout() {
+
+    SetSolverUpdateNeeded();
+}
+
+
 #ifdef VSTSDK
 void MainHost::SetTimeInfo(const VstTimeInfo *info)
 {
     vstHost->SetTimeInfo(info);
-//    CheckTempo();
 }
 #endif
 
@@ -889,7 +807,6 @@ void MainHost::SetTempo(int tempo, int sign1, int sign2)
 #ifdef VSTSDK
     vstHost->SetTempo(tempo,sign1,sign2);
     vst3Host->SetTempo(tempo,sign1,sign2);
-//    CheckTempo();
 #endif
 }
 
@@ -953,20 +870,10 @@ void MainHost::LoadSetupFile(const QString &filename)
     undoStack.clear();
 
     if(ProjectFile::LoadFromFile(this,name)) {
-//        ConfigDialog::AddRecentSetupFile(name,settings);
         currentSetupFile = name;
     } else {
-//        ConfigDialog::RemoveRecentSetupFile(name,settings);
         ClearSetup();
     }
-
-
-//    if(hostContainer) {
-//        MsgObject a(0, FixedObjId::hostContainer);
-//        a.prop["actionType"]="add";
-//        hostContainer->GetInfos(a);
-//        SendMsg(a);
-//    }
 
     currentFileChanged();
 }
@@ -989,34 +896,10 @@ void MainHost::LoadProjectFile(const QString &filename)
     undoStack.clear();
 
     if(ProjectFile::LoadFromFile(this,name)) {
-//        ConfigDialog::AddRecentProjectFile(name,settings);
         currentProjectFile = name;
     } else {
-//        ConfigDialog::RemoveRecentProjectFile(name,settings);
         ClearProject();
     }
-
-//    if(projectContainer) {
-//        MsgObject a(0, FixedObjId::projectContainer);
-//        a.prop["actionType"]="add";
-//        projectContainer->GetInfos(a);
-//        SendMsg(a);
-//    }
-
-//    if(groupContainer) {
-//        MsgObject b(0, FixedObjId::groupContainer);
-//        b.prop["actionType"]="add";
-//        groupContainer->GetInfos(b);
-//        SendMsg(b);
-//    }
-
-
-//    if(programContainer) {
-//        MsgObject c(0, FixedObjId::programContainer);
-//        c.prop["actionType"]="add";
-//        programContainer->GetInfos(c);
-//        SendMsg(c);
-//    }
 
     currentFileChanged();
 }
@@ -1037,8 +920,6 @@ void MainHost::ReloadSetup()
         return;
 
     undoStack.clear();
-
-//    ConfigDialog::AddRecentSetupFile(currentSetupFile,settings);
 }
 
 void MainHost::ClearSetup()
@@ -1054,7 +935,6 @@ void MainHost::ClearSetup()
     if(mainWindow)
         mainWindow->viewConfig->LoadFromRegistry();
 
-//    ConfigDialog::AddRecentSetupFile("",settings);
     currentSetupFile = "";
     currentFileChanged();
 }
@@ -1074,7 +954,6 @@ void MainHost::ClearProject()
 
     programManager->BuildDefaultPrograms();
 
-//    ConfigDialog::AddRecentProjectFile("",settings);
     currentProjectFile = "";
     currentFileChanged();
 }
@@ -1099,8 +978,6 @@ bool MainHost::SaveSetupFile(bool saveAs)
     }
 
     if(ProjectFile::SaveToSetupFile(this,filename)) {
-//        settings->SetSetting("lastSetupDir",QFileInfo(filename).absolutePath());
-//        ConfigDialog::AddRecentSetupFile(filename,settings);
         currentSetupFile = filename;
         currentFileChanged();
     }
@@ -1128,8 +1005,6 @@ bool MainHost::SaveProjectFile(bool saveAs)
     }
 
     if(ProjectFile::SaveToProjectFile(this,filename)) {
-//        settings->SetSetting("lastProjectDir",QFileInfo(filename).absolutePath());
-//        ConfigDialog::AddRecentProjectFile(filename,settings);
         currentProjectFile = filename;
         currentFileChanged();
     }
@@ -1146,7 +1021,6 @@ void MainHost::currentFileChanged()
 
 void MainHost::ReceiveMsg(const MsgObject &msg)
 {
-//    LOG(msg.objIndex << msg.prop)
 
     if(msg.objIndex == FixedObjId::mainHost) {
 
@@ -1254,7 +1128,6 @@ void MainHost::GetRenderMap(RenderMap &map)
 void MainHost::SetRenderMap(const RenderMap &map)
 {
     renderer->SetMap(map,nbThreads);
-//    solver->UpdateCpuTimes(map,nbThreads);
     if(updateRendererViewTimer.isActive())
         UpdateRendererView();
 }

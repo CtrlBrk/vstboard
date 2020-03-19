@@ -38,10 +38,10 @@ void WaitAll::AddClient()
     ++cptAtStart;
 }
 
-void WaitAll::WakeAll()
-{
-    condStart.wakeAll();
-}
+//void WaitAll::WakeAll()
+//{
+//    condStart.wakeAll();
+//}
 
 void WaitAll::RemoveClient()
 {
@@ -52,11 +52,11 @@ void WaitAll::RemoveClient()
     }
 }
 
-bool WaitAll::IsReady()
-{
-    QMutexLocker l(&mutex);
-    return (cptAtStart<=1);
-}
+//bool WaitAll::IsReady()
+//{
+//    QMutexLocker l(&mutex);
+//    return (cptAtStart<=1);
+//}
 
 bool WaitAll::WaitAllThreads(int timeout)
 {

@@ -36,8 +36,8 @@ void MainHostHost::Init()
     midiDevices = new MidiDevices(this,this,FixedObjId::midiDevices);
     audioDevices = new AudioDevices(this,this,FixedObjId::audioDevices);
 
-    connect(renderer, SIGNAL(Timeout()),
-            audioDevices, SLOT(RendererTimeout()));
+//    connect(renderer, SIGNAL(Timeout()),
+//            audioDevices, SLOT(RendererTimeout()));
 }
 
 MainHostHost::~MainHostHost()

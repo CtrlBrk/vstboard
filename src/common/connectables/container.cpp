@@ -207,21 +207,11 @@ void Container::SetProgram(quint32 progId)
         return;
     }
 
-//    if(!myHost->mutexRender.tryLock())
-//        return;
-//    LoadProgram(progToSet);
-//    progToSet=-1;
-//    myHost->mutexRender.unlock();
-
 }
 
 void Container::NewRenderLoop()
 {
-//    Object::NewRenderLoop();
 
-//    foreach(QSharedPointer<Object> obj, listStaticObjects) {
-//        obj->NewRenderLoop();
-//    }
 }
 
 void Container::PostRender()
@@ -229,11 +219,7 @@ void Container::PostRender()
     if(progToSet!=-1) {
         int p =progToSet;
         progToSet=-1;
-
-//        myHost->mutexRender.lock();
         LoadProgram(p);
-
-//        myHost->mutexRender.unlock();
     }
 }
 

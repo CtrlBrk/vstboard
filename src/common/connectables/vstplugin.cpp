@@ -248,8 +248,8 @@ void VstPlugin::Render()
 
         float **tmpBufIn;
         if(listAudioPinIn->listPins.size()==0) {
-            //no input, use outputs as fake buffers... don't know what we're supposed to do...
-            tmpBufIn = tmpBufOut;
+            //no input, don't know what we're supposed to do...
+            tmpBufIn = 0;
         } else {
             tmpBufIn = new float*[listAudioPinIn->listPins.size()];
 

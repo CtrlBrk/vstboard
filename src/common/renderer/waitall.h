@@ -28,11 +28,11 @@ class WaitAll
 public:
     WaitAll();
     ~WaitAll();
-    bool IsReady();
+//    bool IsReady();
     bool WaitAllThreads(int timeout);
     void AddClient();
     void RemoveClient();
-    void WakeAll();
+//    void WakeAll();
 
 private:
     QMutex mutex;

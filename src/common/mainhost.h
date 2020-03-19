@@ -21,17 +21,13 @@
 #ifndef MAINHOST_H
 #define MAINHOST_H
 
-//#include "precomp.h"
 #include <QUndoStack>
 #include "connectables/objectfactory.h"
 #include "connectables/object.h"
 #include "connectables/container.h"
-//#include "renderer/pathsolver.h"
-//#include "renderer/renderer.h"
 #include "renderer/solver.h"
 #include "renderer/renderer2.h"
 #include "globals.h"
-//#include "models/hostmodel.h"
 #include "settings.h"
 #include "msgcontroller.h"
 #include "programmanager.h"
@@ -44,16 +40,12 @@
 #define MAX_NB_THREADS 500
 
 class MainWindow;
-//class ProgramsModel;
 class MainHost : public QObject, public MsgController
 {
 Q_OBJECT
 public:
     MainHost( Settings *settings, QObject *parent = 0);
     virtual ~MainHost();
-
-
-//    void SendMsg(const ConnectionInfo &senderPin,const PinMessage::Enum msgType,void *data);
 
     void SetBufferSizeMs(unsigned int ms);
     void SetBufferSize(unsigned long size);
@@ -62,52 +54,11 @@ public:
     float GetSampleRate() {return sampleRate;}
 
     void EnableSolverUpdate(bool enable);
-//    bool IsSolverUpdateEnabled();
-
     void GetTempo(int &tempo, int &sign1, int &sign2);
 
 #ifdef VSTSDK
     void SetTimeInfo(const VstTimeInfo *info);
 #endif
-
-//    void SetCurrentBuffers(float ** inputBuffer, float ** outputBuffer,unsigned long size) {
-//        QMutexLocker l(&currentBuffersMutex);
-//        currentInputBuffer = inputBuffer;
-//        currentOutputBuffer = outputBuffer;
-//        currentFramesPerBuffer = size;
-//        inBufferReady = true;
-//        outBufferReady = true;
-
-//        if(currentFramesPerBuffer > bufferSize) {
-//           SetBufferSize(currentFramesPerBuffer);
-//        }
-//    }
-
-//    float ** TakeInputBuffer(unsigned long &size) {
-//        QMutexLocker l(&currentBuffersMutex);
-//        if(!inBufferReady)
-//            return 0;
-//        size = currentFramesPerBuffer;
-//        inBufferReady = false;
-//        return currentInputBuffer;
-//    }
-//    float ** TakeOutputBuffer(unsigned long &size) {
-//        QMutexLocker l(&currentBuffersMutex);
-//        if(!outBufferReady)
-//            return 0;
-//        size = currentFramesPerBuffer;
-//        outBufferReady = false;
-//        return currentOutputBuffer;
-//    }
-
-//    QMutex currentBuffersMutex;
-//    float **currentInputBuffer;
-//    float **currentOutputBuffer;
-//    unsigned long currentFramesPerBuffer;
-//    bool inBufferReady;
-//    bool outBufferReady;
-
-//    QStandardItemModel *GetRendererModel() { return renderer->GetModel(); }
 
     Renderer2 * GetRenderer() { return renderer; }
 
@@ -127,10 +78,6 @@ public:
         solverMutex.unlock();
     }
 
-//    void UpdateGlobalDelay(long samples)
-//    {
-//        emit DelayChanged(samples);
-//    }
 
     inline bool undoProgramChanges() {return undoProgramChangesEnabled;}
 
@@ -141,8 +88,6 @@ public:
     QSharedPointer<Connectables::Container> groupContainer;
 
     QTimer *updateViewTimer;
-
-//    HostModel * GetModel() {return model;}
     ProgramManager *programManager;
     Connectables::ObjectFactory *objFactory;
     MainWindow *mainWindow;
@@ -164,7 +109,6 @@ public:
     QString currentSetupFile;
 
     QUndoStack undoStack;
-    QMutex mutexRender;
 
     Settings *settings;
 
@@ -194,14 +138,7 @@ private:
 
     QMap<int,Connectables::Object*>listContainers;
     QMap<ConnectionInfo,Connectables::Pin*>listPins;
-
-//    hashCables workingListOfCables;
-//    QMutex *mutexListCables;
-
-
     QMutex solverMutex;
-
-//    HostModel *model;
 
     int currentTempo;
     int currentTimeSig1;
@@ -209,7 +146,6 @@ private:
 
     bool undoProgramChangesEnabled;
 
-//    PathSolver *solver;
     Solver *solver;
     long globalDelay;
 
@@ -223,8 +159,6 @@ signals:
     void ObjectRemoved(int contrainerId, int obj);
     void SolverToUpdate();
     void Rendered();
-//    void programParkingModelChanged(QStandardItemModel *model);
-//    void groupParkingModelChanged(QStandardItemModel *model);
     void TempoChanged(int tempo=120, int sign1=4, int sign2=4);
     void DelayChanged(long samples);
 
@@ -248,6 +182,7 @@ public slots:
     void UpdateRendererMap();
     void UpdateRendererView();
     void UpdateView();
+    void OnRenderTimeout();
 
 private slots:
     void UpdateSolver(bool forceUpdate=false);
