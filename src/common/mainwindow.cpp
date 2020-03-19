@@ -35,16 +35,16 @@
 MainWindow::MainWindow(Settings *settings, MainHost * myHost, QWidget *parent) :
     QMainWindow(parent),
     mySceneView(0),
+    viewConfig( new View::ViewConfig(settings,this)),
+    settings(settings),
     listToolsModel(0),
     listVstPluginsModel(0),
     listVstBanksModel(0),
     ui(new Ui::MainWindow),
     myHost(myHost),
-    viewConfig( new View::ViewConfig(settings,this)),
-    viewConfigDlg(0),
     actUndo(0),
     actRedo(0),
-    settings(settings),
+    viewConfigDlg(0),
     progModel(new GroupsProgramsModel(this,this)),
     groupParking(0),
     programParking(0),
@@ -87,6 +87,8 @@ void MainWindow::Init()
              progModel, SLOT(UpdateColor(ColorGroups::Enum,Colors::Enum,QColor)) );
     connect( viewConfig, SIGNAL(ColorChanged(ColorGroups::Enum,Colors::Enum,QColor)),
              this, SLOT(UpdateColor(ColorGroups::Enum,Colors::Enum,QColor)));
+    connect ( viewConfig, SIGNAL(StylesheetChanged()),
+             this, SLOT(UpdateStylesheet()));
 
 //    connect(viewConfig->keyBinding, SIGNAL(BindingChanged()),
 //            this, SLOT(UpdateKeyBinding()));
@@ -94,6 +96,7 @@ void MainWindow::Init()
     UpdateKeyBinding();
     shellSelect = new View::VstShellSelect(this, FixedObjId::shellselect, this);
     shellSelect->hide();
+
 }
 
 void MainWindow::ReceiveMsg(const MsgObject &msg)
@@ -264,11 +267,14 @@ MainWindow::~MainWindow()
         delete programParking;
 }
 
-void MainWindow::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color)
+void MainWindow::UpdateStylesheet()
+{
+    setStyleSheet(viewConfig->GetSyleSheet());
+}
+
+void MainWindow::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &/*color*/)
 {
     if(groupId==ColorGroups::Theme) {
-        setStyleSheet(viewConfig->GetSyleSheet());
-        return;
 
         QString thName = QString("%1").arg(colorId == Colors::Dark ? "dark" : "light");
         QIcon::setThemeName(thName);
@@ -279,19 +285,21 @@ void MainWindow::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, co
 
 
 //    if(groupId!=ColorGroups::Window)
-        return;
+//        return;
 
-    QPalette::ColorRole role = viewConfig->GetPaletteRoleFromColor(colorId);
+//    setStyleSheet(viewConfig->GetSyleSheet());
 
-    QPalette pal=palette();
-    pal.setColor(role, color);
-    setPalette(pal);
+//    QPalette::ColorRole role = viewConfig->GetPaletteRoleFromColor(colorId);
 
-    //apply to undocked widgets and menus
-    QList<QWidget *> dockWidgets = findChildren<QWidget *>();
-    foreach(auto w, dockWidgets) {
-        w->setPalette(pal);
-    }
+//    QPalette pal=palette();
+//    pal.setColor(role, color);
+//    setPalette(pal);
+
+//    //apply to undocked widgets and menus
+//    QList<QWidget *> dockWidgets = findChildren<QWidget *>();
+//    foreach(auto w, dockWidgets) {
+//        w->setPalette(pal);
+//    }
 
 }
 

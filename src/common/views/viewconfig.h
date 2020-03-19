@@ -92,7 +92,7 @@ namespace View {
         QString GetColorGroupName(ColorGroups::Enum groupId);
         QString GetColorName(Colors::Enum colorId);
         QPalette::ColorRole GetPaletteRoleFromColor(Colors::Enum colorId);
-        QPalette GetPaletteFromColorGroup(ColorGroups::Enum groupId, const QPalette &oriPalette);
+//        QPalette GetPaletteFromColorGroup(ColorGroups::Enum groupId, const QPalette &oriPalette);
         void SetListGroups(viewConfigPreset newList);
 
         void SaveToFile( QDataStream & out );
@@ -101,6 +101,7 @@ namespace View {
         void LoadFromRegistry();
 
         QString GetSyleSheet();
+//        QPalette GetPalette(ColorGroups::Enum groupId);
 
         void LoadPreset(const QString &presetName);
         inline const QString & GetPresetName() const {return currentPresetName;}
@@ -165,6 +166,7 @@ namespace View {
             \param color the new color
         */
         void ColorChanged(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color);
+        void StylesheetChanged();
         void NewSetupLoaded();
     };
 

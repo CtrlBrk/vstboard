@@ -32,11 +32,11 @@ using namespace View;
   */
 ViewConfig::ViewConfig(Settings *settings, QObject *parent) :
     QObject(parent),
-    savedInSetupFile(false),
-    currentPresetName("Default"),
-    settings(settings),
     keyBinding(new KeyBind(settings)),
-    AutoOpenGui(false)
+    AutoOpenGui(false),
+    settings(settings),
+    savedInSetupFile(false),
+    currentPresetName("Default")
 {
     timerFalloff = new QTimer(this);
     timerFalloff->start(120);
@@ -137,6 +137,7 @@ void ViewConfig::LoadPreset(const QString &presetName)
 {
     currentPresetName=presetName;
     UpdateAllWidgets();
+
     if(!savedInSetupFile)
         settings->SetSetting("ColorPreset",currentPresetName);
 }
@@ -149,6 +150,7 @@ void ViewConfig::SetListGroups(viewConfigPreset newList)
 {
     *GetCurrentPreset() = newList;
     UpdateAllWidgets();
+
 }
 
 /*!
@@ -166,6 +168,7 @@ void ViewConfig::UpdateAllWidgets()
         }
         ++i;
     }
+    emit StylesheetChanged();
 }
 
 /*!
@@ -232,21 +235,21 @@ QPalette::ColorRole ViewConfig::GetPaletteRoleFromColor(Colors::Enum colorId)
   \param oriPalette the palette to modify
   \return modified palette
   */
-QPalette ViewConfig::GetPaletteFromColorGroup(ColorGroups::Enum groupId, const QPalette &oriPalette)
-{
-    if(!GetCurrentPreset()->contains(groupId))
-        return oriPalette;
+//QPalette ViewConfig::GetPaletteFromColorGroup(ColorGroups::Enum groupId, const QPalette &oriPalette)
+//{
+//    if(!GetCurrentPreset()->contains(groupId))
+//        return oriPalette;
 
-    QMap<Colors::Enum,QColor> grp = GetCurrentPreset()->value(groupId);
-    QPalette pal(oriPalette);
+//    QMap<Colors::Enum,QColor> grp = GetCurrentPreset()->value(groupId);
+//    QPalette pal(oriPalette);
 
-    QMap<Colors::Enum,QColor>::iterator i = grp.begin();
-    while(i != grp.end()) {
-        pal.setColor( GetPaletteRoleFromColor( i.key() ), i.value() );
-        ++i;
-    }
-    return pal;
-}
+//    QMap<Colors::Enum,QColor>::iterator i = grp.begin();
+//    while(i != grp.end()) {
+//        pal.setColor( GetPaletteRoleFromColor( i.key() ), i.value() );
+//        ++i;
+//    }
+//    return pal;
+//}
 
 /*!
   Add a color to a group
@@ -280,6 +283,11 @@ void ViewConfig::SetColor(ColorGroups::Enum groupId, Colors::Enum colorId, const
 
     (*GetCurrentPreset())[groupId].insert(colorId,color);
     emit ColorChanged(groupId,colorId,color);
+
+    if(groupId == ColorGroups::Window) {
+        emit StylesheetChanged();
+    }
+
 }
 
 /*!
@@ -296,20 +304,53 @@ QColor ViewConfig::GetColor(ColorGroups::Enum groupId, Colors::Enum colorId)
     return GetCurrentPreset()->value(groupId).value(colorId,QColor());
 }
 
+//QPalette ViewConfig::GetPalette(ColorGroups::Enum groupId) {
+//    QPalette pal;
+
+//    QMap<Colors::Enum,QColor> grp = (*GetCurrentPreset())[groupId];
+//    QMap<Colors::Enum,QColor>::iterator i = grp.begin();
+//    while( i!=grp.end() ) {
+//        qDebug() << i.key();
+//        qDebug() << i.value();
+//        pal.setColor( GetPaletteRoleFromColor(i.key()), i.value() );
+//        ++i;
+//    }
+//    return pal;
+//}
+
 QString ViewConfig::GetSyleSheet() {
 //    foreach(auto c, GetCurrentPreset()[ColorGroups::Window]) {
 
 //    }
-    return QString(
-                "color: " + GetColor(ColorGroups::Window,Colors::WindowText).name() + ";"
-                "background-color: " + GetColor(ColorGroups::Window,Colors::Window).name() + ";"
-                "selection-color: " + GetColor(ColorGroups::Window,Colors::Text).name() + ";"
-                "selection-background-color: " + GetColor(ColorGroups::Window,Colors::Base).name() + ";" //todo
-                "QScrollBar {"
-                "   color: " + GetColor(ColorGroups::Window,Colors::ButtonText).name() + ";"
-                "   background-color: " + GetColor(ColorGroups::Window,Colors::Button).name() + ";"
-                "}"
-                );
+    QString st(
+        "QWidget {"
+        "   background: " + GetColor(ColorGroups::Window,Colors::Window).name() + ";"
+        "   color: " + GetColor(ColorGroups::Window,Colors::WindowText).name() + ";"
+        "   selection-color: " + GetColor(ColorGroups::Window,Colors::Text).name() + ";"
+        //"   outline: 2px solid red;"
+        "}"
+        "QDockWidget::title, QMainWindow  {"
+        "   background:" + GetColor(ColorGroups::Window,Colors::Base).name() + ";"
+        "}"
+        "QScrollBar {"
+        "   color: " + GetColor(ColorGroups::Window,Colors::ButtonText).name() + ";"
+        "   background-color: " + GetColor(ColorGroups::Window,Colors::Button).name() + ";"
+        "}"
+        "QScrollBar::handle:vertical {"
+        "   border: 1px solid " + GetColor(ColorGroups::Window,Colors::ButtonText).name() + ";"
+        "}"
+        "QScrollBar::sub-line:vertical,QScrollBar::add-line:vertical {"
+        "   border: 0;"
+        "}"
+        "QListView, QSplitter {"
+        "   border:0;"
+        "}"
+        "QSplitter::handle {"
+        "   background-color: " + GetColor(ColorGroups::Window,Colors::Base).name() + ";"
+        "}"
+    );
+//    qDebug() << st;
+    return st;
 }
 
 void ViewConfig::AddPreset(QString &presetName)

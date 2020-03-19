@@ -118,6 +118,7 @@ private slots:
     void openRecentSetup();
     void openRecentProject();
     void UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color);
+    void UpdateStylesheet();
     void UpdateKeyBinding();
 
     void on_solverView_clicked(const QModelIndex &index);

@@ -42,15 +42,18 @@ ContainerContent::ContainerContent(ViewConfig *config, MsgController *msgCtrl, i
     dropPos.setX(0);
     dropPos.setY(0);
 
-    QPalette pal(palette());
-    pal.setColor(QPalette::Window, config->GetColor(ColorGroups::Object,Colors::HighlightBackground) );
-    setPalette( pal );
+//    QPalette pal(palette());
+//    pal.setColor(QPalette::Window, config->GetColor(ColorGroups::Object,Colors::HighlightBackground) );
+//    setPalette( pal );
+
 
     connect( config, SIGNAL(ColorChanged(ColorGroups::Enum,Colors::Enum,QColor)),
             this, SLOT(UpdateColor(ColorGroups::Enum,Colors::Enum,QColor)) );
+
+    HighlightStop();
 }
 
-void ContainerContent::ReceiveMsg(const MsgObject &msg)
+void ContainerContent::ReceiveMsg(const MsgObject &/*msg*/)
 {
 
 }
@@ -131,7 +134,7 @@ void ContainerContent::dragLeaveEvent( QGraphicsSceneDragDropEvent *event)
 ////    event->setAccepted(model->dropMimeData(event->mimeData(), event->proposedAction(), 0, 0, objIndex));
 //}
 
-void ContainerContent::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color)
+void ContainerContent::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &/*color*/)
 {
     if(groupId==ColorGroups::Panel && colorId==Colors::Background) {
         HighlightStop();
