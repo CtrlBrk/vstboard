@@ -529,12 +529,6 @@ void AudioDevices::ConfigDevice(const ObjectInfo &info)
     OpenDevices();
 }
 
-void AudioDevices::RendererTimeout()
-{
-    CloseDevices();
-    OpenDevices();
-}
-
 //restart portaudio until a device is found
 void AudioDevices::TryToOpenDevice()
 {
