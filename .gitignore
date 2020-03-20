@@ -1,11 +1,19 @@
 *.pdb
 *.pro.user*
+*.vcxproj.user
 Thumbs.db
+desktop.ini
 .DS_Store
-build-*
+*~
+build*
+moc_*.cpp
+qrc_*.cpp
+ui_*.h
+*.log
+*.tlog
 libs/VST3SDK/
 libs/vstsdk2.4/
 libs/VST3 SDK/
-*/debug/*
-*/release/*
+debug/
+release/
 .vs/

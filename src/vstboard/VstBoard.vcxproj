@@ -1,0 +1,448 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{9B5B19A0-057D-39E9-B7B7-1874D28FF3E8}</ProjectGuid>
+    <RootNamespace>VstBoard</RootNamespace>
+    <Keyword>QtVS_v302</Keyword>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <PlatformToolset>v141</PlatformToolset>
+    <OutputDirectory>release\</OutputDirectory>
+    <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
+    <CharacterSet>NotSet</CharacterSet>
+    <ConfigurationType>Application</ConfigurationType>
+    <IntermediateDirectory>release\</IntermediateDirectory>
+    <PrimaryOutput>VstBoard</PrimaryOutput>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <PlatformToolset>v141</PlatformToolset>
+    <OutputDirectory>debug\</OutputDirectory>
+    <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
+    <CharacterSet>MultiByte</CharacterSet>
+    <ConfigurationType>Application</ConfigurationType>
+    <IntermediateDirectory>debug\</IntermediateDirectory>
+    <PrimaryOutput>VstBoard</PrimaryOutput>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup Condition="'$(QtMsBuild)'=='' or !Exists('$(QtMsBuild)\qt.targets')">
+    <QtMsBuild>$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
+  </PropertyGroup>
+  <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
+    <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />
+  </Target>
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
+    <Import Project="$(QtMsBuild)\qt_defaults.props" />
+  </ImportGroup>
+  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <QtInstall>msvc2017</QtInstall>
+    <QtModules>core;gui;widgets</QtModules>
+  </PropertyGroup>
+  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <QtInstall>msvc2017</QtInstall>
+    <QtModules>core;gui;widgets</QtModules>
+  </PropertyGroup>
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.props')">
+    <Import Project="$(QtMsBuild)\qt.props" />
+  </ImportGroup>
+  <PropertyGroup>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Platform)\$(Configuration)\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VstBoard</TargetName>
+    <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</IgnoreImportLibrary>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Platform)\$(Configuration)\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VstBoard</TargetName>
+    <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</IgnoreImportLibrary>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;..\..\libs\VST3SDK;..\..\libs\VST3SDK\public.sdk\source\vst2.x;..\..\libs\portaudio\include;..\..\libs\portmidi\porttime;..\..\libs\portmidi\pm_common;..\common;..\portaudio;..\portmidi;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;release;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
+      <AssemblerListingLocation>release\</AssemblerListingLocation>
+      <BrowseInformation>false</BrowseInformation>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <DisableSpecificWarnings>4577;4467;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ForcedIncludeFiles>..\common\precomp.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>..\common\precomp.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)\VstBoard.pch</PrecompiledHeaderOutputFile>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;NDEBUG;APP_NAME="VstBoard";APP_VERSION_MAJOR=0;APP_VERSION_MINOR=6;APP_VERSION_BUILD=0;APP_VERSION_PATCH=0;VSTSDK;RELEASE;_CRT_SECURE_NO_WARNINGS;QT_NO_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <WarningLevel>Level3</WarningLevel>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>winmm.lib;user32.lib;advapi32.lib;ole32.lib;setupapi.lib;dsound.lib;common.lib;portaudio.lib;portmidi.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\ATLMFC\lib\x86;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\lib\x86;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x86;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\ucrt\x86;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\um\x86;";C:\dev\vstboard\src\common\release;C:\dev\vstboard\src\portaudio\release;C:\dev\vstboard\src\portmidi\release;C:\opensslx86\lib;C:\Utils\my_sql\mysql-5.7.25-win32\lib;C:\Utils\postgresqlx86\pgsql\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
+      <DataExecutionPrevention>true</DataExecutionPrevention>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreImportLibrary>true</IgnoreImportLibrary>
+      <LinkIncremental>false</LinkIncremental>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <OptimizeReferences>true</OptimizeReferences>
+      <OutputFile>$(OutDir)\VstBoard.exe</OutputFile>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <SubSystem>Windows</SubSystem>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Link>
+    <Midl>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+      <WarningLevel>0</WarningLevel>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;NDEBUG;APP_NAME=\"VstBoard\";APP_VERSION_MAJOR=0;APP_VERSION_MINOR=6;APP_VERSION_BUILD=0;APP_VERSION_PATCH=0;VSTSDK;RELEASE;_CRT_SECURE_NO_WARNINGS;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <QtMoc>
+      <CompilerFlavor>msvc</CompilerFlavor>
+      <Include>./$(Configuration)/moc_predefs.h</Include>
+      <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>
+      <DynamicSource>output</DynamicSource>
+      <QtMocDir>$(Configuration)</QtMocDir>
+      <QtMocFileName>moc_%(Filename).cpp</QtMocFileName>
+    </QtMoc>
+    <QtRcc>
+      <Compression>default</Compression>
+      <InitFuncName>resources</InitFuncName>
+      <ExecutionDescription>Rcc'ing %(Identity)...</ExecutionDescription>
+      <QtRccDir>$(Configuration)</QtRccDir>
+      <QtRccFileName>qrc_%(Filename).cpp</QtRccFileName>
+    </QtRcc>
+    <QtUic>
+      <ExecutionDescription>Uic'ing %(Identity)...</ExecutionDescription>
+      <QtUicDir>$(ProjectDir)</QtUicDir>
+      <QtUicFileName>ui_%(Filename).h</QtUicFileName>
+    </QtUic>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;..\..\libs\VST3SDK;..\..\libs\VST3SDK\public.sdk\source\vst2.x;..\..\libs\portaudio\include;..\..\libs\portmidi\porttime;..\..\libs\portmidi\pm_common;..\common;..\portaudio;..\portmidi;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;debug;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
+      <AssemblerListingLocation>debug\</AssemblerListingLocation>
+      <BrowseInformation>false</BrowseInformation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4577;4467;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ForcedIncludeFiles>..\common\precomp.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>..\common\precomp.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)\VstBoard.pch</PrecompiledHeaderOutputFile>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;APP_NAME="VstBoard";APP_VERSION_MAJOR=0;APP_VERSION_MINOR=6;APP_VERSION_BUILD=0;APP_VERSION_PATCH=0;VSTSDK;DEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <WarningLevel>Level3</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>winmm.lib;user32.lib;advapi32.lib;ole32.lib;setupapi.lib;dsound.lib;common.lib;portaudio.lib;portmidi.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\ATLMFC\lib\x86;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\lib\x86;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x86;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\ucrt\x86;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\um\x86;C:\dev\vstboard\src\common\debug;C:\dev\vstboard\src\portaudio\debug;C:\dev\vstboard\src\portmidi\debug;C:\opensslx86\lib;C:\Utils\my_sql\mysql-5.7.25-win32\lib;C:\Utils\postgresqlx86\pgsql\lib</AdditionalLibraryDirectories>
+      <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
+      <DataExecutionPrevention>true</DataExecutionPrevention>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreImportLibrary>true</IgnoreImportLibrary>
+      <OutputFile>$(OutDir)\VstBoard.exe</OutputFile>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <SubSystem>Windows</SubSystem>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Link>
+    <Midl>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+      <WarningLevel>0</WarningLevel>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;APP_NAME=\"VstBoard\";APP_VERSION_MAJOR=0;APP_VERSION_MINOR=6;APP_VERSION_BUILD=0;APP_VERSION_PATCH=0;VSTSDK;DEBUG;_CRT_SECURE_NO_WARNINGS;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <QtRcc>
+      <Compression>default</Compression>
+      <InitFuncName>resources</InitFuncName>
+      <ExecutionDescription>Rcc'ing %(Identity)...</ExecutionDescription>
+      <QtRccDir>$(Configuration)</QtRccDir>
+      <QtRccFileName>qrc_%(Filename).cpp</QtRccFileName>
+    </QtRcc>
+    <QtMoc>
+      <CompilerFlavor>msvc</CompilerFlavor>
+      <Include>./$(Configuration)/moc_predefs.h</Include>
+      <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>
+      <DynamicSource>output</DynamicSource>
+      <QtMocDir>$(Configuration)</QtMocDir>
+      <QtMocFileName>moc_%(Filename).cpp</QtMocFileName>
+    </QtMoc>
+    <QtUic>
+      <ExecutionDescription>Uic'ing %(Identity)...</ExecutionDescription>
+      <QtUicDir>$(ProjectDir)</QtUicDir>
+      <QtUicFileName>ui_%(Filename).h</QtUicFileName>
+    </QtUic>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="connectables\audiodevice.cpp" />
+    <ClCompile Include="connectables\audiodevicein.cpp" />
+    <ClCompile Include="connectables\audiodeviceout.cpp" />
+    <ClCompile Include="audiodevices.cpp" />
+    <ClCompile Include="views\configdialoghost.cpp" />
+    <ClCompile Include="models\listaudiointerfacesmodel.cpp" />
+    <ClCompile Include="models\listmidiinterfacesmodel.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="mainhosthost.cpp" />
+    <ClCompile Include="mainwindowhost.cpp" />
+    <ClCompile Include="connectables\mididevice.cpp" />
+    <ClCompile Include="mididevices.cpp" />
+    <ClCompile Include="views\mmeconfigdialog.cpp" />
+    <ClCompile Include="connectables\objectfactoryhost.cpp" />
+    <ClCompile Include="views\wasapiconfigdialog.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="connectables\audiodevice.h">
+    </QtMoc>
+    <QtMoc Include="connectables\audiodevicein.h">
+    </QtMoc>
+    <QtMoc Include="connectables\audiodeviceout.h">
+    </QtMoc>
+    <QtMoc Include="audiodevices.h">
+    </QtMoc>
+    <ClInclude Include="views\configdialoghost.h" />
+    <QtMoc Include="models\listaudiointerfacesmodel.h">
+    </QtMoc>
+    <ClInclude Include="models\listmidiinterfacesmodel.h" />
+    <QtMoc Include="mainhosthost.h">
+    </QtMoc>
+    <QtMoc Include="mainwindowhost.h">
+    </QtMoc>
+    <QtMoc Include="connectables\mididevice.h">
+    </QtMoc>
+    <QtMoc Include="mididevices.h">
+    </QtMoc>
+    <QtMoc Include="views\mmeconfigdialog.h">
+    </QtMoc>
+    <ClInclude Include="connectables\objectfactoryhost.h" />
+    <CustomBuild Include="..\common\precomp.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo /*-------------------------------------------------------------------- &gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * Precompiled header source file used by Visual Studio.NET to generate&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * the .pch file.&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo *&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * Due to issues with the dependencies checker within the IDE, it&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * sometimes fails to recompile the PCH file, if we force the IDE to&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * create the PCH file directly from the header file.&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo *&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * This file is auto-generated by qmake since no PRECOMPILED_SOURCE was&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * specified, and is used as the common stdafx.cpp. The file is only&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * generated when creating .vcxproj project files, and is not used for&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * command line compilations by nmake.&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo *&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * WARNING: All changes made in this file will be lost.&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo --------------------------------------------------------------------*/&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo #include "precomp.h"&gt;&gt;..\common\precomp.h.cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating precompiled header source file '..\common\precomp.h.cpp' ...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\common\precomp.h.cpp;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo /*-------------------------------------------------------------------- &gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * Precompiled header source file used by Visual Studio.NET to generate&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * the .pch file.&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo *&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * Due to issues with the dependencies checker within the IDE, it&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * sometimes fails to recompile the PCH file, if we force the IDE to&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * create the PCH file directly from the header file.&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo *&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * This file is auto-generated by qmake since no PRECOMPILED_SOURCE was&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * specified, and is used as the common stdafx.cpp. The file is only&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * generated when creating .vcxproj project files, and is not used for&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * command line compilations by nmake.&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo *&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * WARNING: All changes made in this file will be lost.&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo --------------------------------------------------------------------*/&gt;&gt;..\common\precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo #include "precomp.h"&gt;&gt;..\common\precomp.h.cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating precompiled header source file '..\common\precomp.h.cpp' ...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\common\precomp.h.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <QtMoc Include="views\wasapiconfigdialog.h">
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="debug\moc_predefs.h.cbt">
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\features\data\dummy.cpp;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cl -Bx"$(QTDIR)\bin\qmake.exe" -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -Zi -MDd -W3 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 -wd4577 -wd4467 -E ..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\features\data\dummy.cpp 2&gt;NUL &gt;debug\moc_predefs.h</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generate moc_predefs.h</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">debug\moc_predefs.h;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="release\moc_predefs.h.cbt">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\features\data\dummy.cpp;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cl -Bx"$(QTDIR)\bin\qmake.exe" -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -O2 -MD -GL -W3 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 -wd4577 -wd4467 -E ..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\features\data\dummy.cpp 2&gt;NUL &gt;release\moc_predefs.h</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generate moc_predefs.h</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">release\moc_predefs.h;%(Outputs)</Outputs>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </CustomBuild>
+    <ClCompile Include="..\common\precomp.h.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NOINHERIT)</ForcedIncludeFiles>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">precomp.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NOINHERIT)</ForcedIncludeFiles>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">precomp.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="views\mmeconfigdialog.ui">
+    </QtUic>
+    <QtUic Include="views\wasapiconfigdialog.ui">
+    </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resources\dark\actions\24\arrow-down.svg" />
+    <None Include="..\resources\light\actions\24\arrow-down.svg" />
+    <None Include="..\resources\dark\actions\24\arrow-up.svg" />
+    <None Include="..\resources\light\actions\24\arrow-up.svg" />
+    <None Include="..\resources\asio.png" />
+    <None Include="..\resources\translations\common_fr.qm" />
+    <None Include="..\resources\translations\common_fr.ts" />
+    <None Include="..\resources\dark\actions\24\configure.svg" />
+    <None Include="..\resources\light\actions\24\configure.svg" />
+    <None Include="..\resources\dark\actions\24\dash.svg" />
+    <None Include="..\resources\light\actions\24\dash.svg" />
+    <None Include="..\resources\dark\actions\24\document-new.svg" />
+    <None Include="..\resources\light\actions\24\document-new.svg" />
+    <None Include="..\resources\dark\actions\24\document-open.svg" />
+    <None Include="..\resources\light\actions\24\document-open.svg" />
+    <None Include="..\resources\dark\actions\24\document-save-as.svg" />
+    <None Include="..\resources\light\actions\24\document-save-as.svg" />
+    <None Include="..\resources\dark\actions\24\document-save.svg" />
+    <None Include="..\resources\light\actions\24\document-save.svg" />
+    <None Include="..\resources\dark\actions\24\edit-copy.svg" />
+    <None Include="..\resources\light\actions\24\edit-copy.svg" />
+    <None Include="..\resources\dark\actions\24\edit-cut.svg" />
+    <None Include="..\resources\light\actions\24\edit-cut.svg" />
+    <None Include="..\resources\dark\actions\24\edit-paste-style.svg" />
+    <None Include="..\resources\light\actions\24\edit-paste-style.svg" />
+    <None Include="..\resources\dark\actions\24\edit-paste.svg" />
+    <None Include="..\resources\light\actions\24\edit-paste.svg" />
+    <None Include="..\resources\dark\actions\24\edit-redo.svg" />
+    <None Include="..\resources\light\actions\24\edit-redo.svg" />
+    <None Include="..\resources\dark\actions\24\edit-rename.svg" />
+    <None Include="..\resources\light\actions\24\edit-rename.svg" />
+    <None Include="..\resources\dark\actions\24\edit-undo-history.svg" />
+    <None Include="..\resources\light\actions\24\edit-undo-history.svg" />
+    <None Include="..\resources\dark\actions\24\edit-undo.svg" />
+    <None Include="..\resources\light\actions\24\edit-undo.svg" />
+    <None Include="..\resources\dark\actions\24\folder-new.svg" />
+    <None Include="..\resources\light\actions\24\folder-new.svg" />
+    <None Include="..\resources\dark\actions\24\games-hint.svg" />
+    <None Include="..\resources\light\actions\24\games-hint.svg" />
+    <None Include="..\resources\dark\actions\24\gtk-stop.svg" />
+    <None Include="..\resources\light\actions\24\gtk-stop.svg" />
+    <None Include="..\resources\dark\actions\24\help-about.svg" />
+    <None Include="..\resources\light\actions\24\help-about.svg" />
+    <None Include="..\resources\dark\index.theme" />
+    <None Include="..\resources\light\index.theme" />
+    <None Include="..\resources\dark\actions\24\key-enter.svg" />
+    <None Include="..\resources\light\actions\24\key-enter.svg" />
+    <None Include="..\resources\dark\actions\24\layer-visible-on.svg" />
+    <None Include="..\resources\light\actions\24\layer-visible-on.svg" />
+    <None Include="..\resources\lgplv3-88x31.png" />
+    <None Include="logo2.png" />
+    <None Include="..\resources\dark\actions\24\object-locked.svg" />
+    <None Include="..\resources\light\actions\24\object-locked.svg" />
+    <None Include="..\resources\dark\actions\24\object-unlocked.svg" />
+    <None Include="..\resources\light\actions\24\object-unlocked.svg" />
+    <None Include="..\resources\dark\actions\24\plugins.svg" />
+    <None Include="..\resources\light\actions\24\plugins.svg" />
+    <None Include="..\resources\dark\actions\24\plus.svg" />
+    <None Include="..\resources\light\actions\24\plus.svg" />
+    <None Include="..\resources\dark\actions\24\process-stop.svg" />
+    <None Include="..\resources\light\actions\24\process-stop.svg" />
+    <None Include="..\resources\translations\qt_fr.qm" />
+    <QtRcc Include="..\resources\resources.qrc">
+    </QtRcc>
+    <None Include="..\resources\dark\actions\24\view-fullscreen.svg" />
+    <None Include="..\resources\light\actions\24\view-fullscreen.svg" />
+    <None Include="..\resources\dark\actions\24\view-refresh.svg" />
+    <None Include="..\resources\light\actions\24\view-refresh.svg" />
+    <None Include="..\resources\vst.png" />
+    <None Include="..\resources\vst3.png" />
+    <None Include="..\resources\vstboard" />
+    <None Include="..\resources\vstboard16_8.png" />
+    <None Include="..\resources\vstboard24_8.png" />
+    <None Include="..\resources\vstboard32_8.png" />
+    <None Include="..\resources\vstboard48_8.png" />
+    <None Include="..\resources\vstboard64_8.png" />
+    <None Include="..\resources\translations\vstboard_fr.qm" />
+    <None Include="..\resources\translations\vstboard_fr.ts" />
+    <None Include="..\resources\translations\vstdll_fr.qm" />
+    <None Include="..\resources\translations\vstdll_fr.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="vstboard.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
+    <Import Project="$(QtMsBuild)\qt.targets" />
+  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
+</Project>

@@ -293,7 +293,7 @@ FORMS += \
 
 PRECOMPILED_HEADER = precomp.h
 
-TRANSLATIONS = ../resources/translations/common_fr.ts
+#TRANSLATIONS = ../resources/translations/common_fr.ts
 
 RESOURCES += \
     ../resources/resources.qrc

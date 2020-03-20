@@ -1,0 +1,703 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{AB0CF438-FEFB-33C6-B45C-D4633C2DD63B}</ProjectGuid>
+    <RootNamespace>common</RootNamespace>
+    <Keyword>QtVS_v302</Keyword>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <PlatformToolset>v141</PlatformToolset>
+    <OutputDirectory>release\</OutputDirectory>
+    <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
+    <CharacterSet>NotSet</CharacterSet>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <IntermediateDirectory>release\</IntermediateDirectory>
+    <PrimaryOutput>common</PrimaryOutput>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <PlatformToolset>v141</PlatformToolset>
+    <OutputDirectory>debug\</OutputDirectory>
+    <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
+    <CharacterSet>MultiByte</CharacterSet>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <IntermediateDirectory>debug\</IntermediateDirectory>
+    <PrimaryOutput>common</PrimaryOutput>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup Condition="'$(QtMsBuild)'=='' or !Exists('$(QtMsBuild)\qt.targets')">
+    <QtMsBuild>$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
+  </PropertyGroup>
+  <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
+    <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />
+  </Target>
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
+    <Import Project="$(QtMsBuild)\qt_defaults.props" />
+  </ImportGroup>
+  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <QtInstall>msvc2017</QtInstall>
+    <QtModules>core;gui;widgets</QtModules>
+  </PropertyGroup>
+  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <QtInstall>msvc2017</QtInstall>
+    <QtModules>core;gui;widgets</QtModules>
+  </PropertyGroup>
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.props')">
+    <Import Project="$(QtMsBuild)\qt.props" />
+  </ImportGroup>
+  <PropertyGroup>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Platform)\$(Configuration)\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">common</TargetName>
+    <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</IgnoreImportLibrary>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Platform)\$(Configuration)\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">common</TargetName>
+    <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</IgnoreImportLibrary>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;..\..\libs\VST3SDK;..\..\libs\VST3SDK\public.sdk\source\vst2.x;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets\5.14.1\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1\QtCore;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;release;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
+      <AssemblerListingLocation>release\</AssemblerListingLocation>
+      <BrowseInformation>false</BrowseInformation>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <DisableSpecificWarnings>4577;4467;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ForcedIncludeFiles>precomp.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>precomp.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)\common.pch</PrecompiledHeaderOutputFile>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;NDEBUG;APP_NAME="VstBoard";APP_VERSION_MAJOR=0;APP_VERSION_MINOR=6;APP_VERSION_BUILD=0;APP_VERSION_PATCH=0;VSTSDK;RELEASE;_CRT_SECURE_NO_WARNINGS;QT_NO_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <WarningLevel>Level3</WarningLevel>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)\common.lib</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Lib>
+    <Midl>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+      <WarningLevel>0</WarningLevel>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;NDEBUG;APP_NAME=\"VstBoard\";APP_VERSION_MAJOR=0;APP_VERSION_MINOR=6;APP_VERSION_BUILD=0;APP_VERSION_PATCH=0;VSTSDK;RELEASE;_CRT_SECURE_NO_WARNINGS;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <QtMoc>
+      <CompilerFlavor>msvc</CompilerFlavor>
+      <Include>./$(Configuration)/moc_predefs.h</Include>
+      <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>
+      <DynamicSource>output</DynamicSource>
+      <QtMocDir>$(Configuration)</QtMocDir>
+      <QtMocFileName>moc_%(Filename).cpp</QtMocFileName>
+    </QtMoc>
+    <QtRcc>
+      <InitFuncName>resources</InitFuncName>
+      <Compression>default</Compression>
+      <ExecutionDescription>Rcc'ing %(Identity)...</ExecutionDescription>
+      <QtRccDir>$(Configuration)</QtRccDir>
+      <QtRccFileName>qrc_%(Filename).cpp</QtRccFileName>
+    </QtRcc>
+    <QtUic>
+      <ExecutionDescription>Uic'ing %(Identity)...</ExecutionDescription>
+      <QtUicDir>$(ProjectDir)</QtUicDir>
+      <QtUicFileName>ui_%(Filename).h</QtUicFileName>
+    </QtUic>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;..\..\libs\VST3SDK;..\..\libs\VST3SDK\public.sdk\source\vst2.x;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets\5.14.1\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1\QtCore;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;debug;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
+      <AssemblerListingLocation>debug\</AssemblerListingLocation>
+      <BrowseInformation>false</BrowseInformation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4577;4467;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ForcedIncludeFiles>precomp.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>precomp.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)\common.pch</PrecompiledHeaderOutputFile>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;APP_NAME="VstBoard";APP_VERSION_MAJOR=0;APP_VERSION_MINOR=6;APP_VERSION_BUILD=0;APP_VERSION_PATCH=0;VSTSDK;DEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <WarningLevel>Level3</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)\common.lib</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Lib>
+    <Midl>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+      <WarningLevel>0</WarningLevel>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;APP_NAME=\"VstBoard\";APP_VERSION_MAJOR=0;APP_VERSION_MINOR=6;APP_VERSION_BUILD=0;APP_VERSION_PATCH=0;VSTSDK;DEBUG;_CRT_SECURE_NO_WARNINGS;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <QtMoc>
+      <CompilerFlavor>msvc</CompilerFlavor>
+      <Include>./$(Configuration)/moc_predefs.h</Include>
+      <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>
+      <DynamicSource>output</DynamicSource>
+      <QtMocDir>$(Configuration)</QtMocDir>
+      <QtMocFileName>moc_%(Filename).cpp</QtMocFileName>
+    </QtMoc>
+    <QtRcc>
+      <Compression>default</Compression>
+      <InitFuncName>resources</InitFuncName>
+      <ExecutionDescription>Rcc'ing %(Identity)...</ExecutionDescription>
+      <QtRccDir>$(Configuration)</QtRccDir>
+      <QtRccFileName>qrc_%(Filename).cpp</QtRccFileName>
+    </QtRcc>
+    <QtUic>
+      <ExecutionDescription>Uic'ing %(Identity)...</ExecutionDescription>
+      <QtUicDir>$(ProjectDir)</QtUicDir>
+      <QtUicFileName>ui_%(Filename).h</QtUicFileName>
+    </QtUic>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="views\aboutdialog.cpp" />
+    <ClCompile Include="audiobuffer.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst2.x\audioeffect.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst2.x\audioeffectx.cpp" />
+    <ClCompile Include="connectables\audiopin.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\base\source\baseiids.cpp" />
+    <ClCompile Include="connectables\bridge.cpp" />
+    <ClCompile Include="connectables\bridgepinin.cpp" />
+    <ClCompile Include="connectables\bridgepinout.cpp" />
+    <ClCompile Include="sceneview\bridgepinview.cpp" />
+    <ClCompile Include="sceneview\bridgeview.cpp" />
+    <ClCompile Include="connectables\buffer.cpp" />
+    <ClCompile Include="views\buttonswidget.cpp" />
+    <ClCompile Include="connectables\cable.cpp" />
+    <ClCompile Include="sceneview\cableview.cpp" />
+    <ClCompile Include="vst\ceffect.cpp" />
+    <ClCompile Include="circularbuffer.cpp" />
+    <ClCompile Include="commands\comaddcable.cpp" />
+    <ClCompile Include="commands\comaddgroup.cpp" />
+    <ClCompile Include="commands\comaddobject.cpp" />
+    <ClCompile Include="commands\comaddpin.cpp" />
+    <ClCompile Include="commands\comaddprogram.cpp" />
+    <ClCompile Include="commands\comchangeautosave.cpp" />
+    <ClCompile Include="commands\comdisconnectpin.cpp" />
+    <ClCompile Include="commands\comprogramstate.cpp" />
+    <ClCompile Include="commands\comremovegroup.cpp" />
+    <ClCompile Include="commands\comremoveobject.cpp" />
+    <ClCompile Include="commands\comremovepin.cpp" />
+    <ClCompile Include="commands\comremoveprogram.cpp" />
+    <ClCompile Include="views\configdialog.cpp" />
+    <ClCompile Include="sceneview\connectableobjectview.cpp" />
+    <ClCompile Include="sceneview\connectablepinview.cpp" />
+    <ClCompile Include="connectables\connectioninfo.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\pluginterfaces\base\conststringtable.cpp" />
+    <ClCompile Include="connectables\container.cpp" />
+    <ClCompile Include="sceneview\containercontent.cpp" />
+    <ClCompile Include="connectables\containerprogram.cpp" />
+    <ClCompile Include="connectables\cursor.cpp" />
+    <ClCompile Include="sceneview\cursorview.cpp" />
+    <ClCompile Include="vst\cvsthost.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\base\source\fatomic.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\base\source\fdebug.cpp" />
+    <ClCompile Include="views\filebrowser.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\base\source\fobject.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\base\source\fstring.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\base\source\fthread.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\pluginterfaces\base\funknown.cpp" />
+    <ClCompile Include="views\gradientwidget.cpp" />
+    <ClCompile Include="views\gradientwidgethue.cpp" />
+    <ClCompile Include="views\grouplistview.cpp" />
+    <ClCompile Include="models\groupsprogramsmodel.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\hosting\hostclasses.cpp" />
+    <ClCompile Include="connectables\hostcontroller.cpp" />
+    <ClCompile Include="views\keybind.cpp" />
+    <ClCompile Include="views\keybindingdialog.cpp" />
+    <ClCompile Include="views\keypressedwidget.cpp" />
+    <ClCompile Include="views\listaudiodevicesview.cpp" />
+    <ClCompile Include="sceneview\listpinsview.cpp" />
+    <ClCompile Include="models\listtoolsmodel.cpp" />
+    <ClCompile Include="sceneview\maincontainerview.cpp" />
+    <ClCompile Include="views\maingraphicsview.cpp" />
+    <ClCompile Include="mainhost.cpp" />
+    <ClCompile Include="mainwindow.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\common\memorystream.cpp" />
+    <ClCompile Include="connectables\midipinin.cpp" />
+    <ClCompile Include="connectables\midipinout.cpp" />
+    <ClCompile Include="connectables\midisender.cpp" />
+    <ClCompile Include="connectables\miditoautomation.cpp" />
+    <ClCompile Include="sceneview\minmaxpinview.cpp" />
+    <ClCompile Include="views\modifierswidget.cpp" />
+    <ClCompile Include="msgcontroller.cpp" />
+    <ClCompile Include="msghandler.cpp" />
+    <ClCompile Include="msgobject.cpp" />
+    <ClCompile Include="renderer\node.cpp" />
+    <ClCompile Include="connectables\object.cpp" />
+    <ClCompile Include="sceneview\objectdropzone.cpp" />
+    <ClCompile Include="connectables\objectfactory.cpp" />
+    <ClCompile Include="connectables\objectinfo.cpp" />
+    <ClCompile Include="connectables\objectparameter.cpp" />
+    <ClCompile Include="connectables\objectprogram.cpp" />
+    <ClCompile Include="sceneview\objectview.cpp" />
+    <ClCompile Include="renderer\optimizemap.cpp" />
+    <ClCompile Include="renderer\optimizernode.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\hosting\parameterchanges.cpp" />
+    <ClCompile Include="connectables\parameterpin.cpp" />
+    <ClCompile Include="connectables\parameterpinin.cpp" />
+    <ClCompile Include="connectables\parameterpinout.cpp" />
+    <ClCompile Include="models\parkingmodel.cpp" />
+    <ClCompile Include="renderer\pathsolver.cpp" />
+    <ClCompile Include="connectables\pin.cpp" />
+    <ClCompile Include="connectables\pinslist.cpp" />
+    <ClCompile Include="sceneview\pinview.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\main\pluginfactoryvst3.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\common\pluginview.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\hosting\processdata.cpp" />
+    <ClCompile Include="views\proglistview.cpp" />
+    <ClCompile Include="views\programlist.cpp" />
+    <ClCompile Include="programmanager.cpp" />
+    <ClCompile Include="projectfile\projectfile.cpp" />
+    <ClCompile Include="renderer\renderer2.cpp" />
+    <ClCompile Include="renderer\renderernode2.cpp" />
+    <ClCompile Include="renderer\rendererthread2.cpp" />
+    <ClCompile Include="renderer\rendermap.cpp" />
+    <ClCompile Include="sceneview\sceneview.cpp" />
+    <ClCompile Include="renderer\semaphoreinverted.cpp" />
+    <ClCompile Include="settings.cpp" />
+    <ClCompile Include="renderer\solver.cpp" />
+    <ClCompile Include="renderer\solvernode.cpp" />
+    <ClCompile Include="views\splash.cpp" />
+    <ClCompile Include="renderer\updatedelays.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\base\source\updatehandler.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\pluginterfaces\base\ustring.cpp" />
+    <ClCompile Include="views\viewconfig.cpp" />
+    <ClCompile Include="views\viewconfigdialog.cpp" />
+    <ClCompile Include="vst\vst3host.cpp" />
+    <ClCompile Include="connectables\vst3plugin.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstaudioeffect.cpp" />
+    <ClCompile Include="vst\vstbank.cpp" />
+    <ClCompile Include="vst\vstbankbase.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstbus.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstcomponent.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstcomponentbase.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vsteditcontroller.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstinitiids.cpp" />
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstparameters.cpp" />
+    <ClCompile Include="connectables\vstplugin.cpp" />
+    <ClCompile Include="sceneview\vstpluginview.cpp" />
+    <ClCompile Include="views\vstpluginwindow.cpp" />
+    <ClCompile Include="vst\vstprogram.cpp" />
+    <ClCompile Include="views\vstshellselect.cpp" />
+    <ClCompile Include="renderer\waitall.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="views\aboutdialog.h">
+    </QtMoc>
+    <ClInclude Include="audiobuffer.h" />
+    <QtMoc Include="connectables\audiopin.h">
+    </QtMoc>
+    <QtMoc Include="connectables\bridge.h">
+    </QtMoc>
+    <ClInclude Include="connectables\bridgepinin.h" />
+    <ClInclude Include="connectables\bridgepinout.h" />
+    <QtMoc Include="sceneview\bridgepinview.h">
+    </QtMoc>
+    <QtMoc Include="sceneview\bridgeview.h">
+    </QtMoc>
+    <QtMoc Include="connectables\buffer.h">
+    </QtMoc>
+    <QtMoc Include="views\buttonswidget.h">
+    </QtMoc>
+    <ClInclude Include="connectables\cable.h" />
+    <QtMoc Include="sceneview\cableview.h">
+    </QtMoc>
+    <ClInclude Include="vst\ceffect.h" />
+    <ClInclude Include="circularbuffer.h" />
+    <ClInclude Include="commands\comaddcable.h" />
+    <ClInclude Include="commands\comaddgroup.h" />
+    <ClInclude Include="commands\comaddobject.h" />
+    <ClInclude Include="commands\comaddpin.h" />
+    <ClInclude Include="commands\comaddprogram.h" />
+    <ClInclude Include="commands\comchangeautosave.h" />
+    <ClInclude Include="commands\comdisconnectpin.h" />
+    <ClInclude Include="commands\comprogramstate.h" />
+    <ClInclude Include="commands\comremovegroup.h" />
+    <ClInclude Include="commands\comremoveobject.h" />
+    <ClInclude Include="commands\comremovepin.h" />
+    <ClInclude Include="commands\comremoveprogram.h" />
+    <QtMoc Include="views\configdialog.h">
+    </QtMoc>
+    <QtMoc Include="sceneview\connectableobjectview.h">
+    </QtMoc>
+    <QtMoc Include="sceneview\connectablepinview.h">
+    </QtMoc>
+    <ClInclude Include="connectables\connectioninfo.h" />
+    <ClInclude Include="vst\const.h" />
+    <QtMoc Include="connectables\container.h">
+    </QtMoc>
+    <QtMoc Include="sceneview\containercontent.h">
+    </QtMoc>
+    <ClInclude Include="connectables\containerprogram.h" />
+    <QtMoc Include="connectables\cursor.h">
+    </QtMoc>
+    <QtMoc Include="sceneview\cursorview.h">
+    </QtMoc>
+    <ClInclude Include="vst\cvsthost.h" />
+    <QtMoc Include="views\filebrowser.h">
+    </QtMoc>
+    <ClInclude Include="projectfile\fileversion.h" />
+    <ClInclude Include="globals.h" />
+    <QtMoc Include="views\gradientwidget.h">
+    </QtMoc>
+    <QtMoc Include="views\gradientwidgethue.h">
+    </QtMoc>
+    <QtMoc Include="views\grouplistview.h">
+    </QtMoc>
+    <QtMoc Include="models\groupsprogramsmodel.h">
+    </QtMoc>
+    <QtMoc Include="connectables\hostcontroller.h">
+    </QtMoc>
+    <QtMoc Include="views\keybind.h">
+    </QtMoc>
+    <QtMoc Include="views\keybindingdialog.h">
+    </QtMoc>
+    <QtMoc Include="views\keypressedwidget.h">
+    </QtMoc>
+    <QtMoc Include="views\listaudiodevicesview.h">
+    </QtMoc>
+    <ClInclude Include="sceneview\listpinsview.h" />
+    <ClInclude Include="models\listtoolsmodel.h" />
+    <QtMoc Include="sceneview\maincontainerview.h">
+    </QtMoc>
+    <QtMoc Include="views\maingraphicsview.h">
+    </QtMoc>
+    <QtMoc Include="mainhost.h">
+    </QtMoc>
+    <QtMoc Include="mainwindow.h">
+    </QtMoc>
+    <ClInclude Include="connectables\midipinin.h" />
+    <ClInclude Include="connectables\midipinout.h" />
+    <QtMoc Include="connectables\midisender.h">
+    </QtMoc>
+    <QtMoc Include="connectables\miditoautomation.h">
+    </QtMoc>
+    <QtMoc Include="sceneview\minmaxpinview.h">
+    </QtMoc>
+    <QtMoc Include="views\modifierswidget.h">
+    </QtMoc>
+    <ClInclude Include="msgcontroller.h" />
+    <ClInclude Include="msghandler.h" />
+    <ClInclude Include="msgobject.h" />
+    <ClInclude Include="renderer\node.h" />
+    <QtMoc Include="connectables\object.h">
+    </QtMoc>
+    <QtMoc Include="sceneview\objectdropzone.h">
+    </QtMoc>
+    <QtMoc Include="connectables\objectfactory.h">
+    </QtMoc>
+    <ClInclude Include="connectables\objectinfo.h" />
+    <ClInclude Include="connectables\objectparameter.h" />
+    <ClInclude Include="connectables\objectprogram.h" />
+    <QtMoc Include="sceneview\objectview.h">
+    </QtMoc>
+    <ClInclude Include="renderer\optimizemap.h" />
+    <ClInclude Include="renderer\optimizernode.h" />
+    <QtMoc Include="connectables\parameterpin.h">
+    </QtMoc>
+    <ClInclude Include="connectables\parameterpinin.h" />
+    <ClInclude Include="connectables\parameterpinout.h" />
+    <ClInclude Include="models\parkingmodel.h" />
+    <QtMoc Include="renderer\pathsolver.h">
+    </QtMoc>
+    <QtMoc Include="connectables\pin.h">
+    </QtMoc>
+    <QtMoc Include="connectables\pinslist.h">
+    </QtMoc>
+    <QtMoc Include="sceneview\pinview.h">
+    </QtMoc>
+    <CustomBuild Include="precomp.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo /*-------------------------------------------------------------------- &gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * Precompiled header source file used by Visual Studio.NET to generate&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * the .pch file.&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo *&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * Due to issues with the dependencies checker within the IDE, it&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * sometimes fails to recompile the PCH file, if we force the IDE to&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * create the PCH file directly from the header file.&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo *&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * This file is auto-generated by qmake since no PRECOMPILED_SOURCE was&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * specified, and is used as the common stdafx.cpp. The file is only&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * generated when creating .vcxproj project files, and is not used for&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * command line compilations by nmake.&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo *&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * WARNING: All changes made in this file will be lost.&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo --------------------------------------------------------------------*/&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo #include "precomp.h"&gt;&gt;precomp.h.cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating precompiled header source file 'precomp.h.cpp' ...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">precomp.h.cpp;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo /*-------------------------------------------------------------------- &gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * Precompiled header source file used by Visual Studio.NET to generate&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * the .pch file.&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo *&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * Due to issues with the dependencies checker within the IDE, it&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * sometimes fails to recompile the PCH file, if we force the IDE to&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * create the PCH file directly from the header file.&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo *&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * This file is auto-generated by qmake since no PRECOMPILED_SOURCE was&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * specified, and is used as the common stdafx.cpp. The file is only&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * generated when creating .vcxproj project files, and is not used for&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * command line compilations by nmake.&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo *&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo * WARNING: All changes made in this file will be lost.&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo --------------------------------------------------------------------*/&gt;&gt;precomp.h.cpp
+if errorlevel 1 goto VCEnd
+echo #include "precomp.h"&gt;&gt;precomp.h.cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating precompiled header source file 'precomp.h.cpp' ...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">precomp.h.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <QtMoc Include="views\proglistview.h">
+    </QtMoc>
+    <QtMoc Include="views\programlist.h">
+    </QtMoc>
+    <QtMoc Include="programmanager.h">
+    </QtMoc>
+    <QtMoc Include="projectfile\projectfile.h">
+    </QtMoc>
+    <QtMoc Include="renderer\renderer2.h">
+    </QtMoc>
+    <ClInclude Include="renderer\renderernode2.h" />
+    <QtMoc Include="renderer\rendererthread2.h">
+    </QtMoc>
+    <ClInclude Include="renderer\rendermap.h" />
+    <QtMoc Include="sceneview\sceneview.h">
+    </QtMoc>
+    <ClInclude Include="renderer\semaphoreinverted.h" />
+    <QtMoc Include="settings.h">
+    </QtMoc>
+    <ClInclude Include="renderer\solver.h" />
+    <ClInclude Include="renderer\solvernode.h" />
+    <QtMoc Include="views\splash.h">
+    </QtMoc>
+    <ClInclude Include="renderer\updatedelays.h" />
+    <QtMoc Include="views\viewconfig.h">
+    </QtMoc>
+    <QtMoc Include="views\viewconfigdialog.h">
+    </QtMoc>
+    <ClInclude Include="vst\vst3host.h" />
+    <QtMoc Include="connectables\vst3plugin.h">
+    </QtMoc>
+    <ClInclude Include="vst\vstbank.h" />
+    <ClInclude Include="vst\vstbankbase.h" />
+    <QtMoc Include="connectables\vstplugin.h">
+    </QtMoc>
+    <QtMoc Include="sceneview\vstpluginview.h">
+    </QtMoc>
+    <QtMoc Include="views\vstpluginwindow.h">
+    </QtMoc>
+    <ClInclude Include="vst\vstprogram.h" />
+    <QtMoc Include="views\vstshellselect.h">
+    </QtMoc>
+    <ClInclude Include="renderer\waitall.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="debug\moc_predefs.h.cbt">
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\features\data\dummy.cpp;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cl -Bx"$(QTDIR)\bin\qmake.exe" -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -Zi -MDd -W3 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 -wd4577 -wd4467 -E ..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\features\data\dummy.cpp 2&gt;NUL &gt;debug\moc_predefs.h</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generate moc_predefs.h</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">debug\moc_predefs.h;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="release\moc_predefs.h.cbt">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\features\data\dummy.cpp;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cl -Bx"$(QTDIR)\bin\qmake.exe" -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -O2 -MD -GL -W3 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 -wd4577 -wd4467 -E ..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\features\data\dummy.cpp 2&gt;NUL &gt;release\moc_predefs.h</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generate moc_predefs.h</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">release\moc_predefs.h;%(Outputs)</Outputs>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </CustomBuild>
+    <ClCompile Include="precomp.h.cpp">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NOINHERIT)</ForcedIncludeFiles>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">precomp.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NOINHERIT)</ForcedIncludeFiles>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">precomp.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="views\aboutdialog.ui">
+    </QtUic>
+    <QtUic Include="views\buttonswidget.ui">
+    </QtUic>
+    <QtUic Include="views\configdialog.ui">
+    </QtUic>
+    <QtUic Include="views\filebrowser.ui">
+    </QtUic>
+    <QtUic Include="views\keybindingdialog.ui">
+    </QtUic>
+    <QtUic Include="mainwindow.ui">
+    </QtUic>
+    <QtUic Include="views\modifierswidget.ui">
+    </QtUic>
+    <QtUic Include="views\programlist.ui">
+    </QtUic>
+    <QtUic Include="views\splash.ui">
+    </QtUic>
+    <QtUic Include="views\viewconfigdialog.ui">
+    </QtUic>
+    <QtUic Include="views\vstpluginwindow.ui">
+    </QtUic>
+    <QtUic Include="views\vstshellselect.ui">
+    </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resources\dark\actions\24\arrow-down.svg" />
+    <None Include="..\resources\light\actions\24\arrow-down.svg" />
+    <None Include="..\resources\dark\actions\24\arrow-up.svg" />
+    <None Include="..\resources\light\actions\24\arrow-up.svg" />
+    <None Include="..\resources\asio.png" />
+    <None Include="..\resources\translations\common_fr.qm" />
+    <None Include="..\resources\translations\common_fr.ts" />
+    <None Include="..\resources\dark\actions\24\configure.svg" />
+    <None Include="..\resources\light\actions\24\configure.svg" />
+    <None Include="..\resources\dark\actions\24\dash.svg" />
+    <None Include="..\resources\light\actions\24\dash.svg" />
+    <None Include="..\resources\dark\actions\24\document-new.svg" />
+    <None Include="..\resources\light\actions\24\document-new.svg" />
+    <None Include="..\resources\dark\actions\24\document-open.svg" />
+    <None Include="..\resources\light\actions\24\document-open.svg" />
+    <None Include="..\resources\dark\actions\24\document-save-as.svg" />
+    <None Include="..\resources\light\actions\24\document-save-as.svg" />
+    <None Include="..\resources\dark\actions\24\document-save.svg" />
+    <None Include="..\resources\light\actions\24\document-save.svg" />
+    <None Include="..\resources\dark\actions\24\edit-copy.svg" />
+    <None Include="..\resources\light\actions\24\edit-copy.svg" />
+    <None Include="..\resources\dark\actions\24\edit-cut.svg" />
+    <None Include="..\resources\light\actions\24\edit-cut.svg" />
+    <None Include="..\resources\dark\actions\24\edit-paste-style.svg" />
+    <None Include="..\resources\light\actions\24\edit-paste-style.svg" />
+    <None Include="..\resources\dark\actions\24\edit-paste.svg" />
+    <None Include="..\resources\light\actions\24\edit-paste.svg" />
+    <None Include="..\resources\dark\actions\24\edit-redo.svg" />
+    <None Include="..\resources\light\actions\24\edit-redo.svg" />
+    <None Include="..\resources\dark\actions\24\edit-rename.svg" />
+    <None Include="..\resources\light\actions\24\edit-rename.svg" />
+    <None Include="..\resources\dark\actions\24\edit-undo-history.svg" />
+    <None Include="..\resources\light\actions\24\edit-undo-history.svg" />
+    <None Include="..\resources\dark\actions\24\edit-undo.svg" />
+    <None Include="..\resources\light\actions\24\edit-undo.svg" />
+    <None Include="..\resources\dark\actions\24\folder-new.svg" />
+    <None Include="..\resources\light\actions\24\folder-new.svg" />
+    <None Include="..\resources\dark\actions\24\games-hint.svg" />
+    <None Include="..\resources\light\actions\24\games-hint.svg" />
+    <None Include="..\resources\dark\actions\24\gtk-stop.svg" />
+    <None Include="..\resources\light\actions\24\gtk-stop.svg" />
+    <None Include="..\resources\dark\actions\24\help-about.svg" />
+    <None Include="..\resources\light\actions\24\help-about.svg" />
+    <None Include="..\resources\dark\index.theme" />
+    <None Include="..\resources\light\index.theme" />
+    <None Include="..\resources\dark\actions\24\key-enter.svg" />
+    <None Include="..\resources\light\actions\24\key-enter.svg" />
+    <None Include="..\resources\dark\actions\24\layer-visible-on.svg" />
+    <None Include="..\resources\light\actions\24\layer-visible-on.svg" />
+    <None Include="..\resources\lgplv3-88x31.png" />
+    <None Include="logo2.png" />
+    <None Include="..\resources\dark\actions\24\object-locked.svg" />
+    <None Include="..\resources\light\actions\24\object-locked.svg" />
+    <None Include="..\resources\dark\actions\24\object-unlocked.svg" />
+    <None Include="..\resources\light\actions\24\object-unlocked.svg" />
+    <None Include="..\resources\dark\actions\24\plugins.svg" />
+    <None Include="..\resources\light\actions\24\plugins.svg" />
+    <None Include="..\resources\dark\actions\24\plus.svg" />
+    <None Include="..\resources\light\actions\24\plus.svg" />
+    <None Include="..\resources\dark\actions\24\process-stop.svg" />
+    <None Include="..\resources\light\actions\24\process-stop.svg" />
+    <None Include="..\resources\translations\qt_fr.qm" />
+    <QtRcc Include="..\resources\resources.qrc">
+    </QtRcc>
+    <None Include="..\resources\dark\actions\24\view-fullscreen.svg" />
+    <None Include="..\resources\light\actions\24\view-fullscreen.svg" />
+    <None Include="..\resources\dark\actions\24\view-refresh.svg" />
+    <None Include="..\resources\light\actions\24\view-refresh.svg" />
+    <None Include="..\resources\vst.png" />
+    <None Include="..\resources\vst3.png" />
+    <None Include="..\resources\vstboard" />
+    <None Include="..\resources\vstboard16_8.png" />
+    <None Include="..\resources\vstboard24_8.png" />
+    <None Include="..\resources\vstboard32_8.png" />
+    <None Include="..\resources\vstboard48_8.png" />
+    <None Include="..\resources\vstboard64_8.png" />
+    <None Include="..\resources\translations\vstboard_fr.qm" />
+    <None Include="..\resources\translations\vstboard_fr.ts" />
+    <None Include="..\resources\translations\vstdll_fr.qm" />
+    <None Include="..\resources\translations\vstdll_fr.ts" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
+    <Import Project="$(QtMsBuild)\qt.targets" />
+  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
+</Project>

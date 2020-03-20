@@ -67,7 +67,7 @@ FORMS += \
 
 PRECOMPILED_HEADER = ../common/precomp.h
 
-TRANSLATIONS = ../resources/translations/vstboard_fr.ts
+#TRANSLATIONS = ../resources/translations/vstboard_fr.ts
 
 RESOURCES += ../resources/resources.qrc
 

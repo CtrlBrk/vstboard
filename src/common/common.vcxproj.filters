@@ -1,0 +1,1194 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;moc;h;def;odl;idl;res;</Extensions>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;moc;h;def;odl;idl;res;</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="views\aboutdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="audiobuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst2.x\audioeffect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst2.x\audioeffectx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\audiopin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\base\source\baseiids.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\bridge.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\bridgepinin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\bridgepinout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneview\bridgepinview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneview\bridgeview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\buffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\buttonswidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\cable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneview\cableview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vst\ceffect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="circularbuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\comaddcable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\comaddgroup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\comaddobject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\comaddpin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\comaddprogram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\comchangeautosave.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\comdisconnectpin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\comprogramstate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\comremovegroup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\comremoveobject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\comremovepin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\comremoveprogram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\configdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneview\connectableobjectview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneview\connectablepinview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\connectioninfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\pluginterfaces\base\conststringtable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\container.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneview\containercontent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\containerprogram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\cursor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneview\cursorview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vst\cvsthost.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\base\source\fatomic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\base\source\fdebug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\filebrowser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\base\source\fobject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\base\source\fstring.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\base\source\fthread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\pluginterfaces\base\funknown.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\gradientwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\gradientwidgethue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\grouplistview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="models\groupsprogramsmodel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\hosting\hostclasses.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\hostcontroller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\keybind.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\keybindingdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\keypressedwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\listaudiodevicesview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneview\listpinsview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="models\listtoolsmodel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneview\maincontainerview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\maingraphicsview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mainhost.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mainwindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\common\memorystream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\midipinin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\midipinout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\midisender.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\miditoautomation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneview\minmaxpinview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\modifierswidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="msgcontroller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="msghandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="msgobject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\node.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\object.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneview\objectdropzone.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\objectfactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\objectinfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\objectparameter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\objectprogram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneview\objectview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\optimizemap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\optimizernode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\hosting\parameterchanges.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\parameterpin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\parameterpinin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\parameterpinout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="models\parkingmodel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\pathsolver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\pin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\pinslist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneview\pinview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\main\pluginfactoryvst3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\common\pluginview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\hosting\processdata.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\proglistview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\programlist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="programmanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="projectfile\projectfile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\renderer2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\renderernode2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\rendererthread2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\rendermap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneview\sceneview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\semaphoreinverted.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\solver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\solvernode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\splash.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\updatedelays.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\base\source\updatehandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\pluginterfaces\base\ustring.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\viewconfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\viewconfigdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vst\vst3host.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\vst3plugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstaudioeffect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vst\vstbank.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vst\vstbankbase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstbus.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstcomponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstcomponentbase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vsteditcontroller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstinitiids.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstparameters.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\vstplugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneview\vstpluginview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\vstpluginwindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vst\vstprogram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\vstshellselect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\waitall.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="views\aboutdialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="audiobuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="connectables\audiopin.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="connectables\bridge.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="connectables\bridgepinin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="connectables\bridgepinout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="sceneview\bridgepinview.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="sceneview\bridgeview.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="connectables\buffer.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="views\buttonswidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="connectables\cable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="sceneview\cableview.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="vst\ceffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="circularbuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\comaddcable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\comaddgroup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\comaddobject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\comaddpin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\comaddprogram.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\comchangeautosave.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\comdisconnectpin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\comprogramstate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\comremovegroup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\comremoveobject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\comremovepin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\comremoveprogram.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="views\configdialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="sceneview\connectableobjectview.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="sceneview\connectablepinview.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="connectables\connectioninfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vst\const.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="connectables\container.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="sceneview\containercontent.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="connectables\containerprogram.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="connectables\cursor.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="sceneview\cursorview.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="vst\cvsthost.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="views\filebrowser.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="projectfile\fileversion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="globals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="views\gradientwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="views\gradientwidgethue.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="views\grouplistview.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="models\groupsprogramsmodel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="connectables\hostcontroller.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="views\keybind.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="views\keybindingdialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="views\keypressedwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="views\listaudiodevicesview.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="sceneview\listpinsview.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="models\listtoolsmodel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="sceneview\maincontainerview.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="views\maingraphicsview.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="mainhost.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="mainwindow.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="connectables\midipinin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="connectables\midipinout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="connectables\midisender.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="connectables\miditoautomation.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="sceneview\minmaxpinview.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="views\modifierswidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="msgcontroller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="msghandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="msgobject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\node.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="connectables\object.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="sceneview\objectdropzone.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="connectables\objectfactory.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="connectables\objectinfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="connectables\objectparameter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="connectables\objectprogram.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="sceneview\objectview.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="renderer\optimizemap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\optimizernode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="connectables\parameterpin.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="connectables\parameterpinin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="connectables\parameterpinout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="models\parkingmodel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="renderer\pathsolver.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="connectables\pin.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="connectables\pinslist.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="sceneview\pinview.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <CustomBuild Include="precomp.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <QtMoc Include="views\proglistview.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="views\programlist.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="programmanager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="projectfile\projectfile.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="renderer\renderer2.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="renderer\renderernode2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="renderer\rendererthread2.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="renderer\rendermap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="sceneview\sceneview.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="renderer\semaphoreinverted.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="settings.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="renderer\solver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\solvernode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="views\splash.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="renderer\updatedelays.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="views\viewconfig.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="views\viewconfigdialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="vst\vst3host.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="connectables\vst3plugin.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="vst\vstbank.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vst\vstbankbase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="connectables\vstplugin.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="sceneview\vstpluginview.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="views\vstpluginwindow.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="vst\vstprogram.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="views\vstshellselect.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="renderer\waitall.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <CustomBuild Include="debug\moc_predefs.h.cbt">
+      <Filter>Generated Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="release\moc_predefs.h.cbt">
+      <Filter>Generated Files</Filter>
+    </CustomBuild>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <ClCompile Include="precomp.h.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="views\aboutdialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="views\buttonswidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="views\configdialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="views\filebrowser.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="views\keybindingdialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="mainwindow.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="views\modifierswidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="views\programlist.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="views\splash.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="views\viewconfigdialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="views\vstpluginwindow.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="views\vstshellselect.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resources\dark\actions\24\arrow-down.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\arrow-down.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\arrow-up.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\arrow-up.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\asio.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\translations\common_fr.qm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\translations\common_fr.ts">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\configure.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\configure.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\dash.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\dash.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\document-new.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\document-new.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\document-open.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\document-open.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\document-save-as.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\document-save-as.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\document-save.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\document-save.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\edit-copy.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\edit-copy.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\edit-cut.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\edit-cut.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\edit-paste-style.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\edit-paste-style.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\edit-paste.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\edit-paste.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\edit-redo.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\edit-redo.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\edit-rename.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\edit-rename.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\edit-undo-history.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\edit-undo-history.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\edit-undo.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\edit-undo.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\folder-new.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\folder-new.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\games-hint.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\games-hint.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\gtk-stop.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\gtk-stop.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\help-about.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\help-about.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\index.theme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\index.theme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\key-enter.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\key-enter.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\layer-visible-on.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\layer-visible-on.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\lgplv3-88x31.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="logo2.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\object-locked.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\object-locked.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\object-unlocked.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\object-unlocked.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\plugins.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\plugins.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\plus.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\plus.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\process-stop.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\process-stop.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\translations\qt_fr.qm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <QtRcc Include="..\resources\resources.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <None Include="..\resources\dark\actions\24\view-fullscreen.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\view-fullscreen.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\view-refresh.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\view-refresh.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\vst.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\vst3.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\vstboard">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\vstboard16_8.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\vstboard24_8.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\vstboard32_8.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\vstboard48_8.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\vstboard64_8.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\translations\vstboard_fr.qm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\translations\vstboard_fr.ts">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\translations\vstdll_fr.qm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\translations\vstdll_fr.ts">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

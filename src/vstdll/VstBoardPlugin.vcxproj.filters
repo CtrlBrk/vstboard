@@ -1,0 +1,453 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;moc;h;def;odl;idl;res;</Extensions>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;moc;h;def;odl;idl;res;</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="views\configdialogvst.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\hosting\eventlist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="factory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\base\source\fbuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\base\source\fstreamer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mainwindowvst.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="myvst2wrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\objectfactoryvst.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\qtwinmigrate\src\qmfcapp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\qtwinmigrate\src\qwinhost.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\qtwinmigrate\src\qwinwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="resizehandle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\base\source\timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vst.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vst2shell.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vst2wrapper\vst2wrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\vstaudiodevicein.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\vstaudiodeviceout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\vstautomation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vstboardcontroller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vstboardprocessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\vstmididevice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vsttest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="views\configdialogvst.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="gui.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="ids.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="mainwindowvst.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="myvst2wrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="connectables\objectfactoryvst.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <CustomBuild Include="..\common\precomp.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <ClInclude Include="..\..\libs\qtwinmigrate\src\qmfcapp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="..\..\libs\qtwinmigrate\src\qwinhost.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="..\..\libs\qtwinmigrate\src\qwinwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="resizehandle.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="vst.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vst2shell.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="connectables\vstaudiodevicein.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="connectables\vstaudiodeviceout.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="connectables\vstautomation.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="vstboardcontroller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="vstboardprocessor.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="connectables\vstmididevice.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="vsttest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    
+    
+    
+    
+    <CustomBuild Include="debug\moc_predefs.h.cbt">
+      <Filter>Generated Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="release\moc_predefs.h.cbt">
+      <Filter>Generated Files</Filter>
+    </CustomBuild>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <ClCompile Include="..\common\precomp.h.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    
+    
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resources\dark\actions\24\arrow-down.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\arrow-down.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\arrow-up.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\arrow-up.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\asio.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\translations\common_fr.qm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\translations\common_fr.ts">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\configure.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\configure.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\dash.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\dash.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\document-new.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\document-new.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\document-open.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\document-open.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\document-save-as.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\document-save-as.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\document-save.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\document-save.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\edit-copy.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\edit-copy.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\edit-cut.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\edit-cut.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\edit-paste-style.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\edit-paste-style.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\edit-paste.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\edit-paste.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\edit-redo.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\edit-redo.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\edit-rename.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\edit-rename.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\edit-undo-history.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\edit-undo-history.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\edit-undo.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\edit-undo.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\folder-new.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\folder-new.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\games-hint.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\games-hint.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\gtk-stop.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\gtk-stop.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\help-about.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\help-about.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\index.theme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\index.theme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\key-enter.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\key-enter.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\layer-visible-on.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\layer-visible-on.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\lgplv3-88x31.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="logo2.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\object-locked.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\object-locked.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\object-unlocked.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\object-unlocked.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\plugins.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\plugins.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\plus.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\plus.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\process-stop.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\process-stop.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\translations\qt_fr.qm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <QtRcc Include="..\resources\resources.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <None Include="..\resources\dark\actions\24\view-fullscreen.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\view-fullscreen.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\dark\actions\24\view-refresh.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\light\actions\24\view-refresh.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\vst.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\vst3.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\vstboard">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\vstboard16_8.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\vstboard24_8.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\vstboard32_8.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\vstboard48_8.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\vstboard64_8.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\translations\vstboard_fr.qm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\translations\vstboard_fr.ts">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\translations\vstdll_fr.qm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\translations\vstdll_fr.ts">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="vstdll.rc" />
+  </ItemGroup>
+</Project>

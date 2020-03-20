@@ -52,7 +52,7 @@ win32-g++ {
 
 win32-msvc* {
     DEFINES += _CRT_SECURE_NO_WARNINGS
-    INCLUDEPATH += $$quote($$(INCLUDE))
+  #  INCLUDEPATH += $$quote($$(INCLUDE))
     LIBS += -L$$quote($$(LIB))
  #   QMAKE_CFLAGS += -Fd$$top_destdir/$$TARGET
 
