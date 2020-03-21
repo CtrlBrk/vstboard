@@ -2,7 +2,9 @@
 #define VSTBANKBASE_H
 
 //#include "../precomp.h"
+#pragma warning ( push, 1 )
 #include "aeffeditor.h"
+#pragma warning ( pop )
 
 namespace vst
 {

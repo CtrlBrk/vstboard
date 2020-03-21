@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Generated Files">
@@ -117,15 +117,15 @@
     <ClInclude Include="views\configdialogvst.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="gui.h">
+    <CustomBuild Include="gui.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="ids.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="mainwindowvst.h">
+    <CustomBuild Include="mainwindowvst.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="myvst2wrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -138,75 +138,119 @@
     <ClInclude Include="..\..\libs\qtwinmigrate\src\qmfcapp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="..\..\libs\qtwinmigrate\src\qwinhost.h">
+    <CustomBuild Include="..\..\libs\qtwinmigrate\src\qwinhost.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="..\..\libs\qtwinmigrate\src\qwinwidget.h">
+    </CustomBuild>
+    <CustomBuild Include="..\..\libs\qtwinmigrate\src\qwinwidget.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="resizehandle.h">
+    </CustomBuild>
+    <CustomBuild Include="resizehandle.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="vst.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="vst2shell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="connectables\vstaudiodevicein.h">
+    <CustomBuild Include="connectables\vstaudiodevicein.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="connectables\vstaudiodeviceout.h">
+    </CustomBuild>
+    <CustomBuild Include="connectables\vstaudiodeviceout.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="connectables\vstautomation.h">
+    </CustomBuild>
+    <CustomBuild Include="connectables\vstautomation.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="vstboardcontroller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="vstboardprocessor.h">
+    <CustomBuild Include="vstboardprocessor.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="connectables\vstmididevice.h">
+    </CustomBuild>
+    <CustomBuild Include="connectables\vstmididevice.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="vsttest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    
-    
-    
-    
+    <ClCompile Include="debug\moc_gui.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_gui.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_mainwindowvst.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_mainwindowvst.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
     <CustomBuild Include="debug\moc_predefs.h.cbt">
       <Filter>Generated Files</Filter>
     </CustomBuild>
     <CustomBuild Include="release\moc_predefs.h.cbt">
       <Filter>Generated Files</Filter>
     </CustomBuild>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    <ClCompile Include="debug\moc_qwinhost.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_qwinhost.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_qwinwidget.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_qwinwidget.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_resizehandle.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_resizehandle.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_vstaudiodevicein.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_vstaudiodevicein.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_vstaudiodeviceout.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_vstaudiodeviceout.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_vstautomation.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_vstautomation.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_vstboardprocessor.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_vstboardprocessor.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_vstmididevice.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_vstmididevice.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\common\precomp.h.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    
-    
+    <ClCompile Include="debug\qrc_resources.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\qrc_resources.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resources\dark\actions\24\arrow-down.svg">
@@ -395,9 +439,9 @@
     <None Include="..\resources\translations\qt_fr.qm">
       <Filter>Resource Files</Filter>
     </None>
-    <QtRcc Include="..\resources\resources.qrc">
+    <CustomBuild Include="..\resources\resources.qrc">
       <Filter>Resource Files</Filter>
-    </QtRcc>
+    </CustomBuild>
     <None Include="..\resources\dark\actions\24\view-fullscreen.svg">
       <Filter>Resource Files</Filter>
     </None>

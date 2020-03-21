@@ -43,12 +43,12 @@ Container::Container(MainHost *myHost,int index, const ObjectInfo &info) :
     bridgeOut(0),
     bridgeSend(0),
     bridgeReturn(0),
+    containersParkingId(FixedObjId::ND),
     optimizerFlag(false),
     currentContainerProgram(0),
     cablesNode(QModelIndex()),
     progToSet(-1),
-    loadingMode(false),
-    containersParkingId(FixedObjId::ND)
+    loadingMode(false)
 {
     qDeleteAll(pinLists);
     pinLists.clear();
@@ -1120,7 +1120,8 @@ void Container::ReceiveMsg(const MsgObject &msg)
         int insertType = msg.prop[MsgObject::Type].toInt();
         QSharedPointer<Object> targetObj = myHost->objFactory->GetObjectFromId( GetIndex() );
 
-        QDataStream streamObj(&msg.prop[MsgObject::ObjectsToLoad].toByteArray(), QIODevice::ReadOnly);
+        QByteArray ba = msg.prop[MsgObject::ObjectsToLoad].toByteArray();
+        QDataStream streamObj(&ba, QIODevice::ReadOnly);
         while(!streamObj.atEnd()) {
             ObjectInfo newInfo;
             newInfo.fromStream(streamObj);

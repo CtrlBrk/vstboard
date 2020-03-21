@@ -28,10 +28,6 @@
 #include "mainhost.h"
 #include "buffer.h"
 
-#ifdef SCRIPTENGINE
-    #include "script.h"
-#endif
-
 #ifdef VSTSDK
     #include "vstplugin.h"
     #include "../vst/cvsthost.h"

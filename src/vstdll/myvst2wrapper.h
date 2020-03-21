@@ -18,7 +18,9 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 
+#pragma warning ( push, 1 )
 #include "public.sdk/source/vst/vst2wrapper/vst2wrapper.h"
+#pragma warning ( pop )
 
 #ifndef MYVST2WRAPPER_H
 #define MYVST2WRAPPER_H

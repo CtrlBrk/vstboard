@@ -27,11 +27,11 @@ namespace Connectables
 Buffer::Buffer(MainHost *host, int index, const ObjectInfo &info) :
     Object(host,index,ObjectInfo(NodeType::object, ObjType::Buffer, tr("Delay"))),
     delayChanged(false),
+    desiredSize(0),
     addedSize(0),
     offset(0),
     adjustDelay(0),
-    countWait(0),
-    desiredSize(0)
+    countWait(0)
 {
     QMutexLocker l(&mutexBuffer);
     delaySize = info.initDelay;
@@ -61,7 +61,7 @@ void Buffer::Resize()
 {
     if(desiredSize<delaySize) {
         //fast forward
-        long tmpSize = delaySize-desiredSize;
+        unsigned long tmpSize = delaySize-desiredSize;
         if(tmpSize>buffer.filledSize) {
             tmpSize = buffer.filledSize;
         }
@@ -71,7 +71,7 @@ void Buffer::Resize()
 
     if(desiredSize>delaySize) {
         AudioBuffer *pinInBuf = listAudioPinIn->GetBuffer(0);
-        long tmpSize = desiredSize-delaySize;
+        unsigned long tmpSize = desiredSize-delaySize;
         if(tmpSize>pinInBuf->GetSize()) {
             tmpSize = pinInBuf->GetSize();
         }
@@ -79,7 +79,7 @@ void Buffer::Resize()
         resizeBuffer.Put( (float*)pinInBuf->GetPointer(), tmpSize );
 
         if(resizeBuffer.filledSize>3000) {
-            long canAdd=resizeBuffer.filledSize;
+            unsigned long canAdd=resizeBuffer.filledSize;
             if(delaySize+canAdd > desiredSize)
                 canAdd = desiredSize-delaySize;
 

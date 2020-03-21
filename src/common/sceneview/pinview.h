@@ -27,11 +27,6 @@
 #include "views/viewconfig.h"
 #include "msghandler.h"
 
-#ifdef _MSC_VER
-#pragma warning( push )
-#pragma warning( disable : 4100 )
-#endif
-
 namespace Connectables {
     class Pin;
 }
@@ -104,7 +99,7 @@ namespace View {
     public slots:
         /// update the vu-meter, called by a timer
         virtual void updateVu() {}
-        virtual void UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color) {}
+        virtual void UpdateColor(ColorGroups::Enum /*groupId*/, Colors::Enum /*colorId*/, const QColor & /*color*/) {}
         void RemovePin();
         void Unplug();
         void UpdateKeyBinding();
@@ -112,9 +107,5 @@ namespace View {
     friend class Cable;
     };
 }
-
-#ifdef _MSC_VER
-#pragma warning( pop )
-#endif
 
 #endif // PINVIEW_H

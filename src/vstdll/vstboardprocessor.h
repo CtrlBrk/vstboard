@@ -21,7 +21,13 @@
 #ifndef VSTBOARDPROCESSOR_H
 #define VSTBOARDPROCESSOR_H
 
+#ifdef _MSC_VER
+#pragma warning( push, 1 )
+#endif
 #include "public.sdk/source/vst/vstaudioeffect.h"
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
 #include <QObject>
 #include <QApplication>

@@ -60,15 +60,15 @@ vstsdk {
         views/vstshellselect.ui
 }
 
-scriptengine {
-    SOURCES += connectables/script.cpp \
-        views/scripteditor.cpp \
+#scriptengine {
+#    SOURCES += connectables/script.cpp \
+#        views/scripteditor.cpp \
 
-    HEADERS += connectables/script.h \
-        views/scripteditor.h \
+#    HEADERS += connectables/script.h \
+#        views/scripteditor.h \
 
-    FORMS += views/scripteditor.ui
-}
+#    FORMS += views/scripteditor.ui
+#}
 
 PRECOMPILED_HEADER = precomp.h
 

@@ -454,7 +454,7 @@ void MainWindow::UpdateKeyBinding()
     ui->dockPrograms->toggleViewAction()->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::programs));
 //    ui->dockUndo->toggleViewAction()->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::undoHistory));
     ui->dockSolver->toggleViewAction()->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::solverModel));
-    ui->dockHostModel->toggleViewAction()->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::hostModel));
+//    ui->dockHostModel->toggleViewAction()->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::hostModel));
     ui->actionHide_all_editors->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::hideAllEditors));
     ui->actionAutoShowGui->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::autoOpenEditors));
     ui->actionUndo->setShortcut(viewConfig->keyBinding->GetMainShortcut(KeyBind::undo));
@@ -502,8 +502,6 @@ void MainWindow::readSettings()
 //    ui->mainToolBar->addAction(ui->dockUndo->toggleViewAction());
 
     ui->menuView->addAction(ui->dockSolver->toggleViewAction());
-
-    ui->menuView->addAction(ui->dockHostModel->toggleViewAction());
 
     //recent setups
     for(int i=0; i<NB_RECENT_FILES; i++) {
@@ -619,7 +617,6 @@ void MainWindow::resetSettings()
 
     QList<QDockWidget*>listDocksHidden;
     listDocksHidden << ui->dockSolver;
-    listDocksHidden << ui->dockHostModel;
     foreach(QDockWidget *dock, listDocksHidden) {
         dock->setFloating(false);
         dock->setVisible(false);
@@ -634,9 +631,6 @@ void MainWindow::resetSettings()
     addDockWidget(Qt::RightDockWidgetArea,  ui->dockPrograms);
 //    addDockWidget(Qt::RightDockWidgetArea,  ui->dockUndo);
     addDockWidget(Qt::RightDockWidgetArea,  ui->dockSolver);
-    addDockWidget(Qt::RightDockWidgetArea,  ui->dockHostModel);
-
-    tabifyDockWidget(ui->dockHostModel,ui->dockSolver);
 
     ui->actionHost_panel->setChecked(true);
     ui->actionProject_panel->setChecked(false);

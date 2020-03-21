@@ -129,7 +129,7 @@ namespace Connectables {
         QMutex mutexDevicesInOut;
 
         /// global audio devices mutex
-        static QMutex mutexCountInputDevicesReady;
+        static QMutex mutexCountOpenedDevicesReady;
 
         /// windows mme stream options
         PaWinMmeStreamInfo wmmeStreamInfo;
@@ -152,7 +152,7 @@ namespace Connectables {
         MainHostHost *myHost;
 
         /// the number of opened devices
-        static int countInputDevices;
+        static int countOpenedDevices;
 
         /// the number of devices ready to render. launch a rendering loop when all the devices are ready
         static int countDevicesReady;

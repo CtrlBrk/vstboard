@@ -20,7 +20,7 @@ win32|macx {
 #CONFIG += scriptengine
 
 #use ring buffers to sync multiple audio inputs
-#DEFINES += CIRCULAR_BUFFER
+DEFINES += CIRCULAR_BUFFER
 
 #limit buffers range from -1.0 to 1.0
 #DEFINES += BUFFER_ZERODB_CLIPPING
@@ -52,7 +52,8 @@ win32-g++ {
 
 win32-msvc* {
     DEFINES += _CRT_SECURE_NO_WARNINGS
-  #  INCLUDEPATH += $$quote($$(INCLUDE))
+#    INCLUDEPATH += $$quote($$(INCLUDE))
+    INCLUDEPATH += $$(INCLUDE)
     LIBS += -L$$quote($$(LIB))
  #   QMAKE_CFLAGS += -Fd$$top_destdir/$$TARGET
 

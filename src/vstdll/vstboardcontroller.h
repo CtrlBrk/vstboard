@@ -22,7 +22,15 @@
 #define VSTBOARDCONTROLLER_H
 
 //#include "precomp.h"
+
+#ifdef _MSC_VER
+#pragma warning( push, 1 )
+#endif
 #include "public.sdk/source/vst/vsteditcontroller.h"
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
+
 //#include "settings.h"
 
 //class MainWindowVst;

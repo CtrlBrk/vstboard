@@ -106,6 +106,9 @@ bool AudioDeviceOut::Open()
     //add new pins
     listAudioPinIn->ChangeNumberOfPins( parentDevice->GetNbOutputs() );
 
+    //debug pins
+    listAudioPinOut->ChangeNumberOfPins( parentDevice->GetNbOutputs() );
+
     //device already has a child
     if(!parentDevice->SetObjectOutput(this)) {
         parentDevice=0;
@@ -139,38 +142,21 @@ void AudioDeviceOut::SetRingBufferFromPins(QList<CircularBuffer*>listCircularBuf
 
 void AudioDeviceOut::Render()
 {
-//    if(!parentDevice)
-//        return;
+    foreach(Pin *in, listAudioPinIn->listPins ) {
+        AudioPin *audioIn = static_cast<AudioPin*>(in);
+        AudioPin *audioOut = 0;
+        if(listAudioPinOut->listPins.size() > in->GetConnectionInfo().pinNumber) {
+            audioOut = static_cast<AudioPin*>(listAudioPinOut->GetPin( in->GetConnectionInfo().pinNumber ));
+        }
 
-
-
-//    unsigned long framesPerBuffer = parentDevice->bufferSize;
-//    float **outputBuffer = parentDevice->currentOutputBuffer;
-////    float **outputBuffer = myHost->TakeOutputBuffer(framesPerBuffer);
-
-//    if(!outputBuffer) {
-//        LOG("buffer not ready")
-//        return;
-//    }
-
-//    if(!listAudioPinIn)
-//        return;
-
-//    for(int cpt=0; cpt<listAudioPinIn->nbPins(); cpt++) {
-//        AudioBuffer *pinBuf = listAudioPinIn->GetBuffer(cpt);
-//        if(pinBuf) {
-//            pinBuf->ConsumeStack();
-//            pinBuf->DumpToBuffer( outputBuffer[cpt], framesPerBuffer);
-//            pinBuf->ResetStackCounter();
-//        } else {
-//            LOG("no buffer !?")
-//        }
-//    }
-
-////    if(parentDevice) {
-////        parentDevice->SetOutputBufferReady(true);
-////        parentDevice->SetOutputBufferReady();
-////    }
-
-////    Object::NewRenderLoop();
+        if(audioIn) {
+            if(audioOut) {
+                audioOut->GetBuffer()->AddToStack( audioIn->GetBuffer() );
+                audioOut->GetBuffer()->ConsumeStack();
+                audioOut->SendAudioBuffer();
+                audioOut->GetBuffer()->ResetStackCounter();
+            }
+            audioIn->GetBuffer()->ConsumeStack();
+        }
+    }
 }

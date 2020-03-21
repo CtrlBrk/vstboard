@@ -20,14 +20,14 @@
 #include "circularbuffer.h"
 //#include "precomp.h"
 
-CircularBuffer::CircularBuffer(long size) :
+CircularBuffer::CircularBuffer(unsigned long size) :
     buffSize(0),
-    buffer(0),
     filledSize(0),
+    readPos(0),
+    writePos(0),
     bufStart(0),
     bufEnd(0),
-    readPos(0),
-    writePos(0)
+    buffer(0)
 {
     SetSize(size);
 }
@@ -38,9 +38,9 @@ CircularBuffer::~CircularBuffer()
         delete[] buffer;
 }
 
-void CircularBuffer::SetSize(long size)
+void CircularBuffer::SetSize(unsigned long size)
 {
-    if(size==buffSize)
+    if(size == buffSize)
         return;
 
     if(size!=0) {
@@ -93,7 +93,7 @@ void CircularBuffer::Clear()
     buffer[0]=.0f;
 }
 
-bool CircularBuffer::Put(double *buf, long size)
+bool CircularBuffer::Put(double *buf, unsigned long size)
 {
     if(!buffer)
         return false;
@@ -124,7 +124,7 @@ bool CircularBuffer::Put(double *buf, long size)
             --size;
         }
         writePos=bufStart;
-        for(long p=0; p<size; p++) {
+        for(unsigned long p=0; p<size; p++) {
             writePos = (float*)buf;
             ++writePos;
             ++buf;
@@ -135,7 +135,7 @@ bool CircularBuffer::Put(double *buf, long size)
     return true;
 }
 
-long CircularBuffer::Put(CircularBuffer &buf, long size)
+unsigned long CircularBuffer::Put(CircularBuffer &buf, unsigned long size)
 {
     if(!buffer)
         return false;
@@ -186,7 +186,7 @@ long CircularBuffer::Put(CircularBuffer &buf, long size)
     return size;
 }
 
-bool CircularBuffer::Put(float *buf, long size)
+bool CircularBuffer::Put(float *buf, unsigned long size)
 {
     if(!buffer)
         return false;
@@ -226,7 +226,7 @@ bool CircularBuffer::Put(float *buf, long size)
     return true;
 }
 
-bool CircularBuffer::Get(float *buf, long size)
+bool CircularBuffer::Get(float *buf, unsigned long size)
 {
     if(!buffer)
         return false;
@@ -254,7 +254,7 @@ bool CircularBuffer::Get(float *buf, long size)
     return true;
 }
 
-bool CircularBuffer::Get(double *buf, long size)
+bool CircularBuffer::Get(double *buf, unsigned long size)
 {
     if(!buffer)
         return false;
@@ -265,7 +265,7 @@ bool CircularBuffer::Get(double *buf, long size)
     }
 
 
-    for(long i=0; i<size; i++) {
+    for(unsigned long i=0; i<size; i++) {
         *buf=(double)*readPos;
         buf++;
         readPos++;
@@ -279,7 +279,7 @@ bool CircularBuffer::Get(double *buf, long size)
     return true;
 }
 
-bool CircularBuffer::Skip(long size)
+bool CircularBuffer::Skip(unsigned long size)
 {
     if(!buffer)
         return false;

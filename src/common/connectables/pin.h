@@ -27,10 +27,6 @@
 #include "msghandler.h"
 #include "pinslist.h"
 
-#ifdef _MSC_VER
-#pragma warning( push )
-#pragma warning( disable : 4100 )
-#endif
 
 namespace Connectables {
 
@@ -53,7 +49,7 @@ namespace Connectables {
          \param msgType PinMessage
          \param data received data
          */
-        virtual void ReceivePinMsg(const PinMessage::Enum msgType,void *data=0) {}
+        virtual void ReceivePinMsg(const PinMessage::Enum /*msgType*/,void * /*data*/) {}
 
         /*!
           Get the current value (vu meter or parameter value)
@@ -136,9 +132,5 @@ namespace Connectables {
 
     };
 }
-
-#ifdef _MSC_VER
-#pragma warning( pop )
-#endif
 
 #endif // CONNECTABLEPIN_H

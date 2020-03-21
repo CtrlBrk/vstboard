@@ -44,17 +44,9 @@ Object::Object(MainHost *host, int index, const ObjectInfo &info) :
     QObject(),
     MsgHandler(host,index),
     parkingId(FixedObjId::ND),
+    doublePrecision(false),
     listenProgramChanges(true),
     myHost(host),
-    solverNode(0),
-    savedIndex(-2),
-    sleep(true),
-    currentProgram(0),
-    currentProgId(TEMP_PROGRAM),
-    closed(true),
-    objInfo(info),
-    containerId(FixedObjId::noContainer),
-    initialDelay(0L),
     listAudioPinIn(0),
     listAudioPinOut(0),
     listMidiPinIn(0),
@@ -63,7 +55,15 @@ Object::Object(MainHost *host, int index, const ObjectInfo &info) :
     listBridgePinOut(0),
     listParameterPinIn(0),
     listParameterPinOut(0),
-    doublePrecision(false)
+    solverNode(0),
+    savedIndex(-2),
+    currentProgram(0),
+    currentProgId(TEMP_PROGRAM),
+    closed(true),
+    objInfo(info),
+    containerId(FixedObjId::noContainer),
+    initialDelay(0L),
+    sleep(true)
 {
     if(myHost && myHost->objFactory) {
         listAudioPinIn = new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId());
@@ -439,7 +439,7 @@ void Object::SetContainerId(quint16 id)
   \param pinInfo the modified pin
   \param value the new value
   */
-void Object::OnParameterChanged(ConnectionInfo pinInfo, float value)
+void Object::OnParameterChanged(ConnectionInfo pinInfo, float /*value*/)
 {
     //editor pin
     if(pinInfo.pinNumber==FixedPinNumber::editorVisible) {
@@ -525,7 +525,7 @@ void Object::GetContainerAttribs(ObjectContainerAttribs &attr)
 }
 
 /*!
-  Copy the position, editor visibility and learning state, used by HostModel when a plugin is replaced
+  Copy the position, editor visibility and learning state
   \param objPtr destination object
   */
 void Object::CopyStatusTo(QSharedPointer<Object>objPtr)
@@ -577,6 +577,9 @@ void Object::UserRemovePin(const ConnectionInfo &info)
             listParameterPinOut->AsyncRemovePin(info.pinNumber);
             OnProgramDirty();
             break;
+        default:
+            LOG("no input or output ?")
+            break;
     }
 }
 
@@ -593,6 +596,9 @@ void Object::UserAddPin(const ConnectionInfo &info)
         case PinDirection::Output :
             listParameterPinOut->AsyncAddPin(info.pinNumber);
             OnProgramDirty();
+            break;
+        default:
+            LOG("no input or output ?")
             break;
     }
 }
@@ -842,7 +848,8 @@ void Object::ReceiveMsg(const MsgObject &msg)
             return;
         }
 
-        QDataStream streamObj(&msg.prop[MsgObject::ObjectsToLoad].toByteArray(), QIODevice::ReadOnly);
+        QByteArray ba = msg.prop[MsgObject::ObjectsToLoad].toByteArray();
+        QDataStream streamObj(&ba, QIODevice::ReadOnly);
         while(!streamObj.atEnd()) {
             ObjectInfo newInfo;
             newInfo.fromStream(streamObj);

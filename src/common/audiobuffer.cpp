@@ -69,7 +69,7 @@ AudioBuffer::~AudioBuffer()
   Don't allocate anything if it's externally allocated
   \param size the new size
   */
-bool AudioBuffer::SetSize(long newSize, bool forceRealloc)
+bool AudioBuffer::SetSize(unsigned long newSize, bool forceRealloc)
 {
     debugbuf("setsize old:"<<bufferSize<<"new"<<newSize);
 
@@ -401,7 +401,7 @@ void AudioBuffer::SetBufferContent(double *buff, int count)
     stackSize=1;
 }
 
-void AudioBuffer::DumpToBuffer(float *buff, long count)
+void AudioBuffer::DumpToBuffer(float *buff, unsigned long count)
 {
     debugbuf("dump float");
 
@@ -412,7 +412,7 @@ void AudioBuffer::DumpToBuffer(float *buff, long count)
 
     if(doublePrecision) {
         double *ori = (double*)pBuffer;
-        long i = count;
+        unsigned long i = count;
         while(i>0) {
             *buff=(float)*ori;
             ++ori;
@@ -424,7 +424,7 @@ void AudioBuffer::DumpToBuffer(float *buff, long count)
     }
 }
 
-void AudioBuffer::DumpToBuffer(double *buff, long count)
+void AudioBuffer::DumpToBuffer(double *buff, unsigned long count)
 {
     debugbuf("dump double");
 
@@ -437,7 +437,7 @@ void AudioBuffer::DumpToBuffer(double *buff, long count)
         memcpy(buff,pBuffer,count*sizeof(double));
     } else {
         float *ori = (float*)pBuffer;
-        long i = count;
+        unsigned long i = count;
         while(i>0) {
             *buff=(double)*ori;
             ++ori;

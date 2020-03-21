@@ -1,6 +1,8 @@
 *.pdb
 *.pro.user*
 *.vcxproj.user
+*.vstbsetup
+*.vstbproject
 Thumbs.db
 desktop.ini
 .DS_Store

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Form Files">
@@ -442,42 +442,42 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="views\aboutdialog.h">
+    <CustomBuild Include="views\aboutdialog.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="audiobuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="connectables\audiopin.h">
+    <CustomBuild Include="connectables\audiopin.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="connectables\bridge.h">
+    </CustomBuild>
+    <CustomBuild Include="connectables\bridge.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="connectables\bridgepinin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="connectables\bridgepinout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="sceneview\bridgepinview.h">
+    <CustomBuild Include="sceneview\bridgepinview.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="sceneview\bridgeview.h">
+    </CustomBuild>
+    <CustomBuild Include="sceneview\bridgeview.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="connectables\buffer.h">
+    </CustomBuild>
+    <CustomBuild Include="connectables\buffer.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="views\buttonswidget.h">
+    </CustomBuild>
+    <CustomBuild Include="views\buttonswidget.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="connectables\cable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="sceneview\cableview.h">
+    <CustomBuild Include="sceneview\cableview.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="vst\ceffect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -520,111 +520,111 @@
     <ClInclude Include="commands\comremoveprogram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="views\configdialog.h">
+    <CustomBuild Include="views\configdialog.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="sceneview\connectableobjectview.h">
+    </CustomBuild>
+    <CustomBuild Include="sceneview\connectableobjectview.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="sceneview\connectablepinview.h">
+    </CustomBuild>
+    <CustomBuild Include="sceneview\connectablepinview.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="connectables\connectioninfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="vst\const.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="connectables\container.h">
+    <CustomBuild Include="connectables\container.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="sceneview\containercontent.h">
+    </CustomBuild>
+    <CustomBuild Include="sceneview\containercontent.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="connectables\containerprogram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="connectables\cursor.h">
+    <CustomBuild Include="connectables\cursor.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="sceneview\cursorview.h">
+    </CustomBuild>
+    <CustomBuild Include="sceneview\cursorview.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="vst\cvsthost.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="views\filebrowser.h">
+    <CustomBuild Include="views\filebrowser.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="projectfile\fileversion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="views\gradientwidget.h">
+    <CustomBuild Include="views\gradientwidget.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="views\gradientwidgethue.h">
+    </CustomBuild>
+    <CustomBuild Include="views\gradientwidgethue.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="views\grouplistview.h">
+    </CustomBuild>
+    <CustomBuild Include="views\grouplistview.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="models\groupsprogramsmodel.h">
+    </CustomBuild>
+    <CustomBuild Include="models\groupsprogramsmodel.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="connectables\hostcontroller.h">
+    </CustomBuild>
+    <CustomBuild Include="connectables\hostcontroller.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="views\keybind.h">
+    </CustomBuild>
+    <CustomBuild Include="views\keybind.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="views\keybindingdialog.h">
+    </CustomBuild>
+    <CustomBuild Include="views\keybindingdialog.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="views\keypressedwidget.h">
+    </CustomBuild>
+    <CustomBuild Include="views\keypressedwidget.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="views\listaudiodevicesview.h">
+    </CustomBuild>
+    <CustomBuild Include="views\listaudiodevicesview.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="sceneview\listpinsview.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="models\listtoolsmodel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="sceneview\maincontainerview.h">
+    <CustomBuild Include="sceneview\maincontainerview.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="views\maingraphicsview.h">
+    </CustomBuild>
+    <CustomBuild Include="views\maingraphicsview.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="mainhost.h">
+    </CustomBuild>
+    <CustomBuild Include="mainhost.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="mainwindow.h">
+    </CustomBuild>
+    <CustomBuild Include="mainwindow.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="connectables\midipinin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="connectables\midipinout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="connectables\midisender.h">
+    <CustomBuild Include="connectables\midisender.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="connectables\miditoautomation.h">
+    </CustomBuild>
+    <CustomBuild Include="connectables\miditoautomation.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="sceneview\minmaxpinview.h">
+    </CustomBuild>
+    <CustomBuild Include="sceneview\minmaxpinview.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="views\modifierswidget.h">
+    </CustomBuild>
+    <CustomBuild Include="views\modifierswidget.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="msgcontroller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -637,15 +637,15 @@
     <ClInclude Include="renderer\node.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="connectables\object.h">
+    <CustomBuild Include="connectables\object.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="sceneview\objectdropzone.h">
+    </CustomBuild>
+    <CustomBuild Include="sceneview\objectdropzone.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="connectables\objectfactory.h">
+    </CustomBuild>
+    <CustomBuild Include="connectables\objectfactory.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="connectables\objectinfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -655,18 +655,18 @@
     <ClInclude Include="connectables\objectprogram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="sceneview\objectview.h">
+    <CustomBuild Include="sceneview\objectview.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="renderer\optimizemap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="renderer\optimizernode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="connectables\parameterpin.h">
+    <CustomBuild Include="connectables\parameterpin.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="connectables\parameterpinin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -676,281 +676,541 @@
     <ClInclude Include="models\parkingmodel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="renderer\pathsolver.h">
+    <CustomBuild Include="renderer\pathsolver.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="connectables\pin.h">
+    </CustomBuild>
+    <CustomBuild Include="connectables\pin.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="connectables\pinslist.h">
+    </CustomBuild>
+    <CustomBuild Include="connectables\pinslist.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="sceneview\pinview.h">
+    </CustomBuild>
+    <CustomBuild Include="sceneview\pinview.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <CustomBuild Include="precomp.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <QtMoc Include="views\proglistview.h">
+    <CustomBuild Include="views\proglistview.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="views\programlist.h">
+    </CustomBuild>
+    <CustomBuild Include="views\programlist.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="programmanager.h">
+    </CustomBuild>
+    <CustomBuild Include="programmanager.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="projectfile\projectfile.h">
+    </CustomBuild>
+    <CustomBuild Include="projectfile\projectfile.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="renderer\renderer2.h">
+    </CustomBuild>
+    <CustomBuild Include="renderer\renderer2.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="renderer\renderernode2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="renderer\rendererthread2.h">
+    <CustomBuild Include="renderer\rendererthread2.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="renderer\rendermap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="sceneview\sceneview.h">
+    <CustomBuild Include="sceneview\sceneview.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="renderer\semaphoreinverted.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="settings.h">
+    <CustomBuild Include="settings.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="renderer\solver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="renderer\solvernode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="views\splash.h">
+    <CustomBuild Include="views\splash.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="renderer\updatedelays.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="views\viewconfig.h">
+    <CustomBuild Include="views\viewconfig.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="views\viewconfigdialog.h">
+    </CustomBuild>
+    <CustomBuild Include="views\viewconfigdialog.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="vst\vst3host.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="connectables\vst3plugin.h">
+    <CustomBuild Include="connectables\vst3plugin.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="vst\vstbank.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="vst\vstbankbase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="connectables\vstplugin.h">
+    <CustomBuild Include="connectables\vstplugin.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="sceneview\vstpluginview.h">
+    </CustomBuild>
+    <CustomBuild Include="sceneview\vstpluginview.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="views\vstpluginwindow.h">
+    </CustomBuild>
+    <CustomBuild Include="views\vstpluginwindow.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="vst\vstprogram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="views\vstshellselect.h">
+    <CustomBuild Include="views\vstshellselect.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="renderer\waitall.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    <ClCompile Include="debug\moc_aboutdialog.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_aboutdialog.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_audiopin.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_audiopin.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_bridge.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_bridge.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_bridgepinview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_bridgepinview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_bridgeview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_bridgeview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_buffer.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_buffer.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_buttonswidget.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_buttonswidget.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_cableview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_cableview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_configdialog.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_configdialog.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_connectableobjectview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_connectableobjectview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_connectablepinview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_connectablepinview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_container.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_container.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_containercontent.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_containercontent.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_cursor.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_cursor.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_cursorview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_cursorview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_filebrowser.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_filebrowser.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_gradientwidget.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_gradientwidget.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_gradientwidgethue.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_gradientwidgethue.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_grouplistview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_grouplistview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_groupsprogramsmodel.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_groupsprogramsmodel.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_hostcontroller.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_hostcontroller.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_keybind.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_keybind.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_keybindingdialog.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_keybindingdialog.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_keypressedwidget.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_keypressedwidget.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_listaudiodevicesview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_listaudiodevicesview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_maincontainerview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_maincontainerview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_maingraphicsview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_maingraphicsview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_mainhost.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_mainhost.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_mainwindow.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_mainwindow.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_midisender.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_midisender.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_miditoautomation.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_miditoautomation.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_minmaxpinview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_minmaxpinview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_modifierswidget.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_modifierswidget.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_object.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_object.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_objectdropzone.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_objectdropzone.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_objectfactory.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_objectfactory.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_objectview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_objectview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_parameterpin.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_parameterpin.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_pathsolver.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_pathsolver.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_pin.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_pin.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_pinslist.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_pinslist.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_pinview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_pinview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
     <CustomBuild Include="debug\moc_predefs.h.cbt">
       <Filter>Generated Files</Filter>
     </CustomBuild>
     <CustomBuild Include="release\moc_predefs.h.cbt">
       <Filter>Generated Files</Filter>
     </CustomBuild>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    <ClCompile Include="debug\moc_proglistview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_proglistview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_programlist.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_programlist.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_programmanager.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_programmanager.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_projectfile.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_projectfile.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_renderer2.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_renderer2.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_rendererthread2.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_rendererthread2.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_sceneview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_sceneview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_settings.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_settings.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_splash.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_splash.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_viewconfig.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_viewconfig.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_viewconfigdialog.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_viewconfigdialog.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_vst3plugin.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_vst3plugin.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_vstplugin.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_vstplugin.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_vstpluginview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_vstpluginview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_vstpluginwindow.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_vstpluginwindow.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_vstshellselect.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_vstshellselect.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
     <ClCompile Include="precomp.h.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    <ClCompile Include="debug\qrc_resources.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\qrc_resources.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClInclude Include="ui_aboutdialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_buttonswidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_configdialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_filebrowser.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_keybindingdialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_mainwindow.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_modifierswidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_programlist.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_splash.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_viewconfigdialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_vstpluginwindow.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_vstshellselect.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="views\aboutdialog.ui">
+    <CustomBuild Include="views\aboutdialog.ui">
       <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="views\buttonswidget.ui">
+    </CustomBuild>
+    <CustomBuild Include="views\buttonswidget.ui">
       <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="views\configdialog.ui">
+    </CustomBuild>
+    <CustomBuild Include="views\configdialog.ui">
       <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="views\filebrowser.ui">
+    </CustomBuild>
+    <CustomBuild Include="views\filebrowser.ui">
       <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="views\keybindingdialog.ui">
+    </CustomBuild>
+    <CustomBuild Include="views\keybindingdialog.ui">
       <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="mainwindow.ui">
+    </CustomBuild>
+    <CustomBuild Include="mainwindow.ui">
       <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="views\modifierswidget.ui">
+    </CustomBuild>
+    <CustomBuild Include="views\modifierswidget.ui">
       <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="views\programlist.ui">
+    </CustomBuild>
+    <CustomBuild Include="views\programlist.ui">
       <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="views\splash.ui">
+    </CustomBuild>
+    <CustomBuild Include="views\splash.ui">
       <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="views\viewconfigdialog.ui">
+    </CustomBuild>
+    <CustomBuild Include="views\viewconfigdialog.ui">
       <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="views\vstpluginwindow.ui">
+    </CustomBuild>
+    <CustomBuild Include="views\vstpluginwindow.ui">
       <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="views\vstshellselect.ui">
+    </CustomBuild>
+    <CustomBuild Include="views\vstshellselect.ui">
       <Filter>Form Files</Filter>
-    </QtUic>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resources\dark\actions\24\arrow-down.svg">
@@ -1139,9 +1399,9 @@
     <None Include="..\resources\translations\qt_fr.qm">
       <Filter>Resource Files</Filter>
     </None>
-    <QtRcc Include="..\resources\resources.qrc">
+    <CustomBuild Include="..\resources\resources.qrc">
       <Filter>Resource Files</Filter>
-    </QtRcc>
+    </CustomBuild>
     <None Include="..\resources\dark\actions\24\view-fullscreen.svg">
       <Filter>Resource Files</Filter>
     </None>

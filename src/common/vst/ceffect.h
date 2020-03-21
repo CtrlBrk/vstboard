@@ -22,12 +22,18 @@
 #define CEFFECT_H
 
 #ifdef _MSC_VER
-#pragma warning( push )
-#pragma warning( disable : 4100 )
+#pragma warning( push, 1 )
 #endif
 
 #include "../precomp.h"
+
+#ifdef _MSC_VER
+#pragma warning( push, 1 )
+#endif
 #include "audioeffectx.h"
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
 class MainHost;
 namespace vst

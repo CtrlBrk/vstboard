@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Form Files">
@@ -94,96 +94,148 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="connectables\audiodevice.h">
+    <CustomBuild Include="connectables\audiodevice.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="connectables\audiodevicein.h">
+    </CustomBuild>
+    <CustomBuild Include="connectables\audiodevicein.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="connectables\audiodeviceout.h">
+    </CustomBuild>
+    <CustomBuild Include="connectables\audiodeviceout.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="audiodevices.h">
+    </CustomBuild>
+    <CustomBuild Include="audiodevices.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="views\configdialoghost.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="models\listaudiointerfacesmodel.h">
+    <CustomBuild Include="models\listaudiointerfacesmodel.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="models\listmidiinterfacesmodel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="mainhosthost.h">
+    <CustomBuild Include="mainhosthost.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="mainwindowhost.h">
+    </CustomBuild>
+    <CustomBuild Include="mainwindowhost.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="connectables\mididevice.h">
+    </CustomBuild>
+    <CustomBuild Include="connectables\mididevice.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="mididevices.h">
+    </CustomBuild>
+    <CustomBuild Include="mididevices.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="views\mmeconfigdialog.h">
+    </CustomBuild>
+    <CustomBuild Include="views\mmeconfigdialog.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
     <ClInclude Include="connectables\objectfactoryhost.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <CustomBuild Include="..\common\precomp.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <QtMoc Include="views\wasapiconfigdialog.h">
+    <CustomBuild Include="views\wasapiconfigdialog.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    <ClCompile Include="debug\moc_audiodevice.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_audiodevice.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_audiodevicein.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_audiodevicein.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_audiodeviceout.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_audiodeviceout.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_audiodevices.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_audiodevices.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_listaudiointerfacesmodel.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_listaudiointerfacesmodel.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_mainhosthost.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_mainhosthost.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_mainwindowhost.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_mainwindowhost.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_mididevice.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_mididevice.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_mididevices.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_mididevices.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_mmeconfigdialog.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_mmeconfigdialog.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
     <CustomBuild Include="debug\moc_predefs.h.cbt">
       <Filter>Generated Files</Filter>
     </CustomBuild>
     <CustomBuild Include="release\moc_predefs.h.cbt">
       <Filter>Generated Files</Filter>
     </CustomBuild>
-    
-    
+    <ClCompile Include="debug\moc_wasapiconfigdialog.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_wasapiconfigdialog.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\common\precomp.h.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    
-    
-    
-    
+    <ClCompile Include="debug\qrc_resources.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\qrc_resources.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClInclude Include="ui_mmeconfigdialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_wasapiconfigdialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="views\mmeconfigdialog.ui">
+    <CustomBuild Include="views\mmeconfigdialog.ui">
       <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="views\wasapiconfigdialog.ui">
+    </CustomBuild>
+    <CustomBuild Include="views\wasapiconfigdialog.ui">
       <Filter>Form Files</Filter>
-    </QtUic>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resources\dark\actions\24\arrow-down.svg">
@@ -372,9 +424,9 @@
     <None Include="..\resources\translations\qt_fr.qm">
       <Filter>Resource Files</Filter>
     </None>
-    <QtRcc Include="..\resources\resources.qrc">
+    <CustomBuild Include="..\resources\resources.qrc">
       <Filter>Resource Files</Filter>
-    </QtRcc>
+    </CustomBuild>
     <None Include="..\resources\dark\actions\24\view-fullscreen.svg">
       <Filter>Resource Files</Filter>
     </None>

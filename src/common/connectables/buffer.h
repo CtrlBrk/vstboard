@@ -41,10 +41,10 @@ namespace Connectables
         CircularBuffer buffer;
         CircularBuffer resizeBuffer;
         volatile int delayChanged;
-        long delaySize;
-        volatile long desiredSize;
-        long addedSize;
-        long offset;
+        unsigned long delaySize;
+        volatile unsigned long desiredSize;
+        unsigned long addedSize;
+        unsigned long offset;
         float *adjustDelay;
         int countWait;
 

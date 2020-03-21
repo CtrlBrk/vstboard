@@ -55,8 +55,6 @@ public:
         midiDevices,
         audioDevices,
         solverModel,
-        hostModel,
-        undoHistory,
         configuration,
         appearence,
         undo,

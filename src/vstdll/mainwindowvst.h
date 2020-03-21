@@ -23,7 +23,14 @@
 
 #include "mainwindow.h"
 #include "../common/ui_mainwindow.h"
+
+#ifdef _MSC_VER
+#pragma warning( push, 1 )
+#endif
 #include "public.sdk/source/vst/vsteditcontroller.h"
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
 using namespace Steinberg;
 

@@ -24,6 +24,9 @@
 #ifdef VSTSDK
 
 #include "object.h"
+#ifdef _MSC_VER
+#pragma warning( push, 1 )
+#endif
 #include "public.sdk/source/common/memorystream.h"
 #include "public.sdk/source/vst/hosting/processdata.h"
 #include "public.sdk/source/vst/hosting/parameterchanges.h"
@@ -34,6 +37,9 @@
 #include "pluginterfaces/vst/ivsthostapplication.h"
 #include "pluginterfaces/gui/iplugview.h"
 #include "pluginterfaces/vst/ivstevents.h"
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
 namespace View {
     class VstPluginWindow;

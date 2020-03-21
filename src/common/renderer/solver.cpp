@@ -61,7 +61,7 @@ long Solver::GetMap(const hashObjects &listObject, const hashCables &listCables,
     qDeleteAll(optimizerNodes);
     qDeleteAll(solverNodes);
 
-    LOG( OptimizeMap::OptMap2Txt(oMap) )
+//    LOG( OptimizeMap::OptMap2Txt(oMap) )
 //    LOG( RMap2Txt(rMap) )
 
     return globalDelay;

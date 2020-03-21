@@ -21,11 +21,6 @@
 #ifndef SCENEVIEW_H
 #define SCENEVIEW_H
 
-#ifdef _MSC_VER
-#pragma warning( push )
-#pragma warning( disable : 4100 )
-#endif
-
 //#include "precomp.h"
 #include "connectables/connectioninfo.h"
 #include "views/maingraphicsview.h"
@@ -108,8 +103,5 @@ namespace View {
     };
 }
 
-#ifdef _MSC_VER
-#pragma warning( pop )
-#endif
 
 #endif // SCENEVIEW_H
