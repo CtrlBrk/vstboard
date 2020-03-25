@@ -331,15 +331,18 @@ const QTime Container::GetLastModificationTime() {
 
 void Container::SaveProgram()
 {
-    if(!currentContainerProgram && currentProgId==TEMP_PROGRAM)
+	//TODO : check for null pointer and temp prog ?
+	if(!currentContainerProgram && currentProgId==TEMP_PROGRAM)
         return;
+	if (!currentContainerProgram)
+		return;
 
     currentContainerProgram->Save();
 
     delete listContainerPrograms.take(currentProgId);
     listContainerPrograms.insert(currentProgId,currentContainerProgram);
-    ContainerProgram *tmp = new ContainerProgram(*currentContainerProgram);
-    currentContainerProgram = tmp;
+	ContainerProgram *tmp = new ContainerProgram(*currentContainerProgram);
+	currentContainerProgram = tmp;
 }
 
 void Container::UnloadProgram()

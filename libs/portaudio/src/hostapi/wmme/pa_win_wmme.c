@@ -84,6 +84,11 @@
     Events (when necessary) inside the ReadStream() and WriteStream() functions.
 */
 
+#ifdef _MSC_VER
+#pragma warning(disable: 4100) //unreferenced parameter
+#pragma warning(disable: 4189)
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>

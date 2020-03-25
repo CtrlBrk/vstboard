@@ -1,12 +1,14 @@
 #include "vst3host.h"
 
+using namespace Steinberg;
+
 Vst3Host::Vst3Host()
 {
     currentBar=0;
     loopLenght=4;
 
     processContext.state =
-            Vst::ProcessContext::kPlaying |
+			Vst::ProcessContext::kPlaying |
             Vst::ProcessContext::kCycleActive |
             Vst::ProcessContext::kSystemTimeValid |
             Vst::ProcessContext::kContTimeValid |
@@ -23,7 +25,7 @@ Vst3Host::Vst3Host()
     processContext.projectTimeMusic = 0;
     processContext.barPositionMusic = 0;
     processContext.cycleStartMusic = 0;
-    processContext.cycleEndMusic = 4*4;
+    processContext.cycleEndMusic = 16.L;
     processContext.tempo = 120;
     processContext.timeSigNumerator = 4;
     processContext.timeSigDenominator = 4;
@@ -46,11 +48,11 @@ void Vst3Host::UpdateTime(long buffSize, float sampleRate)
     processContext.projectTimeSamples += buffSize;
     processContext.continousTimeSamples += buffSize;
 
-    float barLengthq = (float)(4*processContext.timeSigNumerator)/processContext.timeSigDenominator;
+	Vst::TQuarterNotes barLengthq = (Vst::TQuarterNotes)(processContext.timeSigNumerator*4) /processContext.timeSigDenominator;
     processContext.cycleStartMusic = 0;
-    processContext.cycleEndMusic = barLengthq*loopLenght;
+    processContext.cycleEndMusic = barLengthq*(Vst::TQuarterNotes)loopLenght;
 
-    double dPos = processContext.continousTimeSamples / processContext.sampleRate;
+	Vst::TQuarterNotes dPos = processContext.continousTimeSamples / processContext.sampleRate;
     processContext.projectTimeMusic = dPos * processContext.tempo / 60.L;
 
     if(processContext.projectTimeMusic > processContext.cycleEndMusic) {
@@ -64,7 +66,7 @@ void Vst3Host::UpdateTime(long buffSize, float sampleRate)
 
     //start of last bar
     currentBar = floor(processContext.projectTimeMusic/barLengthq);
-    processContext.barPositionMusic = barLengthq*currentBar;
+    processContext.barPositionMusic = barLengthq*(Vst::TQuarterNotes)currentBar;
 }
 
 float Vst3Host::GetCurrentBarTic()
@@ -111,7 +113,7 @@ void Vst3Host::SetTimeInfo(const Vst::ProcessContext *info) {
     if( (newCxt.state & Vst::ProcessContext::kBarPositionValid)==0 ) {
         float barLengthq = (float)(4*newCxt.timeSigNumerator)/newCxt.timeSigDenominator;
         int32 nbBars = newCxt.projectTimeMusic/barLengthq;
-        newCxt.barPositionMusic = barLengthq*nbBars;
+        newCxt.barPositionMusic = (Vst::TQuarterNotes)barLengthq*(Vst::TQuarterNotes)nbBars;
         newCxt.state |= Vst::ProcessContext::kBarPositionValid;
     }
 

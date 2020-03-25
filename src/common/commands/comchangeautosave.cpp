@@ -28,7 +28,8 @@ ComChangeAutosave::ComChangeAutosave(ProgramManager *model,
     QUndoCommand(parent),
     model(model),
     type(type),
-    newState(newState)
+	oldState(Qt::Unchecked),
+	newState(newState)
 {
     setText(QObject::tr("Change Autosave"));
 

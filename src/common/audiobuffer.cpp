@@ -265,6 +265,7 @@ void *AudioBuffer::ConsumeStack()
             buf = (float*)pBuffer;
             long i=bufferSize;
             while(i>0) {
+
                 if(*buf > ma)
                     ma = *buf;
                 if(mi > *buf)

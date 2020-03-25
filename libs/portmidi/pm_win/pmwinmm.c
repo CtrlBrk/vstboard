@@ -2,6 +2,8 @@
 
 #ifdef _MSC_VER
  #pragma warning(disable: 4133) // stop warnings about implicit typecasts
+ #pragma warning(disable: 4100) //unreferenced parameter
+ #pragma warning(disable: 4189)
 #endif
 
 #ifndef _WIN32_WINNT

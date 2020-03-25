@@ -36,18 +36,33 @@
 quint32 MainHost::currentFileVersion=PROJECT_AND_SETUP_FILE_VERSION;
 
 MainHost::MainHost(Settings *settings, QObject *parent) :
-    QObject(parent),
-    programManager(0),
-    objFactory(0),
-    mainWindow(0),
-    settings(settings),
-    solverNeedAnUpdate(false),
-    solverUpdateEnabled(true),
-    undoProgramChangesEnabled(false),
-    globalDelay(0L),
-    nbThreads(1)
+    QObject(parent)
+    ,updateViewTimer(0)
+    ,programManager(0)
+    ,objFactory(0)
+    ,mainWindow(0)
+    #ifdef VSTSDK
+        , vstHost(0)
+        , vst3Host(0)
+    #endif
+    ,settings(settings)
+    ,solverNeedAnUpdate(false)
+    ,solverUpdateEnabled(true)
+    ,undoProgramChangesEnabled(false)
+    ,globalDelay(0L)
+    ,nbThreads(1)
 {
-
+    qRegisterMetaType<ConnectionInfo>("ConnectionInfo");
+    qRegisterMetaType<ObjectInfo>("ObjectInfo");
+    qRegisterMetaType<ObjectContainerAttribs>("ObjectContainerAttribs");
+    qRegisterMetaType<MsgObject>("MsgObject");
+    qRegisterMetaType<int>("ObjType::Enum");
+    qRegisterMetaType<QVariant>("QVariant");
+    qRegisterMetaType<AudioBuffer*>("AudioBuffer*");
+    qRegisterMetaType<QVector<int> >("QVector<int>");
+    qRegisterMetaType<QVector<float> >("QVector<float>");
+    qRegisterMetaTypeStreamOperators<ObjectInfo>("ObjectInfo");
+    qRegisterMetaTypeStreamOperators<ObjectContainerAttribs>("ObjectContainerAttribs");
 }
 
 MainHost::~MainHost()
@@ -747,6 +762,8 @@ void MainHost::SetBufferSizeMs(unsigned int ms)
 
 void MainHost::SetBufferSize(unsigned long size)
 {
+    if(bufferSize == size)
+        return;
     bufferSize = size;
     emit BufferSizeChanged(bufferSize);
 }
@@ -762,6 +779,8 @@ void MainHost::SetSampleRate(float rate)
 
 void MainHost::Render()
 {
+
+//    LOG("Render");
 
 #ifdef VSTSDK
     CheckTempo();

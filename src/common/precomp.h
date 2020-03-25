@@ -121,12 +121,10 @@
     #include <QWaitCondition>
     #include <QWidget>
 
-    #ifdef SCRIPTENGINE
-        #include <QtScript>
-    #endif
-
     #ifdef QT_NO_DEBUG
         #define LOG(...)
+//        #include <QDebug>
+//        #define LOG(...); {qInfo()<<__VA_ARGS__<<"("<<__FUNCTION__<<":"<< __LINE__<<" )";}
     #else
         #include <QDebug>
         #define LOG(...); {qDebug()<<__VA_ARGS__<<"("<<__FUNCTION__<<":"<< __LINE__<<" )";}

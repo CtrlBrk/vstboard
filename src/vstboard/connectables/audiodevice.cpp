@@ -29,6 +29,8 @@
 
 #include <qthread.h>
 
+#include "mainwindow.h"
+
 class I : public QThread
 {
 public:
@@ -63,7 +65,8 @@ AudioDevice::AudioDevice(MainHostHost *myHost,const ObjectInfo &info,QObject *pa
     devIn(0),
     devOut(0),
     opened(false),
-    myHost(myHost)
+    myHost(myHost),
+    pause(false)
 {
     memset(&devInfo, 0, sizeof(devInfo));
 
@@ -75,7 +78,13 @@ AudioDevice::AudioDevice(MainHostHost *myHost,const ObjectInfo &info,QObject *pa
 
     connect(this,SIGNAL(InUseChanged(PaHostApiIndex,PaDeviceIndex,bool,PaTime,PaTime,double)),
             myHost->audioDevices,SLOT(OnToggleDeviceInUse(PaHostApiIndex,PaDeviceIndex,bool,PaTime,PaTime,double)));
+
+    connect(this,SIGNAL(DebugGraphUpdated(QVector<float>)),
+            myHost->mainWindow,SLOT(UpdateDebugGraph(QVector<float>)));
+    connect(myHost->mainWindow,SIGNAL(PauseOutput(bool)),
+            this,SLOT(PauseOutput(bool)));
 }
+
 
 AudioDevice::~AudioDevice()
 {
@@ -90,6 +99,11 @@ AudioDevice::~AudioDevice()
     }
 
     LOG(objectName()<<"deleted");
+}
+
+
+void AudioDevice::PauseOutput(bool p) {
+    pause=p;
 }
 
 /*!
@@ -195,7 +209,7 @@ bool AudioDevice::SetObjectOutput(AudioDeviceOut *obj)
   Reopen the device with the new sample rate
   \param rate the new rate
   */
-void AudioDevice::SetSampleRate(float rate)
+void AudioDevice::SetSampleRate(float /*rate*/)
 {
     {
         QMutexLocker lo(&mutexOpenClose);
@@ -244,10 +258,10 @@ bool AudioDevice::OpenStream(double sampleRate)
                 directSoundStreamInfo.version = 2;
                 //directSoundStreamInfo.flags = paWinDirectSoundUseChannelMask;
                 //directSoundStreamInfo.channelMask = PAWIN_SPEAKER_5POINT1; /* request 5.1 output format */
-
                 directSoundStreamInfo.flags = paWinDirectSoundUseLowLevelLatencyParameters;
-                directSoundStreamInfo.framesPerBuffer = 2048;
+                directSoundStreamInfo.framesPerBuffer = myHost->settings->GetSetting("api/dx_bufferSize", DIRECTX_DEFAULT_BUFFER_SIZE).toUInt();
                 inputParameters->hostApiSpecificStreamInfo = &directSoundStreamInfo;
+                myHost->SetBufferSize(directSoundStreamInfo.framesPerBuffer);
                 break;
             case paMME :
                 ZeroMemory( &wmmeStreamInfo, sizeof(PaWinMmeStreamInfo) );
@@ -258,6 +272,7 @@ bool AudioDevice::OpenStream(double sampleRate)
                 wmmeStreamInfo.framesPerBuffer = myHost->settings->GetSetting("api/wmme_bufferSize", MME_DEFAULT_BUFFER_SIZE).toUInt();
                 wmmeStreamInfo.bufferCount = myHost->settings->GetSetting("api/wmme_bufferCount", MME_DEFAULT_BUFFER_COUNT).toUInt();
                 inputParameters->hostApiSpecificStreamInfo = &wmmeStreamInfo;
+                myHost->SetBufferSize(wmmeStreamInfo.framesPerBuffer);
                 break;
             case paASIO :
                 break;
@@ -315,6 +330,9 @@ bool AudioDevice::OpenStream(double sampleRate)
                 directSoundStreamInfo.version = 2;
                 //directSoundStreamInfo.flags = paWinDirectSoundUseChannelMask;
                 //directSoundStreamInfo.channelMask = PAWIN_SPEAKER_5POINT1; /* request 5.1 output format */
+                //directSoundStreamInfo.flags = paWinDirectSoundUseLowLevelLatencyParameters;
+                directSoundStreamInfo.flags = myHost->settings->GetSetting("api/dx_flags", DIRECTX_DEFAULT_BUFFER_SIZE).toUInt();
+                directSoundStreamInfo.framesPerBuffer = myHost->settings->GetSetting("api/dx_bufferSize", DIRECTX_DEFAULT_BUFFER_SIZE).toUInt();
                 outputParameters->hostApiSpecificStreamInfo = &directSoundStreamInfo;
                 break;
             case paMME :
@@ -452,6 +470,11 @@ bool AudioDevice::Open()
         return false;
     }
 
+
+#ifdef CIRCULAR_BUFFER
+    CreateCircularBuffers();
+#endif
+
     //try to open at the host rate
     double sampleRate = myHost->GetSampleRate();
     if(!OpenStream(sampleRate)) {
@@ -484,9 +507,7 @@ bool AudioDevice::Open()
         return false;
     }
 
-#ifdef CIRCULAR_BUFFER
-    CreateCircularBuffers();
-#endif
+
 
     {
         QMutexLocker lo(&mutexOpenClose);
@@ -541,10 +562,21 @@ bool AudioDevice::Close()
 #ifdef CIRCULAR_BUFFER
 void AudioDevice::CreateCircularBuffers()
 {
-    for(int i=0; i<devInfo.maxInputChannels; i++ )
+    for(int i=0; i<devInfo.maxInputChannels; i++ ) {
         listCircularBuffersIn << new CircularBuffer();
-    for(int i=0; i<devInfo.maxOutputChannels; i++ )
+    }
+    for(int i=0; i<devInfo.maxOutputChannels; i++ ) {
         listCircularBuffersOut << new CircularBuffer();
+    }
+
+//    const ulong bsize=4000;
+//    float buff[bsize];
+//    memset(buff,.0f,bsize);
+//    foreach(CircularBuffer *buf, listCircularBuffersOut) {
+//        if(buf) {
+//            buf->Put( buff, bsize );
+//        }
+//    }
 }
 
 /*!
@@ -567,10 +599,10 @@ void AudioDevice::DeleteCircularBuffers()
   Set the sleep state
   \param sleeping the new state
   */
-void AudioDevice::SetSleep(bool sleeping)
+bool AudioDevice::SetSleep(bool sleeping)
 {
     if(!sleeping)
-        Open();
+        return Open();
 
 //    mutexDevicesInOut.lock();
 //    if(devIn)
@@ -579,8 +611,8 @@ void AudioDevice::SetSleep(bool sleeping)
 //        devOut->SetSleep( (!opened || sleeping) );
 //    mutexDevicesInOut.unlock();
 
-    if(sleeping)
-        Close();
+    else
+        return Close();
 }
 
 /*!
@@ -595,6 +627,9 @@ float AudioDevice::GetCpuUsage()
 #ifdef CIRCULAR_BUFFER
 bool AudioDevice::DeviceToRingBuffers( const void *inputBuffer, unsigned long framesPerBuffer)
 {
+    //if no input, render when the host buffer is full
+    static ulong fakeFilledSize=0;
+
     {
         QMutexLocker lo(&mutexOpenClose);
         if(isClosing) return false;
@@ -602,16 +637,28 @@ bool AudioDevice::DeviceToRingBuffers( const void *inputBuffer, unsigned long fr
 
     unsigned long hostBuffSize = myHost->GetBufferSize();
     if(framesPerBuffer > hostBuffSize) {
+        LOG(QString("ajusting host buffer %1->%2")
+            .arg(hostBuffSize)
+            .arg(framesPerBuffer));
        myHost->SetBufferSize(framesPerBuffer);
        hostBuffSize = framesPerBuffer;
     }
 
     {
         QMutexLocker lio(&mutexDevicesInOut);
-        if(!devIn) return true;
+        if(!devIn) {
+            fakeFilledSize+=framesPerBuffer;
+            if(fakeFilledSize>=hostBuffSize) {
+                inputBufferReady=true;
+                fakeFilledSize=0;
+            } else {
+                inputBufferReady=false;
+            }
+            return true;
+        }
     }
 
-    bool readyToRender=true;
+    inputBufferReady=true;
 
     //fill circular buffer with device audio
     int cpt=0;
@@ -620,13 +667,18 @@ bool AudioDevice::DeviceToRingBuffers( const void *inputBuffer, unsigned long fr
             buf->SetSize(myHost->GetBufferSize()*2);
 
         buf->Put( ((float **) inputBuffer)[cpt], framesPerBuffer );
-        if(buf->filledSize < hostBuffSize )
-            readyToRender=false;
+        if(buf->filledSize < hostBuffSize ) {
+            inputBufferReady=false;
+        } else {
+            LOG(QString("not enough data host buffer %1/%2")
+                .arg(buf->filledSize)
+                .arg(hostBuffSize));
+        }
         cpt++;
     }
 
     //if we filled enough buffer
-    if(readyToRender)
+    if(inputBufferReady)
         RingBuffersToPins();
 
     return true;
@@ -641,7 +693,7 @@ void AudioDevice::RingBuffersToPins()
     }
 
 //    if(!inputBufferReady) {
-        inputBufferReady=true;
+//        inputBufferReady=true;
 
 //        QMutexLocker locker(&mutexCountInputDevicesReady);
 //        countDevicesReady++;
@@ -691,24 +743,43 @@ bool AudioDevice::RingBuffersToDevice( void *outputBuffer, unsigned long framesP
     //send circular buffer to device if there's enough data
     int cpt=0;
     foreach(CircularBuffer *buf, listCircularBuffersOut) {
-        if(buf->filledSize>=framesPerBuffer)
+        if(!pause && buf->filledSize>=framesPerBuffer) {
+//            LOG(QString("buffer->device %1<-%2/%3 (host:%4)")
+//                .arg(framesPerBuffer)
+//                .arg(buf->filledSize)
+//                .arg(buf->buffSize)
+//                .arg(myHost->GetBufferSize())
+//                );
             buf->Get( ((float **) outputBuffer)[cpt], framesPerBuffer );
+
+        } else {
+            ZeroMemory( ((float **) outputBuffer)[cpt], sizeof(float)*framesPerBuffer );
+            LOG(QString("buffer->device %1<-%2 | not enough data")
+                .arg(framesPerBuffer)
+                .arg(buf->filledSize));
+        }
         cpt++;
     }
 
-
-
-
+    if(outputBuffer) {
+        QVector<float> grph;
+        grph.reserve(framesPerBuffer * sizeof(float));
+        std::copy(((float **) outputBuffer)[0], ((float **) outputBuffer)[0] + framesPerBuffer, std::back_inserter(grph));
+//        myHost->mainWindow->DrawBuffer( ((float **) outputBuffer)[0], framesPerBuffer );
+        emit DebugGraphUpdated(grph);
+    }
     return true;
 }
 #else
 bool AudioDevice::DeviceToPinBuffers( const void *inputBuffer, unsigned long framesPerBuffer )
 {
-    unsigned long hostBuffSize = myHost->GetBufferSize();
-    if(framesPerBuffer > hostBuffSize) {
-       myHost->SetBufferSize(framesPerBuffer);
-       hostBuffSize = framesPerBuffer;
-    }
+//    unsigned long hostBuffSize = myHost->GetBufferSize();
+//    if(framesPerBuffer > hostBuffSize) {
+//       myHost->SetBufferSize(framesPerBuffer);
+//       hostBuffSize = framesPerBuffer;
+//    }
+
+    myHost->SetBufferSize(framesPerBuffer);
 
 //    mutexDevicesInOut.lock();
     if(!devIn) {
@@ -736,11 +807,21 @@ bool AudioDevice::DeviceToPinBuffers( const void *inputBuffer, unsigned long fra
 
 bool AudioDevice::PinBuffersToDevice( void *outputBuffer, unsigned long framesPerBuffer )
 {
+//    unsigned long hostBuffSize = myHost->GetBufferSize();
+//    if(framesPerBuffer > hostBuffSize) {
+//       myHost->SetBufferSize(framesPerBuffer);
+//       hostBuffSize = framesPerBuffer;
+//    }
+
+
+
+    myHost->SetBufferSize(framesPerBuffer);
+
 	if (devOutClosing || !devOut) {
 		devOutClosing = false;
 
 		for (int i = 0; i < devInfo.maxOutputChannels; i++) {
-			for (int j = 0; j < framesPerBuffer; j++) {
+            for (unsigned long j = 0; j < framesPerBuffer; j++) {
 				((float **)outputBuffer)[i][j] = .0f;
 			}
 		}
@@ -784,6 +865,7 @@ int AudioDevice::paCallback( const void *inputBuffer, void *outputBuffer,
 //        );
 
 #ifdef CIRCULAR_BUFFER
+
     //put input buffer in rongbuffer
     if(!device->DeviceToRingBuffers(inputBuffer, framesPerBuffer))
         return paComplete;
@@ -794,14 +876,13 @@ int AudioDevice::paCallback( const void *inputBuffer, void *outputBuffer,
         if(device->inputBufferReady) {
             countDevicesReady++;
         } else {
-            LOG(QString("%1 %2")
-                .arg( device->devInfo.name )
-                .arg("buffer not full")
-                );
-            return paContinue;
+//            LOG(QString("%1 %2")
+//                .arg( device->devInfo.name )
+//                .arg("buffer not full")
+//                );
+//            return paContinue;
         }
     }
-
 
     //all devices are ready : render
     mutexCountOpenedDevicesReady.lock();
@@ -811,6 +892,9 @@ int AudioDevice::paCallback( const void *inputBuffer, void *outputBuffer,
 //        .arg( countDevicesReady )
 //        .arg( countOpenedDevices )
 //        );
+
+    if(!device->RingBuffersToDevice(outputBuffer, framesPerBuffer))
+        return paComplete;
 
     if(countDevicesReady>=countOpenedDevices) {
         countDevicesReady=0;
@@ -827,8 +911,10 @@ int AudioDevice::paCallback( const void *inputBuffer, void *outputBuffer,
         return paContinue;
     }
 
-    if(!device->RingBuffersToDevice(outputBuffer, framesPerBuffer))
-        return paComplete;
+
+
+
+
 #else
     QMutexLocker l(&device->mutexDevicesInOut);
     device->mutexOpenClose.lock();
@@ -837,7 +923,6 @@ int AudioDevice::paCallback( const void *inputBuffer, void *outputBuffer,
         return paComplete;
     }
     device->mutexOpenClose.unlock();
-
 
 ////    if(device->devOut) {
 //        device->myHost->SetCurrentBuffers((float **)inputBuffer, (float **)outputBuffer, framesPerBuffer);
@@ -850,10 +935,8 @@ int AudioDevice::paCallback( const void *inputBuffer, void *outputBuffer,
 //    device->bufferSize=framesPerBuffer;
 
 
-
 //    if(device->devIn)
 //        device->devIn->NewRenderLoop2();
-
 
 
     if(!device->DeviceToPinBuffers(inputBuffer,framesPerBuffer))

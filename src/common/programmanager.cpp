@@ -31,14 +31,17 @@
 ProgramManager::ProgramManager(MainHost *myHost) :
     QObject(myHost),
     MsgHandler(myHost,FixedObjId::programsManager),
+	orderChanged(false),
     myHost(myHost),
     nextGroupId(1),
     nextProgId(1),
-    currentGroupId(0),
-    currentProgId(0),
-    currentMidiGroup(0),
-    currentMidiProg(0),
     dirtyFlag(false),
+	groupAutosaveState(Qt::Unchecked),
+	progAutosaveState(Qt::Unchecked),
+	currentMidiGroup(0),
+	currentMidiProg(0),
+	currentGroupId(0),
+	currentProgId(0),
     promptAnswer(-1)
 {
     updateTimer.setInterval(20);

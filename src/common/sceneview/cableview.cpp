@@ -32,7 +32,8 @@ CableView::CableView(MsgController *msgCtrl, int objId, PinView *pinOut, PinView
     QObject(),
     MsgHandler(msgCtrl,objId),
     pinOut(pinOut),
-    pinIn(pinIn)
+    pinIn(pinIn),
+	config(0)
 {
     setPen( config->GetColor(ColorGroups::Panel,Colors::Lines) );
     connect( config, SIGNAL(ColorChanged(ColorGroups::Enum,Colors::Enum,QColor)),

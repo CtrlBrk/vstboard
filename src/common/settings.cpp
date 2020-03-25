@@ -21,8 +21,8 @@
 #include "settings.h"
 
 Settings::Settings(const QString & settingsGroup, QObject *parent) :
-    settingsGroup(settingsGroup),
-    QObject(parent)
+    QObject(parent),
+    settingsGroup(settingsGroup)
 {
 }
 

@@ -42,6 +42,10 @@
  @brief Microsoft COM initialization routines.
 */
 
+#ifdef _MSC_VER
+#pragma warning(disable: 4100) //unreferenced parameter
+#endif
+
 #include <windows.h>
 #include <objbase.h>
 

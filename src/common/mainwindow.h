@@ -60,6 +60,8 @@ public:
 
     Settings *settings;
 
+
+
 protected:
     void showEvent(QShowEvent *event);
     void hideEvent(QHideEvent *event);
@@ -98,11 +100,18 @@ protected:
 
     QRect geometryBeforeFullscreen;
 
+    QGraphicsScene *debugScene;
+    QGraphicsPixmapItem* debugPixmap;
+    QPixmap debugPix;
+signals:
+    void PauseOutput(bool);
+
 public slots:
     void OnViewConfigClosed();
     void LoadDefaultFiles();
     void SetProgramsFont(const QFont &f);
     void LoadProgramsFont();
+    void UpdateDebugGraph(QVector<float> grph);
 
 private slots:
     void on_actionLoad_Setup_triggered();
@@ -136,6 +145,7 @@ private slots:
     void on_actionProject_panel_toggled(bool arg1);
     void on_dockSolver_visibilityChanged(bool visible);
     void on_actionFullscreen_toggled(bool arg1);
+    void on_actionPause_output_toggled(bool arg1);
 };
 
 #endif // MAINWINDOW_H

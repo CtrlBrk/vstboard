@@ -47,6 +47,11 @@
 */
 //#define PA_WIN_DS_USE_WMME_TIMER
 
+#ifdef _MSC_VER
+#pragma warning(disable: 4100) //unreferenced parameter
+#pragma warning(disable: 4189)
+#endif
+
 #include <assert.h>
 #include <stdio.h>
 #include <string.h> /* strlen() */

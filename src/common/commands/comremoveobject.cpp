@@ -30,7 +30,6 @@ ComRemoveObject::ComRemoveObject( MainHost *myHost,
     QUndoCommand(parent),
     myHost(myHost),
     removeType(removeType),
-    objectInfo(objectInfo),
     currentGroup(0),
     currentProg(0)
 {

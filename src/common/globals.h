@@ -40,6 +40,9 @@
 #define WASAPI_DEFAULT_INLATENCY 0
 #define WASAPI_DEFAULT_OUTLATENCY 0
 
+#define DIRECTX_DFAULT_FLAGS paWinDirectSoundUseLowLevelLatencyParameters
+#define DIRECTX_DEFAULT_BUFFER_SIZE 4096
+
 namespace UserRoles {
     enum Enum {
         programGroup = Qt::UserRole+1,
@@ -258,4 +261,6 @@ namespace RemoveType {
         BridgeCables
     };
 }
+
+
 #endif // GLOBALS_H

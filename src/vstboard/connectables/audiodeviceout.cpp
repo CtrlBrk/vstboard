@@ -107,7 +107,9 @@ bool AudioDeviceOut::Open()
     listAudioPinIn->ChangeNumberOfPins( parentDevice->GetNbOutputs() );
 
     //debug pins
-    listAudioPinOut->ChangeNumberOfPins( parentDevice->GetNbOutputs() );
+#ifndef QT_NO_DEBUG
+//    listAudioPinOut->ChangeNumberOfPins( parentDevice->GetNbOutputs() );
+#endif
 
     //device already has a child
     if(!parentDevice->SetObjectOutput(this)) {
@@ -122,15 +124,29 @@ bool AudioDeviceOut::Open()
 
 #ifdef CIRCULAR_BUFFER
 void AudioDeviceOut::SetRingBufferFromPins(QList<CircularBuffer*>listCircularBuffers) {
+    AudioBuffer *pinBuf = listAudioPinIn->GetBuffer(0);
+//    static ulong put=0;
+//    put+=pinBuf->GetSize();
+//    LOG(QString("put %1").arg(put));
+
     int cpt=0;
     foreach(CircularBuffer *buf, listCircularBuffers) {
-        if(buf->buffSize<myHost->GetBufferSize()*2)
-            buf->SetSize(myHost->GetBufferSize()*2);
+//        if(buf->buffSize<myHost->GetBufferSize()*2)
+//            buf->SetSize(myHost->GetBufferSize()*2);
 
         AudioBuffer *pinBuf = listAudioPinIn->GetBuffer(cpt);
         cpt++;
-        if(!pinBuf)
+        if(!pinBuf) {
+            LOG("no pin buffer");
             continue;
+        }
+
+//        LOG(QString("pin->buffer %1->%2/%3")
+//            .arg(pinBuf->GetSize())
+//            .arg(buf->filledSize)
+//            .arg(buf->buffSize)
+//            );
+
         if(pinBuf->GetDoublePrecision())
             buf->Put( (double*)pinBuf->ConsumeStack(), pinBuf->GetSize() );
         else
@@ -142,21 +158,24 @@ void AudioDeviceOut::SetRingBufferFromPins(QList<CircularBuffer*>listCircularBuf
 
 void AudioDeviceOut::Render()
 {
-    foreach(Pin *in, listAudioPinIn->listPins ) {
-        AudioPin *audioIn = static_cast<AudioPin*>(in);
-        AudioPin *audioOut = 0;
-        if(listAudioPinOut->listPins.size() > in->GetConnectionInfo().pinNumber) {
-            audioOut = static_cast<AudioPin*>(listAudioPinOut->GetPin( in->GetConnectionInfo().pinNumber ));
-        }
+#ifndef QT_NO_DEBUG
+    //for debug output pins
+//    foreach(Pin *in, listAudioPinIn->listPins ) {
+//        AudioPin *audioIn = static_cast<AudioPin*>(in);
+//        AudioPin *audioOut = 0;
+//        if(listAudioPinOut->listPins.size() > in->GetConnectionInfo().pinNumber) {
+//            audioOut = static_cast<AudioPin*>(listAudioPinOut->GetPin( in->GetConnectionInfo().pinNumber ));
+//        }
 
-        if(audioIn) {
-            if(audioOut) {
-                audioOut->GetBuffer()->AddToStack( audioIn->GetBuffer() );
-                audioOut->GetBuffer()->ConsumeStack();
-                audioOut->SendAudioBuffer();
-                audioOut->GetBuffer()->ResetStackCounter();
-            }
-            audioIn->GetBuffer()->ConsumeStack();
-        }
-    }
+//        if(audioIn) {
+//            if(audioOut) {
+//                audioOut->GetBuffer()->AddToStack( audioIn->GetBuffer() );
+//                audioOut->GetBuffer()->ConsumeStack();
+//                audioOut->SendAudioBuffer();
+//                audioOut->GetBuffer()->ResetStackCounter();
+//            }
+//            audioIn->GetBuffer()->ConsumeStack();
+//        }
+//    }
+#endif
 }

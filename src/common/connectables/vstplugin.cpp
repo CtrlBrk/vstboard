@@ -95,8 +95,10 @@ void VstPlugin::SetSleep(bool sleeping)
 
     } else {
         foreach(Pin *in, listAudioPinIn->listPins ) {
-            AudioPin *audioIn = static_cast<AudioPin*>(in);
-            audioIn->GetBuffer()->ResetStackCounter();
+            if(in) {
+                AudioPin *audioIn = static_cast<AudioPin*>(in);
+                audioIn->GetBuffer()->ResetStackCounter();
+            }
         }
         EffResume();
         EffStartProcess();
@@ -199,7 +201,21 @@ void VstPlugin::Render()
         }
     }
 
-    if(doublePrecision) {
+	ulong newbuffsize = 0;
+	AudioPin* p = static_cast<AudioPin*>(listAudioPinIn->listPins[0]);
+	if (p) {
+		newbuffsize = p->GetBuffer()->GetSize();
+	}
+	p = static_cast<AudioPin*>(listAudioPinIn->listPins[0]);
+	if (p) {
+		newbuffsize = p->GetBuffer()->GetSize();
+	}
+
+	if (newbuffsize != 0) {
+		SetBufferSize(newbuffsize);
+	}
+
+	if(doublePrecision) {
         if (pEffect->flags & effFlagsCanDoubleReplacing) {
             double **tmpBufOut = new double*[listAudioPinOut->listPins.size()];
 
@@ -241,8 +257,13 @@ void VstPlugin::Render()
 
         int cpt=0;
         foreach(Pin* pin,listAudioPinOut->listPins) {
-            AudioPin *audioPin = static_cast<AudioPin*>(pin);
-            tmpBufOut[cpt] = (float*)audioPin->GetBuffer()->GetPointerWillBeFilled();
+			if (pin) {
+				AudioPin *audioPin = static_cast<AudioPin*>(pin);
+				tmpBufOut[cpt] = (float*)audioPin->GetBuffer()->GetPointerWillBeFilled();
+			}
+			else {
+				LOG("no out pin");
+			}
             cpt++;
         }
 
@@ -255,7 +276,12 @@ void VstPlugin::Render()
 
             cpt=0;
             foreach(Pin* pin,listAudioPinIn->listPins) {
-                tmpBufIn[cpt] = (float*)static_cast<AudioPin*>(pin)->GetBuffer()->ConsumeStack();
+				if (pin) {
+					tmpBufIn[cpt] = (float*)static_cast<AudioPin*>(pin)->GetBuffer()->ConsumeStack();
+				}
+//				else {
+//					LOG("no input pin");
+//				}
                 cpt++;
             }
         }

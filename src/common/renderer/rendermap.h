@@ -36,9 +36,10 @@ class SolverNode;
 class RenderMap
 {
 public:
-    RenderMap();
-//    RenderMap(const RenderMap &c);
+	RenderMap() {}
+	RenderMap(const RenderMap &c) { *this = c; }
     RenderMap(const OptMap &oMap, const QList<SolverNode*> &solverNodes);
+
 //    ~RenderMap();
 //    void Clear();
     QString ToTxt();

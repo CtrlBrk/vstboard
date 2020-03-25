@@ -39,6 +39,7 @@ ViewConfigDialog::ViewConfigDialog(MainHost *myHost, QWidget *parent) :
     myHost(myHost),
     currentGrp(ColorGroups::ND),
     currentCol(Colors::ND),
+	backupSaveInSetup(false),
     modified(false),
     updateInProgress(false),
     conf(myHost->mainWindow->viewConfig)

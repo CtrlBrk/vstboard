@@ -29,6 +29,9 @@ RendererThread2::RendererThread2(Renderer2 *renderer, int id) :
     stop(false),
     renderer(renderer),
     id(id)
+#ifdef WIN32
+	, hMmTask(0)
+#endif
 {
     setObjectName("rendererThread");
     renderer->waitThreadReady.AddClient();

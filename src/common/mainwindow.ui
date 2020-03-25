@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>846</width>
-    <height>570</height>
+    <width>855</width>
+    <height>657</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -331,7 +331,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>846</width>
+     <width>855</width>
      <height>20</height>
     </rect>
    </property>
@@ -370,6 +370,7 @@
     <addaction name="menuTool"/>
     <addaction name="actionUndo"/>
     <addaction name="actionRedo"/>
+    <addaction name="actionPause_output"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -933,6 +934,28 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QDockWidget" name="dockGraph">
+   <property name="windowTitle">
+    <string>Graph</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_8">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <widget class="QGraphicsView" name="debugGraph">
+       <property name="dragMode">
+        <enum>QGraphicsView::ScrollHandDrag</enum>
+       </property>
+       <property name="optimizationFlags">
+        <set>QGraphicsView::DontAdjustForAntialiasing|QGraphicsView::DontClipPainter|QGraphicsView::DontSavePainterState|QGraphicsView::IndirectPainting</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="actionSave">
    <property name="icon">
     <iconset theme="document-save">
@@ -1061,7 +1084,7 @@
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset theme="layer-visible-on">
@@ -1410,6 +1433,14 @@
    </property>
    <property name="shortcut">
     <string>F11</string>
+   </property>
+  </action>
+  <action name="actionPause_output">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Pause output</string>
    </property>
   </action>
  </widget>

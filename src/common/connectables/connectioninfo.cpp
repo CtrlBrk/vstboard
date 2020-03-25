@@ -58,14 +58,6 @@ ConnectionInfo::ConnectionInfo(MainHost *myHost,quint16 objId, PinType::Enum typ
 }
 
 /*!
-  Copy the info
-  \param c the model
-  */
-ConnectionInfo::ConnectionInfo(const ConnectionInfo &c) {
-    *this = c;
-}
-
-/*!
   Check if the provided pin can connect to this one
   \param c the other pin
   \return true if it can connect

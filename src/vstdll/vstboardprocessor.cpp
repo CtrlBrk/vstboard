@@ -80,16 +80,17 @@ tresult PLUGIN_API VstBoardProcessor::initialize (FUnknown* context)
     if (result != kResultTrue)
         return result;
 
-    qRegisterMetaType<ConnectionInfo>("ConnectionInfo");
-    qRegisterMetaType<ObjectInfo>("ObjectInfo");
-    qRegisterMetaType<ObjectContainerAttribs>("ObjectContainerAttribs");
-    qRegisterMetaType<MsgObject>("MsgObject");
-    qRegisterMetaType<int>("ObjType::Enum");
-    qRegisterMetaType<QVariant>("QVariant");
-    qRegisterMetaType<AudioBuffer*>("AudioBuffer*");
+//    qRegisterMetaType<ConnectionInfo>("ConnectionInfo");
+//    qRegisterMetaType<ObjectInfo>("ObjectInfo");
+//    qRegisterMetaType<ObjectContainerAttribs>("ObjectContainerAttribs");
+//    qRegisterMetaType<MsgObject>("MsgObject");
+//    qRegisterMetaType<int>("ObjType::Enum");
+//    qRegisterMetaType<QVariant>("QVariant");
+//    qRegisterMetaType<AudioBuffer*>("AudioBuffer*");
+//    qRegisterMetaType<QVector<int> >("QVector<int>");
+//    qRegisterMetaTypeStreamOperators<ObjectInfo>("ObjectInfo");
+//    qRegisterMetaTypeStreamOperators<ObjectContainerAttribs>("ObjectContainerAttribs");
 
-    qRegisterMetaTypeStreamOperators<ObjectInfo>("ObjectInfo");
-    qRegisterMetaTypeStreamOperators<ObjectContainerAttribs>("ObjectContainerAttribs");
 
     QCoreApplication::setOrganizationName("CtrlBrk");
     QCoreApplication::setApplicationName("VstBoard");
@@ -526,12 +527,15 @@ bool VstBoardProcessor::processOutputEvents()
 
     int cpt=0;
     foreach(Connectables::VstMidiDevice *dev, lstMidiOut) {
-        foreach(long msg, dev->midiQueue) {
+		foreach(long msg, dev->midiQueue) {
 
-            //allocate a new buffer
-            if(!listEvnts)
-                listEvnts = (VstEvents*)malloc(sizeof(VstEvents) + sizeof(VstEvents*)*(VST_EVENT_BUFFER_SIZE-2));
-
+			//allocate a new buffer
+			if (!listEvnts)
+				listEvnts = (VstEvents*)malloc(sizeof(VstEvents) + sizeof(VstEvents*)*(VST_EVENT_BUFFER_SIZE - 2));
+			if (!listEvnts) {
+				LOG("malloc error!");
+				return false;
+			}
             VstMidiEvent *evnt = new VstMidiEvent;
             memset(evnt, 0, sizeof(VstMidiEvent));
             evnt->type = kVstMidiType;

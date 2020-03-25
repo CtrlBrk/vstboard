@@ -385,13 +385,17 @@ void Object::NewRenderLoop()
 
     if(listAudioPinIn) {
         foreach(Pin *pin, listAudioPinIn->listPins) {
-            pin->NewRenderLoop();
+            if(pin) {
+                pin->NewRenderLoop();
+            }
         }
     }
 
     if(listBridgePinIn) {
         foreach(Pin *p, listBridgePinIn->listPins) {
-            p->NewRenderLoop();
+            if(p) {
+                p->NewRenderLoop();
+            }
         }
     }
 }
@@ -553,10 +557,14 @@ void Object::SetBufferSize(unsigned long size)
 {
     QMutexLocker l(&objMutex);
     foreach(Pin *pin, listAudioPinIn->listPins) {
-        static_cast<AudioPin*>(pin)->SetBufferSize(size);
+        if(pin) {
+            static_cast<AudioPin*>(pin)->SetBufferSize(size);
+        }
     }
     foreach(Pin *pin, listAudioPinOut->listPins) {
-        static_cast<AudioPin*>(pin)->SetBufferSize(size);
+        if(pin) {
+            static_cast<AudioPin*>(pin)->SetBufferSize(size);
+        }
     }
 }
 
@@ -870,7 +878,9 @@ void Object::SetMsgEnabled(bool enab)
 {
     MsgHandler::SetMsgEnabled(enab);
     foreach(PinsList *lst, pinLists) {
-        lst->SetMsgEnabled(enab);
+        if(lst) {
+            lst->SetMsgEnabled(enab);
+        }
     }
 
     //we're enabled, parent is not : send update

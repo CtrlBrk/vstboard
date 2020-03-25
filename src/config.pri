@@ -4,6 +4,9 @@ DEFINES += APP_VERSION_MINOR=6
 DEFINES += APP_VERSION_BUILD=0
 DEFINES += APP_VERSION_PATCH=0
 
+#CONFIG += object_parallel_to_source
+#OBJECTS_DIR= tmp
+#MOC_DIR = tmp
 
 PORTAUDIO_PATH 	= ../../libs/portaudio
 PORTMIDI_PATH 	= ../../libs/portmidi
@@ -52,8 +55,7 @@ win32-g++ {
 
 win32-msvc* {
     DEFINES += _CRT_SECURE_NO_WARNINGS
-#    INCLUDEPATH += $$quote($$(INCLUDE))
-    INCLUDEPATH += $$(INCLUDE)
+    INCLUDEPATH += $$quote($$(INCLUDE))
     LIBS += -L$$quote($$(LIB))
  #   QMAKE_CFLAGS += -Fd$$top_destdir/$$TARGET
 

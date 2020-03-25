@@ -23,7 +23,13 @@
 #include "models/groupsprogramsmodel.h"
 
 GroupListView::GroupListView(QWidget *parent) :
-    QListView(parent)
+    QListView(parent),
+	actRename(0),
+	actDel(0),
+	actAddNew(0),
+	actCopy(0),
+	actPaste(0),
+	actCut(0)
 {
     CreateActions();
 

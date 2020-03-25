@@ -27,6 +27,7 @@ using namespace View;
 
 ConnectableObjectView::ConnectableObjectView(ViewConfig *config, MsgController *msgCtrl, int objId, MainContainerView * parent=0 ) :
     ObjectView(config,msgCtrl,objId,parent),
+	objType(ObjType::ND),
     dropReplace(0),
     dropAttachLeft(0),
     dropAttachRight(0),

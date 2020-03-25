@@ -43,6 +43,10 @@
  @file
  @ingroup hostapi_src
 */
+#ifdef _MSC_VER
+#pragma warning(disable: 4100) //unreferenced parameter
+#pragma warning(disable: 4189)
+#endif
 
 #include "pa_win_ds_dynlink.h"
 #include "pa_debugprint.h"

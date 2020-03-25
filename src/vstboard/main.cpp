@@ -57,16 +57,17 @@
 
 int main(int argc, char *argv[])
 {
-    qRegisterMetaType<ConnectionInfo>("ConnectionInfo");
-    qRegisterMetaType<ObjectInfo>("ObjectInfo");
-    qRegisterMetaType<ObjectContainerAttribs>("ObjectContainerAttribs");
-    qRegisterMetaType<MsgObject>("MsgObject");
-    qRegisterMetaType<int>("ObjType::Enum");
-    qRegisterMetaType<QVariant>("QVariant");
-    qRegisterMetaType<AudioBuffer*>("AudioBuffer*");
+//    qRegisterMetaType<ConnectionInfo>("ConnectionInfo");
+//    qRegisterMetaType<ObjectInfo>("ObjectInfo");
+//    qRegisterMetaType<ObjectContainerAttribs>("ObjectContainerAttribs");
+//    qRegisterMetaType<MsgObject>("MsgObject");
+//    qRegisterMetaType<int>("ObjType::Enum");
+//    qRegisterMetaType<QVariant>("QVariant");
+//    qRegisterMetaType<AudioBuffer*>("AudioBuffer*");
+//    qRegisterMetaType<QVector<float> >("QVector<float>");
 
-    qRegisterMetaTypeStreamOperators<ObjectInfo>("ObjectInfo");
-    qRegisterMetaTypeStreamOperators<ObjectContainerAttribs>("ObjectContainerAttribs");
+//    qRegisterMetaTypeStreamOperators<ObjectInfo>("ObjectInfo");
+//    qRegisterMetaTypeStreamOperators<ObjectContainerAttribs>("ObjectContainerAttribs");
 
 #ifndef QT_NO_DEBUG
 //    qInstallMessageHandler(myMessageOutput);

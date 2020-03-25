@@ -29,6 +29,7 @@ using namespace Connectables;
 BridgePinIn::BridgePinIn(Object *parent, int number, bool bridge) :
     Pin(parent,PinType::Bridge,PinDirection::Input,number,bridge),
     valueType(PinType::ND),
+	messagesType{ PinMessage::ND },
     msgCount(0)
 {
     setObjectName(QString("BIn%1").arg(number));
@@ -61,7 +62,7 @@ void BridgePinIn::SendMsgToOutput()
     ConnectionInfo info = connectInfo;
     info.direction=PinDirection::Output;
 
-    for(int i=0; i<msgCount; i++) {
+    for(unsigned int i=0; i<msgCount; i++) {
         parent->GetPin(info)->SendMsg(messagesType[i],messagesData[i]);
     }
 

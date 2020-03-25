@@ -62,13 +62,14 @@ Vst::Vst (audioMasterCallback audioMaster, bool asInstrument) :
     programsAreChunks(true);
     vst_strncpy (programName, "Default", kVstMaxProgNameLen);	// default program name
 
-    qRegisterMetaType<ConnectionInfo>("ConnectionInfo");
-    qRegisterMetaType<ObjectInfo>("ObjectInfo");
-    qRegisterMetaType<int>("ObjType::Enum");
-    qRegisterMetaType<QVariant>("QVariant");
-    qRegisterMetaType<AudioBuffer*>("AudioBuffer*");
+//    qRegisterMetaType<ConnectionInfo>("ConnectionInfo");
+//    qRegisterMetaType<ObjectInfo>("ObjectInfo");
+//    qRegisterMetaType<int>("ObjType::Enum");
+//    qRegisterMetaType<QVariant>("QVariant");
+//    qRegisterMetaType<AudioBuffer*>("AudioBuffer*");
+//    qRegisterMetaType<QVector<int> >("QVector<int>");
 
-    qRegisterMetaTypeStreamOperators<ObjectInfo>("ObjectInfo");
+//    qRegisterMetaTypeStreamOperators<ObjectInfo>("ObjectInfo");
 
     QCoreApplication::setOrganizationName("CtrlBrk");
     QCoreApplication::setApplicationName("VstBoard");

@@ -35,7 +35,8 @@ CursorView::CursorView(MsgController *msgCtrl, int objId, bool isMaxi,bool upsid
     drag(false),
     value(.0f),
     offset(QPointF(0,0)),
-    config(config)
+    config(config),
+	startDragValue(.0f)
 {
     QPolygonF pol;
 

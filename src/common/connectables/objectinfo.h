@@ -28,7 +28,7 @@ class ObjectInfo
 public:
     ObjectInfo();
     ObjectInfo(NodeType::Enum nodeType, ObjType::Enum objType=ObjType::ND, QString name="");
-    ObjectInfo(const ObjectInfo &c);
+    //ObjectInfo(const ObjectInfo &c);
 
     QDataStream & toStream(QDataStream& stream) const;
     QDataStream & fromStream(QDataStream& stream);

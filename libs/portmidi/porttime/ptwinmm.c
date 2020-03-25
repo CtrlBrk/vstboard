@@ -1,5 +1,7 @@
 /* ptwinmm.c -- portable timer implementation for win32 */
-
+#ifdef _MSC_VER
+#pragma warning(disable: 4100) //unreferenced parameter
+#endif
 
 #include "porttime.h"
 #include "windows.h"

@@ -23,15 +23,6 @@
 //#include "renderernode2.h"
 #include "optimizernode.h"
 
-RenderMap::RenderMap()
-{
-}
-
-//RenderMap::RenderMap(const RenderMap &c)
-//{
-//    *this=c;
-//}
-
 //RenderMap & RenderMap::operator= (const RenderMap & c)
 //{
 //    RendererMap newMap;

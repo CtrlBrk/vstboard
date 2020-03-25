@@ -41,6 +41,7 @@ ObjectInfo::ObjectInfo() :
 ObjectInfo::ObjectInfo(NodeType::Enum nodeType, ObjType::Enum objType, QString name) :
     nodeType(nodeType),
     objType(objType),
+	id(0),
     name(name),
     filename(""),
     inputs(0),
@@ -51,11 +52,6 @@ ObjectInfo::ObjectInfo(NodeType::Enum nodeType, ObjType::Enum objType, QString n
     initDelay(0)
 {
 
-}
-
-ObjectInfo::ObjectInfo(const ObjectInfo &c)
-{
-    *this = c;
 }
 
 QDataStream & ObjectInfo::toStream(QDataStream& stream) const

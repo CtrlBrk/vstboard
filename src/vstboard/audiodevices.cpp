@@ -25,6 +25,7 @@
 #include "pa_asio.h"
 #include "views/mmeconfigdialog.h"
 #include "views/wasapiconfigdialog.h"
+#include "views/directxconfigdialog.h"
 #include "connectables/audiodevicein.h"
 #include "connectables/audiodeviceout.h"
 #include "mainwindow.h"
@@ -110,11 +111,7 @@ void AudioDevices::CloseDevices(bool close)
         mutexClosing.unlock();
     }
 
-    mutexDevices.lock();
-    foreach(Connectables::AudioDevice *ad, listAudioDevices) {
-        ad->SetSleep(true);
-    }
-    mutexDevices.unlock();
+    SleepAll();
 
 //    if(!close) {
 //        mutexClosing.lock();
@@ -129,6 +126,16 @@ void AudioDevices::CloseDevices(bool close)
         }
         paOpened=false;
     }
+}
+
+void AudioDevices::SleepAll()
+{
+    mutexDevices.lock();
+    foreach(Connectables::AudioDevice *ad, listAudioDevices) {
+        ad->SetSleep(true);
+    }
+    mutexDevices.unlock();
+
 }
 
 void AudioDevices::OpenDevices()
@@ -313,7 +320,7 @@ void AudioDevices::OnToggleDeviceInUse(PaHostApiIndex apiId, PaDeviceIndex devId
     //the renderer is normally launched when all the audio devices are ready,
     //if there is no audio device we have to run a timer
     if(!listOpenedDevices.isEmpty()) {
-        myHost->SetBufferSize(1);
+       // myHost->SetBufferSize(1);
         if(fakeRenderTimer) {
             delete fakeRenderTimer;
             fakeRenderTimer=0;
@@ -356,7 +363,7 @@ Connectables::AudioDevice * AudioDevices::AddDevice(ObjectInfo &objInfo)
     listAudioDevices << dev;
     mutexDevices.unlock();
 
-    if(!dev->Open()) {
+    if(!dev->SetSleep(false)) {
         //retry later
         if(!timerRefreshDevices.isActive())
             timerRefreshDevices.start();
@@ -475,14 +482,16 @@ void AudioDevices::ConfigDevice(const ObjectInfo &info)
     PaDeviceIndex configDevId = (PaDeviceIndex)info.id;
     PaHostApiTypeId configApiIndex = (PaHostApiTypeId)info.api;
 
-    mutexDevices.lock();
-    foreach(Connectables::AudioDevice *ad, listAudioDevices) {
-        ad->SetSleep(true);
+    //stop scanning for devices while config is opened
+    if(timerRefreshDevices.isActive()) {
+        timerRefreshDevices.stop();
     }
-    mutexDevices.unlock();
 
     switch(configApiIndex) {
         case paASIO: {
+
+            SleepAll();
+
             PaError err;
 #if WIN32
             err = PaAsio_ShowControlPanel( configDevId, (void*)myHost->mainWindow );
@@ -515,6 +524,13 @@ void AudioDevices::ConfigDevice(const ObjectInfo &info)
             break;
         }
 
+        case paDirectSound: {
+
+            DirectxConfigDialog dlg( myHost, myHost->mainWindow );
+            dlg.exec();
+            break;
+        }
+
         default: {
             QMessageBox msg(QMessageBox::Information,
                 tr("No config"),
@@ -526,7 +542,13 @@ void AudioDevices::ConfigDevice(const ObjectInfo &info)
         }
     }
 
+    //restart devices
+    SleepAll();
     OpenDevices();
+    //continue scanning for new devices
+    if(!timerRefreshDevices.isActive()) {
+        timerRefreshDevices.start();
+    }
 }
 
 //restart portaudio until a device is found

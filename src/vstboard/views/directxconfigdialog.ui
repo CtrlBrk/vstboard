@@ -1,25 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MmeConfigDialog</class>
- <widget class="QDialog" name="MmeConfigDialog">
+ <class>DirectxConfigDialog</class>
+ <widget class="QDialog" name="DirectxConfigDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>235</height>
+    <width>234</width>
+    <height>140</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>Buffers</string>
      </property>
      <layout class="QFormLayout" name="formLayout">
+      <item row="2" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Buffer Size</string>
+        </property>
+       </widget>
+      </item>
       <item row="2" column="1">
        <widget class="QSpinBox" name="framesPerBuffer">
         <property name="minimum">
@@ -33,47 +40,10 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Buffer Count</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QSpinBox" name="bufferCount">
-        <property name="minimum">
-         <number>1</number>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Buffer Size</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0" colspan="2">
        <widget class="QCheckBox" name="UseLowLevelLatencyParameters">
         <property name="text">
          <string>Use Low Level Latency Parameters</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="title">
-      <string>Options</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QCheckBox" name="DontThrottleOverloadedProcessingThread">
-        <property name="text">
-         <string>Don't Throttle Overloaded Processing Thread</string>
         </property>
        </widget>
       </item>
@@ -97,12 +67,12 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>MmeConfigDialog</receiver>
+   <receiver>DirectxConfigDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>227</x>
-     <y>282</y>
+     <x>248</x>
+     <y>254</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -113,12 +83,12 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>MmeConfigDialog</receiver>
+   <receiver>DirectxConfigDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>295</x>
-     <y>288</y>
+     <x>316</x>
+     <y>260</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -133,28 +103,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>76</x>
-     <y>45</y>
+     <x>116</x>
+     <y>53</y>
     </hint>
     <hint type="destinationlabel">
-     <x>123</x>
-     <y>73</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>UseLowLevelLatencyParameters</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>bufferCount</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>48</x>
-     <y>48</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>138</x>
-     <y>95</y>
+     <x>145</x>
+     <y>80</y>
     </hint>
    </hints>
   </connection>

@@ -70,6 +70,7 @@ public:
 
 private:
     void CloseDevices(bool close=false);
+    void SleepAll();
     void OpenDevices();
     void BuildModel();
 

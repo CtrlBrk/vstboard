@@ -30,7 +30,11 @@ const int default_diameter = 5;
 GradientWidget::GradientWidget(QWidget *parent) :
         QWidget(parent), 
         m_cursor_position(rect().center()),
-        m_left_button_pressed(false)
+        m_left_button_pressed(false),
+		hue(.0), 
+		saturation(.0), 
+		value(.0), 
+		alpha(.0)
 {
     m_gradient_image = QImage(128, 128, QImage::Format_RGB32);
     setMainColor(Qt::red);
@@ -219,8 +223,8 @@ void GradientWidget::updateGradientImage()
 
 void GradientWidget::cursorMoved()
 {
-    saturation=(qreal)m_cursor_position.x()/(width()-1);
-    value=1.0 - (qreal)m_cursor_position.y()/(height()-1);
+    saturation=(qreal)m_cursor_position.x()/((qreal)width()-1.0);
+    value=1.0 - (qreal)m_cursor_position.y()/((qreal)height()-1.0);
     m_selected_color.setHsvF(hue,saturation,value,alpha);
 
     update();
@@ -228,7 +232,7 @@ void GradientWidget::cursorMoved()
 
 void GradientWidget::updateCursorPosition()
 {
-    m_cursor_position.setX( saturation*(width()-1) );
-    m_cursor_position.setY( (1.0-value)*(height()-1) );
+    m_cursor_position.setX( saturation*((qreal)width()-1.0) );
+    m_cursor_position.setY( (1.0-value)*((qreal)height()-1.0) );
     update();
 }

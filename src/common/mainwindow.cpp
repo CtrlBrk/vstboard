@@ -48,12 +48,46 @@ MainWindow::MainWindow(Settings *settings, MainHost * myHost, QWidget *parent) :
     progModel(new GroupsProgramsModel(this,this)),
     groupParking(0),
     programParking(0),
-    shellSelect(0)
+    shellSelect(0),
+    debugScene(new QGraphicsScene(this)),
+    debugPixmap(0)
 {
 }
 
+void MainWindow::UpdateDebugGraph(QVector<float> grph)  {
+    if(debugPixmap) {
+        int w = debugPix.width();
+        int h = debugPix.height();
+        int bs = (int)myHost->GetBufferSize();
+        if(w != bs) {
+            debugPix = QPixmap(bs,200);
+        }
+
+        QPainter paint(&debugPix);
+        paint.setBackground(QColor(0,0,0,255));
+        paint.eraseRect(debugPix.rect());
+        paint.setPen(QColor(255,34,200,255));
+
+        int x=0;
+        int oldy=h/2;
+        for(x=0; x<grph.size(); x++) {
+            int y = h/2 * (1.0f + grph.at(x));
+            if(x==0) oldy=y;
+            paint.drawLine(x, oldy, x, y);
+            oldy=y;
+        }
+        paint.setPen(QColor(255,34,0,255));
+        paint.drawLine(0, h/2, w, h/2);
+        paint.drawLine(x, 0, x, h);
+
+        debugPixmap->setPixmap(debugPix);
+    }
+}
+
+
 void MainWindow::Init()
 {
+
     QStyle *style = new QProxyStyle (QStyleFactory::create("fusion"));
     if(style!=nullptr) QApplication::setStyle(style);
     QIcon::setThemeName("light");
@@ -61,6 +95,11 @@ void MainWindow::Init()
 
     geometryBeforeFullscreen = geometry();
     ui->setupUi(this);
+
+
+    //debugPix = QPixmap(600,600);
+    ui->debugGraph->setScene(debugScene);
+    debugPixmap = new QGraphicsPixmapItem(debugScene->addPixmap(debugPix));
 
     ui->statusBar->hide();
     ui->dockUndo->hide();
@@ -879,4 +918,9 @@ void MainWindow::on_actionFullscreen_toggled(bool arg1)
         show();
     }
 
+}
+
+void MainWindow::on_actionPause_output_toggled(bool arg1)
+{
+    emit PauseOutput(arg1);
 }

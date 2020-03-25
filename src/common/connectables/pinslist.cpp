@@ -51,7 +51,9 @@ PinsList::PinsList(MainHost *myHost, Object *parent, MsgController *msgCtrl, int
 PinsList::~PinsList()
 {
     foreach(Pin* pin, listPins) {
-        pin->SetPinList(0);
+        if(pin) {
+            pin->SetPinList(0);
+        }
     }
 }
 
@@ -59,14 +61,18 @@ void PinsList::SetContainerId(quint16 id)
 {
     connInfo.container=id;
     foreach(Pin* pin, listPins) {
-        pin->SetContainerId(id);
+        if(pin) {
+            pin->SetContainerId(id);
+        }
     }
 }
 
 void PinsList::Hide()
 {
     foreach(Pin* pin, listPins) {
-        pin->Close();
+        if(pin) {
+            pin->Close();
+        }
     }
 }
 
@@ -93,7 +99,9 @@ void PinsList::SetInfo(Object *parent,const ConnectionInfo &connInfo, const Obje
 void PinsList::EnableVuUpdates(bool enab)
 {
     foreach(Pin* pin, listPins) {
-        pin->EnableVuUpdates(enab);
+        if(pin) {
+            pin->EnableVuUpdates(enab);
+        }
     }
 }
 
@@ -102,8 +110,10 @@ void PinsList::SetBridge(bool bridge)
     connInfo.bridge=bridge;
     visible=!bridge;
     foreach(Pin* pin, listPins) {
-        pin->SetBridge(bridge);
-        pin->SetVisible(visible);
+        if(pin) {
+            pin->SetBridge(bridge);
+            pin->SetVisible(visible);
+        }
     }
 }
 
@@ -290,15 +300,17 @@ void PinsList::GetInfos(MsgObject &msg)
     QMap<quint16,Pin*>::const_iterator i = listPins.constBegin();
     while(i!=listPins.constEnd()) {
         Pin *p = i.value();
-        if(!p->GetVisible()) {
-            ++i;
-            continue;
+        if(p) {
+            if(!p->GetVisible()) {
+                ++i;
+                continue;
+            }
+            MsgObject msgPin(GetIndex());
+            msgPin.prop[MsgObject::ParentNodeType]=parent->info().nodeType;
+            msgPin.prop[MsgObject::ParentObjType]=parent->info().objType;
+            p->GetInfos(msgPin);
+            msg.children << msgPin;
         }
-        MsgObject msgPin(GetIndex());
-        msgPin.prop[MsgObject::ParentNodeType]=parent->info().nodeType;
-        msgPin.prop[MsgObject::ParentObjType]=parent->info().objType;
-        p->GetInfos(msgPin);
-        msg.children << msgPin;
         ++i;
     }
 }
@@ -316,6 +328,8 @@ void PinsList::SetMsgEnabled(bool enab)
 {
     MsgHandler::SetMsgEnabled(enab);
     foreach(Pin *pin, listPins) {
-        pin->SetMsgEnabled(enab);
+        if(pin) {
+            pin->SetMsgEnabled(enab);
+        }
     }
 }

@@ -52,7 +52,7 @@ void CircularBuffer::SetSize(unsigned long size)
 
         //copy the data in the new buffer
         if(filledSize>0) {
-            long filled = filledSize;
+			unsigned long filled = filledSize;
             Get(newBuf,filledSize);
             filledSize = filled;
         }
@@ -93,23 +93,37 @@ void CircularBuffer::Clear()
     buffer[0]=.0f;
 }
 
+void CircularBuffer::Fit(ulong size) {
+    if((buffSize-filledSize)<size) {
+        ulong newSize= filledSize + 2*size;
+        LOG(QString("resize ring buf %1=>%2")
+            .arg(buffSize)
+            .arg(newSize));
+
+        SetSize(newSize);
+    }
+}
+
 bool CircularBuffer::Put(double *buf, unsigned long size)
 {
-    if(!buffer)
-        return false;
-
+//    if(!buffer)
+//        return false;
+/*
     if(size>buffSize) {
         size=buffSize;
     }
 
     if((buffSize-filledSize)<size) {
 //       LOG("CircularBuffer::Put not enough free space");
-       long overlapping = sizeof(float)*(size-(buffSize-filledSize));
+       unsigned long overlapping = sizeof(float)*(size-(buffSize-filledSize));
        readPos+=overlapping;
        filledSize-=overlapping;
        while(readPos>bufEnd)
            readPos-=(buffSize*sizeof(float));
     }
+*/
+
+    Fit(size);
 
     if(writePos+(size*sizeof(float)) <= bufEnd) {
         memcpy(writePos,buf,size*sizeof(float));
@@ -137,8 +151,8 @@ bool CircularBuffer::Put(double *buf, unsigned long size)
 
 unsigned long CircularBuffer::Put(CircularBuffer &buf, unsigned long size)
 {
-    if(!buffer)
-        return false;
+//    if(!buffer)
+//        return false;
 
     float *currentVal = writePos-1;
     if(currentVal<bufStart)
@@ -151,26 +165,29 @@ unsigned long CircularBuffer::Put(CircularBuffer &buf, unsigned long size)
     } while(size>0 && abs(val-*currentVal)>0.01f);
 
 
-    if(size>buffSize) {
-        LOG("buffer too long")
-        size=buffSize;
-    }
 
-    if((buffSize-filledSize)<size) {
+//    if(size>buffSize) {
+//        LOG("buffer too long")
+//        size=buffSize;
+//    }
+
+//    if((buffSize-filledSize)<size) {
 //       LOG("CircularBuffer::Put not enough free space");
-       long overlapping = size-(buffSize-filledSize);
-       readPos+=overlapping;
-       filledSize-=overlapping;
-       while(readPos>bufEnd)
-           readPos-=buffSize;
-    }
+//       unsigned long overlapping = size-(buffSize-filledSize);
+//       readPos+=overlapping;
+//       filledSize-=overlapping;
+//       while(readPos>bufEnd)
+//           readPos-=buffSize;
+//    }
+
+    Fit(size);
 
     if(writePos+size <= bufEnd) {
         buf.Get(writePos,size);
         writePos+=size;
     } else {
-        long size1 = bufEnd - writePos +1;
-        long size2 = size - size1;
+		unsigned long size1 = bufEnd - writePos +1;
+		unsigned long size2 = size - size1;
         if(size1<0 || size2<0) {
             size1=0;
             size2=0;
@@ -188,9 +205,10 @@ unsigned long CircularBuffer::Put(CircularBuffer &buf, unsigned long size)
 
 bool CircularBuffer::Put(float *buf, unsigned long size)
 {
-    if(!buffer)
-        return false;
 
+//    if(!buffer)
+//        return false;
+/*
     if(size>buffSize) {
         LOG("buffer too long")
         size=buffSize;
@@ -198,19 +216,21 @@ bool CircularBuffer::Put(float *buf, unsigned long size)
 
     if((buffSize-filledSize)<size) {
 //       LOG("CircularBuffer::Put not enough free space");
-       long overlapping = size-(buffSize-filledSize);
+		unsigned long overlapping = size-(buffSize-filledSize);
        readPos+=overlapping;
        filledSize-=overlapping;
        while(readPos>bufEnd)
            readPos-=buffSize;
     }
+*/
+    Fit(size);
 
     if(writePos+size <= bufEnd) {
         memcpy(writePos,buf,size*sizeof(float));
         writePos+=size;
     } else {
-        long size1 = bufEnd - writePos +1;
-        long size2 = size - size1;
+		unsigned long size1 = bufEnd - writePos +1;
+		unsigned long size2 = size - size1;
         if(size1<0 || size2<0) {
             size1=0;
             size2=0;
@@ -223,11 +243,13 @@ bool CircularBuffer::Put(float *buf, unsigned long size)
     while(writePos>bufEnd)
         writePos-=buffSize;
     filledSize+=size;
+
     return true;
 }
 
 bool CircularBuffer::Get(float *buf, unsigned long size)
 {
+
     if(!buffer)
         return false;
 
@@ -241,8 +263,8 @@ bool CircularBuffer::Get(float *buf, unsigned long size)
         memcpy(buf,readPos,size*sizeof(float));
         readPos+=size;
     } else {
-        long size1 = bufEnd - readPos +1;
-        long size2 = size - size1;
+		unsigned long size1 = bufEnd - readPos +1;
+		unsigned long size2 = size - size1;
         memcpy(buf,readPos,size1*sizeof(float));
         memcpy(buf+size1,bufStart,size2*sizeof(float));
         readPos=bufStart+size2;
@@ -251,6 +273,7 @@ bool CircularBuffer::Get(float *buf, unsigned long size)
 
     while(readPos>bufEnd)
         readPos-=buffSize;
+
     return true;
 }
 

@@ -25,7 +25,9 @@
 #include "mainwindow.h"
 
 MainHostHost::MainHostHost(Settings *settings, QObject *parent) :
-    MainHost(settings,parent)
+    MainHost(settings,parent),
+	audioDevices(0),
+	midiDevices(0)
 {
 }
 

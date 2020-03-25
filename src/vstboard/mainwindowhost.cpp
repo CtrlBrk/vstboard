@@ -26,7 +26,9 @@
 #include "programmanager.h"
 
 MainWindowHost::MainWindowHost(Settings *settings, MainHostHost * myHost, QWidget *parent) :
-    MainWindow(settings,myHost,parent)
+    MainWindow(settings,myHost,parent),
+	listAudioDevModel(0),
+	listMidiDevModel(0)
 {
     myHost->mainWindow=this;
 

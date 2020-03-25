@@ -50,6 +50,11 @@ format conversion. That means that it will lock out all other users
 of a device for the duration of active stream using those devices
 */
 
+#ifdef _MSC_VER
+#pragma warning(disable: 4100) //unreferenced parameter
+#pragma warning(disable: 4189)
+#endif
+
 #include <stdio.h>
 
 #if (defined(_WIN32) && (defined(_MSC_VER) && (_MSC_VER >= 1200))) /* MSC version 6 and above */

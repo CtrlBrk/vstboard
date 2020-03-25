@@ -41,6 +41,7 @@ SOURCES += \
     audiodevices.cpp \
     mididevices.cpp \
     views/configdialoghost.cpp \
+    views/directxconfigdialog.cpp \
     views/mmeconfigdialog.cpp \
     views/wasapiconfigdialog.cpp
 
@@ -57,11 +58,13 @@ HEADERS += \
     audiodevices.h \
     mididevices.h \
     views/configdialoghost.h \
+    views/directxconfigdialog.h \
     views/mmeconfigdialog.h \
     views/wasapiconfigdialog.h
 
 
 FORMS += \
+    views/directxconfigdialog.ui \
     views/mmeconfigdialog.ui \
     views/wasapiconfigdialog.ui
 

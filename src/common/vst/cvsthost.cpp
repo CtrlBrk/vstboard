@@ -35,7 +35,10 @@ CVSTHost * CVSTHost::pHost = NULL;      /* pointer to the one and only host  */
 /* CVSTHost : constructor                                                    */
 /*****************************************************************************/
 
-CVSTHost::CVSTHost()
+CVSTHost::CVSTHost() :
+	loopLenght(4),
+	currentBar(0),
+	barLengthq(0)
 {
     if (pHost)                              /* disallow more than one host!      */
         return;//throw((int)1);
@@ -69,7 +72,6 @@ CVSTHost::CVSTHost()
     vstTimeInfo.flags |= kVstSmpteValid;//           = 1 << 14,	///< VstTimeInfo::smpteOffset and VstTimeInfo::smpteFrameRate valid
     vstTimeInfo.flags |= kVstClockValid;
 
-    loopLenght=4;
     pHost = this;                           /* install this instance as the one  */
 }
 
@@ -143,10 +145,10 @@ void CVSTHost::UpdateTimeInfo(double timer, int addSamples, double sampleRate)
     vstTimeInfo.samplePos += addSamples;
 
     //bar length in quarter notes
-    barLengthq =  (float)(4*vstTimeInfo.timeSigNumerator)/vstTimeInfo.timeSigDenominator;
+    barLengthq =  (double)(4*vstTimeInfo.timeSigNumerator)/vstTimeInfo.timeSigDenominator;
 
 
-    vstTimeInfo.cycleEndPos = barLengthq*loopLenght;
+    vstTimeInfo.cycleEndPos = barLengthq*(double)loopLenght;
     vstTimeInfo.cycleStartPos = 0;
 
     // we don't care for the mask in here
@@ -179,7 +181,7 @@ void CVSTHost::UpdateTimeInfo(double timer, int addSamples, double sampleRate)
 
     //start of last bar
     currentBar = floor(vstTimeInfo.ppqPos/barLengthq);
-    vstTimeInfo.barStartPos = barLengthq*currentBar;
+    vstTimeInfo.barStartPos = barLengthq*(double)currentBar;
 }
 
 /*****************************************************************************/

@@ -32,12 +32,12 @@ namespace Connectables {
     {
 
     public:
-        ObjectProgram() { ResetDirty(); }
+        ObjectProgram() : dirty(false) {}
         ObjectProgram(PinsList *in, PinsList *out);
 
         ObjectProgram(const ObjectProgram &c) {
             *this = c;
-            ResetDirty();
+			dirty = false;
         }
 
         void Load(PinsList *in, PinsList *out);

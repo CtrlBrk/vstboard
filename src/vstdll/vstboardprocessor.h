@@ -95,7 +95,7 @@ public:
         VstEvents * getEvents() {return listEvnts;}
 
 protected:
-        QApplication *myApp;
+       // QApplication *myApp;
 
         QList<Connectables::VstAudioDeviceIn*>lstAudioIn;
         QList<Connectables::VstAudioDeviceOut*>lstAudioOut;

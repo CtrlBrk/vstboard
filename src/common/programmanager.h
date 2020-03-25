@@ -27,6 +27,8 @@
 class Program
 {
 public:
+	Program() : id(0) {}
+
     quint32 id;
     QString name;
 
@@ -39,6 +41,7 @@ public:
 class Group
 {
 public:
+	Group() : id(0) {}
     ~Group() {
         listPrograms.clear();
     }

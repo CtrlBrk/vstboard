@@ -46,7 +46,7 @@ namespace Connectables {
 
         QList<QVariant> listValues;
         QHash<int,float>listChanged;
-        int progChanged;
+        //int progChanged;
 
     public slots:
         void OnParameterChanged(ConnectionInfo pinInfo, float value);

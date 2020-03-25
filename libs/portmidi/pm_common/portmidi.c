@@ -1,6 +1,7 @@
 #ifdef _MSC_VER
  #pragma warning(disable: 4244) // stop warnings about downsize typecasts
  #pragma warning(disable: 4018) // stop warnings about signed/unsigned
+ #pragma warning(disable: 4100) //unreferenced parameter
 #endif
 
 #include "stdlib.h"

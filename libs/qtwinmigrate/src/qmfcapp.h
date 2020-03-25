@@ -103,7 +103,6 @@ private:
     static CWinApp *mfc_app;
 #endif
 
-    int idleCount;
     bool doIdle;
 };
 

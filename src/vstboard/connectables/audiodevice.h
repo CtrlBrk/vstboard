@@ -47,11 +47,10 @@ namespace Connectables {
         AudioDevice(MainHostHost *myHost,const ObjectInfo &info, QObject *parent=0);
         ~AudioDevice();
 
-        bool Open();
         float GetCpuUsage();
         bool SetObjectInput(AudioDeviceIn *obj);
         bool SetObjectOutput(AudioDeviceOut *obj);
-        void SetSleep(bool sleeping);
+        bool SetSleep(bool sleeping);
 
         int GetNbInputs() const { return devInfo.maxInputChannels; }
         int GetNbOutputs() const { return devInfo.maxOutputChannels; }
@@ -70,6 +69,7 @@ namespace Connectables {
         void GetErrMessage(QString &msg) {msg = errorMessage; }
 
     private:
+        bool Open();
         bool Close();
         static int paCallback( const void *inputBuffer, void *outputBuffer,
                                unsigned long framesPerBuffer,
@@ -160,6 +160,9 @@ namespace Connectables {
         /// check if this device has been counted in the list of ready devices
         bool inputBufferReady;
 
+        /// debug: stop output, fill buffer
+        bool pause;
+
     signals:
         /*!
           emitted when the device is opened or closed, used by AudioDevices
@@ -168,10 +171,12 @@ namespace Connectables {
           \param inUse true if the device is in use
           */
         void InUseChanged(PaHostApiIndex apiId,PaDeviceIndex devId, bool inUse, PaTime inLatency=0, PaTime outLatency=0, double sampleRate=0);
+        void DebugGraphUpdated(QVector<float> grph);
 
     public slots:
         void SetSampleRate(float rate=44100.0);
         void DeleteIfUnused();
+        void PauseOutput(bool);
     };
 }
 

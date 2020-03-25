@@ -30,6 +30,7 @@ HostController::HostController(MainHost *myHost,int index):
     tempoChanged(false),
     progChanged(false),
     grpChanged(false),
+	tapTempoChanged(false),
     tapTrigger(false)
 {
 

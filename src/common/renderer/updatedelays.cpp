@@ -24,7 +24,8 @@
 UpdateDelays::UpdateDelays(const hashObjects &listObjects, hashCables *listCables, const QList<SolverNode*> *listNodes) :
     listObjects(listObjects),
     listCables(listCables),
-    listNodes(listNodes)
+    listNodes(listNodes),
+	globalDelay(0)
 {
     ResetDelays();
     int cpt=0;

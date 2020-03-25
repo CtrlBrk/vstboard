@@ -22,7 +22,10 @@
 
 using namespace vst;
 
-CFxProgram::CFxProgram(std::string *pszFile)
+CFxProgram::CFxProgram(std::string *pszFile) :
+	bProgram(0),
+	nProgLen(0),
+	bChunk(false)
 {
     Init();
     if (pszFile)

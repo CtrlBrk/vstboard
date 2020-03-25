@@ -31,7 +31,8 @@ MinMaxPinView::MinMaxPinView(int listPinId, float angle, MsgController *msgCtrl,
     inMax(0),
     outMin(0),
     outMax(0),
-    scaledView(0)
+    scaledView(0),
+	parentObjType(ObjType::ND)
 {
     CreateCursors();
 }

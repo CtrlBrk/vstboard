@@ -39,6 +39,7 @@ public:
 
 
 private:
+    void Fit(ulong size);
     float *readPos;
     float *writePos;
     float *bufStart;

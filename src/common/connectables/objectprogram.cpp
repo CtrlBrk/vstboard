@@ -24,10 +24,9 @@
 
 using namespace Connectables;
 
-ObjectProgram::ObjectProgram(PinsList *in, PinsList *out)
+ObjectProgram::ObjectProgram(PinsList *in, PinsList *out) :
+	dirty(false)
 {
-    ResetDirty();
-
     ObjectParameter param;
     QMap<quint16,Pin*>::const_iterator i = in->listPins.constBegin();
     while(i!=in->listPins.constEnd()) {

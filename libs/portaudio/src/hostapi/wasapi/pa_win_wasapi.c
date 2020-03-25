@@ -41,6 +41,10 @@
  @brief WASAPI implementation of support for a host API.
  @note pa_wasapi currently requires minimum VC 2005, and the latest Vista SDK
 */
+#ifdef _MSC_VER
+#pragma warning(disable: 4100) //unreferenced parameter
+#pragma warning(disable: 4189)
+#endif
 
 #include <windows.h>
 #include <stdio.h>

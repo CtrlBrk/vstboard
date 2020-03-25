@@ -56,7 +56,7 @@ namespace vst
         int loopLenght;
         VstTimeInfo vstTimeInfo;
         int currentBar;
-        float barLengthq;
+        double barLengthq;
 
     protected:
         static CVSTHost * pHost;
