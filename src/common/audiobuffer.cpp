@@ -59,8 +59,13 @@ AudioBuffer::~AudioBuffer()
 {
     debugbuf("delete");
 
-    if(pBuffer && !externAlloc)
-        delete[] pBuffer;
+    if(pBuffer && !externAlloc) {
+        if(doublePrecision) {
+            delete[] (double*)pBuffer;
+        } else {
+            delete[] (float*)pBuffer;
+        }
+    }
 }
 
 /*!
@@ -82,8 +87,13 @@ bool AudioBuffer::SetSize(unsigned long newSize, bool forceRealloc)
             return true;
         }
 
-        if(pBuffer)
-            delete[] pBuffer;
+        if(pBuffer) {
+            if(doublePrecision) {
+                delete[] (double*)pBuffer;
+            } else {
+                delete[] (float*)pBuffer;
+            }
+        }
 
         if(doublePrecision)
             pBuffer = new double[newSize];
@@ -191,7 +201,7 @@ void AudioBuffer::AddToStack(const AudioBuffer * buff)
                     --i;
                 }
             } else  {
-                //convert from double to float
+                //convert from double to float => dither ?
                 double *buffToAdd = (double*)buff->GetPointer();
                 float *myBuff = (float*)pBuffer;
                 long i=bufferSize;
@@ -354,7 +364,7 @@ float AudioBuffer::GetVu()
     return currentVu;
 }
 
-void AudioBuffer::SetBufferContent(float *buff, int count)
+void AudioBuffer::SetBufferContent(float *buff, unsigned long count)
 {
     debugbuf("setcontent float");
 
@@ -378,7 +388,7 @@ void AudioBuffer::SetBufferContent(float *buff, int count)
     stackSize=1;
 }
 
-void AudioBuffer::SetBufferContent(double *buff, int count)
+void AudioBuffer::SetBufferContent(double *buff, unsigned long count)
 {
     debugbuf("setcontent double");
 
@@ -390,8 +400,9 @@ void AudioBuffer::SetBufferContent(double *buff, int count)
     if(doublePrecision) {
         memcpy(pBuffer,buff,count*sizeof(double));
     } else {
+        //TDOO: double to float : dither maybe ?
         float *dest = (float*)pBuffer;
-        long i = count;
+        unsigned long i = count;
         while(i>0) {
             *dest=(float)*buff;
             ++dest;
@@ -407,7 +418,7 @@ void AudioBuffer::DumpToBuffer(float *buff, unsigned long count)
     debugbuf("dump float");
 
     if(count>bufferSize) {
-//        LOG("buffer too small");
+        LOG("buffer too small");
         count=bufferSize;
     }
 
@@ -430,13 +441,14 @@ void AudioBuffer::DumpToBuffer(double *buff, unsigned long count)
     debugbuf("dump double");
 
     if(count>bufferSize) {
-//        LOG("buffer too small");
+        LOG("buffer too small");
         count=bufferSize;
     }
 
     if(doublePrecision) {
         memcpy(buff,pBuffer,count*sizeof(double));
     } else {
+        //TDOO: double to float : dither maybe ?
         float *ori = (float*)pBuffer;
         unsigned long i = count;
         while(i>0) {

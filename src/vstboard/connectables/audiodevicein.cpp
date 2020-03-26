@@ -41,6 +41,7 @@ AudioDeviceIn::AudioDeviceIn(MainHost *myHost,int index, const ObjectInfo &info)
     Object(myHost,index, info),
     parentDevice(0)
 {
+    doublePrecision=false;
     listParameterPinOut->AddPin(0);
 }
 

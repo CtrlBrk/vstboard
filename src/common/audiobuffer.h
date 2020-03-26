@@ -33,8 +33,8 @@ public:
         void SetBufferPointer(void *pt) {if(!externAlloc)return; pBuffer=pt;}
         bool SetSize(unsigned long size, bool forceRealloc=false);
         void AddToStack(const AudioBuffer * buff);
-        void SetBufferContent(float *buff, int count);
-        void SetBufferContent(double *buff, int count);
+        void SetBufferContent(float *buff, unsigned long count);
+        void SetBufferContent(double *buff, unsigned long count);
         void DumpToBuffer(float *buff, unsigned long count);
         void DumpToBuffer(double *buff, unsigned long count);
 
@@ -64,7 +64,7 @@ public:
 
 protected:
         /// the stack size
-        unsigned int stackSize;
+        unsigned long stackSize;
 
         /// pointer to the audio buffer
         void * pBuffer;

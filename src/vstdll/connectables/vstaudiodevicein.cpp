@@ -71,7 +71,7 @@ bool VstAudioDeviceIn::Open()
     return true;
 }
 
-void VstAudioDeviceIn::SetBuffers(float **buf, int &cpt, int sampleFrames)
+void VstAudioDeviceIn::SetBuffers(float **buf, int &cpt, Steinberg::int32 sampleFrames)
 {
     foreach(Pin *pin, listAudioPinOut->listPins) {
         AudioBuffer *abuf= static_cast<AudioPin*>(pin)->GetBuffer();
@@ -80,7 +80,7 @@ void VstAudioDeviceIn::SetBuffers(float **buf, int &cpt, int sampleFrames)
     }
 }
 
-void VstAudioDeviceIn::SetBuffersD(double **buf, int &cpt, int sampleFrames)
+void VstAudioDeviceIn::SetBuffersD(double **buf, int &cpt, Steinberg::int32 sampleFrames)
 {
     foreach(Pin *pin, listAudioPinOut->listPins) {
         AudioBuffer *abuf= static_cast<AudioPin*>(pin)->GetBuffer();
@@ -89,7 +89,7 @@ void VstAudioDeviceIn::SetBuffersD(double **buf, int &cpt, int sampleFrames)
     }
 }
 
-void VstAudioDeviceIn::SetBuffers(Steinberg::Vst::AudioBusBuffers *buf, int sampleFrames)
+void VstAudioDeviceIn::SetBuffers(Steinberg::Vst::AudioBusBuffers *buf, Steinberg::int32 sampleFrames)
 {
     int cpt=0;
     foreach(Pin *pin, listAudioPinOut->listPins) {

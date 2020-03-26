@@ -41,9 +41,9 @@ namespace Connectables {
         bool Close();
         void Render();
 
-        void SetBuffers(float **buf, int &cpt, int sampleFrames);
-        void SetBuffersD(double **buf, int &cpt, int sampleFrames);
-        void SetBuffers(Steinberg::Vst::AudioBusBuffers *buf, int sampleFrames);
+        void SetBuffers(float **buf, int &cpt, Steinberg::int32 sampleFrames);
+        void SetBuffersD(double **buf, int &cpt, Steinberg::int32 sampleFrames);
+        void SetBuffers(Steinberg::Vst::AudioBusBuffers *buf, Steinberg::int32 sampleFrames);
 
     public slots:
         void SetBufferSize(unsigned long size);

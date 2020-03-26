@@ -622,6 +622,7 @@ Pin* Object::CreatePin(const ConnectionInfo &info)
         case PinDirection::Input :
             switch(info.type) {
                 case PinType::Audio : {
+                //TODO: the input pin could be double if the host is double, to sum in doubles. but we would have to convert to float when rendering a float plugin
                     return new AudioPin(this,info.direction,info.pinNumber,myHost->GetBufferSize(),doublePrecision);
                 }
 
@@ -804,7 +805,12 @@ void Object::GetInfos(MsgObject &msg)
 
     msg.prop[MsgObject::Add]=info().nodeType;
     msg.prop[MsgObject::Type]=info().objType;
-    msg.prop[MsgObject::Name]=objectName();//info().name;
+
+    if(myHost->doublePrecision && !doublePrecision) {
+        msg.prop[MsgObject::Name] = QString("%1 %2").arg(objectName()).arg("32bits");
+    } else {
+        msg.prop[MsgObject::Name] = objectName();
+    }
 
     if(!errorMessage.isEmpty()) {
         msg.prop[MsgObject::Message]=errorMessage;

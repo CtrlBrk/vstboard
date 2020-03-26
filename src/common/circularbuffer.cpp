@@ -125,6 +125,7 @@ bool CircularBuffer::Put(double *buf, unsigned long size)
 
     Fit(size);
 
+    //TODO: double to float : dither
     if(writePos+(size*sizeof(float)) <= bufEnd) {
         memcpy(writePos,buf,size*sizeof(float));
         writePos+=(size*sizeof(float));

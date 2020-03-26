@@ -41,6 +41,7 @@ AudioDeviceOut::AudioDeviceOut(MainHost *myHost,int index, const ObjectInfo &inf
     Object(myHost,index, info),
     parentDevice(0)
 {
+    doublePrecision=false;
 }
 
 AudioDeviceOut::~AudioDeviceOut()
@@ -124,7 +125,7 @@ bool AudioDeviceOut::Open()
 
 #ifdef CIRCULAR_BUFFER
 void AudioDeviceOut::SetRingBufferFromPins(QList<CircularBuffer*>listCircularBuffers) {
-    AudioBuffer *pinBuf = listAudioPinIn->GetBuffer(0);
+//    AudioBuffer *pinBuf = listAudioPinIn->GetBuffer(0);
 //    static ulong put=0;
 //    put+=pinBuf->GetSize();
 //    LOG(QString("put %1").arg(put));
