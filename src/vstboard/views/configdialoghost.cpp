@@ -18,7 +18,7 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 #include "configdialoghost.h"
-#include "../common/ui_configdialog.h"
+#include "ui_configdialog.h"
 #include "mainhost.h"
 
 ConfigDialogHost::ConfigDialogHost(Settings *settings,MainHost *myHost, QWidget *parent) :

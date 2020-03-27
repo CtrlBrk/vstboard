@@ -5,8 +5,18 @@ DEFINES += APP_VERSION_BUILD=0
 DEFINES += APP_VERSION_PATCH=0
 
 #CONFIG += object_parallel_to_source
-#OBJECTS_DIR= tmp
-#MOC_DIR = tmp
+
+OUT_PWD = $${PWD}/../$${QMAKE_HOST.arch}/$${TARGET}/
+
+Release:DESTDIR = $${OUT_PWD}/release
+Debug:DESTDIR = $${OUT_PWD}/debug
+OBJECTS_DIR= $${DESTDIR}/obj
+
+RCC_DIR = $${OUT_PWD}/rcc
+MOC_DIR = $${OUT_PWD}/moc
+UI_DIR = $${OUT_PWD}/../ui
+
+INCLUDEPATH += $${UI_DIR}
 
 PORTAUDIO_PATH 	= ../../libs/portaudio
 PORTMIDI_PATH 	= ../../libs/portmidi
@@ -55,7 +65,7 @@ win32-g++ {
 
 win32-msvc* {
     DEFINES += _CRT_SECURE_NO_WARNINGS
-    INCLUDEPATH += $$quote($$(INCLUDE))
+ #   INCLUDEPATH += $$quote($$(INCLUDE))
     LIBS += -L$$quote($$(LIB))
  #   QMAKE_CFLAGS += -Fd$$top_destdir/$$TARGET
 

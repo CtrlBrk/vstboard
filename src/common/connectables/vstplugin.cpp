@@ -51,7 +51,6 @@ VstPlugin::VstPlugin(MainHost *myHost,int index, const ObjectInfo & info) :
     }
     listBypass << "On" << "Bypass" << "Mute";
 
-
 }
 
 VstPlugin::~VstPlugin()
@@ -206,7 +205,7 @@ void VstPlugin::Render()
 	if (p) {
 		newbuffsize = p->GetBuffer()->GetSize();
 	}
-	p = static_cast<AudioPin*>(listAudioPinIn->listPins[0]);
+    p = static_cast<AudioPin*>(listAudioPinOut->listPins[0]);
 	if (p) {
 		newbuffsize = p->GetBuffer()->GetSize();
 	}
@@ -270,7 +269,7 @@ void VstPlugin::Render()
         float **tmpBufIn;
         if(listAudioPinIn->listPins.size()==0) {
             //no input, don't know what we're supposed to do...
-            tmpBufIn = 0;
+            tmpBufIn = tmpBufOut;
         } else {
             tmpBufIn = new float*[listAudioPinIn->listPins.size()];
 

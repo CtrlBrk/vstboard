@@ -22,7 +22,7 @@
 #define MAINWINDOWVST_H
 
 #include "mainwindow.h"
-#include "../common/ui_mainwindow.h"
+#include "ui_mainwindow.h"
 
 #ifdef _MSC_VER
 #pragma warning( push, 1 )

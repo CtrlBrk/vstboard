@@ -19,7 +19,7 @@
 **************************************************************************/
 
 #include "configdialogvst.h"
-#include "../common/ui_configdialog.h"
+#include "ui_configdialog.h"
 #include "mainhost.h"
 
 ConfigDialogVst::ConfigDialogVst(Settings *settings, MainHost *myHost, QWidget *parent) :
