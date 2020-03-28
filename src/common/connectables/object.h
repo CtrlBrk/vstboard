@@ -213,6 +213,9 @@ namespace Connectables {
         /// list of parameters output
         PinsList *listParameterPinOut;
 
+        /// list of values used by the editor pin (0 and 1)
+        QList<QVariant>listEditorVisible;
+
         /// global object mutex
         QMutex objMutex;
 

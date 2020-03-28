@@ -94,7 +94,7 @@ void PinView::UpdateKeyBinding()
   */
 void PinView::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
-    if(actions().size()==0)
+    if(actions().isEmpty())
         return;
 
     QMenu menu;

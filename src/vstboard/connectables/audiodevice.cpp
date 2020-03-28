@@ -669,11 +669,11 @@ bool AudioDevice::DeviceToRingBuffers( const void *inputBuffer, unsigned long fr
         buf->Put( ((float **) inputBuffer)[cpt], framesPerBuffer );
         if(buf->filledSize < hostBuffSize ) {
             inputBufferReady=false;
-        } else {
+        } /*else {
             LOG(QString("not enough data host buffer %1/%2")
                 .arg(buf->filledSize)
                 .arg(hostBuffSize));
-        }
+        }*/
         cpt++;
     }
 
@@ -757,6 +757,7 @@ bool AudioDevice::RingBuffersToDevice( void *outputBuffer, unsigned long framesP
             LOG(QString("buffer->device %1<-%2 | not enough data")
                 .arg(framesPerBuffer)
                 .arg(buf->filledSize));
+            return true;
         }
         cpt++;
     }
@@ -910,10 +911,6 @@ int AudioDevice::paCallback( const void *inputBuffer, void *outputBuffer,
         mutexCountOpenedDevicesReady.unlock();
         return paContinue;
     }
-
-
-
-
 
 #else
     QMutexLocker l(&device->mutexDevicesInOut);

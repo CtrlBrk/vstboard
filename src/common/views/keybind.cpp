@@ -170,7 +170,7 @@ void KeyBind::SaveInRegistry()
 void KeyBind::LoadFromRegistry()
 {
     QByteArray ba = settings->GetSetting("keyBinding","").toByteArray();
-    if(ba.size()==0) {
+    if(ba.isEmpty()==0) {
         SetDefaults();
         SaveInRegistry();
         return;

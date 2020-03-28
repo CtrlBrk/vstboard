@@ -764,6 +764,11 @@ void MainHost::SetBufferSize(unsigned long size)
 {
     if(bufferSize == size)
         return;
+
+    MsgObject msg(FixedObjId::mainWindow);
+    msg.prop[MsgObject::ObjInfo]=QString("hostBudffer:%1").arg(size);
+    SendMsg(msg);
+
     bufferSize = size;
     emit BufferSizeChanged(bufferSize);
 }

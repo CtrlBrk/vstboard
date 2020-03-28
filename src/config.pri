@@ -6,14 +6,12 @@ DEFINES += APP_VERSION_PATCH=0
 
 #CONFIG += object_parallel_to_source
 
-OUT_PWD = $${PWD}/../$${QMAKE_HOST.arch}/$${TARGET}/
-
 Release:DESTDIR = $${OUT_PWD}/release
 Debug:DESTDIR = $${OUT_PWD}/debug
 OBJECTS_DIR= $${DESTDIR}/obj
 
-RCC_DIR = $${OUT_PWD}/rcc
-MOC_DIR = $${OUT_PWD}/moc
+RCC_DIR = $${DESTDIR}/tmp
+MOC_DIR = $${DESTDIR}/tmp
 UI_DIR = $${OUT_PWD}/../ui
 
 INCLUDEPATH += $${UI_DIR}

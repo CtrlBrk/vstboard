@@ -634,6 +634,14 @@ Pin* Object::CreatePin(const ConnectionInfo &info)
                     return new BridgePinIn(this,info.pinNumber,info.bridge);
                 }
 
+                case PinType::Parameter : {
+                    if(info.pinNumber == FixedPinNumber::editorVisible ) {
+                        listEditorVisible << "hide";
+                        listEditorVisible << "show";
+                        return new ParameterPinIn(this,info.pinNumber,"show",&listEditorVisible,tr("Editor"));
+                    }
+                }
+
                 default :
                     return 0;
             }

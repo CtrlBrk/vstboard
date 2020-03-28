@@ -150,6 +150,12 @@ void MainWindow::ReceiveMsg(const MsgObject &msg)
             UpdateSolverMap(msg);
             return;
         }
+
+        if(msg.prop.contains(MsgObject::ObjInfo)) {
+            ui->statusBar->showMessage(msg.prop[MsgObject::ObjInfo].toString());
+            return;
+        }
+
         return;
     }
 
@@ -269,9 +275,7 @@ void MainWindow::SetupBrowsersModels(const QString &vstPath, const QString &brow
     listVstPluginsModel = new QFileSystemModel(this);
     listVstPluginsModel->setReadOnly(true);
     listVstPluginsModel->setResolveSymlinks(true);
-    QStringList fileFilter;
-    fileFilter << "*.dll";
-    listVstPluginsModel->setNameFilters(fileFilter);
+    listVstPluginsModel->setNameFilters(QStringList()<< "*.dll" << "*.vst3");
     listVstPluginsModel->setNameFilterDisables(false);
     listVstPluginsModel->setRootPath(vstPath);
     ui->VstBrowser->setModel(listVstPluginsModel);
@@ -280,10 +284,7 @@ void MainWindow::SetupBrowsersModels(const QString &vstPath, const QString &brow
     listVstBanksModel = new QFileSystemModel(this);
     listVstBanksModel->setReadOnly(false);
     listVstBanksModel->setResolveSymlinks(true);
-    //    QStringList bankFilter;
-    //    bankFilter << "*.fxb";
-    //    bankFilter << "*.fxp";
-    //    listVstBanksModel->setNameFilters(bankFilter);
+    //    listVstBanksModel->setNameFilters(QStringList()<< "*.fxb" << "*.fxp");
     //    listVstBanksModel->setNameFilterDisables(false);
     listVstBanksModel->setRootPath(browserPath);
     ui->BankBrowser->setModel(listVstBanksModel);
@@ -507,7 +508,7 @@ void MainWindow::writeSettings()
 {
     settings->SetSetting("MainWindow/geometry", saveGeometry());
     settings->SetSetting("MainWindow/state", saveState());
-//    settings->SetSetting("MainWindow/statusBar", ui->statusBar->isVisible());
+    settings->SetSetting("MainWindow/statusBar", ui->statusBar->isVisible());
     settings->SetSetting("MainWindow/splitPan", ui->splitterPanels->saveState());
     settings->SetSetting("MainWindow/splitProg", ui->splitterProg->saveState());
     settings->SetSetting("MainWindow/splitGroup", ui->splitterGroup->saveState());
@@ -571,9 +572,9 @@ void MainWindow::readSettings()
     if(settings->SettingDefined("MainWindow/geometry")) {
         restoreGeometry(settings->GetSetting("MainWindow/geometry").toByteArray());
         restoreState(settings->GetSetting("MainWindow/state").toByteArray());
-//        bool statusb = myHost->GetSetting("MainWindow/statusBar",false).toBool();
-//        ui->actionStatus_bar->setChecked( statusb );
-//        ui->statusBar->setVisible(statusb);
+        bool statusb = settings->GetSetting("MainWindow/statusBar",false).toBool();
+        ui->actionStatus_bar->setChecked( statusb );
+        ui->statusBar->setVisible(statusb);
     } else {
         resetSettings();
     }
@@ -677,7 +678,7 @@ void MainWindow::resetSettings()
     ui->actionGroup_panel->setChecked(true);
 
     ui->actionTool_bar->setChecked(true);
-//    ui->actionStatus_bar->setChecked(false);
+    ui->actionStatus_bar->setChecked(false);
     ui->statusBar->setVisible(false);
     ui->dockUndo->setVisible(false);
 

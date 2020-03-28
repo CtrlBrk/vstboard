@@ -312,7 +312,7 @@ VstInt32 CEffect::PluginIdFromBankFile(std::string *name)
 /* EffDispatch : calls an effect's dispatcher                                */
 /*****************************************************************************/
 
-long CEffect::EffDispatch(VstInt32 opCode, VstInt32 index, VstInt32 value, void *ptr, float opt)
+long CEffect::EffDispatch(VstInt32 opCode, VstInt32 index, VstIntPtr value, void *ptr, float opt)
 {
     if (!pEffect)
         return 0;

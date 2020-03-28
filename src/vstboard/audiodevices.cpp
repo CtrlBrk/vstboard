@@ -42,17 +42,17 @@ FakeTimer::FakeTimer(MainHostHost *myHost) :
 
 FakeTimer::~FakeTimer()
 {
-    LOG("stop thread"<<objectName()<<(int)currentThreadId());
+    LOG("stop thread"<<objectName()<<(DWORD)currentThreadId());
     stop=true;
     while(isRunning())
         wait(10);
-    LOG("thread stopped"<<objectName()<<(int)currentThreadId());
+    LOG("thread stopped"<<objectName()<<(DWORD)currentThreadId());
 }
 
 void FakeTimer::run()
 {
 
-    LOG("start thread"<<objectName()<<(int)currentThreadId());
+    LOG("start thread"<<objectName()<<(DWORD)currentThreadId());
     while(!stop) {
         msleep(FAKE_RENDER_TIMER_MS);
         myHost->Render();
@@ -93,11 +93,12 @@ AudioDevices::~AudioDevices()
 {
     CloseDevices(true);
 
-    mutexDevices.lock();
-    foreach(Connectables::AudioDevice *dev, listAudioDevices)
-        delete dev; //dev->DeleteIfUnused();
-    listAudioDevices.clear();
-    mutexDevices.unlock();
+	{
+		QMutexLocker d(&mutexDevices);
+		foreach(Connectables::AudioDevice *dev, listAudioDevices)
+			delete dev; //dev->DeleteIfUnused();
+		listAudioDevices.clear();
+	}
 
     if(fakeRenderTimer)
         delete fakeRenderTimer;
@@ -105,11 +106,12 @@ AudioDevices::~AudioDevices()
 
 void AudioDevices::CloseDevices(bool close)
 {
-    if(close) {
-        mutexClosing.lock();
-        closing=true;
-        mutexClosing.unlock();
-    }
+	{
+		QMutexLocker l(&mutexClosing);
+		if (close) {
+			closing = true;
+		}
+	}
 
     SleepAll();
 
@@ -130,12 +132,10 @@ void AudioDevices::CloseDevices(bool close)
 
 void AudioDevices::SleepAll()
 {
-    mutexDevices.lock();
+	QMutexLocker d(&mutexDevices);
     foreach(Connectables::AudioDevice *ad, listAudioDevices) {
         ad->SetSleep(true);
     }
-    mutexDevices.unlock();
-
 }
 
 void AudioDevices::OpenDevices()
@@ -172,22 +172,24 @@ void AudioDevices::OpenDevices()
     if( numDevices < 0 )
     {
         printf( "ERROR: Pa_CountDevices returned 0x%x\n", numDevices );
-
     }
 
-    mutexClosing.lock();
-    closing=true;
-    mutexClosing.unlock();
+	{
+		QMutexLocker l(&mutexClosing);
+		closing = true;
+	}
 
-    mutexDevices.lock();
-    foreach(Connectables::AudioDevice *ad, listAudioDevices) {
-        ad->SetSleep(false);
-    }
-    mutexDevices.unlock();
-
-    mutexClosing.lock();
-    closing=false;
-    mutexClosing.unlock();
+	{
+		QMutexLocker d(&mutexDevices);
+		foreach(Connectables::AudioDevice *ad, listAudioDevices) {
+			ad->SetSleep(false);
+		}
+	}
+    
+	{
+		QMutexLocker l(&mutexClosing);
+		closing = false;
+	}
 
 
     //rebuild all audio in&out objects
@@ -359,9 +361,10 @@ Connectables::AudioDevice * AudioDevices::AddDevice(ObjectInfo &objInfo)
     //create a device
     Connectables::AudioDevice *dev = new Connectables::AudioDevice(myHost,objInfo);
 
-    mutexDevices.lock();
-    listAudioDevices << dev;
-    mutexDevices.unlock();
+	{
+		QMutexLocker d(&mutexDevices);
+		listAudioDevices << dev;
+	}
 
     if(!dev->SetSleep(false)) {
         //retry later
@@ -374,28 +377,25 @@ Connectables::AudioDevice * AudioDevices::AddDevice(ObjectInfo &objInfo)
 
 void AudioDevices::RemoveDevice(Connectables::AudioDevice *dev)
 {
-    mutexDevices.lock();
+	QMutexLocker d(&mutexDevices);
     listAudioDevices.removeAll(dev);
-    mutexDevices.unlock();
-
 }
 
 #ifdef CIRCULAR_BUFFER
 void AudioDevices::PutPinsBuffersInRingBuffers()
 {
-    mutexClosing.lock();
+	QMutexLocker l(&mutexClosing);
     if(closing) {
-        mutexClosing.unlock();
         return;
     }
 
-    mutexDevices.lock();
-    foreach(Connectables::AudioDevice *dev, listAudioDevices) {
-        dev->PinsToRingBuffers();
-    }
-    mutexDevices.unlock();
+	{
+		QMutexLocker d(&mutexDevices);
+		foreach(Connectables::AudioDevice *dev, listAudioDevices) {
+			dev->PinsToRingBuffers();
+		}
+	}
 
-    mutexClosing.unlock();
 }
 #endif
 /*!

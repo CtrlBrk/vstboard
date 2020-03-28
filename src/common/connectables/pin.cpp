@@ -88,7 +88,9 @@ void Pin::SendMsg(const PinMessage::Enum msgType,void *data)
 void Pin::SetPinList(PinsList *lst)
 {
     pinList=lst;
-    SetVisible(true);
+    if(lst!=0) {
+        SetVisible(true);
+    }
 }
 
 //void Pin::SetParentModelIndex(PinsList *list, const QModelIndex &newParent)

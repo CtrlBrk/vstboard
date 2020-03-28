@@ -75,7 +75,7 @@ namespace vst
 
         static VstInt32 PluginIdFromBankFile(std::string *name);
 
-        virtual long EffDispatch(VstInt32 opCode, VstInt32 index=0, VstInt32 value=0, void *ptr=0, float opt=0.);
+        virtual long EffDispatch(VstInt32 opCode, VstInt32 index=0, VstIntPtr value=0, void *ptr=0, float opt=0.);
         virtual VstIntPtr OnMasterCallback(long opcode, long index, long value, void *ptr, float opt,long currentReturnCode);
 
         virtual void EffProcess(float **inputs, float **outputs, long sampleframes);
@@ -141,7 +141,7 @@ namespace vst
         virtual long EffOfflinePrepare(VstOfflineTask *ptr, long count) { return EffDispatch(effOfflinePrepare, 0, count, ptr); }
         virtual long EffOfflineRun(VstOfflineTask *ptr, long count) { return EffDispatch(effOfflineRun, 0, count, ptr); }
         virtual long EffProcessVarIo(VstVariableIo* varIo) { return EffDispatch(effProcessVarIo, 0, 0, varIo); }
-        virtual long EffSetSpeakerArrangement(VstSpeakerArrangement* pluginInput, VstSpeakerArrangement* pluginOutput) { return EffDispatch(effSetSpeakerArrangement, 0, (long)pluginInput, pluginOutput); }
+        virtual long EffSetSpeakerArrangement(VstSpeakerArrangement* pluginInput, VstSpeakerArrangement* pluginOutput) { return EffDispatch(effSetSpeakerArrangement, 0, (VstIntPtr)pluginInput, pluginOutput); }
         virtual long EffSetBlockSizeAndSampleRate(long blockSize, float sampleRate) { return EffDispatch(effSetBlockSizeAndSampleRate, 0, blockSize, 0, sampleRate); }
         virtual long EffSetBypass(bool onOff) { return EffDispatch(effSetBypass, 0, onOff); }
         virtual long EffGetEffectName(char *ptr) { return EffDispatch(effGetEffectName, 0, 0, ptr); }
@@ -170,7 +170,7 @@ namespace vst
         virtual long EffBeginSetProgram() { bInSetProgram = !!EffDispatch(effBeginSetProgram); return bInSetProgram; }
         virtual long EffEndSetProgram() { bInSetProgram = false; return EffDispatch(effEndSetProgram); }
                                             /* VST 2.3 Extensions                */
-        virtual long EffGetSpeakerArrangement(VstSpeakerArrangement** pluginInput, VstSpeakerArrangement** pluginOutput) { return EffDispatch(effGetSpeakerArrangement, 0, (long)pluginInput, pluginOutput); }
+        virtual long EffGetSpeakerArrangement(VstSpeakerArrangement** pluginInput, VstSpeakerArrangement** pluginOutput) { return EffDispatch(effGetSpeakerArrangement, 0, (VstIntPtr)pluginInput, pluginOutput); }
         virtual long EffSetTotalSampleToProcess (long value) { return EffDispatch(effSetTotalSampleToProcess, 0, value); }
         virtual long EffGetNextShellPlugin(char *name) { return EffDispatch(effShellGetNextPlugin, 0, 0, name); }
         virtual long EffStartProcess() { return EffDispatch(effStartProcess); }

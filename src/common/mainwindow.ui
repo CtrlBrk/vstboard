@@ -350,6 +350,7 @@
     <addaction name="actionAutoShowGui"/>
     <addaction name="actionHide_all_editors"/>
     <addaction name="separator"/>
+    <addaction name="actionStatus_bar"/>
     <addaction name="actionFullscreen"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -1443,6 +1444,14 @@
     <string>Pause output</string>
    </property>
   </action>
+  <action name="actionStatus_bar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Status_bar</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -1556,6 +1565,22 @@
     <hint type="destinationlabel">
      <x>510</x>
      <y>239</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionStatus_bar</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>statusBar</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>427</x>
+     <y>645</y>
     </hint>
    </hints>
   </connection>

@@ -44,7 +44,8 @@ VstPlugin::VstPlugin(MainHost *myHost,int index, const ObjectInfo & info) :
     listEvnts(0),
     savedChunk(0),
     savedChunkSize(0),
-    bypass(false)
+    bypass(false),
+    hasEditor(false)
 {
     for(int i=0;i<128;i++) {
         listValues << i;
@@ -150,20 +151,22 @@ void VstPlugin::Render()
 {
     if(bypass) {
         foreach(Pin *in, listAudioPinIn->listPins ) {
-            AudioPin *audioIn = static_cast<AudioPin*>(in);
-            AudioPin *audioOut = 0;
-            if(listAudioPinOut->listPins.size() > in->GetConnectionInfo().pinNumber) {
-                audioOut = static_cast<AudioPin*>(listAudioPinOut->GetPin( in->GetConnectionInfo().pinNumber ));
-            }
-
-            if(audioIn) {
-                if(audioOut) {
-                    audioOut->GetBuffer()->AddToStack( audioIn->GetBuffer() );
-                    audioOut->GetBuffer()->ConsumeStack();
-                    audioOut->SendAudioBuffer();
-                    audioOut->GetBuffer()->ResetStackCounter();
+            if(in) {
+                AudioPin *audioIn = static_cast<AudioPin*>(in);
+                AudioPin *audioOut = 0;
+                if(listAudioPinOut->listPins.size() > in->GetConnectionInfo().pinNumber) {
+                    audioOut = static_cast<AudioPin*>(listAudioPinOut->GetPin( in->GetConnectionInfo().pinNumber ));
                 }
-                audioIn->GetBuffer()->ConsumeStack();
+
+                if(audioIn) {
+                    if(audioOut) {
+                        audioOut->GetBuffer()->AddToStack( audioIn->GetBuffer() );
+                        audioOut->GetBuffer()->ConsumeStack();
+                        audioOut->SendAudioBuffer();
+                        audioOut->GetBuffer()->ResetStackCounter();
+                    }
+                    audioIn->GetBuffer()->ConsumeStack();
+                }
             }
         }
         return;
@@ -201,13 +204,15 @@ void VstPlugin::Render()
     }
 
 	ulong newbuffsize = 0;
-	AudioPin* p = static_cast<AudioPin*>(listAudioPinIn->listPins[0]);
-	if (p) {
-		newbuffsize = p->GetBuffer()->GetSize();
-	}
-    p = static_cast<AudioPin*>(listAudioPinOut->listPins[0]);
-	if (p) {
-		newbuffsize = p->GetBuffer()->GetSize();
+    if(!listAudioPinIn->listPins.isEmpty()) {
+        AudioPin* p = static_cast<AudioPin*>(listAudioPinIn->listPins.first());
+        newbuffsize = p->GetBuffer()->GetSize();
+    }
+    if(!listAudioPinOut->listPins.isEmpty()) {
+        AudioPin* p = static_cast<AudioPin*>(listAudioPinOut->listPins.first());
+        if(newbuffsize < p->GetBuffer()->GetSize()) {
+            newbuffsize = p->GetBuffer()->GetSize();
+        }
 	}
 
 	if (newbuffsize != 0) {
@@ -226,7 +231,7 @@ void VstPlugin::Render()
             }
 
             double **tmpBufIn;
-            if(listAudioPinIn->listPins.size()==0) {
+            if(listAudioPinIn->listPins.isEmpty()) {
                 //no input, use outputs as fake buffers... don't know what we're supposed to do...
                 tmpBufIn = tmpBufOut;
             } else {
@@ -267,7 +272,7 @@ void VstPlugin::Render()
         }
 
         float **tmpBufIn;
-        if(listAudioPinIn->listPins.size()==0) {
+        if(listAudioPinIn->listPins.isEmpty()) {
             //no input, don't know what we're supposed to do...
             tmpBufIn = tmpBufOut;
         } else {
@@ -275,12 +280,7 @@ void VstPlugin::Render()
 
             cpt=0;
             foreach(Pin* pin,listAudioPinIn->listPins) {
-				if (pin) {
-					tmpBufIn[cpt] = (float*)static_cast<AudioPin*>(pin)->GetBuffer()->ConsumeStack();
-				}
-//				else {
-//					LOG("no input pin");
-//				}
+                tmpBufIn[cpt] = (float*)static_cast<AudioPin*>(pin)->GetBuffer()->ConsumeStack();
                 cpt++;
             }
         }
@@ -535,9 +535,6 @@ bool VstPlugin::initPlugin()
 
     if(pEffect->flags & effFlagsHasEditor) {
         //editor pin
-//        listEditorVisible << "close";
-        listEditorVisible << "hide";
-        listEditorVisible << "show";
         listParameterPinIn->AddPin(FixedPinNumber::editorVisible);
 
         //learning pin
@@ -1090,23 +1087,24 @@ void VstPlugin::onVstProgramChanged()
 
 Pin* VstPlugin::CreatePin(const ConnectionInfo &info)
 {
+    //if the plugin has a gui, the pins can be learned and the name can change
+    hasEditor = (!pEffect || (pEffect->flags & effFlagsHasEditor) == 0)?false:true;
+
     Pin *newPin = Object::CreatePin(info);
     if(newPin)
         return newPin;
 
     if(info.type == PinType::Parameter && info.direction == PinDirection::Input) {
-        //if the plugin has a gui, the pins can be learned and the name can change
-        bool hasEditor = (!pEffect || (pEffect->flags & effFlagsHasEditor) == 0)?false:true;
 
         ParameterPin *pin=0;
 
         switch(info.pinNumber) {
             case FixedPinNumber::vstProgNumber :
                 return new ParameterPinIn(this,info.pinNumber,0,&listValues,"prog");
-            case FixedPinNumber::editorVisible :
-                if(!hasEditor && !IsInError())
-                    return 0;
-                return new ParameterPinIn(this,info.pinNumber,"show",&listEditorVisible,tr("Editor"));
+//            case FixedPinNumber::editorVisible :
+//                if(!hasEditor && !IsInError())
+//                    return 0;
+//                return new ParameterPinIn(this,info.pinNumber,"show",&listEditorVisible,tr("Editor"));
             case FixedPinNumber::learningMode :
                 if(!hasEditor && !IsInError())
                     return 0;

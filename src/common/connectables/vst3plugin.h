@@ -88,7 +88,7 @@ public:
 
 private:
     void Unload();
-    void CreateEditorWindow();
+    bool CreateEditorWindow();
     void RemoveGui();
     bool initPlugin();
     bool initProcessor();

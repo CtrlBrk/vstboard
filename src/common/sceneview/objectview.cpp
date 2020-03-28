@@ -121,7 +121,7 @@ void ObjectView::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, co
   */
 void ObjectView::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
-    if(actions().size()==0)
+    if(actions().isEmpty())
         return;
 
     QMenu menu;

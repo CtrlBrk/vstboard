@@ -86,9 +86,6 @@ namespace Connectables {
         unsigned long bufferSize;
         VstEvents *listEvnts;
 
-        /// list of values used by the editor pin (0 and 1)
-        QList<QVariant>listEditorVisible;
-
         /// list of values used by the learn pin (off, learn, unlearn)
         QList<QVariant>listIsLearning;
 
@@ -101,6 +98,7 @@ namespace Connectables {
         quint32 savedChunkSize;
 
         bool bypass;
+        bool hasEditor;
 
     signals:
         void WindowSizeChange(int newWidth, int newHeight);
