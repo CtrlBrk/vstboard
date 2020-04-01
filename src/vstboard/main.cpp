@@ -21,8 +21,7 @@
 //    #include "vld.h"
 //#endif
 
-#include <QLibraryInfo>
-#include <QTranslator>
+#include "precomp.h"
 #include "mainhosthost.h"
 #include "mainwindowhost.h"
 #include "connectables/objectinfo.h"

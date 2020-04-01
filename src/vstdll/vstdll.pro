@@ -7,6 +7,8 @@ QMAKE_LFLAGS+="/DEF:$${_PRO_FILE_PWD_}/vstboard.def"
 TARGET = "VstBoardPlugin"
 TEMPLATE = lib
 
+PRECOMPILED_HEADER = ../common/precomp.h
+
 #CONFIG(debug, debug|release) {
 #    LIBS += -L"C:/Program Files (x86)/Visual Leak Detector/lib/" -lvld
 #    INCLUDEPATH += "C:/Program Files (x86)/Visual Leak Detector/include/"
@@ -75,25 +77,20 @@ HEADERS  += \
     vst2shell.h \
     myvst2wrapper.h
 
-
-PRECOMPILED_HEADER = ../common/precomp.h
-
 RESOURCES += ../resources/resources.qrc
 
 #TRANSLATIONS = ../resources/translations/vstdll_fr.ts
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../common/release/ -lcommon
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../common/debug/ -lcommon
-else:unix:!symbian: LIBS += -L$$OUT_PWD/../common/ -lcommon
+win32-g++:LIBS += -L$$DESTDIR -llibcommon
+else:win32:LIBS += -L$$DESTDIR -lcommon
+else:unix:LIBS += -L$$DESTDIR -lcommon
 
-INCLUDEPATH += $$PWD/../common
-DEPENDPATH += $$PWD/../common
+INCLUDEPATH += $$DESTDIR/common
+DEPENDPATH += $$DESTDIR/common
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../common/release/libcommon.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../common/debug/libcommon.a
-else:win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../common/release/common.lib
-else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../common/debug/common.lib
-else:unix:!symbian: PRE_TARGETDEPS += $$OUT_PWD/../common/libcommon.a
+win32-g++:PRE_TARGETDEPS += $$DESTDIR/libcommon.a
+else:win32:PRE_TARGETDEPS += $$DESTDIR/common.lib
+else:unix:!symbian: PRE_TARGETDEPS += $$DESTDIR/libcommon.a
 
 OTHER_FILES += \
     vstboard.def

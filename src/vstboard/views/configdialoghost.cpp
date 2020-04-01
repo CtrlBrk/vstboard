@@ -24,10 +24,32 @@
 ConfigDialogHost::ConfigDialogHost(Settings *settings,MainHost *myHost, QWidget *parent) :
     ConfigDialog(settings,myHost, parent)
 {
-    ui->sampleRate->addItem("44.1 kHz",44100);
-    ui->sampleRate->addItem("48 kHz",48000);
-    ui->sampleRate->addItem("88.2 kHz",88200);
-    ui->sampleRate->addItem("96 kHz",96000);
+    QList<float> rates {
+    8000,
+    9600,
+    11025,
+    12000,
+    16000,
+    22050,
+    24000,
+    32000,
+    44100,
+    48000,
+    88200,
+    96000,
+    192000,
+    };
+
+    for (int i = 0; i < rates.size(); ++i) {
+        ui->sampleRate->addItem(
+                    QString::number(rates.at(i)/1000,'f',1) + " kHz",
+                        rates.at(i)
+                    );
+    }
+//    ui->sampleRate->addItem("44.1 kHz",44100);
+//    ui->sampleRate->addItem("48 kHz",48000);
+//    ui->sampleRate->addItem("88.2 kHz",88200);
+//    ui->sampleRate->addItem("96 kHz",96000);
 
     int index=ui->sampleRate->findData( myHost->GetSampleRate() );
     if(index==-1) {

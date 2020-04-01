@@ -42,17 +42,17 @@ FakeTimer::FakeTimer(MainHostHost *myHost) :
 
 FakeTimer::~FakeTimer()
 {
-    LOG("stop thread"<<objectName()<<(DWORD)currentThreadId());
+    LOG("stop thread"<<objectName()<<(Qt::HANDLE)currentThreadId());
     stop=true;
     while(isRunning())
         wait(10);
-    LOG("thread stopped"<<objectName()<<(DWORD)currentThreadId());
+    LOG("thread stopped"<<objectName()<<(Qt::HANDLE)currentThreadId());
 }
 
 void FakeTimer::run()
 {
 
-    LOG("start thread"<<objectName()<<(DWORD)currentThreadId());
+    LOG("start thread"<<objectName()<<(Qt::HANDLE)currentThreadId());
     while(!stop) {
         msleep(FAKE_RENDER_TIMER_MS);
         myHost->Render();

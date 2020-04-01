@@ -27,8 +27,8 @@ Gui::Gui(Vst::EditController *ctrl, ViewRect *size) :
     Vst::EditorView(ctrl,size),
     widget(0),
     myWindow(0),
-    plugFrame(0),
-    resizeH(0)
+    resizeH(0),
+    plugFrame(0)
 {
 
 
@@ -64,13 +64,13 @@ Gui::~Gui()
 {
     if(myWindow) {
         myWindow->writeSettings();
-////        myWindow->deleteLater();
-        myWindow->setParent(0);
-        delete myWindow;
-        myWindow=0;
+//        myWindow->deleteLater();
+//        myWindow->setParent(0);
+//        delete myWindow;
+//        myWindow=0;
     }
     if(widget) {
-        delete widget;
+        widget->deleteLater();
         widget=0;
     }
 }
@@ -148,6 +148,9 @@ tresult PLUGIN_API Gui::isPlatformTypeSupported (FIDString type)
 
 tresult PLUGIN_API Gui::attached (void* parent, FIDString /*type*/)
 {
+    if(!myWindow)
+        return kResultFalse;
+
     widget = new QWinWidget(static_cast<HWND>(parent));
     widget->setAutoFillBackground(false);
     widget->setObjectName("QWinWidget");
@@ -158,8 +161,6 @@ tresult PLUGIN_API Gui::attached (void* parent, FIDString /*type*/)
     widget->setPalette( myWindow->palette() );
 
 //    AEffEditor::open(ptr);
-
-
 
     resizeH = new ResizeHandle(widget);
     QPoint pos( widget->geometry().bottomRight() );
@@ -179,17 +180,19 @@ tresult PLUGIN_API Gui::attached (void* parent, FIDString /*type*/)
 
 tresult PLUGIN_API Gui::removed ()
 {
-    if(myWindow) {
+//    if(myWindow) {
 //        myWindow->writeSettings();
-        myWindow->setParent(0);
-////        myWindow->deleteLater();
+//        myWindow->setParent(0);
+//        myWindow->deleteLater();
 //        delete myWindow;
 //        myWindow=0;
-    }
-    if(widget) {
-        delete widget;
-        widget=0;
-    }
+//    }
+//    if(widget) {
+//        widget->setParent(0);
+//        widget->deleteLater();
+//        delete widget;
+//        widget=0;
+//    }
 
     Vst::EditorView::removedFromParent();
     return kResultOk;

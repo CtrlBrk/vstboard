@@ -36,6 +36,22 @@
 #define tstrrchr strrchr
 #endif
 
+const std::wstring GetCurrentDllPath(HINSTANCE hInst)
+{
+	WCHAR buffer[MAX_PATH];
+	
+	if (GetModuleFileName(hInst, buffer, sizeof(buffer)) == 0)
+		return L"";
+
+	std::wstring path(buffer);
+	const size_t last_slash_idx = path.rfind('\\');
+	if (std::wstring::npos != last_slash_idx)
+		path = path.substr(0, last_slash_idx);
+
+	return path;
+}
+
+
 AudioEffect *createShell(audioMasterCallback audioMaster);
 
 ::AudioEffect* createEffectInstance(audioMasterCallback audioMaster)
@@ -86,6 +102,10 @@ extern "C" {
 //------------------------------------------------------------------------
 BOOL WINAPI DllMain (HINSTANCE hInst, DWORD dwReason, LPVOID /*lpvReserved*/)
 {
+	//custom Qt plugin path : Qt will not find the "platforms" directory in the host's dir
+	QString p = QString("%1").arg( GetCurrentDllPath(hInst) );
+	QCoreApplication::addLibraryPath( p );
+	
     static bool ownApplication = FALSE;
 
     if (dwReason == DLL_PROCESS_ATTACH)
@@ -109,11 +129,13 @@ BOOL WINAPI DllMain (HINSTANCE hInst, DWORD dwReason, LPVOID /*lpvReserved*/)
             gPath[bkslash - gPath + 1] = 0;
     }
 
+	//do not delete the app
     //there's no way to know if another plugin is using our qapp
-//        if ( dwReason == DLL_PROCESS_DETACH && ownApplication ) {
-//            if(qApp)
-//                delete qApp;
-//        }
+        if ( dwReason == DLL_PROCESS_DETACH && ownApplication ) {
+//            if(qApp) {
+//                qApp->exit(0);
+//            }
+        }
 
     return TRUE;
 }

@@ -6,13 +6,13 @@ DEFINES += APP_VERSION_PATCH=0
 
 #CONFIG += object_parallel_to_source
 
-Release:DESTDIR = $${OUT_PWD}/release
-Debug:DESTDIR = $${OUT_PWD}/debug
-OBJECTS_DIR= $${DESTDIR}/obj
+#Release:DESTDIR = $${OUT_PWD}/release
+Debug:DESTDIR = $${OUT_PWD}/../
 
-RCC_DIR = $${DESTDIR}/tmp
-MOC_DIR = $${DESTDIR}/tmp
-UI_DIR = $${OUT_PWD}/../ui
+OBJECTS_DIR= $${OUT_PWD}
+RCC_DIR = $${OUT_PWD}
+MOC_DIR = $${OUT_PWD}
+UI_DIR = $${DESTDIR}/ui
 
 INCLUDEPATH += $${UI_DIR}
 
@@ -39,15 +39,16 @@ DEFINES += CIRCULAR_BUFFER
 #use lines instead of curves
 #DEFINES += SIMPLE_CABLES
 
-scriptengine {
-    DEFINES += SCRIPTENGINE
-    QT += script
-}
+#scriptengine {
+#    DEFINES += SCRIPTENGINE
+#    QT += script
+#}
 
 CONFIG(debug, debug|release) {
     POST =
     build_postfix=debug
     DEFINES += DEBUG
+    DEFINES += _DEBUG
 } else {
     POST =
     build_postfix=release

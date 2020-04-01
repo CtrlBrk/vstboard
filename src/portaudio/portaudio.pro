@@ -50,38 +50,34 @@ linux-g++ {
     SOURCES += $$PORTAUDIO_PATH/src/os/unix/pa_unix_util.c
 }
 
-win32 {
+#LIBS += -lwinmm
+#LIBS += -luser32
+#LIBS += -ladvapi32
+#LIBS += -lole32
+#LIBS += -lsetupapi
+#LIBS += -ldsound
 
-    LIBS += -lwinmm
-    LIBS += -luser32
-    LIBS += -ladvapi32
-    LIBS += -lole32
-    LIBS += -lsetupapi
-    LIBS += -ldsound
+win32 {
 
     INCLUDEPATH += $$PORTAUDIO_PATH/src/os/win
     INCLUDEPATH += $$PORTAUDIO_PATH/src/hostapi/asio/ASIOSDK/common
     INCLUDEPATH += $$PORTAUDIO_PATH/src/hostapi/asio/ASIOSDK/host
     INCLUDEPATH += $$PORTAUDIO_PATH/src/hostapi/asio/ASIOSDK/host/pc
 
-    HEADERS += $$PORTAUDIO_PATH/include/pa_win_ds.h
-    HEADERS += $$PORTAUDIO_PATH/include/pa_win_wasapi.h
     HEADERS += $$PORTAUDIO_PATH/include/pa_win_waveformat.h
     HEADERS += $$PORTAUDIO_PATH/include/pa_win_wmme.h
-
-
     HEADERS += $$PORTAUDIO_PATH/include/pa_asio.h
 
-    SOURCES += $$PORTAUDIO_PATH/src/hostapi/wasapi/pa_win_wasapi.c \
-    $$PORTAUDIO_PATH/src/hostapi/wmme/pa_win_wmme.c \
-    $$PORTAUDIO_PATH/src/os/win/pa_win_waveformat.c \
-    $$PORTAUDIO_PATH/src/os/win/pa_win_util.c \
-    $$PORTAUDIO_PATH/src/os/win/pa_win_hostapis.c \
-    $$PORTAUDIO_PATH/src/hostapi/asio/pa_asio.cpp \
-    $$PORTAUDIO_PATH/src/hostapi/asio/ASIOSDK/common/asio.cpp \
-    $$PORTAUDIO_PATH/src/hostapi/asio/ASIOSDK/host/ASIOConvertSamples.cpp \
-    $$PORTAUDIO_PATH/src/hostapi/asio/ASIOSDK/host/asiodrivers.cpp \
-    $$PORTAUDIO_PATH/src/hostapi/asio/ASIOSDK/host/pc/asiolist.cpp
+
+    SOURCES += $$PORTAUDIO_PATH/src/hostapi/wmme/pa_win_wmme.c
+    SOURCES += $$PORTAUDIO_PATH/src/os/win/pa_win_waveformat.c
+    SOURCES += $$PORTAUDIO_PATH/src/os/win/pa_win_util.c
+    SOURCES += $$PORTAUDIO_PATH/src/os/win/pa_win_hostapis.c
+    SOURCES += $$PORTAUDIO_PATH/src/hostapi/asio/pa_asio.cpp
+    SOURCES += $$PORTAUDIO_PATH/src/hostapi/asio/ASIOSDK/common/asio.cpp
+    SOURCES += $$PORTAUDIO_PATH/src/hostapi/asio/ASIOSDK/host/ASIOConvertSamples.cpp
+    SOURCES += $$PORTAUDIO_PATH/src/hostapi/asio/ASIOSDK/host/asiodrivers.cpp
+    SOURCES += $$PORTAUDIO_PATH/src/hostapi/asio/ASIOSDK/host/pc/asiolist.cpp
 
     win32-g++ {
         DEFINES += PA_USE_WMME
@@ -99,6 +95,13 @@ win32 {
 
     win32-msvc* {
 
+        LIBS += -lwinmm
+        LIBS += -luser32
+        LIBS += -ladvapi32
+        LIBS += -lole32
+        LIBS += -lsetupapi
+        LIBS += -ldsound
+
         DEFINES += PA_USE_WMME
         DEFINES += PA_USE_DS
         DEFINES += PA_USE_ASIO
@@ -107,7 +110,8 @@ win32 {
 
         DEFINES += PAWIN_USE_DIRECTSOUNDFULLDUPLEXCREATE
 
-
+        HEADERS += $$PORTAUDIO_PATH/include/pa_win_ds.h
+        HEADERS += $$PORTAUDIO_PATH/include/pa_win_wasapi.h
         HEADERS += $$PORTAUDIO_PATH/src/os/win/pa_win_wdmks_utils.h
         HEADERS += $$PORTAUDIO_PATH/src/os/win/pa_x86_plain_converters.h
 
@@ -118,6 +122,8 @@ win32 {
         SOURCES += $$PORTAUDIO_PATH/src/hostapi/wdmks/pa_win_wdmks.c
         SOURCES += $$PORTAUDIO_PATH/src/hostapi/dsound/pa_win_ds.c
         SOURCES += $$PORTAUDIO_PATH/src/hostapi/dsound/pa_win_ds_dynlink.c
+        SOURCES += $$PORTAUDIO_PATH/src/hostapi/wasapi/pa_win_wasapi.c
+
     }
 
 
@@ -158,5 +164,3 @@ mac {
     $$PORTAUDIO_PATH/src/hostapi/asio/ASIOSDK/host/mac/asioshlib.cpp \
     $$PORTAUDIO_PATH/src/hostapi/asio/ASIOSDK/host/mac/codefragements.cpp
 }
-
-OTHER_FILES +=

@@ -5,6 +5,8 @@ QT += core gui widgets
 TEMPLATE = lib
 CONFIG += staticlib
 
+PRECOMPILED_HEADER = precomp.h
+
 vstsdk {
     HEADERS += vst/vst3host.h \
         connectables/vst3plugin.h \
@@ -69,8 +71,6 @@ vstsdk {
 
 #    FORMS += views/scripteditor.ui
 #}
-
-PRECOMPILED_HEADER = precomp.h
 
 SOURCES += \
     msghandler.cpp \
@@ -290,8 +290,6 @@ FORMS += \
     views/buttonswidget.ui \
     views/modifierswidget.ui
 
-
-PRECOMPILED_HEADER = precomp.h
 
 #TRANSLATIONS = ../resources/translations/common_fr.ts
 

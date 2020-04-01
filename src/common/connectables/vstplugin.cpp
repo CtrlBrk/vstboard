@@ -650,6 +650,9 @@ void VstPlugin::OnShowEditor()
     if(!editorWnd)
         CreateEditorWindow();
 
+    if(!editorWnd)
+        return;
+
     if(editorWnd->isVisible())
         return;
 

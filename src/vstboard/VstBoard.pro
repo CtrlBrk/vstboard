@@ -5,8 +5,6 @@ QT += core gui widgets
 TEMPLATE = app
 TARGET = "VstBoard"
 
-LIBS += -lportmidi
-
 win32 {
     LIBS += -lwinmm
     LIBS += -luser32
@@ -21,6 +19,8 @@ INCLUDEPATH += $$PORTMIDI_PATH/porttime
 INCLUDEPATH += $$PORTMIDI_PATH/pm_common
 
 INCLUDEPATH += ../common
+
+PRECOMPILED_HEADER = ../common/precomp.h
 
 #CONFIG(debug, debug|release) {
 #    LIBS += -L"C:/Program Files (x86)/Visual Leak Detector/lib/" -lvld
@@ -68,8 +68,6 @@ FORMS += \
     views/mmeconfigdialog.ui \
     views/wasapiconfigdialog.ui
 
-PRECOMPILED_HEADER = ../common/precomp.h
-
 #TRANSLATIONS = ../resources/translations/vstboard_fr.ts
 
 RESOURCES += ../resources/resources.qrc
@@ -78,42 +76,38 @@ win32-msvc* {
     RC_FILE = vstboard.rc
 }
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../common/release/ -lcommon
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../common/debug/ -lcommon
-else:unix:!symbian: LIBS += -L$$OUT_PWD/../common/ -lcommon
+#common
+win32-g++:LIBS += -L$$DESTDIR -llibcommon
+else:win32:LIBS += -L$$DESTDIR -lcommon
+else:unix:LIBS += -L$$DESTDIR -lcommon
 
-INCLUDEPATH += $$PWD/../common
-DEPENDPATH += $$PWD/../common
+INCLUDEPATH += $$DESTDIR/common
+DEPENDPATH += $$DESTDIR/common
 
+win32-g++:PRE_TARGETDEPS += $$DESTDIR/libcommon.a
+else:win32:PRE_TARGETDEPS += $$DESTDIR/common.lib
+else:unix:PRE_TARGETDEPS += $$DESTDIR/libcommon.a
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../common/libcommon.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../common/libcommon.a
-else:win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../common/release/common.lib
-else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../common/debug/common.lib
-else:unix:!symbian: PRE_TARGETDEPS += $$OUT_PWD/../common/libcommon.a
+#portaudio
+win32-g++:LIBS += -L$$DESTDIR -llibportaudio
+else:win32:LIBS += -L$$DESTDIR -lportaudio
+else:unix:LIBS += -L$$DESTDIR -lportaudio
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../portaudio/release/ -lportaudio
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../portaudio/debug/ -lportaudio
-else:unix:!symbian: LIBS += -L$$OUT_PWD/../portaudio/ -lportaudio
+INCLUDEPATH += $$DESTDIR/portaudio
+DEPENDPATH += $$DESTDIR/portaudio
 
-INCLUDEPATH += $$PWD/../portaudio
-DEPENDPATH += $$PWD/../portaudio
+win32-g++:PRE_TARGETDEPS += $$DESTDIR/libportaudio.a
+else:win32:PRE_TARGETDEPS += $$DESTDIR/portaudio.lib
+else:unix:PRE_TARGETDEPS += $$DESTDIR/libportaudio.a
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../portaudio/libportaudio.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../portaudio/libportaudio.a
-else:win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../portaudio/release/portaudio.lib
-else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../portaudio/debug/portaudio.lib
-else:unix:!symbian: PRE_TARGETDEPS += $$OUT_PWD/../portaudio/libportaudio.a
+#portmidi
+win32-g++:LIBS += -L$$DESTDIR -llibportmidi
+else:win32:LIBS += -L$$DESTDIR -lportmidi
+else:unix:LIBS += -L$$DESTDIR -lportmidi
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../portmidi/release/ -lportmidi
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../portmidi/debug/ -lportmidi
-else:unix:!symbian: LIBS += -L$$OUT_PWD/../portmidi/ -lportmidi
+INCLUDEPATH += $$DESTDIR/portmidi
+DEPENDPATH += $$DESTDIR/portmidi
 
-INCLUDEPATH += $$PWD/../portmidi
-DEPENDPATH += $$PWD/../portmidi
-
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../portmidi/libportmidi.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../portmidi/libportmidi.a
-else:win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../portmidi/release/portmidi.lib
-else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../portmidi/debug/portmidi.lib
-else:unix:!symbian: PRE_TARGETDEPS += $$OUT_PWD/../portmidi/libportmidi.a
+win32-g++:PRE_TARGETDEPS += $$DESTDIR/libportmidi.a
+else:win32:PRE_TARGETDEPS += $$DESTDIR/portmidi.lib
+else:unix:PRE_TARGETDEPS += $$DESTDIR/libportmidi.a

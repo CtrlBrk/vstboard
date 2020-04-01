@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <windows.h>
 #include <string>
+#include <list>
 
 #ifndef __ipluginbase__
 #include "pluginterfaces/base/ipluginbase.h"
@@ -33,107 +34,136 @@
 
 #define DllExport __declspec( dllexport )
 
-HMODULE Hcore=0;
-HMODULE Hgui=0;
-HMODULE Hscript=0;
-HMODULE HwinMigrate=0;
-HMODULE Hplugin=0;
+static bool __dummyLoaderLocation;
+
+HMODULE HpluginDll = 0;
+
+const std::wstring  GetCurrentDllPath()
+{
+	WCHAR buffer[MAX_PATH];
+	HMODULE hm = NULL;
+
+	if (GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCWSTR)&__dummyLoaderLocation, &hm) == 0)
+	{
+		return L"";
+	}
+	if (GetModuleFileName(hm, buffer, sizeof(buffer)) == 0)
+	{
+		return L"";
+	}
+
+	std::wstring path(buffer);
+	const size_t last_slash_idx = path.rfind('\\');
+	if (std::wstring::npos != last_slash_idx)
+	{
+		path = path.substr(0, last_slash_idx);
+	}
+	return path;
+}
+
+const std::wstring GetPathFromRegistry()
+{
+#if defined(_M_X64) || defined(__amd64__)
+	std::wstring regBaseKey(L"Software\\CtrlBrk\\VstBoard\\x64");
+#else
+	std::wstring regBaseKey(L"Software\\CtrlBrk\\VstBoard\\x86");
+#endif
+
+	HKEY  hKey;
+	if (::RegOpenKeyEx(HKEY_CURRENT_USER, regBaseKey.c_str(), 0, KEY_QUERY_VALUE, &hKey) != ERROR_SUCCESS) {
+		return L"";
+	}
+
+#ifndef QT_NO_DEBUG
+	std::wstring installKey(L"DebugLocation");
+#else
+	std::wstring installKey(L"InstallLocation");
+#endif
+
+	DWORD dwSize = MAX_PATH;
+	DWORD dwDataType = 0;
+	BYTE value[1000];
+	if (::RegQueryValueEx(hKey, installKey.c_str(), 0, &dwDataType, (LPBYTE)value, &dwSize) != ERROR_SUCCESS) {
+		::RegCloseKey(hKey);
+		//MessageBox(NULL, (L"Registry key not found : HKCU\\" + regBaseKey + L"\\" + installKey).c_str(), L"VstBoard", MB_OK | MB_ICONERROR);
+		return L"";
+	}
+
+	::RegCloseKey(hKey);
+	std::wstring instDir((TCHAR*)value);
+	instDir.erase(remove(instDir.begin(), instDir.end(), '\"'), instDir.end());
+
+	return instDir;
+}
+
+HMODULE LoadDll( const std::wstring &dll) {
+
+	HMODULE h = 0;
+
+#ifndef QT_NO_DEBUG
+	//try to load the debug version
+	h = LoadLibrary(( dll + L"d.dll").c_str());
+	if (h) return h;
+
+#endif
+	h = LoadLibrary(( dll + L".dll").c_str());
+	if (h) return h;
+
+	return 0;
+}
+
+
+void AddDllPath()
+{
+	WCHAR newSearchPath[4096];
+	::GetEnvironmentVariable(L"Path", newSearchPath, MAX_PATH);
+	std::wstring path(newSearchPath);
+	path += L";";
+	path += GetCurrentDllPath();
+	path += L";";
+	path += GetPathFromRegistry();
+	path += L";";
+	::SetEnvironmentVariable(L"Path", path.c_str());
+	//::SetEnvironmentVariable(L"QT_QPA_PLATFORM_PLUGIN_PATH", GetPathFromRegistry().c_str());
+	
+}
 
 bool InitModule()
 {
-#if defined(_M_X64) || defined(__amd64__)
-    std::wstring regBaseKey(L"Software\\CtrlBrk\\VstBoard\\x64");
-#else
-    std::wstring regBaseKey(L"Software\\CtrlBrk\\VstBoard\\x86");
-#endif
+	AddDllPath();
 
-    HKEY  hKey;
-    if(::RegOpenKeyEx(HKEY_CURRENT_USER, regBaseKey.c_str(), 0, KEY_QUERY_VALUE, &hKey) != ERROR_SUCCESS) {
-        MessageBox(NULL,(L"Registry key not found : HKCU\\"+regBaseKey).c_str(),L"VstBoard", MB_OK | MB_ICONERROR);
-        return false;
-    }
+	std::list<std::wstring> dlls = {
+		L"Qt5Core",
+		/*	L"Qt5Gui",
+		L"Qt5Widgets",
+		L"Qt5Svg",
+		L"qwindows",
+		L"qsvgicon"
+	*/
+	};
 
-#ifndef QT_NO_DEBUG
-    std::wstring installKey(L"DebugLocation");
-#else
-    std::wstring installKey(L"InstallLocation");
-#endif
+	for (auto const& dll : dlls) {
+		if (!LoadDll( dll)) {
+			MessageBox(NULL, (dll + L"(d).dll : not loaded").c_str(), L"VstBoard", MB_OK | MB_ICONERROR);
+			return false;
+		}
+	}
+	
+	HpluginDll = LoadDll( L"VstBoardPlugin");
+	if (!HpluginDll) {
+		MessageBox(NULL, L"VstBoardPlugin(d).dll : not loaded", L"VstBoard", MB_OK | MB_ICONERROR);
+		return false;
+	}
 
-    DWORD dwSize     = 1000;
-    DWORD dwDataType = 0;
-    BYTE value[1000];
-    if(::RegQueryValueEx(hKey, installKey.c_str(), 0, &dwDataType, (LPBYTE)value, &dwSize) != ERROR_SUCCESS) {
-        ::RegCloseKey(hKey);
-        MessageBox(NULL,(L"Registry key not found : HKCU\\"+regBaseKey+L"\\"+installKey).c_str(),L"VstBoard", MB_OK | MB_ICONERROR);
-        return false;
-    }
-
-    ::RegCloseKey(hKey);
-    std::wstring instDir((TCHAR*)value);
-    instDir.erase( remove( instDir.begin(), instDir.end(), '\"' ), instDir.end() );
-
-    if(GetFileAttributes((instDir).c_str()) == 0xffffffff) {
-        MessageBox(NULL,(L"The path \""+instDir+L"\" defined in \"HKCU\\"+regBaseKey+L"\\"+installKey+L"\" is not valid").c_str(),L"VstBoard", MB_OK | MB_ICONERROR);
-        return false;
-    }
-
-    if(GetFileAttributes((instDir+L"\\VstBoardPlugin.dll").c_str()) == 0xffffffff) {
-      MessageBox(NULL,(instDir+L"\\VstBoardPlugin.dll : file not found").c_str(),L"VstBoard", MB_OK | MB_ICONERROR);
-      return false;
-    }
-
-#ifndef QT_NO_DEBUG
-    std::wstring dbgSuffix(L"d");
-#else
-    std::wstring dbgSuffix(L"");
-#endif
-
-    if(!Hcore)
-        Hcore = LoadLibrary((instDir+L"\\QtCore"+dbgSuffix+L"4.dll").c_str());
-    if(!Hcore) {
-        MessageBox(NULL,(instDir+L"\\QtCore"+dbgSuffix+L"4.dll : not loaded").c_str(),L"VstBoard", MB_OK | MB_ICONERROR);
-        return false;
-    }
-    if(!Hgui)
-    Hgui = LoadLibrary((instDir+L"\\QtGui"+dbgSuffix+L"4.dll").c_str());
-    if(!Hgui) {
-        MessageBox(NULL,(instDir+L"\\QtGui"+dbgSuffix+L"4.dll : not loaded").c_str(),L"VstBoard", MB_OK | MB_ICONERROR);
-        return false;
-    }
-    #ifdef SCRIPTENGINE
-        if(!Hscript)
-        Hscript = LoadLibrary((instDir+L"\\QtScript"+dbgSuffix+L"4.dll").c_str());
-        if(!Hscript) {
-            MessageBox(NULL,(instDir+L"\\QtScript"+dbgSuffix+L"4.dll : not loaded").c_str(),L"VstBoard", MB_OK | MB_ICONERROR);
-            return false;
-        }
-    #endif
-    if(!HwinMigrate)
-    HwinMigrate = LoadLibrary((instDir+L"\\QtSolutions_MFCMigrationFramework-head"+dbgSuffix+L".dll").c_str());
-    if(!HwinMigrate) {
-        MessageBox(NULL,(instDir+L"QtSolutions_MFCMigrationFramework-head"+dbgSuffix+L".dll : not loaded").c_str(),L"VstBoard", MB_OK | MB_ICONERROR);
-        return false;
-    }
-
-    if(!Hplugin)
-    Hplugin = LoadLibrary((instDir+L"\\VstBoardPlugin.dll").c_str());
-    if(!Hplugin) {
-        MessageBox(NULL,(instDir+L"\\VstBoardPlugin.dll : not loaded").c_str(),L"VstBoard", MB_OK | MB_ICONERROR);
-        return false;
-    }
-    return true;
+	return true;
 }
 
 bool DeinitModule()
 {
-//    FreeLibrary(Hplugin);
-//    Hplugin=0;
+//    FreeLibrary(HpluginDll);
+//    HpluginDll=0;
 //    FreeLibrary(HwinMigrate);
 //    HwinMigrate=0;
-//#ifdef SCRIPTENGINE
-//    FreeLibrary(Hscript);
-//    Hscript=0;
-//#endif
 //    FreeLibrary(Hgui);
 //    Hgui=0;
 //    FreeLibrary(Hcore);
@@ -171,7 +201,7 @@ EXPORT_FACTORY IPluginFactory* PLUGIN_API GetPluginFactory ()
         return 0;
     }
 
-    GetFactoryProc entryPoint = (GetFactoryProc)::GetProcAddress (Hplugin, "GetPluginFactory");
+    GetFactoryProc entryPoint = (GetFactoryProc)::GetProcAddress (HpluginDll, "GetPluginFactory");
 
     if(!entryPoint) {
         MessageBox(NULL,L"VstBoardPlugin.dll is not valid",L"VstBoard", MB_OK | MB_ICONERROR);
@@ -200,7 +230,7 @@ extern "C" {
         if(!InitModule()) {
             return 0;
         }
-        vstPluginFuncPtr entryPoint = (vstPluginFuncPtr)GetProcAddress(Hplugin, "VSTPluginMain");
+        vstPluginFuncPtr entryPoint = (vstPluginFuncPtr)GetProcAddress(HpluginDll, "VSTPluginMain");
         if(!entryPoint) {
             MessageBox(NULL,L"VstBoardPlugin.dll is not valid",L"VstBoard", MB_OK | MB_ICONERROR);
             return 0;

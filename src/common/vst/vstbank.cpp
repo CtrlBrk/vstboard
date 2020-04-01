@@ -187,7 +187,9 @@ bool CFxBank::SetSize(int nPrograms, int nParams)
 
 bool CFxBank::SetSize(int nChunkSize)
 {
-    int nTotLen = ((int)((SFxBankChunk *)0)->chunk) + nChunkSize;
+//    int nTotLen = ((int)((SFxBankChunk *)0)->chunk) + nChunkSize;
+    //TODO: is this the correct size ?
+    int nTotLen = sizeof(SFxBankChunk) + nChunkSize;
     unsigned char *nBank = new unsigned char[nTotLen];
     if (!nBank)
         return false;
