@@ -252,12 +252,13 @@ void AudioDevices::ReceiveMsg(const MsgObject &msg)
   */
 void AudioDevices::BuildModel()
 {
-    MsgObject msg(GetIndex());
+    MSGOBJ();
     msg.prop[MsgObject::Update]=1;
 
     for (int i = 0; i < Pa_GetHostApiCount(); ++i) {
         const PaHostApiInfo *apiInfo = Pa_GetHostApiInfo(i);
-        MsgObject msgApi((int)apiInfo->type);
+//        MsgObject msgApi((int)apiInfo->type);
+        _MSGOBJ(msgApi,(int)apiInfo->type);
         msgApi.prop[MsgObject::Name]=apiInfo->name;
 
         //an api can contain multiple devices with the same name
@@ -339,7 +340,7 @@ void AudioDevices::OnToggleDeviceInUse(PaHostApiIndex apiId, PaDeviceIndex devId
         }
     }
 
-    MsgObject msg(GetIndex());
+    MSGOBJ();
     msg.prop[MsgObject::State]=inUse;
     msg.prop[MsgObject::Group]=apiId;
     msg.prop[MsgObject::Id]=devId;

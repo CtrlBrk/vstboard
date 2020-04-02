@@ -77,10 +77,11 @@ Object::Object(MainHost *host, int index, const ObjectInfo &info) :
     }
 
     objInfo.forcedObjId = index;
-
     setObjectName(objInfo.name);
     if(myHost)
         doublePrecision=myHost->doublePrecision;
+
+    LOG("crtObject:"<<objInfo.forcedObjId<<":"<<objInfo.name);
 
 #ifdef SCRIPTENGINE
     QScriptValue scriptObj = myHost->scriptEngine->newQObject(this);
@@ -159,6 +160,8 @@ Object::Object(MainHost *host, int index, const ObjectInfo &info) :
   */
 Object::~Object()
 {
+    LOG(" delObject:"<<objInfo.forcedObjId<<":"<<objInfo.name);
+
     pinLists.clear();
 
     if(containerId!=FixedObjId::noContainer) {
@@ -201,7 +204,8 @@ bool Object::Close()
 //            msg.prop[MsgObject::Remove]=GetIndex();
 //            msgCtrl->SendMsg(msg);
         } else {
-            MsgObject msg(parkingId);
+//            MsgObject msg(parkingId);
+            _MSGOBJ(msg,parkingId);
             msg.prop[MsgObject::Remove]=GetIndex();
             msgCtrl->SendMsg(msg);
         }
@@ -831,7 +835,8 @@ void Object::GetInfos(MsgObject &msg)
             ++i;
             continue;
         }
-        MsgObject lstPinMsg(GetIndex());
+//        MsgObject lstPinMsg(GetIndex());
+        _MSGOBJ(lstPinMsg,GetIndex());
         lst->GetInfos(lstPinMsg);
         msg.children << lstPinMsg;
         ++i;
@@ -915,7 +920,8 @@ void Object::UpdateView()
 
 void Object::UpdateViewNow()
 {
-    MsgObject msg(containerId);
+//    MsgObject msg(containerId);
+    _MSGOBJ(msg,containerId);
     GetInfos(msg);
     msgCtrl->SendMsg(msg);
 }
@@ -927,7 +933,8 @@ void Object::SetErrorMessage(const QString &msg)
     if(!MsgEnabled())
         return;
 
-    MsgObject m(GetIndex());
+//    MsgObject m(GetIndex());
+    _MSGOBJ(m,GetIndex());
     m.prop[MsgObject::Message] = errorMessage;
     msgCtrl->SendMsg(m);
 }

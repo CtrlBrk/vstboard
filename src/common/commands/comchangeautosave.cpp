@@ -43,7 +43,8 @@ ComChangeAutosave::ComChangeAutosave(ProgramManager *model,
 
 void ComChangeAutosave::undo()
 {
-    MsgObject msg(model->GetIndex());
+//    MsgObject msg(model->GetIndex());
+    _MSGOBJ(msg,model->GetIndex());
 
     if(type==0) {
         model->groupAutosaveState = oldState;
@@ -59,7 +60,8 @@ void ComChangeAutosave::undo()
 
 void ComChangeAutosave::redo()
 {
-    MsgObject msg(model->GetIndex());
+//    MsgObject msg(model->GetIndex());
+    _MSGOBJ(msg,model->GetIndex());
 
     if(type==0) {
         model->groupAutosaveState = newState;

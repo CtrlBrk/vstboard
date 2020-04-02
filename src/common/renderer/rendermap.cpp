@@ -150,14 +150,16 @@ void RenderMap::GetInfo(MsgObject &msg) const
 
     RendererMap::const_iterator thread = map.constBegin();
     while(thread!=map.constEnd()) {
-        MsgObject msgThread(thread.key());
+//        MsgObject msgThread(thread.key());
+        _MSGOBJ(msgThread,thread.key());
         if(thread.key()>nbThreads)
             nbThreads=thread.key();
 
 
         ThreadNodes::const_iterator step = thread.value().constBegin();
         while(step!=thread.value().constEnd()) {
-            MsgObject msgStep(step.key());
+//            MsgObject msgStep(step.key());
+            _MSGOBJ(msgStep,step.key());
             if(step.key()>nbSteps)
                 nbSteps=step.key();
 

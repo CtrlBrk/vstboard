@@ -188,7 +188,8 @@ void Pin::SetVisible(bool vis)
 //        parentItem->appendRow(item);
 //        modelIndex = item->index();
 
-        MsgObject msg(pinList->GetIndex());
+//        MsgObject msg(pinList->GetIndex());
+        _MSGOBJ(msg,pinList->GetIndex());
         GetInfos(msg);
         msgCtrl->SendMsg(msg);
 
@@ -217,7 +218,8 @@ void Pin::SetVisible(bool vis)
 //        modelIndex=QModelIndex();
 
         if(pinList) {
-            MsgObject msg(pinList->GetIndex());
+//            MsgObject msg(pinList->GetIndex());
+            _MSGOBJ(msg,pinList->GetIndex());
             msg.prop[MsgObject::Remove]=GetIndex();
             msgCtrl->SendMsg(msg);
         }
@@ -238,8 +240,8 @@ void Pin::updateView()
         return;
 
     QMutexLocker l(&objMutex);
-    MsgObject msg(GetIndex());
 
+    MSGOBJ();
     if(!displayedText.isEmpty()) {
         msg.prop[MsgObject::Name]=displayedText;
 //        displayedText="";

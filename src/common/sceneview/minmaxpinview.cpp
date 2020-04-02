@@ -203,7 +203,7 @@ void MinMaxPinView::ValueChanged(float newVal)
     if(newVal>1.0f) newVal=1.0f;
     if(newVal<0.0f) newVal=0.0f;
 
-    MsgObject msg(GetIndex());
+    MSGOBJ();
     msg.prop[MsgObject::Type]=parentObjType;
     msg.prop[MsgObject::Id]=connectInfo.pinNumber;
     msg.prop[MsgObject::Value]=newVal;
@@ -275,7 +275,7 @@ void MinMaxPinView::wheelEvent ( QGraphicsSceneWheelEvent * event )
         if(event->delta()<0)
             increm=-1;
 
-        MsgObject msg(GetIndex());
+        MSGOBJ();
         msg.prop[MsgObject::Increment]=increm;
         msgCtrl->SendMsg(msg);
 //        ValueChanged( pinIndex.data(UserRoles::value).toFloat()

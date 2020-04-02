@@ -483,7 +483,8 @@ void Container::UserAddObject(const QSharedPointer<Object> &objPtr,
                 ParkObject(targetPtr);
 
                 if(MsgEnabled()) {
-                    MsgObject msg(GetIndex());
+//                    MSGOBJ();
+                    MSGOBJ();
                     msg.prop[MsgObject::Remove]=targetPtr->GetIndex();
                     msgCtrl->SendMsg(msg);
                 }
@@ -498,14 +499,16 @@ void Container::UserAddObject(const QSharedPointer<Object> &objPtr,
 
         if(MsgEnabled()) {
             foreach(int id, removedCables) {
-                MsgObject msg(GetIndex());
+//                MSGOBJ();
+                MSGOBJ();
                 msg.prop[MsgObject::Remove]=id;
                 msgCtrl->SendMsg(msg);
             }
 
 
             foreach(QSharedPointer<Cable> cab, addedCables) {
-                MsgObject msg(GetIndex());
+//                MSGOBJ();
+                MSGOBJ();
                 cab->GetInfos(msg);
                 msgCtrl->SendMsg(msg);
             }
@@ -525,7 +528,8 @@ void Container::UserParkObject(QSharedPointer<Object> objPtr,
                                QList< QPair<ConnectionInfo,ConnectionInfo> > *listOfAddedCables,
                                QList< QPair<ConnectionInfo,ConnectionInfo> > *listOfRemovedCables)
 {
-    MsgObject msg(GetIndex());
+
+    MSGOBJ();
     msg.prop[MsgObject::Remove]=objPtr->GetIndex();
     msgCtrl->SendMsg(msg);
 
@@ -543,13 +547,15 @@ void Container::UserParkObject(QSharedPointer<Object> objPtr,
     currentContainerProgram->CollectCableUpdatesIds();
 
     foreach(int id, removedCables) {
-        MsgObject msg(GetIndex());
+
+        MSGOBJ();
         msg.prop[MsgObject::Remove]=id;
         msgCtrl->SendMsg(msg);
     }
 
     foreach(QSharedPointer<Cable> cab, addedCables) {
-        MsgObject msg(GetIndex());
+
+        MSGOBJ();
         cab->GetInfos(msg);
         msgCtrl->SendMsg(msg);
     }
@@ -650,7 +656,8 @@ void Container::AddChildObject(QSharedPointer<Object> objPtr)
 //    objPtr->modelIndex=item->index();
 
     if(containersParkingId!=FixedObjId::ND && objPtr->parkingId!=FixedObjId::ND) {
-        MsgObject msg(containersParkingId);
+//        MsgObject msg(containersParkingId);
+        _MSGOBJ(msg,containersParkingId);
         msg.prop[MsgObject::Remove]=objPtr->GetIndex();
         msgCtrl->SendMsg(msg);
     }
@@ -679,7 +686,8 @@ void Container::ParkChildObject(QSharedPointer<Object> objPtr)
     myHost->objFactory->listDelayObj.removeAll(objPtr->GetIndex());
 
     if(containersParkingId!=FixedObjId::ND && !listStaticObjects.contains(objPtr)) {
-        MsgObject msg(containersParkingId);
+//        MsgObject msg(containersParkingId);
+        _MSGOBJ(msg,containersParkingId);
         msg.prop[MsgObject::Add]=objPtr->GetIndex();
 //        msg.prop["name"]=objPtr->info().name;
         msg.prop[MsgObject::ObjInfo]=QVariant::fromValue(objPtr->info());
@@ -726,7 +734,8 @@ void Container::UserAddCable(const ConnectionInfo &outputPin, const ConnectionIn
 
     currentContainerProgram->CollectCableUpdatesIds();
     foreach(QSharedPointer<Cable> cab, addedCables) {
-        MsgObject msg(GetIndex());
+
+        MSGOBJ();
         cab->GetInfos(msg);
         msgCtrl->SendMsg(msg);
     }
@@ -750,7 +759,8 @@ void Container::UserRemoveCableFromPin(const ConnectionInfo &pin)
     currentContainerProgram->CollectCableUpdatesIds();
 
     foreach(int id, removedCables) {
-        MsgObject msg(GetIndex());
+
+        MSGOBJ();
         msg.prop[MsgObject::Remove]=id;
         msgCtrl->SendMsg(msg);
     }
@@ -769,7 +779,8 @@ void  Container::UserRemoveCable(const ConnectionInfo &outputPin, const Connecti
     currentContainerProgram->CollectCableUpdatesIds();
 
     foreach(int id, removedCables) {
-        MsgObject msg(GetIndex());
+
+        MSGOBJ();
         msg.prop[MsgObject::Remove]=id;
         msgCtrl->SendMsg(msg);
     }
@@ -883,6 +894,8 @@ bool Container::fromStream (QDataStream& in)
         QDataStream tmpStream( &tmpBa , QIODevice::ReadWrite);
         ProjectFile::LoadNextChunk( chunkName, tmpBa, in );
 
+        LOG(chunkName);
+
         if(chunkName=="CntHead")
             loadHeaderStream(tmpStream);
 
@@ -953,15 +966,21 @@ bool Container::loadObjectFromStream (QDataStream &in)
     QSharedPointer<Object> objPtr = myHost->objFactory->NewObject(info);
 
     //can't create the object ?
-    if(!objPtr) {
-        LOG("object not created");
+//    if(!objPtr) {
+//        LOG("object not created");
+//        return false;
+//    }
+
+    if(objPtr->fromStream( in ))
+        listLoadingObjects << objPtr; //keep the object alive while loading
+
+    if(objPtr->GetSleep()) {
+//        listObjects.remove(objId);
+//        sharedObj.clear();
         return false;
     }
 
     AddParkedObject(objPtr);
-    if(objPtr->fromStream( in ))
-        listLoadingObjects << objPtr; //keep the object alive while loading
-
     return true;
 }
 
@@ -1089,7 +1108,8 @@ void Container::GetInfos(MsgObject &msg)
 
     foreach( QSharedPointer< Object >obj, listStaticObjects) {
         if(obj) {
-            MsgObject a(GetIndex());
+//            MsgObject a(GetIndex());
+            _MSGOBJ(a,GetIndex());
             obj->GetInfos(a);
             msg.children << a;
         }

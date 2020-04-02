@@ -60,7 +60,8 @@ void View::VstShellSelect::accept()
     ui->listPlugins->clear();
     QDialog::accept();
 
-    MsgObject msg(senderObjId);
+//    MsgObject msg(senderObjId);
+    _MSGOBJ(msg,senderObjId);
     msg.prop[MsgObject::ObjInfo] = QVariant::fromValue(info);
     msgCtrl->SendMsg(msg);
 
@@ -75,7 +76,9 @@ void View::VstShellSelect::reject()
 //    MsgObject msg(senderObjId);
 //    msg.prop[MsgObject::Remove]=RemoveType::RemoveWithCables;
 //    msgCtrl->SendMsg(msg);
-    MsgObject msg(senderObjId);
+
+//    MsgObject msg(senderObjId);
+    _MSGOBJ(msg,senderObjId);
     msg.prop[MsgObject::ObjInfo] = QVariant::fromValue(info);
     msgCtrl->SendMsg(msg);
 

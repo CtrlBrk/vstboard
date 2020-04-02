@@ -255,7 +255,7 @@ void ObjectView::closeEvent ( QCloseEvent * event )
 {
     setActive(false);
 
-    MsgObject msg(GetIndex());
+    MSGOBJ();
     msg.prop[MsgObject::Remove]=RemoveType::RemoveWithCables;
     msgCtrl->SendMsg(msg);
     event->ignore();
@@ -265,7 +265,7 @@ void ObjectView::RemoveWithBridge()
 {
     setActive(false);
 
-    MsgObject msg(GetIndex());
+    MSGOBJ();
     msg.prop[MsgObject::Remove]=RemoveType::BridgeCables;
     msgCtrl->SendMsg(msg);
 }

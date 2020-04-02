@@ -110,7 +110,7 @@ void MidiDevices::OpenDevice(Connectables::MidiDevice* objPtr)
 
     listOpenedDevices << objPtr->info().id;
 
-    MsgObject msg(GetIndex());
+    MSGOBJ();
     msg.prop[MsgObject::State]=true;
     msg.prop[MsgObject::Id]=objPtr->info().id;
     msgCtrl->SendMsg(msg);
@@ -120,7 +120,7 @@ void MidiDevices::CloseDevice(Connectables::MidiDevice* objPtr)
 {
     listOpenedDevices.removeAll(objPtr->info().id);
 
-    MsgObject msg(GetIndex());
+    MSGOBJ();
     msg.prop[MsgObject::State]=false;
     msg.prop[MsgObject::Id]=objPtr->info().id;
     msgCtrl->SendMsg(msg);
@@ -132,7 +132,7 @@ void MidiDevices::CloseDevice(Connectables::MidiDevice* objPtr)
 
 void MidiDevices::BuildModel()
 {
-    MsgObject msg(GetIndex());
+    MSGOBJ();
     msg.prop[MsgObject::Update]=1;
 
     QString lastName;

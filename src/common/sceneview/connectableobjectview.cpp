@@ -159,7 +159,7 @@ void ConnectableObjectView::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event
 
 void ConnectableObjectView::ReportPosChange()
 {
-    MsgObject msg(GetIndex());
+    MSGOBJ();
     msg.prop[MsgObject::State]=pos();
     msgCtrl->SendMsg(msg);
 }

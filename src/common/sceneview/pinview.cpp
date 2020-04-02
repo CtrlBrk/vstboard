@@ -41,13 +41,13 @@ CableView *PinView::currentLine = 0;
 PinView::PinView(int listPinId, float angle, MsgController *msgCtrl, int objId, QGraphicsItem * parent, const ConnectionInfo &pinInfo, ViewConfig *config) :
     QGraphicsWidget(parent),
     MsgHandler(msgCtrl,objId),
-    listPinId(listPinId),
     outline(0),
     highlight(0),
     connectInfo(pinInfo),
     pinAngle(angle),
     config(config),
-    defaultCursor(Qt::OpenHandCursor)
+    defaultCursor(Qt::OpenHandCursor),
+    listPinId(listPinId)
 {
     setAcceptDrops(true);
     setCursor(defaultCursor);
@@ -188,7 +188,8 @@ void PinView::mouseReleaseEvent ( QGraphicsSceneMouseEvent  * /*event*/ )
 
 void PinView::Unplug()
 {
-    MsgObject msg(connectInfo.container);
+//    MsgObject msg(connectInfo.container);
+    _MSGOBJ(msg,connectInfo.container);
     msg.prop[MsgObject::UnplugPin]=GetIndex();
     connectInfo.GetInfos(msg);
     msgCtrl->SendMsg(msg);
@@ -199,7 +200,8 @@ void PinView::RemovePin()
     if(!connectInfo.isRemoveable)
         return;
 
-    MsgObject msg(listPinId);
+//    MsgObject msg(listPinId);
+    _MSGOBJ(msg,listPinId);
     msg.prop[MsgObject::RemovePin]=GetIndex();
     connectInfo.GetInfos(msg);
     msgCtrl->SendMsg(msg);
@@ -264,14 +266,17 @@ void PinView::dropEvent ( QGraphicsSceneDragDropEvent  * event )
     ConnectionInfo connInfo;
     ReadMimeData(bytes,connInfo);
 
-    MsgObject msg(connectInfo.container);
+//    MsgObject msg(connectInfo.container);
+    _MSGOBJ(msg,connectInfo.container);
     msg.prop[MsgObject::ConnectPin]=1;
 
-    MsgObject msgPin1;
+//    MsgObject msgPin1;
+    _MSGOBJ(msgPin1,FixedObjId::ND);
     connectInfo.GetInfos(msgPin1);
     msg.children << msgPin1;
 
-    MsgObject msgPin2;
+//    MsgObject msgPin2;
+    _MSGOBJ(msgPin2,FixedObjId::ND);
     connInfo.GetInfos(msgPin2);
     msg.children << msgPin2;
 

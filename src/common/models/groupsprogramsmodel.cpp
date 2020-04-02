@@ -36,7 +36,8 @@ GroupsProgramsModel::GroupsProgramsModel( MsgController *msgCtrl, QObject *paren
 
 void GroupsProgramsModel::SendUpdateToHost()
 {
-    MsgObject msg(GetIndex());
+
+    MSGOBJ();
 
     if(orderChanged) {
         orderChanged=false;
@@ -46,7 +47,8 @@ void GroupsProgramsModel::SendUpdateToHost()
         for(int i=0; i<nbGrp; ++i) {
             QStandardItem *grp = item(i);
 
-            MsgObject msgGrp(i);
+//            MsgObject msgGrp(i);
+            _MSGOBJ(msgGrp,i);
             if(grp) {
                 msgGrp.prop[MsgObject::Id]=grp->data().toInt();
                 msgGrp.prop[MsgObject::Name]=grp->text();
@@ -55,7 +57,8 @@ void GroupsProgramsModel::SendUpdateToHost()
                 for(int j=0; j<nbPrg; ++j) {
                     QStandardItem *prg = grp->child(j);
 
-                    MsgObject msgPrg(j);
+//                    MsgObject msgPrg(j);
+                    _MSGOBJ(msgPrg,j);
                     if(prg) {
                         msgPrg.prop[MsgObject::Id]=prg->data().toInt();
                         msgPrg.prop[MsgObject::Name]=prg->text();
@@ -147,7 +150,8 @@ void GroupsProgramsModel::ReceiveMsg(const MsgObject &msg)
         msgBox.setInformativeText(tr("Do you want to save your changes?"));
         msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
         msgBox.setDefaultButton(QMessageBox::Save);
-        MsgObject answer(GetIndex());
+//        MsgObject answer(GetIndex());
+        _MSGOBJ(answer,GetIndex());
         answer.prop[MsgObject::Answer] = msgBox.exec();
         msgCtrl->SendMsg(answer);
     }
@@ -272,7 +276,8 @@ QMimeData * GroupsProgramsModel::mimeData ( const QModelIndexList & indexes ) co
 
 void GroupsProgramsModel::UserChangeProg(const QModelIndex &idx)
 {
-    MsgObject msg(GetIndex());
+
+    MSGOBJ();
     if(idx.parent().isValid())
         msg.prop[MsgObject::Program]=idx.row();
     else
@@ -343,21 +348,24 @@ QStringList GroupsProgramsModel::mimeTypes () const
 
 void GroupsProgramsModel::UserChangeProgAutosave(const Qt::CheckState state)
 {
-    MsgObject msg(GetIndex());
+
+    MSGOBJ();
     msg.prop[MsgObject::ProgAutosave]=state;
     msgCtrl->SendMsg(msg);
 }
 
 void GroupsProgramsModel::UserChangeGroupAutosave(const Qt::CheckState state)
 {
-    MsgObject msg(GetIndex());
+
+    MSGOBJ();
     msg.prop[MsgObject::GroupAutosave]=state;
     msgCtrl->SendMsg(msg);
 }
 
 void GroupsProgramsModel::Update()
 {
-    MsgObject msg(GetIndex());
+
+    MSGOBJ();
     msg.prop[MsgObject::GetUpdate]=1;
     msgCtrl->SendMsg(msg);
 }

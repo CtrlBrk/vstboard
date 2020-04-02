@@ -21,12 +21,6 @@
 #include "msgobject.h"
 #include "connectables/connectioninfo.h"
 
-MsgObject::MsgObject(int objIndex) :
-    objIndex(objIndex)
-{
-
-}
-
 QDataStream & MsgObject::toStream (QDataStream &out) const
 {
     out << (qint32)objIndex;
@@ -67,7 +61,8 @@ QDataStream & MsgObject::fromStream (QDataStream &in)
 
     in >> c;
     for(qint32 i=0; i<c; i++) {
-        MsgObject msg;
+//        MsgObject msg;
+        _MSGOBJ(msg,FixedObjId::ND);
         in >> msg;
         children << msg;
     }

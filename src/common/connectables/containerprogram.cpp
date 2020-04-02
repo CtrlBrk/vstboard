@@ -172,13 +172,15 @@ void ContainerProgram::GetInfos(MsgObject &msg)
 {
     foreach(QSharedPointer<Object> obj, listObjects) {
         if(obj) {
-            MsgObject a(container->GetIndex());
+//            MsgObject a(container->GetIndex());
+            _MSGOBJ(a,container->GetIndex());
             obj->GetInfos(a);
             msg.children << a;
 
             //add view attribs (position, size, etc.)
             if(mapObjAttribs.contains(obj->GetIndex())) {
-                MsgObject attr(obj->GetIndex());
+//                MsgObject attr(obj->GetIndex());
+                _MSGOBJ(attr,obj->GetIndex());
                 attr.prop[MsgObject::State] = QVariant::fromValue( mapObjAttribs[obj->GetIndex()] );
                 msg.children << attr;
 
@@ -189,7 +191,8 @@ void ContainerProgram::GetInfos(MsgObject &msg)
 
     foreach(QSharedPointer<Cable>cab, listCables) {
         if(cab) {
-            MsgObject a(container->GetIndex());
+//            MsgObject a(container->GetIndex());
+            _MSGOBJ(a,container->GetIndex());
             cab->GetInfos(a);
             msg.children << a;
         }

@@ -188,7 +188,8 @@ void CursorView::ValueChanged(float newVal)
     if(newVal>1.0f) newVal=1.0f;
     if(newVal<0.0f) newVal=0.0f;
 
-    MsgObject msg(GetIndex());
+
+    MSGOBJ();
     msg.prop[MsgObject::Value]=newVal;
     msgCtrl->SendMsg(msg);
 }

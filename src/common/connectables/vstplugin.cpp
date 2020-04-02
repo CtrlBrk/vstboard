@@ -355,7 +355,8 @@ bool VstPlugin::Open()
     if(EffGetPlugCategory() == kPlugCategShell && objInfo.id==0) {
         QList<quint32>ids;
 
-        MsgObject msg(FixedObjId::shellselect);
+//        MsgObject msg(FixedObjId::shellselect);
+        _MSGOBJ(msg,FixedObjId::shellselect);
         msg.prop[MsgObject::Id] = GetIndex();
         msg.prop[MsgObject::ObjInfo] = QVariant::fromValue(objInfo);
         char szName[256];
@@ -364,7 +365,8 @@ bool VstPlugin::Open()
             if(ids.contains(id))
                 continue;
             ids << id;
-            MsgObject plug;
+//            MsgObject plug;
+            _MSGOBJ(plug,FixedObjId::ND);
             plug.prop[MsgObject::Name] = szName;
             plug.prop[MsgObject::Id] = id;
             msg.children << plug;
@@ -1012,7 +1014,8 @@ bool VstPlugin::LoadBank(const QString &filename)
     onVstProgramChanged();
 
     currentBankFile=filename;
-    MsgObject msg(GetIndex());
+
+    MSGOBJ();
     msg.prop[MsgObject::Load] = currentBankFile;
     msgCtrl->SendMsg(msg);
 
@@ -1032,7 +1035,8 @@ void VstPlugin::SaveBank(const QString &filename)
         return;
 
     currentBankFile=filename;
-    MsgObject msg(GetIndex());
+
+    MSGOBJ();
     msg.prop[MsgObject::Load] = currentBankFile;
     msgCtrl->SendMsg(msg);
 }
@@ -1050,7 +1054,8 @@ bool VstPlugin::LoadProgramFile(const QString &filename)
     onVstProgramChanged();
 
     currentBankFile=filename;
-    MsgObject msg(GetIndex());
+
+    MSGOBJ();
     msg.prop[MsgObject::Load] = currentBankFile;
     msgCtrl->SendMsg(msg);
 
@@ -1070,7 +1075,8 @@ void VstPlugin::SaveProgramFile(const QString &filename)
         return;
 
     currentBankFile=filename;
-    MsgObject msg(GetIndex());
+
+    MSGOBJ();
     msg.prop[MsgObject::Load] = currentBankFile;
     msgCtrl->SendMsg(msg);
 }

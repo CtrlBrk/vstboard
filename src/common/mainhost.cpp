@@ -726,7 +726,8 @@ void MainHost::UpdateRendererMap()
 
 void MainHost::UpdateRendererView()
 {
-    MsgObject msg(FixedObjId::mainWindow);
+//    MsgObject msg(FixedObjId::mainWindow);
+    _MSGOBJ(msg,FixedObjId::mainWindow);
     renderer->currentMap.GetInfo(msg);
     SendMsg(msg);
 }
@@ -765,7 +766,8 @@ void MainHost::SetBufferSize(unsigned long size)
     if(bufferSize == size)
         return;
 
-    MsgObject msg(FixedObjId::mainWindow);
+//    MsgObject msg(FixedObjId::mainWindow);
+    _MSGOBJ(msg,FixedObjId::mainWindow);
     msg.prop[MsgObject::ObjInfo]=QString("hostBudffer:%1").arg(size);
     SendMsg(msg);
 
@@ -1037,7 +1039,8 @@ bool MainHost::SaveProjectFile(bool saveAs)
 
 void MainHost::currentFileChanged()
 {
-    MsgObject msg(FixedObjId::mainWindow);
+//    MsgObject msg(FixedObjId::mainWindow);
+    _MSGOBJ(msg,FixedObjId::mainWindow);
     msg.prop[MsgObject::Setup]=currentSetupFile;
     msg.prop[MsgObject::Project]=currentProjectFile;
     SendMsg(msg);

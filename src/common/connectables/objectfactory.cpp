@@ -42,8 +42,8 @@ using namespace Connectables;
 
 ObjectFactory::ObjectFactory(MainHost *myHost) :
     QObject(myHost),
-    cptListObjects(50),
-    myHost(myHost)
+    myHost(myHost),
+    cptListObjects(50)
 {
     setObjectName("ObjectFactory");
 
@@ -117,6 +117,7 @@ QSharedPointer<Object> ObjectFactory::GetObj(const QModelIndex & index)
 QSharedPointer<Object> ObjectFactory::NewObject(const ObjectInfo &info, int containerId)
 {
     int objId = GetNewObjId();
+
     if(info.forcedObjId!=0) {
         objId = info.forcedObjId;
         if(listObjects.contains(objId)) {
@@ -127,7 +128,8 @@ QSharedPointer<Object> ObjectFactory::NewObject(const ObjectInfo &info, int cont
     Object *obj=0;
 
     if(containerId) {
-        MsgObject msg(containerId);
+//        MsgObject msg(containerId);
+        _MSGOBJ(msg,containerId);
         msg.prop[MsgObject::Id]=objId;
         msg.prop[MsgObject::Add]=NodeType::tempObj;
         msg.prop[MsgObject::Name]=info.name;
@@ -200,15 +202,18 @@ QSharedPointer<Object> ObjectFactory::NewObject(const ObjectInfo &info, int cont
     }
 
 
+    LOG("Loading Obj:"<<objId<<" : "<<info.name);
+
     QSharedPointer<Object> sharedObj(obj);
-    listObjects.insert(objId,sharedObj.toWeakRef());
 
     if(!obj->Open()) {
-        listObjects.remove(objId);
-        sharedObj.clear();
-        return QSharedPointer<Object>();
+//        listObjects.remove(objId);
+//        sharedObj.clear();
+//        return QSharedPointer<Object>();
+        return sharedObj;
     }
 
+    listObjects.insert(objId,sharedObj.toWeakRef());
     obj->SetSleep(false);
 
     if(info.forcedObjId) {

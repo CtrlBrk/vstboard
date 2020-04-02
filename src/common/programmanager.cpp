@@ -210,7 +210,8 @@ void ProgramManager::UpdateView()
     if(!MsgEnabled())
         return;
 
-    MsgObject msg(GetIndex());
+
+    MSGOBJ();
 
     if(orderChanged) {
         orderChanged=false;
@@ -218,7 +219,8 @@ void ProgramManager::UpdateView()
 
         int cpt=0;
         foreach(const Group &grp, listGroups) {
-            MsgObject msgGrp(cpt);
+//            MsgObject msgGrp(cpt);
+            _MSGOBJ(msgGrp,cpt);
             grp.GetInfos(msgGrp);
             msg.children << msgGrp;
             ++cpt;
@@ -405,7 +407,8 @@ int ProgramManager::WaitPromptAnswer(const QString &type)
         return QMessageBox::Cancel;
 
     //ask
-    MsgObject msg(GetIndex());
+
+    MSGOBJ();
     msg.prop[MsgObject::Message]=type;
     msgCtrl->SendMsg(msg);
 

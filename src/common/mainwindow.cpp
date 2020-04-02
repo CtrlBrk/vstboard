@@ -160,7 +160,7 @@ void MainWindow::ReceiveMsg(const MsgObject &msg)
     }
 
     if(!listObj.contains(msg.objIndex)) {
-        LOG("obj not found"<<msg.objIndex<<msg.prop)
+        LOG("obj not found id:"<<msg.objIndex<<" prop:"<<msg.prop<<" from:"<<msg.sender)
         return;
     }
 
@@ -231,7 +231,8 @@ void MainWindow::showEvent(QShowEvent *event)
 {
 //    LOG("window show event")
 
-    MsgObject msg;
+//    MsgObject msg;
+    _MSGOBJ(msg,FixedObjId::ND);
     msg.prop[MsgObject::Update]=true;
 
     if(ui->actionHost_panel->isChecked()) {
@@ -254,7 +255,8 @@ void MainWindow::showEvent(QShowEvent *event)
 
 void MainWindow::hideEvent(QHideEvent *event)
 {
-    MsgObject msg;
+//    MsgObject msg;
+    _MSGOBJ(msg,FixedObjId::ND);
     msg.prop[MsgObject::Update]=false;
     msg.objIndex=FixedObjId::hostContainer;
     SendMsg(msg);
@@ -416,56 +418,64 @@ void MainWindow::BuildListTools()
 
 void MainWindow::on_actionLoad_triggered()
 {
-    MsgObject msg(FixedObjId::mainHost);
+//    MsgObject msg(FixedObjId::mainHost);
+    _MSGOBJ(msg,FixedObjId::mainHost);
     msg.prop[MsgObject::Project]=MsgObject::Load;
     SendMsg(msg);
 }
 
 void MainWindow::on_actionNew_triggered()
 {
-    MsgObject msg(FixedObjId::mainHost);
+//    MsgObject msg(FixedObjId::mainHost);
+    _MSGOBJ(msg,FixedObjId::mainHost);
     msg.prop[MsgObject::Project]=MsgObject::Clear;
     SendMsg(msg);
 }
 
 void MainWindow::on_actionSave_triggered()
 {
-    MsgObject msg(FixedObjId::mainHost);
+//    MsgObject msg(FixedObjId::mainHost);
+    _MSGOBJ(msg,FixedObjId::mainHost);
     msg.prop[MsgObject::Project]=MsgObject::Save;
     SendMsg(msg);
 }
 
 void MainWindow::on_actionSave_Project_As_triggered()
 {
-    MsgObject msg(FixedObjId::mainHost);
+//    MsgObject msg(FixedObjId::mainHost);
+    _MSGOBJ(msg,FixedObjId::mainHost);
     msg.prop[MsgObject::Project]=MsgObject::SaveAs;
     SendMsg(msg);
 }
 
 void MainWindow::on_actionLoad_Setup_triggered()
 {
-    MsgObject msg(FixedObjId::mainHost);
+//    MsgObject msg(FixedObjId::mainHost);
+    _MSGOBJ(msg,FixedObjId::mainHost);
     msg.prop[MsgObject::Setup]=MsgObject::Load;
     SendMsg(msg);
 }
 
 void MainWindow::on_actionNew_Setup_triggered()
 {
-    MsgObject msg(FixedObjId::mainHost);
+//    MsgObject msg(FixedObjId::mainHost);
+    _MSGOBJ(msg,FixedObjId::mainHost);
     msg.prop[MsgObject::Setup]=MsgObject::Clear;
     SendMsg(msg);
 }
 
 void MainWindow::on_actionSave_Setup_triggered()
 {
-    MsgObject msg(FixedObjId::mainHost);
+//    MsgObject msg(FixedObjId::mainHost);
+    _MSGOBJ(msg,FixedObjId::mainHost);
     msg.prop[MsgObject::Setup]=MsgObject::Save;
     SendMsg(msg);
 }
 
 void MainWindow::on_actionSave_Setup_As_triggered()
 {
-    MsgObject msg(FixedObjId::mainHost);
+//    MsgObject msg(FixedObjId::mainHost);
+    _MSGOBJ(msg,FixedObjId::mainHost);
     msg.prop[MsgObject::Setup]=MsgObject::SaveAs;
     SendMsg(msg);
 }
@@ -759,7 +769,8 @@ void MainWindow::on_actionRestore_default_layout_triggered()
 
 void MainWindow::on_solverView_clicked(const QModelIndex &/*index*/)
 {
-    MsgObject msg(FixedObjId::renderer);
+//    MsgObject msg(FixedObjId::renderer);
+    _MSGOBJ(msg,FixedObjId::renderer);
     msg.prop[MsgObject::GetUpdate]=1;
     SendMsg(msg);
 }
@@ -860,49 +871,56 @@ void MainWindow::on_actionAutoShowGui_triggered(bool checked)
 
 void MainWindow::on_actionUndo_triggered()
 {
-    MsgObject msg(FixedObjId::mainHost);
+//    MsgObject msg(FixedObjId::mainHost);
+    _MSGOBJ(msg,FixedObjId::mainHost);
     msg.prop[MsgObject::Undo]=1;
     SendMsg(msg);
 }
 
 void MainWindow::on_actionRedo_triggered()
 {
-    MsgObject msg(FixedObjId::mainHost);
+//    MsgObject msg(FixedObjId::mainHost);
+    _MSGOBJ(msg,FixedObjId::mainHost);
     msg.prop[MsgObject::Redo]=1;
     SendMsg(msg);
 }
 
 void MainWindow::on_actionHost_panel_toggled(bool arg1)
 {
-    MsgObject msg(FixedObjId::hostContainer);
+//    MsgObject msg(FixedObjId::hostContainer);
+    _MSGOBJ(msg,FixedObjId::hostContainer);
     msg.prop[MsgObject::Update]=arg1;
     SendMsg(msg);
 }
 
 void MainWindow::on_actionGroup_panel_toggled(bool arg1)
 {
-    MsgObject msg(FixedObjId::groupContainer);
+//    MsgObject msg(FixedObjId::groupContainer);
+    _MSGOBJ(msg,FixedObjId::groupContainer);
     msg.prop[MsgObject::Update]=arg1;
     SendMsg(msg);
 }
 
 void MainWindow::on_actionProgram_panel_toggled(bool arg1)
 {
-    MsgObject msg(FixedObjId::programContainer);
+//    MsgObject msg(FixedObjId::programContainer);
+    _MSGOBJ(msg,FixedObjId::programContainer);
     msg.prop[MsgObject::Update]=arg1;
     SendMsg(msg);
 }
 
 void MainWindow::on_actionProject_panel_toggled(bool arg1)
 {
-    MsgObject msg(FixedObjId::projectContainer);
+//    MsgObject msg(FixedObjId::projectContainer);
+    _MSGOBJ(msg,FixedObjId::projectContainer);
     msg.prop[MsgObject::Update]=arg1;
     SendMsg(msg);
 }
 
 void MainWindow::on_dockSolver_visibilityChanged(bool visible)
 {
-    MsgObject msg(FixedObjId::renderer);
+//    MsgObject msg(FixedObjId::renderer);
+    _MSGOBJ(msg,FixedObjId::renderer);
     msg.prop[MsgObject::Update]=visible;
     SendMsg(msg);
 }

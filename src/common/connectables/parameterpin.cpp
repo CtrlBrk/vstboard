@@ -399,28 +399,32 @@ void ParameterPin::GetInfos(MsgObject &msg)
 {
     Pin::GetInfos(msg);
 
-    MsgObject l1(GetIndex());
+//    MsgObject l1(GetIndex());
+    _MSGOBJ(l1,GetIndex());
     l1.prop[MsgObject::Id]=limitInMin->GetIndex();
     l1.prop[MsgObject::Add]=NodeType::cursor;
     l1.prop[MsgObject::Type]=ObjType::limitInMin;
     l1.prop[MsgObject::Value]=limitInMin->GetValue();
     msg.children << l1;
 
-    MsgObject l2(GetIndex());
+//    MsgObject l2(GetIndex());
+    _MSGOBJ(l2,GetIndex());
     l2.prop[MsgObject::Id]=limitInMax->GetIndex();
     l2.prop[MsgObject::Add]=NodeType::cursor;
     l2.prop[MsgObject::Type]=ObjType::limitInMax;
     l2.prop[MsgObject::Value]=limitInMax->GetValue();
     msg.children << l2;
 
-    MsgObject l3(GetIndex());
+//    MsgObject l3(GetIndex());
+    _MSGOBJ(l3,GetIndex());
     l3.prop[MsgObject::Id]=limitOutMin->GetIndex();
     l3.prop[MsgObject::Add]=NodeType::cursor;
     l3.prop[MsgObject::Type]=ObjType::limitOutMin;
     l3.prop[MsgObject::Value]=limitOutMin->GetValue();
     msg.children << l3;
 
-    MsgObject l4(GetIndex());
+//    MsgObject l4(GetIndex());
+    _MSGOBJ(l4,GetIndex());
     l4.prop[MsgObject::Id]=limitOutMax->GetIndex();
     l4.prop[MsgObject::Add]=NodeType::cursor;
     l4.prop[MsgObject::Type]=ObjType::limitOutMax;

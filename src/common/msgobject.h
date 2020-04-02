@@ -24,6 +24,14 @@
 #include "precomp.h"
 #include "connectables/objectinfo.h"
 
+#ifdef QT_NO_DEBUG
+    #define _MSGOBJ(V,ID) MsgObject V(ID)
+    #define MSGOBJ() MsgObject msg(GetIndex())
+#else
+    #define _MSGOBJ(V,ID) MsgObject V(__FUNCTION__,__LINE__,ID)
+    #define MSGOBJ() MsgObject msg(__FUNCTION__,__LINE__,GetIndex())
+#endif
+
 class MsgObject
 {
 public:
@@ -80,7 +88,18 @@ public:
         Value5
     };
 
-    MsgObject(int objIndex=FixedObjId::ND);
+
+    MsgObject() :
+        objIndex(FixedObjId::ND) { }
+
+//    MsgObject(int id) :
+//        objIndex(id) { }
+
+    MsgObject(QString func, int line, int id) :
+        objIndex(id) {
+        sender = QString("%1(%2)").arg(func).arg(line);
+    }
+
 //    void SetProp(Props propId, const QVariant &value) { prop.insert(propId,value); }
 //    const QVariant & GetProp(Props propId) { return prop.value(propId,0); }
 //    bool PropExists(Props propId) { return prop.contains(propId); }
@@ -90,7 +109,7 @@ public:
     QList<MsgObject>children;
     QMap<Props,QVariant>prop;
 
-
+    QString sender;
 private:
 
     QDataStream & toStream (QDataStream &out) const;

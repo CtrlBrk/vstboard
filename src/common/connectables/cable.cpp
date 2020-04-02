@@ -123,7 +123,7 @@ bool Cable::SetDelay(quint32 d)
 
     delay=d;
     if(MsgEnabled()) {
-        MsgObject msg(GetIndex());
+        MSGOBJ();
         msg.prop[MsgObject::Delay]=d;
         msgCtrl->SendMsg(msg);
     }

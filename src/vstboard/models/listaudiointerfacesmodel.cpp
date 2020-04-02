@@ -136,35 +136,35 @@ void ListAudioInterfacesModel::ReceiveMsg(const MsgObject &msg)
 
 void ListAudioInterfacesModel::Update()
 {
-    MsgObject msg(GetIndex());
+    MSGOBJ();
     msg.prop[MsgObject::GetUpdate]=1;
     msgCtrl->SendMsg(msg);
 }
 
 void ListAudioInterfacesModel::Rescan()
 {
-    MsgObject msg(GetIndex());
+    MSGOBJ();
     msg.prop[MsgObject::Rescan]=1;
     msgCtrl->SendMsg(msg);
 }
 
 void ListAudioInterfacesModel::ApiDisabled(const QModelIndex &api)
 {
-    MsgObject msg(GetIndex());
+    MSGOBJ();
     msg.prop[MsgObject::State]=api.data(UserRoles::value).toInt();
     msgCtrl->SendMsg(msg);
 }
 
 void ListAudioInterfacesModel::ResetApis()
 {
-    MsgObject msg(GetIndex());
+    MSGOBJ();
     msg.prop[MsgObject::State]=-1;
     msgCtrl->SendMsg(msg);
 }
 
 void ListAudioInterfacesModel::ConfigDevice(const QModelIndex &dev)
 {
-    MsgObject msg(GetIndex());
+    MSGOBJ();
     ObjectInfo info = dev.data(UserRoles::objInfo).value<ObjectInfo>();
     msg.prop[MsgObject::Setup]=QVariant::fromValue(info);
     msgCtrl->SendMsg(msg);

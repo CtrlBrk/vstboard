@@ -53,14 +53,16 @@ void ListToolsModel::ReceiveMsg(const MsgObject &msg)
 
 void ListToolsModel::Update()
 {
-    MsgObject msg(GetIndex());
+
+    MSGOBJ();
     msg.prop[MsgObject::Update]=1;
     msgCtrl->SendMsg(msg);
 }
 
 void ListToolsModel::Rescan()
 {
-    MsgObject msg(GetIndex());
+
+    MSGOBJ();
     msg.prop[MsgObject::Rescan]=1;
     msgCtrl->SendMsg(msg);
 }

@@ -33,7 +33,8 @@ void Cursor::SetValue(float val)
 
     if(!MsgEnabled())
         return;
-    MsgObject msg(GetIndex());
+
+    MSGOBJ();
     msg.prop[MsgObject::Value]=value;
     msgCtrl->SendMsg(msg);
 }

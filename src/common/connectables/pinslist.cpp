@@ -305,7 +305,8 @@ void PinsList::GetInfos(MsgObject &msg)
                 ++i;
                 continue;
             }
-            MsgObject msgPin(GetIndex());
+//            MsgObject msgPin(GetIndex());
+            _MSGOBJ(msgPin,GetIndex());
             msgPin.prop[MsgObject::ParentNodeType]=parent->info().nodeType;
             msgPin.prop[MsgObject::ParentObjType]=parent->info().objType;
             p->GetInfos(msgPin);

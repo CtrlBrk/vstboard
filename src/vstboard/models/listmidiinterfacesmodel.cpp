@@ -114,14 +114,14 @@ void ListMidiInterfacesModel::ReceiveMsg(const MsgObject &msg)
 
 void ListMidiInterfacesModel::Update()
 {
-    MsgObject msg(GetIndex());
+    MSGOBJ();
     msg.prop[MsgObject::GetUpdate]=1;
     msgCtrl->SendMsg(msg);
 }
 
 void ListMidiInterfacesModel::Rescan()
 {
-    MsgObject msg(GetIndex());
+    MSGOBJ();
     msg.prop[MsgObject::Rescan]=1;
     msgCtrl->SendMsg(msg);
 }

@@ -131,7 +131,7 @@ void VstPluginView::SaveBankAs()
 
     config->settings->SetSetting("lastBankPath",QFileInfo(filename).absolutePath());
 
-    MsgObject msg(GetIndex());
+    MSGOBJ();
     msg.prop[MsgObject::Save] =  filename;
     msgCtrl->SendMsg(msg);
 }
@@ -139,7 +139,7 @@ void VstPluginView::SaveBankAs()
 void VstPluginView::SaveBank()
 {
     if(actSaveBankAs->isEnabled()) {
-        MsgObject msg(GetIndex());
+        MSGOBJ();
         msg.prop[MsgObject::Save] =  currentBankFile;
         msgCtrl->SendMsg(msg);
     } else {
@@ -160,7 +160,7 @@ void VstPluginView::SaveProgramAs()
 
     config->settings->SetSetting("lastBankPath",QFileInfo(filename).absolutePath());
 
-    MsgObject msg(GetIndex());
+    MSGOBJ();
     msg.prop[MsgObject::Save] =  filename;
     msgCtrl->SendMsg(msg);
 }
@@ -168,7 +168,7 @@ void VstPluginView::SaveProgramAs()
 void VstPluginView::SaveProgram()
 {
     if(actSaveProgramAs->isEnabled()) {
-        MsgObject msg(GetIndex());
+        MSGOBJ();
         msg.prop[MsgObject::Save] =  currentProgFile;
         msgCtrl->SendMsg(msg);
     } else {

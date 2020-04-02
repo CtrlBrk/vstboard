@@ -52,7 +52,8 @@ public:
 
         int cpt=0;
         foreach(const Program &prg, listPrograms) {
-            MsgObject msgProg(cpt);
+//            MsgObject msgProg(cpt);
+            _MSGOBJ(msgProg,cpt);
             prg.GetInfos(msgProg);
             msg.children << msgProg;
             ++cpt;

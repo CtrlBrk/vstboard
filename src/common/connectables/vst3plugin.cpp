@@ -115,10 +115,12 @@ bool Vst3Plugin::Open()
         SetErrorMessage( tr("no plugin found in this dll") );
         return true;
     }
+
     if(countPlugins>1) {
         //shell
         objInfo.id=FixedObjId::noContainer;
-        MsgObject msg(FixedObjId::shellselect);
+//        MsgObject msg(FixedObjId::shellselect);
+        _MSGOBJ(msg,FixedObjId::shellselect);
         msg.prop[MsgObject::Id] = GetIndex();
         msg.prop[MsgObject::ObjInfo] = QVariant::fromValue(objInfo);
 
@@ -126,7 +128,8 @@ bool Vst3Plugin::Open()
             PClassInfo classInfo;
             if(factory->getClassInfo(i, &classInfo)==kResultOk) {
                 if (strcmp(kVstAudioEffectClass, classInfo.category)==0) {
-                    MsgObject plug;
+//                    MsgObject plug;
+                    _MSGOBJ(plug,FixedObjId::ND);
                     plug.prop[MsgObject::Name] = classInfo.name;
                     plug.prop[MsgObject::Id] = i;
                     msg.children << plug;
@@ -377,15 +380,10 @@ bool Vst3Plugin::initController()
         editController->setComponentState (&stream);
     }
 
-
-
-    //editor pin
     if(hasEditor) {
         listParameterPinIn->AddPin(FixedPinNumber::editorVisible);
+        listParameterPinIn->AddPin(FixedPinNumber::learningMode);
     }
-
-    //learning pin
-    listParameterPinIn->AddPin(FixedPinNumber::learningMode);
 
 //    listParameterPinIn->AddPin(FixedPinNumber::vstProgNumber);
 
