@@ -30,28 +30,28 @@ using namespace Connectables;
 QTime ContainerProgram::unsavedTime;
 
 ContainerProgram::ContainerProgram(MainHost *myHost,Container *container) :
+    lastModificationTime(unsavedTime),
+    savedTime(unsavedTime),
     container(container),
     dirty(false),
     myHost(myHost),
     collectedListOfAddedCables(0),
     collectedListOfRemovedCables(0),
     listAddedCablesIds(0),
-    listRemovedCablesIds(0),
-    lastModificationTime(unsavedTime),
-    savedTime(unsavedTime)
+    listRemovedCablesIds(0)
 {
 }
 
 ContainerProgram::ContainerProgram(const ContainerProgram& c) :
+    lastModificationTime(c.lastModificationTime),
+    savedTime(c.savedTime),
     container(c.container),
     dirty(false),
     myHost(c.myHost),
     collectedListOfAddedCables(0),
     collectedListOfRemovedCables(0),
     listAddedCablesIds(0),
-    listRemovedCablesIds(0),
-    lastModificationTime(c.lastModificationTime),
-    savedTime(c.savedTime)
+    listRemovedCablesIds(0)
 {
     foreach(QSharedPointer<Object> objPtr, c.listObjects) {
         listObjects << objPtr;
@@ -574,6 +574,70 @@ bool ContainerProgram::CableExists(const ConnectionInfo &outputPin, const Connec
             return true;
     }
     return false;
+}
+
+ContainerProgram::ContainerProgram(MainHost *myHost, Container *container, QJsonObject &json, int &id) :
+    ContainerProgram(myHost, container)
+{
+    id = json["id"].toInt();
+
+    QJsonArray objArray = json["objectsIds"].toArray();
+    for (int i = 0; i < objArray.size(); ++i) {
+        int savedId = objArray[i].toInt();
+        int newid = myHost->objFactory->IdFromSavedId(savedId);
+        if(newid!=-1) {
+            listObjects << myHost->objFactory->GetObjectFromId(newid);
+        }
+    }
+
+    QJsonArray cableArray = json["cables"].toArray();
+    for (int i = 0; i < cableArray.size(); ++i) {
+        QJsonObject jCable = cableArray[i].toObject();
+        Cable *cab = new Cable(myHost, jCable);
+        listCables << QSharedPointer<Cable>(cab);
+    }
+
+    QJsonArray attrArray = json["attrs"].toArray();
+    for (int i = 0; i < attrArray.size(); ++i) {
+        QJsonObject jAttr = attrArray[i].toObject();
+        int savedId;
+        ObjectContainerAttribs attr(jAttr,savedId);
+        int objId=myHost->objFactory->IdFromSavedId(savedId);
+        if(objId!=-1) {
+            mapObjAttribs.insert(objId,attr);
+        }
+    }
+
+    ResetDirty();
+}
+
+void ContainerProgram::toJson(QJsonObject &json, int id) const
+{
+    json["id"] = id;
+
+    QJsonArray objArray;
+    foreach(QSharedPointer<Object> objPtr, listObjects) {
+        objArray.append( objPtr->GetIndex() );
+    }
+    json["objectsIds"] = objArray;
+
+    QJsonArray cableArray;
+    foreach(QSharedPointer<Cable>cab, listCables) {
+        QJsonObject jCable;
+        cab->toJson(jCable);
+        cableArray.append(jCable);
+    }
+    json["cables"] = cableArray;
+
+    QJsonArray attrArray;
+    QMap<int,ObjectContainerAttribs>::ConstIterator i = mapObjAttribs.constBegin();
+    while(i!=mapObjAttribs.constEnd()) {
+        QJsonObject jAttr;
+        i.value().toJson(jAttr, i.key());
+        attrArray.append(jAttr);
+        ++i;
+    }
+    json["attrs"] = attrArray;
 }
 
 QDataStream & ContainerProgram::toStream (QDataStream& out) const

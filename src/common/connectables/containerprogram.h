@@ -24,8 +24,10 @@
 #include "precomp.h"
 #include "cable.h"
 #include "objectinfo.h"
+#include "objectcontainerattribs.h"
 #include "msgobject.h"
 #include "renderer/solver.h"
+
 class MainHost;
 
 //class RendererNode;
@@ -38,6 +40,8 @@ namespace Connectables {
     public:
         ContainerProgram(MainHost *myHost, Container *container);
         ContainerProgram(const ContainerProgram & c);
+        ContainerProgram(MainHost *myHost, Container *container, QJsonObject &json, int &id);
+
         ~ContainerProgram();
         void AddToCableList(hashCables *lst);
         void Load(int progId);
@@ -84,6 +88,7 @@ namespace Connectables {
             listRemovedCablesIds=removedCables;
         }
 
+        void toJson(QJsonObject &json, int id) const;
         QDataStream & toStream (QDataStream &) const;
         QDataStream & fromStream (QDataStream &);
 
@@ -119,7 +124,6 @@ namespace Connectables {
         QList<int> *listRemovedCablesIds;
 
         friend class Container;
-        friend class ParkingContainer;
     };
 }
 

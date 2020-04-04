@@ -96,10 +96,11 @@ void CircularBuffer::Clear()
 void CircularBuffer::Fit(ulong size) {
     if((buffSize-filledSize)<size) {
         ulong newSize= filledSize + 2*size;
+#ifdef DEBUG_BUFFERS
         LOG(QString("resize ring buf %1=>%2")
             .arg(buffSize)
             .arg(newSize));
-
+#endif
         SetSize(newSize);
     }
 }
@@ -114,7 +115,9 @@ bool CircularBuffer::Put(double *buf, unsigned long size)
     }
 
     if((buffSize-filledSize)<size) {
+#ifdef DEBUG_BUFFERS
 //       LOG("CircularBuffer::Put not enough free space");
+#endif
        unsigned long overlapping = sizeof(float)*(size-(buffSize-filledSize));
        readPos+=overlapping;
        filledSize-=overlapping;
@@ -168,7 +171,9 @@ unsigned long CircularBuffer::Put(CircularBuffer &buf, unsigned long size)
 
 
 //    if(size>buffSize) {
+#ifdef DEBUG_BUFFERS
 //        LOG("buffer too long")
+#endif
 //        size=buffSize;
 //    }
 
@@ -211,12 +216,16 @@ bool CircularBuffer::Put(float *buf, unsigned long size)
 //        return false;
 /*
     if(size>buffSize) {
+#ifdef DEBUG_BUFFERS
         LOG("buffer too long")
+#endif
         size=buffSize;
     }
 
     if((buffSize-filledSize)<size) {
+#ifdef DEBUG_BUFFERS
 //       LOG("CircularBuffer::Put not enough free space");
+#endif
 		unsigned long overlapping = size-(buffSize-filledSize);
        readPos+=overlapping;
        filledSize-=overlapping;
@@ -255,7 +264,9 @@ bool CircularBuffer::Get(float *buf, unsigned long size)
         return false;
 
     if(filledSize<size) {
+#ifdef DEBUG_BUFFERS
         LOG("not enough data");
+#endif
         return false;
     }
 
@@ -284,7 +295,9 @@ bool CircularBuffer::Get(double *buf, unsigned long size)
         return false;
 
     if(filledSize<size) {
+#ifdef DEBUG_BUFFERS
         LOG("not enough data");
+#endif
         return false;
     }
 
@@ -309,7 +322,9 @@ bool CircularBuffer::Skip(unsigned long size)
         return false;
 
     if(filledSize<size) {
+#ifdef DEBUG_BUFFERS
         LOG("can't skip more than filledsize");
+#endif
         return false;
     }
 

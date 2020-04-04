@@ -126,6 +126,71 @@ void ObjectProgram::Save(PinsList *in,PinsList *out)
     ResetDirty();
 }
 
+ObjectProgram::ObjectProgram(QJsonObject &json, int &id) :
+    ObjectProgram()
+{
+    id = json["id"].toInt();
+
+    QJsonArray jParaIn = json["paraIn"].toArray();
+    for (int i = 0; i < jParaIn.size(); ++i) {
+        QJsonObject jPara = jParaIn[i].toObject();
+        int id;
+        ObjectParameter param(jPara,id);
+        listParametersIn.insert(id, param);
+    }
+
+    QJsonArray jParaOut = json["paraOut"].toArray();
+    for (int i = 0; i < jParaOut.size(); ++i) {
+        QJsonObject jPara = jParaOut[i].toObject();
+        int id;
+        ObjectParameter param(jPara,id);
+        listParametersOut.insert(id, param);
+    }
+
+    QJsonArray jOtherPara = json["paraOther"].toArray();
+    for (int i = 0; i < jOtherPara.size(); ++i) {
+        QJsonObject jPara = jOtherPara[i].toObject();
+        int id = jPara["id"].toInt();
+        QVariant param = jPara["value"].toVariant();
+        listOtherValues.insert(id, param);
+    }
+}
+
+void ObjectProgram::toJson(QJsonObject &json, int id) const
+{
+    json["id"] = id;
+
+    QJsonArray jParaIn;
+    QMap<ushort,ObjectParameter>::ConstIterator i = listParametersIn.constBegin();
+    while(i!=listParametersIn.constEnd()) {
+        QJsonObject jPara;
+        i.value().toJson(jPara,i.key());
+        jParaIn.append(jPara);
+        ++i;
+    }
+    json["paraIn"] = jParaIn;
+
+    QJsonArray jParaOut;
+    QMap<ushort,ObjectParameter>::ConstIterator j = listParametersOut.constBegin();
+    while(j!=listParametersOut.constEnd()) {
+        QJsonObject jPara;
+        j.value().toJson(jPara,j.key());
+        jParaOut.append(jPara);
+        ++j;
+    }
+    json["paraOut"] = jParaOut;
+
+    QJsonArray jOtherPara;
+    QMap<int, QVariant>::ConstIterator k = listOtherValues.constBegin();
+    while(k!=listOtherValues.constEnd()) {
+        QJsonObject jPara;
+        jPara["id"] = k.key();
+        jPara["value"] = k.value().toJsonValue();
+        jOtherPara.append(jPara);
+        ++k;
+    }
+    json["paraOther"] = jOtherPara;
+}
 
 QDataStream & ObjectProgram::toStream(QDataStream& out) const
 {

@@ -461,6 +461,89 @@ void ViewConfig::LoadFromRegistry()
     LoadPreset(name);
 }
 
+void ViewConfig::toJson(QJsonObject &json) const
+{
+    viewConfigPresetList tmpPresets;
+    if(savedInSetupFile)
+        tmpPresets=listPresetsInSetup;
+    else
+        tmpPresets=listPresets;
+
+    QJsonArray presetArray;
+    viewConfigPresetList::const_iterator ip = tmpPresets.constBegin();
+    while(ip!=tmpPresets.constEnd()) {
+        QJsonObject jPreset;
+        jPreset["name"] = ip.key();
+
+        QJsonArray grpArray;
+        viewConfigPreset::const_iterator i = ip.value().constBegin();
+        while(i!=ip.value().constEnd()) {
+            QJsonObject jGrp;
+            jGrp["id"] = i.key();
+
+            QJsonArray colArray;
+            QMap<Colors::Enum,QColor>::const_iterator j = i.value().begin();
+            while(j!=i.value().end()) {
+                QJsonObject jCol;
+                jCol["id"] = j.key();
+                jCol["r"] = j.value().red();
+                jCol["g"] = j.value().green();
+                jCol["b"] = j.value().blue();
+                jCol["a"] = j.value().alpha();
+                colArray.append(jCol);
+                ++j;
+            }
+            jGrp["colors"] = colArray;
+            grpArray.append(jGrp);
+            ++i;
+        }
+        jPreset["groups"] = grpArray;
+
+        presetArray.append(jPreset);
+        ++ip;
+    }
+    json["presets"] = presetArray;
+}
+
+void ViewConfig::fromJson(QJsonObject &json)
+{
+    if(savedInSetupFile) {
+        listPresetsInSetup.clear();
+    } else {
+        listPresets.clear();
+    }
+
+    QJsonArray presetArray = json["presets"].toArray();
+    for (int i = 0; i < presetArray.size(); ++i) {
+        QJsonObject jPreset = presetArray[i].toObject();
+        QString presetName = jPreset["name"].toString();
+
+        QJsonArray grpArray = jPreset["groups"].toArray();
+        for (int j = 0; j < grpArray.size(); ++j) {
+            QJsonObject jGrp = grpArray[j].toObject();
+            ColorGroups::Enum grpId = static_cast<ColorGroups::Enum>(jGrp["id"].toInt());
+
+            QJsonArray colArray = jGrp["colors"].toArray();
+            for (int k = 0; k < colArray.size(); ++k) {
+                QJsonObject jCol = colArray[k].toObject();
+                Colors::Enum colId = static_cast<Colors::Enum>(jCol["id"].toInt());
+                int r = jCol["r"].toInt();
+                int g = jCol["g"].toInt();
+                int b = jCol["b"].toInt();
+                int a = jCol["a"].toInt();
+
+                if(savedInSetupFile)
+                    listPresetsInSetup[presetName][grpId][colId] = QColor( r,g,b,a );
+                else {
+                    listPresets[presetName][grpId][colId] = QColor( r,g,b,a );
+                }
+            }
+        }
+    }
+
+    emit NewSetupLoaded();
+}
+
 /*!
   Put in a stream
   \param[in] out a QDataStream
@@ -476,7 +559,6 @@ QDataStream & ViewConfig::toStream(QDataStream & out) const
 
     out << (quint16)tmpPresets.count();
     viewConfigPresetList::const_iterator ip = tmpPresets.constBegin();
-
     while(ip!=tmpPresets.constEnd()) {
         out << ip.key();
         out << (quint16)ip.value().count();

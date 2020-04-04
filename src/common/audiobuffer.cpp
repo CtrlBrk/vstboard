@@ -145,7 +145,9 @@ void AudioBuffer::AddToStack(const AudioBuffer * buff)
         if(stackSize==0) {
             SetSize(buff->GetSize());
         } else {
+#ifdef DEBUG_BUFFERS
             LOG("not the same size, abort"<<buff->GetSize()<<bufferSize);
+#endif
             return;
         }
     }
@@ -369,7 +371,9 @@ void AudioBuffer::SetBufferContent(float *buff, unsigned long count)
     debugbuf("setcontent float");
 
     if(count!=bufferSize) {
+#ifdef DEBUG_BUFFERS
 //        LOG("resize buffer"<<bufferSize<<count);
+#endif
         SetSize(count);
     }
 
@@ -393,7 +397,9 @@ void AudioBuffer::SetBufferContent(double *buff, unsigned long count)
     debugbuf("setcontent double");
 
     if(count!=bufferSize) {
+#ifdef DEBUG_BUFFERS
         LOG("resize buffer"<<bufferSize<<count);
+#endif
         SetSize(count);
     }
 
@@ -418,7 +424,9 @@ void AudioBuffer::DumpToBuffer(float *buff, unsigned long count)
     debugbuf("dump float");
 
     if(count>bufferSize) {
+#ifdef DEBUG_BUFFERS
         LOG("buffer too small");
+#endif
         count=bufferSize;
     }
 
@@ -441,7 +449,9 @@ void AudioBuffer::DumpToBuffer(double *buff, unsigned long count)
     debugbuf("dump double");
 
     if(count>bufferSize) {
+#ifdef DEBUG_BUFFERS
         LOG("buffer too small");
+#endif
         count=bufferSize;
     }
 

@@ -376,6 +376,9 @@
     </QtUic>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="connectables\objectcontainerattribs.cpp" />
+    <ClCompile Include="projectfile\jsonreader.cpp" />
+    <ClCompile Include="projectfile\jsonwriter.cpp" />
     <ClCompile Include="views\aboutdialog.cpp" />
     <ClCompile Include="audiobuffer.cpp" />
     <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst2.x\audioeffect.cpp" />
@@ -529,6 +532,9 @@
     <ClInclude Include="connectables\cable.h" />
     <QtMoc Include="sceneview\cableview.h">
     </QtMoc>
+    <ClInclude Include="connectables\objectcontainerattribs.h" />
+    <ClInclude Include="projectfile\jsonreader.h" />
+    <ClInclude Include="projectfile\jsonwriter.h" />
     <ClInclude Include="vst\ceffect.h" />
     <ClInclude Include="circularbuffer.h" />
     <ClInclude Include="commands\comaddcable.h" />

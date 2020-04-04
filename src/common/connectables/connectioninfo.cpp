@@ -62,7 +62,8 @@ ConnectionInfo::ConnectionInfo(MainHost *myHost,quint16 objId, PinType::Enum typ
   \param c the other pin
   \return true if it can connect
   */
-bool ConnectionInfo::CanConnectTo(const ConnectionInfo &c) const {
+bool ConnectionInfo::CanConnectTo(const ConnectionInfo &c) const
+{
 
     //don't connect object to itself
 //    if(objId == c.objId)
@@ -92,6 +93,37 @@ bool ConnectionInfo::CanConnectTo(const ConnectionInfo &c) const {
         return true;
 
     return false;
+}
+
+ConnectionInfo::ConnectionInfo(MainHost *myHost,const QJsonObject &json ) :
+    myHost(myHost)
+{
+    bridge = json["bridge"].toBool();
+    int savedContainerId = json["container"].toInt();
+    int cId = myHost->objFactory->IdFromSavedId(savedContainerId);
+    if(cId != -1) {
+        container = cId;
+    }
+
+    int savedObjId = json["objId"].toInt();
+    int oId = myHost->objFactory->IdFromSavedId(savedObjId);
+    if(oId!=-1) {
+        objId = oId;
+    }
+
+    type = static_cast<PinType::Enum>(json["type"].toInt());
+    direction = static_cast<PinDirection::Enum>(json["direction"].toInt());
+    pinNumber = json["pinNumber"].toInt();
+}
+
+void ConnectionInfo::toJson(QJsonObject &json) const
+{
+    json["bridge"] = bridge;
+    json["container"] = container;
+    json["objId"] = objId;
+    json["type"] = type;
+    json["direction"] = direction;
+    json["pinNumber"] = pinNumber;
 }
 
 /*!
@@ -131,7 +163,6 @@ QDataStream & ConnectionInfo::fromStream(QDataStream& in)
     in >> savedId;
     id = myHost->objFactory->IdFromSavedId(savedId);
     if(id==-1) {
-        LOG("obj not found");
         return in;
     }
     objId = id;

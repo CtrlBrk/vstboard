@@ -78,7 +78,7 @@ public:
     friend QDataStream & operator>> (QDataStream&, ProgramManager&);
 
     inline bool IsDirty() { return dirtyFlag; }
-    inline void SetDirty(bool dirty=true) { dirtyFlag=dirty; }
+    inline void SetDirty(bool dirty=true) const { dirtyFlag=dirty; }
 
     inline quint16 GetNextProgId() { return nextProgId++; }
     inline quint16 GetNextGroupId() { return nextGroupId++; }
@@ -101,6 +101,9 @@ public:
     const QList<Group> &GetListGroups() {return listGroups;}
     void SetListGroups(const QList<Group> &grps);
 
+    void fromJson(QJsonObject &json);
+    void toJson(QJsonObject &json) const;
+
 private:
     void Clear();
     void UserChangeProg(quint16 prog, quint16 grp);
@@ -110,7 +113,7 @@ private:
     QTimer updateTimer;
     bool orderChanged;
 
-    QDataStream & toStream (QDataStream &out);
+    QDataStream & toStream (QDataStream &out) const;
     QDataStream & fromStream (QDataStream &in);
 
     MainHost *myHost;
@@ -119,7 +122,7 @@ private:
 
     quint16 nextGroupId;
     quint16 nextProgId;
-    bool dirtyFlag;
+    mutable bool dirtyFlag;
     Qt::CheckState groupAutosaveState;
     Qt::CheckState progAutosaveState;
 

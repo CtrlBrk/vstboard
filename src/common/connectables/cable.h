@@ -35,7 +35,9 @@ namespace Connectables {
     {
     public:
         Cable(MainHost *myHost,const ConnectionInfo &pinOut, const ConnectionInfo &pinIn);
+//        Cable(MainHost *myHost,const ConnectionInfo &pinOut, const ConnectionInfo &pinIn, int delay);
         Cable(const Cable & c);
+        Cable(MainHost *myHost,QJsonObject &json);
         virtual ~Cable();
 //        void AddToParentNode(const QModelIndex &parentIndex);
         void RemoveFromParentNode(const QModelIndex &parentIndex);
@@ -57,6 +59,8 @@ namespace Connectables {
         void Render(const PinMessage::Enum msgType,void *data);
 
         void GetInfos(MsgObject &msg);
+
+        void toJson(QJsonObject &json) const;
 
     protected:
         /// the output pin (from the sender object)

@@ -33,7 +33,7 @@ namespace Connectables {
         ObjectParameter(float value, bool visible=false) : value(value), index(0), visible(visible), limitInMin(.0f), limitInMax(1.0f), limitOutMin(.0f), limitOutMax(1.0f) {}
         ObjectParameter(int index, bool visible=false) : value(.0f), index(index), visible(visible), limitInMin(.0f), limitInMax(1.0f), limitOutMin(.0f), limitOutMax(1.0f) {}
         ObjectParameter(bool visible) : value(.0f), index(0), visible(visible), limitInMin(.0f), limitInMax(1.0f), limitOutMin(.0f), limitOutMax(1.0f) {}
-
+        ObjectParameter(QJsonObject &json, int &id);
         ObjectParameter(const ObjectParameter &c) {
             *this = c;
         }
@@ -47,6 +47,7 @@ namespace Connectables {
         float limitOutMin;
         float limitOutMax;
 
+        void toJson(QJsonObject &json, int id) const;
         QDataStream & toStream(QDataStream& out) const;
         QDataStream & fromStream(QDataStream& in);
     };

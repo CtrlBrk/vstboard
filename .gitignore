@@ -3,6 +3,7 @@
 *.vcxproj.user
 *.vstbsetup
 *.vstbproject
+*.vb.json
 Thumbs.db
 desktop.ini
 .DS_Store

@@ -34,7 +34,7 @@ namespace Connectables {
     public:
         ObjectProgram() : dirty(false) {}
         ObjectProgram(PinsList *in, PinsList *out);
-
+        ObjectProgram(QJsonObject &json, int &id);
         ObjectProgram(const ObjectProgram &c) {
             *this = c;
 			dirty = false;
@@ -48,6 +48,7 @@ namespace Connectables {
 
         QMap<int, QVariant> listOtherValues;
 
+        void toJson(QJsonObject &json, int id) const;
         QDataStream & toStream(QDataStream& out) const;
         QDataStream & fromStream(QDataStream& in);
 

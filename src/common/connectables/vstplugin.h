@@ -65,6 +65,8 @@ namespace Connectables {
 
         bool DropFile(const QString &filename);
 
+        void fromJson(QJsonObject &json);
+        void toJson(QJsonObject &json) const;
         QDataStream & toStream (QDataStream &) const;
         bool fromStream (QDataStream &);
 

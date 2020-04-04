@@ -127,6 +127,8 @@ namespace View {
         void RenamePreset(const QString &oldName, QString &newName);
         void CopyPreset(const QString &presetName, QString &newName);
 
+        void toJson(QJsonObject &json) const;
+        void fromJson(QJsonObject &json);
         QDataStream & toStream (QDataStream &) const;
         QDataStream & fromStream (QDataStream &);
 

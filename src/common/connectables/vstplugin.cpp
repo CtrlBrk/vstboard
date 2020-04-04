@@ -1134,6 +1134,47 @@ Pin* VstPlugin::CreatePin(const ConnectionInfo &info)
     return 0;
 }
 
+void VstPlugin::fromJson(QJsonObject &json)
+{
+    Object::fromJson(json);
+
+    if(savedChunk) {
+        delete savedChunk;
+        savedChunk=0;
+    }
+
+    if(json.contains("chunk")) {
+        long savedChunkSize = json.value("chunksize").toVariant().toLongLong();
+
+        savedChunk = new char[savedChunkSize];
+        QByteArray data = json["chunk"].toString().toUtf8();
+        std::memcpy(savedChunk,data.constData(),savedChunkSize);
+
+        if(pEffect && (pEffect->flags & effFlagsProgramChunks)) {
+            EffSetChunk(savedChunk ,savedChunkSize);
+        }
+    }
+
+}
+
+void VstPlugin::toJson(QJsonObject &json) const
+{
+    Object::toJson(json);
+
+    if(!errorMessage.isEmpty() && savedChunk) {
+        void *ptr=0;
+        long size = EffGetChunk(&ptr,false);
+        QByteArray ba(QByteArray::fromRawData((char*)ptr, size));
+        json["chunksize"] = static_cast<qlonglong>(size);
+        json["chunk"] = QString(ba);
+
+    } else if(pEffect && (pEffect->flags & effFlagsProgramChunks)) {
+        QByteArray ba(QByteArray::fromRawData(savedChunk, savedChunkSize));
+        json["chunksize"] = static_cast<qlonglong>(savedChunkSize);
+        json["chunk"] = QString(ba);
+    }
+}
+
 QDataStream & VstPlugin::toStream(QDataStream & out) const
 {
     Object::toStream(out);

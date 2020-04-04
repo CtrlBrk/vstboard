@@ -29,6 +29,8 @@
 
 #include "projectfile/fileversion.h"
 #include "projectfile/projectfile.h"
+#include "projectfile/jsonwriter.h"
+#include "projectfile/jsonreader.h"
 #include "views/configdialog.h"
 #include "msgobject.h"
 
@@ -913,19 +915,46 @@ void MainHost::LoadProjectFile(const QString &filename)
 
     if(name.isEmpty()) {
         QString lastDir = settings->GetSetting("lastProjectDir").toString();
-        name = QFileDialog::getOpenFileName(mainWindow, tr("Open a Project file"), lastDir, tr("Project Files (*.%1)").arg(PROJECT_FILE_EXTENSION));
+        name = QFileDialog::getOpenFileName(mainWindow, tr("Open a Project file"), lastDir,
+                                            tr("Project Files (*.%1)").arg(PROJECT_FILE_EXTENSION)
+                                            + ";;" +
+                                            tr("json (*.vb.json)")
+                                            );
     }
 
     if(name.isEmpty())
         return;
 
+    EnableSolverUpdate(false);
     undoStack.clear();
 
-    if(ProjectFile::LoadFromFile(this,name)) {
-        currentProjectFile = name;
-    } else {
-        ClearProject();
+    if(name.endsWith(PROJECT_FILE_EXTENSION, Qt::CaseInsensitive)) {
+        if(ProjectFile::LoadFromFile(this,name)) {
+            currentProjectFile = name;
+        } else {
+            ClearProject();
+        }
+    } else if(name.endsWith(".vb.json", Qt::CaseInsensitive)) {
+        QFile file(name);
+        if (file.open(QFile::ReadOnly | QFile::Text)) {
+            JsonReader reader(this);
+            if(reader.readProjectFile(&file)) {
+                currentProjectFile = name;
+            } else {
+                LOG("json error");
+                ClearProject();
+            }
+        } else {
+            QMessageBox::warning(mainWindow, tr("VstBoard"),
+                                 tr("Cannot read file %1:\n%2.")
+                                 .arg(QDir::toNativeSeparators(name),
+                                      file.errorString()));
+
+        }
     }
+
+    objFactory->ResetSavedId();
+    EnableSolverUpdate(true);
 
     currentFileChanged();
 }
@@ -1008,6 +1037,10 @@ bool MainHost::SaveSetupFile(bool saveAs)
         currentFileChanged();
     }
 
+//    EnableSolverUpdate(false);
+//    writer.writeSetupFile(&file);
+//    EnableSolverUpdate(true);
+
     return true;
 }
 
@@ -1017,12 +1050,17 @@ bool MainHost::SaveProjectFile(bool saveAs)
 
     if(currentProjectFile.isEmpty() || saveAs) {
         QString lastDir = settings->GetSetting("lastProjectDir").toString();
-        filename = QFileDialog::getSaveFileName(mainWindow, tr("Save Project"), lastDir, tr("Project Files (*.%1)").arg(PROJECT_FILE_EXTENSION));
+        filename = QFileDialog::getSaveFileName(mainWindow, tr("Save Project"), lastDir,
+                                                tr("Project Files (*.%1)").arg(PROJECT_FILE_EXTENSION)
+                                                + ";;" +
+                                                tr("json (*.vb.json)")
+                                                );
 
         if(filename.isEmpty())
             return false;
 
-        if(!filename.endsWith(PROJECT_FILE_EXTENSION, Qt::CaseInsensitive)) {
+        if(!filename.endsWith(PROJECT_FILE_EXTENSION, Qt::CaseInsensitive) &&
+            !filename.endsWith(".vb.json", Qt::CaseInsensitive) ) {
             filename += ".";
             filename += PROJECT_FILE_EXTENSION;
         }
@@ -1030,10 +1068,30 @@ bool MainHost::SaveProjectFile(bool saveAs)
         filename = currentProjectFile;
     }
 
-    if(ProjectFile::SaveToProjectFile(this,filename)) {
-        currentProjectFile = filename;
-        currentFileChanged();
+    EnableSolverUpdate(false);
+
+    if(filename.endsWith(".vb.json", Qt::CaseInsensitive)) {
+        QFile file(filename);
+        if (file.open(QFile::WriteOnly | QFile::Text)) {
+            JsonWriter writer(this);
+            writer.writeProjectFile(&file);
+            currentProjectFile = filename;
+        } else {
+            QMessageBox::warning(mainWindow, tr("VstBoard"),
+                                 tr("Cannot write file %1:\n%2.")
+                                 .arg(QDir::toNativeSeparators(filename),
+                                      file.errorString()));
+        }
+
+    } else if(filename.endsWith(PROJECT_FILE_EXTENSION, Qt::CaseInsensitive)) {
+        if(ProjectFile::SaveToProjectFile(this,filename)) {
+            currentProjectFile = filename;
+        }
     }
+
+
+    currentFileChanged();
+    EnableSolverUpdate(true);
     return true;
 }
 

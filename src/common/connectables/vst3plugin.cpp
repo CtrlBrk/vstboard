@@ -1169,6 +1169,34 @@ tresult PLUGIN_API Vst3Plugin::restartComponent (int32 /*flags*/)
     return kResultOk;
 }
 
+//void Vst3Plugin::toXml(QXmlStreamWriter &xml) const
+//{
+//    Object::toXml(xml);
+
+//    xml.writeStartElement("vst3plugin");
+
+//    MemoryStream state;
+//    if(processorComponent && processorComponent->getState(&state)==kResultOk) {
+
+//        state.seek(0,IBStream::kIBSeekSet,0);
+//        int32 len=-1;
+//        char *buf=new char[1024];
+//        QByteArray bArray;
+//        while(len!=0) {
+//            if(state.read(buf,1024,&len)!=kResultOk)
+//                len=0;
+//            bArray.append(buf,len);
+//        }
+//        xml.writeAttribute("processorState", bArray.toHex() );
+
+//    } else {
+//        LOG("error saving state");
+//        xml.writeAttribute("processorState", savedState.toHex() );
+//    }
+
+//    xml.writeEndElement();
+//}
+
 QDataStream & Vst3Plugin::toStream(QDataStream & out) const
 {
     Object::toStream(out);

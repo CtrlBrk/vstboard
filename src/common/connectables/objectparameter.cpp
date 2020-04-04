@@ -23,6 +23,33 @@
 
 using namespace Connectables;
 
+ObjectParameter::ObjectParameter(QJsonObject &json, int &id) :
+    ObjectParameter()
+{
+    id = json["id"].toInt();
+    value = json["value"].toDouble();
+    index = json["index"].toInt();
+    visible = json["visible"].toBool();
+
+    limitInMin = json["limitInMin"].toDouble();
+    limitInMax = json["limitInMax"].toDouble();
+    limitOutMin = json["limitOutMin"].toDouble();
+    limitOutMax = json["limitOutMax"].toDouble();
+}
+
+void ObjectParameter::toJson(QJsonObject &json, int id) const
+{
+    json["id"] = id;
+    json["value"] = value;
+    json["index"] = index;
+    json["visible"] = visible;
+
+    json["limitInMin"] = limitInMin;
+    json["limitInMax"] = limitInMax;
+    json["limitOutMin"] = limitOutMin;
+    json["limitOutMax"] = limitOutMax;
+}
+
 QDataStream & ObjectParameter::toStream(QDataStream& out) const
 {
     out << value;

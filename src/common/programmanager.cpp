@@ -539,7 +539,79 @@ bool ProgramManager::FindCurrentProg()
     return false;
 }
 
-QDataStream & ProgramManager::toStream (QDataStream &out)
+void ProgramManager::fromJson(QJsonObject &json)
+{
+    Clear();
+
+    QJsonArray grpArray = json["groups"].toArray();
+    for (int i = 0; i < grpArray.size(); ++i) {
+        QJsonObject jGrp = grpArray[i].toObject();
+        Group grp;
+        grp.name = jGrp["name"].toString();
+        grp.id = jGrp["id"].toInt();
+
+        QJsonArray prgArray = jGrp["progs"].toArray();
+        for (int i = 0; i < prgArray.size(); ++i) {
+            QJsonObject jPrg = prgArray[i].toObject();
+            Program prg;
+            prg.name = jPrg["name"].toString();
+            prg.id = jPrg["id"].toInt();
+
+            if(prg.id>=nextProgId)
+                nextProgId=prg.id+1;
+
+            grp.listPrograms << prg;
+        }
+
+        listGroups << grp;
+    }
+
+    currentMidiGroup=127;
+    currentMidiProg=127;
+    quint16 grp = json["midiGroup"].toInt();
+    quint16 prg = json["midiProg"].toInt();
+    if(!ChangeProgNow(grp,prg)) {
+        LOG("saved prog not loaded")
+    }
+
+    groupAutosaveState = static_cast<Qt::CheckState>(json["groupAutosave"].toInt());
+    progAutosaveState = static_cast<Qt::CheckState>(json["progAutosave"].toInt());
+
+    SetDirty(false);
+
+    orderChanged=true;
+    updateTimer.start();
+}
+
+void ProgramManager::toJson(QJsonObject &json) const
+{
+    QJsonArray grpArray;
+    foreach(const Group &grp, listGroups) {
+        QJsonObject jGrp;
+        jGrp["name"] = grp.name;
+        jGrp["id"] = static_cast<int>(grp.id);
+
+        QJsonArray prgArray;
+        foreach(const Program &prg, grp.listPrograms) {
+            QJsonObject jPrg;
+            jPrg["name"] = prg.name;
+            jPrg["id"] = static_cast<int>(prg.id);
+            prgArray.append(jPrg);
+        }
+        jGrp["progs"] = prgArray;
+        grpArray.append(jGrp);
+    }
+    json["groups"] = grpArray;
+
+    json["midiGroup"] = currentMidiGroup;
+    json["midiProg"] = currentMidiProg;
+    json["groupAutosave"] = groupAutosaveState;
+    json["progAutosave"] = progAutosaveState;
+
+    SetDirty(false);
+}
+
+QDataStream & ProgramManager::toStream (QDataStream &out) const
 {
     out << (quint16)listGroups.count();
     foreach(const Group &grp, listGroups) {

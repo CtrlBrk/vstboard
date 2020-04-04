@@ -85,14 +85,18 @@ int ObjectFactory::IdFromSavedId(int savedId)
         }
         ++i;
     }
+#ifdef DEBUG_OBJECTS
     LOG("id not found"<<savedId);
+#endif
     return -1;
 }
 
 Pin *ObjectFactory::GetPin(const ConnectionInfo &pinInfo)
 {
     if(!listObjects.contains(pinInfo.objId)) {
+#ifdef DEBUG_OBJECTS
         LOG("obj not found"<<pinInfo.objId);
+#endif
         return 0;
     }
 
@@ -121,7 +125,9 @@ QSharedPointer<Object> ObjectFactory::NewObject(const ObjectInfo &info, int cont
     if(info.forcedObjId!=0) {
         objId = info.forcedObjId;
         if(listObjects.contains(objId)) {
+#ifdef DEBUG_OBJECTS
             LOG("forcedId already exists"<<objId);
+#endif
         }
     }
 
@@ -189,21 +195,25 @@ QSharedPointer<Object> ObjectFactory::NewObject(const ObjectInfo &info, int cont
                         break;
 
                     default:
+#ifdef DEBUG_OBJECTS
                         LOG("unknown object type"<<info.objType);
+#endif
                         return QSharedPointer<Object>();
                 }
                 break;
 
 
             default :
+#ifdef DEBUG_OBJECTS
                 LOG("unknown nodeType"<<info.nodeType);
+#endif
                 return QSharedPointer<Object>();
         }
     }
 
-
+#ifdef DEBUG_OBJECTS
     LOG("Loading Obj:"<<objId<<" : "<<info.name);
-
+#endif
     QSharedPointer<Object> sharedObj(obj);
 
     if(!obj->Open()) {

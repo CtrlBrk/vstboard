@@ -832,6 +832,85 @@ void Container::RemoveCableFromPin(const ConnectionInfo &pin)
     currentContainerProgram->RemoveCableFromPin(pin);
 }
 
+void Container::fromJson(QJsonObject &json)
+{
+    //clear programs
+    foreach(ContainerProgram *prog, listContainerPrograms) {
+        delete prog;
+    }
+    listContainerPrograms.clear();
+
+    Object::fromJson(json);
+
+    LoadProgram(TEMP_PROGRAM);
+
+    if (json.contains("objects") && json["objects"].isArray()) {
+        QJsonArray objArray = json["objects"].toArray();
+        for (int i = 0; i < objArray.size(); ++i) {
+            QJsonObject jsonObj = objArray[i].toObject();
+
+            QJsonObject jInfo = jsonObj["objInfo"].toObject();
+            ObjectInfo info( jInfo );
+            info.forcedObjId=0;
+            QSharedPointer<Object> objPtr = myHost->objFactory->NewObject(info);
+            objPtr->fromJson( jsonObj );
+            listLoadingObjects << objPtr;
+
+            if(!objPtr->GetSleep()) {
+                AddParkedObject(objPtr);
+            }
+        }
+    }
+
+    if (json.contains("progs") && json["progs"].isArray()) {
+        QJsonArray progArray = json["progs"].toArray();
+        for (int i = 0; i < progArray.size(); ++i) {
+            QJsonObject prg = progArray[i].toObject();
+            int savedId=0;
+            ContainerProgram *prog = new ContainerProgram(myHost,this,prg,savedId);
+
+            if(listContainerPrograms.contains(savedId))
+                delete listContainerPrograms.take(savedId);
+            listContainerPrograms.insert(savedId,prog);
+        }
+    }
+
+    //load the default program
+    LoadProgram(0);
+
+    //clear the loading list : delete unused objects
+    listLoadingObjects.clear();
+    delete listContainerPrograms.take(TEMP_PROGRAM);
+
+}
+
+void Container::toJson(QJsonObject &json) const
+{
+    Object::toJson(json);
+
+    //save all loaded objects
+    QJsonArray objArray;
+    foreach(QSharedPointer<Object>obj, listLoadedObjects) {
+        if(obj) {
+            QJsonObject jsonObj;
+            obj->toJson(jsonObj);
+            objArray.append(jsonObj);
+        }
+    }
+    json["objects"] = objArray;
+
+    //save all programs
+    QJsonArray progArray;
+    QHash<int,ContainerProgram*>::const_iterator i = listContainerPrograms.constBegin();
+    while(i!=listContainerPrograms.constEnd()) {
+        QJsonObject jProg;
+        i.value()->toJson(jProg,i.key());
+        progArray.append(jProg);
+        ++i;
+    }
+    json["progs"] = progArray;
+}
+
 /*!
   Put all the ContainerProgram and children Objects in a data stream
   */
@@ -894,7 +973,7 @@ bool Container::fromStream (QDataStream& in)
         QDataStream tmpStream( &tmpBa , QIODevice::ReadWrite);
         ProjectFile::LoadNextChunk( chunkName, tmpBa, in );
 
-        LOG(chunkName);
+//        LOG(chunkName);
 
         if(chunkName=="CntHead")
             loadHeaderStream(tmpStream);

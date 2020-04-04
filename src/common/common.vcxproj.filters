@@ -440,6 +440,15 @@
     <ClCompile Include="renderer\waitall.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="connectables\objectcontainerattribs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="projectfile\jsonreader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="projectfile\jsonwriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="views\aboutdialog.h">
@@ -1055,5 +1064,16 @@
     <None Include="..\resources\translations\vstdll_fr.ts">
       <Filter>Resource Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="projectfile\jsonreader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="projectfile\jsonwriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="connectables\objectcontainerattribs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -57,7 +57,7 @@ RendererThread2::RendererThread2(Renderer2 *renderer, int id) :
         hMmTask = FunctionAvSetMmThreadCharacteristics("Pro Audio", &dwTask);
         if (hMmTask != NULL && hMmTask != INVALID_HANDLE_VALUE) {
             BOOL bret = FunctionAvSetMmThreadPriority(hMmTask, PA_AVRT_PRIORITY_CRITICAL);
-            if (!bret) {
+            if (!bret) {                
                 LOG("can't set msc priority");
             }
         } else {
@@ -89,14 +89,18 @@ RendererThread2::~RendererThread2()
         FreeLibrary(DllAvRt);
 #endif
 
+#ifdef DEBUG_RENDERER
     LOG("thread"<<id<<"deleted")
+#endif
 }
 
 void RendererThread2::Stop()
 {
     QMutexLocker locker(&mutexStop);
     stop=true;
+#ifdef DEBUG_RENDERER
 //    LOG("thread"<<id<<"stopped")
+#endif
 }
 
 bool RendererThread2::IsStopped()
@@ -115,7 +119,9 @@ void RendererThread2::run()
     forever {
 
         if(!renderer->waitThreadReady.WaitAllThreads(1000)) {
+#ifdef DEBUG_RENDERER
             LOG("thread"<<id<<"start timeout")
+#endif
 //            QMutexLocker locker(&mutexStop);
 //            stop=true;
 //            emit Timeout();
@@ -141,7 +147,9 @@ void RendererThread2::run()
                 renderer->stepCanStart.first()->Unlock();
 
                 if(!renderer->stepCanStart.first()->WaitUnlock(1000)) {
+#ifdef DEBUG_RENDERER
 //                    LOG("thread"<<id<<"1st step timeout")
+#endif
 //                    return;
 //                    emit Timeout();
 //                    stop=true;
@@ -163,7 +171,9 @@ void RendererThread2::run()
         }
 
         if(!renderer->waitThreadEnd.WaitAllThreads(1000)) {
+#ifdef DEBUG_RENDERER
 //            LOG("thread"<<id<<"end timeout")
+#endif
 //            QMutexLocker locker(&mutexStop);
 //            stop=true;
 //            renderer->nbThreads--;

@@ -117,7 +117,7 @@ public:
 
 protected:
     void Close();
-    QTime timeFromStart;
+    QElapsedTimer timeFromStart;
     float sampleRate;
     unsigned long bufferSize;
     Renderer2 *renderer;
@@ -130,7 +130,6 @@ private:
     void SetupGroupContainer();
 
     void CheckTempo();
-
     void currentFileChanged();
 
     bool solverNeedAnUpdate;
@@ -189,6 +188,7 @@ private slots:
 
     friend class SetupFile;
     friend class ProjectFile;
+    friend class JsonReader;
 };
 
 #endif // MAINHOST_H

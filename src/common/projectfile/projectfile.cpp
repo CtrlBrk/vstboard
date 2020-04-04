@@ -74,7 +74,7 @@ bool ProjectFile::ToStream(MainHost *myHost,QDataStream &out, quint32 fileKey )
     if(fileKey == SETUP_FILE_KEY || fileKey == SETUPANDPROJECT_FILE_KEY) {
 
         {
-            //save HostContainer
+        //save HostContainer
             QByteArray tmpBa;
             QDataStream tmpStream( &tmpBa, QIODevice::ReadWrite);
             myHost->hostContainer->SaveProgram();
@@ -176,7 +176,7 @@ bool ProjectFile::FromStream(MainHost *myHost,QDataStream &in)
         return false;
     }
 
-    myHost->EnableSolverUpdate(false);
+//    myHost->EnableSolverUpdate(false);
 //    myHost->GetRenderer()->SetEnabled(false);
 
     QString chunkName;
@@ -272,7 +272,7 @@ bool ProjectFile::FromStream(MainHost *myHost,QDataStream &in)
 
     myHost->objFactory->ResetSavedId();
 //    myHost->GetRenderer()->SetEnabled(true);
-    myHost->EnableSolverUpdate(true);
+//    myHost->EnableSolverUpdate(true);
 
     if(in.status()!=QDataStream::Ok) {
         QMessageBox msg(QMessageBox::Warning, "", tr("The file is corrupted and cannot be fully loaded"), QMessageBox::Ok );

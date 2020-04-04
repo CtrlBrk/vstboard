@@ -34,6 +34,8 @@ namespace View {
     public:
         MainGraphicsView(QWidget * parent = 0);
 
+        void fromJson(QJsonObject &json);
+        void toJson(QJsonObject &json) const;
         QDataStream & toStream (QDataStream &) const;
         QDataStream & fromStream (QDataStream &);
 

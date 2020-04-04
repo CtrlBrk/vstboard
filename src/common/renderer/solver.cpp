@@ -61,8 +61,10 @@ long Solver::GetMap(const hashObjects &listObject, const hashCables &listCables,
     qDeleteAll(optimizerNodes);
     qDeleteAll(solverNodes);
 
+#ifdef DEBUG_RENDERER
 //    LOG( OptimizeMap::OptMap2Txt(oMap) )
 //    LOG( RMap2Txt(rMap) )
+#endif
 
     return globalDelay;
 }
@@ -95,8 +97,9 @@ void Solver::UpdateCpuTimes(RenderMap &rMap, int nbThreads)
 
     qDeleteAll(optimizerNodes);
     qDeleteAll(solverNodes);
-
+#ifdef DEBUG_RENDERER
     LOG( OptimizeMap::OptMap2Txt(oMap) )
 //    LOG( RMap2Txt(rMap) )
+#endif
 }
 

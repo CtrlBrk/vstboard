@@ -40,7 +40,6 @@ Cable::Cable(MainHost *myHost, const ConnectionInfo &pinOut, const ConnectionInf
     MsgHandler(myHost, -1),
     pinOut(pinOut),
     pinIn(pinIn),
-//    modelIndex(QModelIndex()),
     myHost(myHost),
     buffer(0),
     delay(0),
@@ -49,6 +48,31 @@ Cable::Cable(MainHost *myHost, const ConnectionInfo &pinOut, const ConnectionInf
     if(myHost && myHost->objFactory)
         SetIndex(myHost->objFactory->GetNewObjId());
 }
+
+
+Cable::Cable(MainHost *myHost,QJsonObject &json) :
+    MsgHandler(myHost, -1),
+    pinOut( ConnectionInfo(myHost, json["out"].toObject() ) ),
+    pinIn( ConnectionInfo(myHost, json["in"].toObject() ) ),
+    myHost(myHost),
+    buffer(0),
+    delay(json["delay"].toInt()),
+    tmpBuf(0)
+{
+
+}
+
+//Cable::Cable(MainHost *myHost,const ConnectionInfo &pinOut, const ConnectionInfo &pinIn, int delay) :
+//    MsgHandler(myHost, -1),
+//    pinOut(pinOut),
+//    pinIn(pinIn),
+//    myHost(myHost),
+//    buffer(0),
+//    delay(delay),
+//    tmpBuf(0)
+//{
+
+//}
 
 /*!
   Copy a cable
@@ -187,4 +211,17 @@ void Cable::GetInfos(MsgObject &msg)
     msg.prop[MsgObject::PinIn]=myHost->objFactory->GetPin(pinIn)->GetIndex();
     msg.prop[MsgObject::Delay]=delay;
 
+}
+
+void Cable::toJson(QJsonObject &json) const
+{
+    QJsonObject jOut;
+    GetInfoOut().toJson(jOut);
+    json["out"] = jOut;
+
+    QJsonObject jIn;
+    GetInfoIn().toJson(jIn);
+    json["in"] = jIn;
+
+    json["delay"] = static_cast<int>(delay);
 }

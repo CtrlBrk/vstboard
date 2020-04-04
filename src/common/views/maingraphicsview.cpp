@@ -262,6 +262,36 @@ void MainGraphicsView::ClearViewPrograms()
     listPrograms.clear();
 }
 
+void MainGraphicsView::fromJson(QJsonObject &json)
+{
+    QJsonArray progArray = json["progs"].toArray();
+    for (int i = 0; i < progArray.size(); ++i) {
+        QJsonObject prg = progArray[i].toObject();
+        int id = prg["id"].toInt();
+        SceneProg state;
+        state.scale = prg["scale"].toDouble();
+        state.scrollx = prg["scrollx"].toInt();
+        state.scrolly = prg["scrolly"].toInt();
+        listPrograms.insert(id,state);
+    }
+}
+
+void MainGraphicsView::toJson(QJsonObject &json) const
+{
+    QJsonArray progArray;
+    QMap<qint16,SceneProg>::ConstIterator i = listPrograms.constBegin();
+    while(i!=listPrograms.constEnd()) {
+        QJsonObject jProg;
+        jProg["id"] = i.key();
+        jProg["scale"] = i.value().scale;
+        jProg["scrollx"] = i.value().scrollx;
+        jProg["scrolly"] = i.value().scrolly;
+        progArray.append(jProg);
+        ++i;
+    }
+    json["progs"] = progArray;
+}
+
 QDataStream & MainGraphicsView::toStream (QDataStream& out) const
 {
     out << (quint16)listPrograms.size();

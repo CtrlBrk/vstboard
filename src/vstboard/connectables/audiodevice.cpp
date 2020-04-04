@@ -97,8 +97,9 @@ AudioDevice::~AudioDevice()
         devOut->SetParentDevice(0);
         devOut=0;
     }
-
+#ifdef DEBUG_DEVICES
     LOG(objectName()<<"deleted");
+#endif
 }
 
 
@@ -150,7 +151,9 @@ bool AudioDevice::SetObjectInput(AudioDeviceIn *obj)
     }
 
     if(devIn && obj) {
+#ifdef DEBUG_DEVICES
         LOG("SetObjectInput already used");
+#endif
         return false;
     }
 
@@ -191,7 +194,9 @@ bool AudioDevice::SetObjectOutput(AudioDeviceOut *obj)
     devOutClosing=false;
 
     if(devOut && obj) {
+#ifdef DEBUG_DEVICES
         LOG("SetObjectOutput already used");
+#endif
         return false;
     }
 
@@ -230,7 +235,9 @@ bool AudioDevice::OpenStream(double sampleRate)
 {
 //    if(Pa_GetDeviceInfo(objInfo.id)==0) {
 //        errorMessage=tr("Device not found");
+#ifdef DEBUG_DEVICES
 //        LOG(errorMessage)
+#endif
 //        return false;
 //    }
 
@@ -412,7 +419,9 @@ bool AudioDevice::OpenStream(double sampleRate)
         return false;
     }
 
+#ifdef DEBUG_DEVICES
     LOG("Open"<<objectName())
+#endif
     emit InUseChanged(objInfo.api, objInfo.id, true, inputParameters?inputParameters->suggestedLatency:0, outputParameters?outputParameters->suggestedLatency:0);
 
 //    err = Pa_SetStreamFinishedCallback( stream, &paStreamFinished );
@@ -451,7 +460,9 @@ bool AudioDevice::Open()
     {
         QMutexLocker lo(&mutexOpenClose);
         if(opened) {
+#ifdef DEBUG_DEVICES
             LOG("already opened");
+#endif
             return true;
         }
         isClosing=false;
@@ -534,8 +545,9 @@ bool AudioDevice::Close()
         QMutexLocker l(&mutexCountOpenedDevicesReady);
         countOpenedDevices--;
     }
-
+#ifdef DEBUG_DEVICES
     LOG("Close"<<objectName())
+#endif
     emit InUseChanged( objInfo.api,objInfo.id,false);
 
     if(stream)
@@ -547,7 +559,9 @@ bool AudioDevice::Close()
             count++;
         }
         if(count>0) {
+#ifdef DEBUG_DEVICES
             LOG("AudioDevice::Close"<<objectName()<<"wait:"<<count);
+#endif
         }
 
         Pa_CloseStream(stream);
@@ -637,9 +651,11 @@ bool AudioDevice::DeviceToRingBuffers( const void *inputBuffer, unsigned long fr
 
     unsigned long hostBuffSize = myHost->GetBufferSize();
     if(framesPerBuffer > hostBuffSize) {
+#ifdef DEBUG_DEVICES
         LOG(QString("ajusting host buffer %1->%2")
             .arg(hostBuffSize)
             .arg(framesPerBuffer));
+#endif
        myHost->SetBufferSize(framesPerBuffer);
        hostBuffSize = framesPerBuffer;
     }
@@ -670,7 +686,9 @@ bool AudioDevice::DeviceToRingBuffers( const void *inputBuffer, unsigned long fr
         if(buf->filledSize < hostBuffSize ) {
             inputBufferReady=false;
         } /*else {
+#ifdef DEBUG_DEVICES
             LOG(QString("not enough data host buffer %1/%2")
+#endif
                 .arg(buf->filledSize)
                 .arg(hostBuffSize));
         }*/
@@ -744,19 +762,23 @@ bool AudioDevice::RingBuffersToDevice( void *outputBuffer, unsigned long framesP
     int cpt=0;
     foreach(CircularBuffer *buf, listCircularBuffersOut) {
         if(!pause && buf->filledSize>=framesPerBuffer) {
+#ifdef DEBUG_DEVICES
 //            LOG(QString("buffer->device %1<-%2/%3 (host:%4)")
 //                .arg(framesPerBuffer)
 //                .arg(buf->filledSize)
 //                .arg(buf->buffSize)
 //                .arg(myHost->GetBufferSize())
 //                );
+#endif
             buf->Get( ((float **) outputBuffer)[cpt], framesPerBuffer );
 
         } else {
             ZeroMemory( ((float **) outputBuffer)[cpt], sizeof(float)*framesPerBuffer );
+#ifdef DEBUG_DEVICES
             LOG(QString("buffer->device %1<-%2 | not enough data")
                 .arg(framesPerBuffer)
                 .arg(buf->filledSize));
+#endif
             return true;
         }
         cpt++;
@@ -859,11 +881,12 @@ int AudioDevice::paCallback( const void *inputBuffer, void *outputBuffer,
                                  void *userData )
 {
     AudioDevice* device = (AudioDevice*)userData;
-
+#ifdef DEBUG_DEVICES
 //    LOG(QString("%1 %2")
 //        .arg( device->devInfo.name )
 //        .arg( framesPerBuffer )
 //        );
+#endif
 
 #ifdef CIRCULAR_BUFFER
 
@@ -877,32 +900,36 @@ int AudioDevice::paCallback( const void *inputBuffer, void *outputBuffer,
         if(device->inputBufferReady) {
             countDevicesReady++;
         } else {
+#ifdef DEBUG_DEVICES
 //            LOG(QString("%1 %2")
 //                .arg( device->devInfo.name )
 //                .arg("buffer not full")
 //                );
+#endif
 //            return paContinue;
         }
     }
 
     //all devices are ready : render
     mutexCountOpenedDevicesReady.lock();
-
+#ifdef DEBUG_DEVICES
 //    LOG(QString("%1 ready: %2/%3")
 //        .arg( device->devInfo.name )
 //        .arg( countDevicesReady )
 //        .arg( countOpenedDevices )
 //        );
-
+#endif
     if(!device->RingBuffersToDevice(outputBuffer, framesPerBuffer))
         return paComplete;
 
     if(countDevicesReady>=countOpenedDevices) {
         countDevicesReady=0;
+#ifdef DEBUG_DEVICES
 //        LOG(QString("%1 %2")
 //            .arg( device->devInfo.name )
 //            .arg("RENDER")
 //            );
+#endif
         mutexCountOpenedDevicesReady.unlock();
 
         device->myHost->Render();
@@ -952,7 +979,9 @@ int AudioDevice::paCallback( const void *inputBuffer, void *outputBuffer,
 //        device->condBufferOutReady.wait(l.mutex(), 100);
 
 //    if(!device->OutBufferIsReady()) {
+#ifdef DEBUG_DEVICES
 //        LOG("buffer not ready")
+#endif
 //        return paContinue;
 //    }
 //    device->SetOutputBufferReady(false);
@@ -985,7 +1014,9 @@ void AudioDevice::SetErrorMsg(const QString &msg)
 {
 #ifndef QT_NO_DEBUG
     if(!msg.isEmpty()) {
+#ifdef DEBUG_DEVICES
         LOG(msg)
+#endif
     }
 #endif
 

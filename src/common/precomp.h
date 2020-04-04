@@ -121,6 +121,10 @@
     #include <QWaitCondition>
     #include <QWidget>
 
+    #include <QJsonDocument>
+    #include <QJsonArray>
+    #include <QJsonObject>
+
     #ifdef QT_NO_DEBUG
         #define LOG(...)
 //        #include <QDebug>

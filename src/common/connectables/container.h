@@ -39,6 +39,8 @@ namespace Connectables {
         void SetContainerId(quint16 id);
 //        const QModelIndex &GetCablesIndex();
 
+        void fromJson(QJsonObject &json);
+        void toJson(QJsonObject &json) const;
         QDataStream & toStream (QDataStream &) const;
         bool fromStream (QDataStream &);
 

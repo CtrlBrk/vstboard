@@ -49,7 +49,9 @@ Renderer2::~Renderer2()
 
     if(!waitThreadEnd.WaitAllThreads(2000)) {
         QString err("closing : renderer end timeout");
+#ifdef DEBUG_RENDERER
         LOG(err)
+#endif
     }
 
     waitThreadReady.RemoveClient();
@@ -65,9 +67,9 @@ void Renderer2::SetMap(const RenderMap &rMap, int nbThreads)
 {
     QMutexLocker l(&mutexThreadList);
     currentMap = rMap;
-
+#ifdef DEBUG_RENDERER
     LOG("set map");
-
+#endif
     ChangeNbOfThreads( nbThreads );
     ThreadCleanup();
 
@@ -103,7 +105,9 @@ bool Renderer2::StartRender()
 //        waitThreadReady.WakeAll()
 //        waitThreadReady.RemoveClient();
 //        waitThreadReady.AddClient();
+#ifdef DEBUG_RENDERER
         LOG(err)
+#endif
         ChangeNbOfThreads(0);
         emit Timeout();
         return false;
@@ -114,7 +118,9 @@ bool Renderer2::StartRender()
         QString err("renderer end timeout");
 //        waitThreadEnd.RemoveClient();
 //        waitThreadEnd.AddClient();
+#ifdef DEBUG_RENDERER
         LOG(err)
+#endif
 //        ChangeNbOfThreads(0);
         ChangeNbOfThreads(0);
         emit Timeout();
@@ -131,7 +137,9 @@ void Renderer2::ChangeNbOfThreads(int newNbThreads)
     for(int i=threads.count()-1; i>=0; i--) {
         RendererThread2* th = threads[i];
         if(!th->isRunning() && !th->IsStopped()) {
+#ifdef DEBUG_RENDERER
             LOG("remove crashed thread"<<i)
+#endif
 //            --nbThreads;
             threads.removeAt(i);
             threadsToDelete << th;

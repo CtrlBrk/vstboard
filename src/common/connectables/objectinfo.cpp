@@ -54,6 +54,38 @@ ObjectInfo::ObjectInfo(NodeType::Enum nodeType, ObjType::Enum objType, QString n
 
 }
 
+ObjectInfo::ObjectInfo(QJsonObject &json)
+{
+    nodeType = static_cast<NodeType::Enum>(json["nodeType"].toInt());
+    objType = static_cast<ObjType::Enum>(json["objType"].toInt());
+    id = json["id"].toDouble();
+    name = json["name"].toString();
+    filename = json["filename"].toString();
+    inputs = json["inputs"].toInt();
+    outputs = json["outputs"].toInt();
+    duplicateNamesCounter = json["duplicateNamesCounter"].toInt();
+    apiName = json["apiName"].toString();
+    api = json["api"].toInt();
+    forcedObjId = json["forcedObjId"].toInt();
+    initDelay = json["initDelay"].toDouble();
+}
+
+void ObjectInfo::toJson(QJsonObject &json) const
+{
+    json["nodeType"] = nodeType;
+    json["objType"] = objType;
+    json["id"] = static_cast<double>(id);
+    json["name"] = name;
+    json["filename"] = filename;
+    json["inputs"] = inputs;
+    json["outputs"] = outputs;
+    json["duplicateNamesCounter"] = duplicateNamesCounter;
+    json["apiName"] = apiName;
+    json["api"] = api;
+    json["forcedObjId"] = forcedObjId;
+    json["initDelay"] = static_cast<double>(initDelay);
+}
+
 QDataStream & ObjectInfo::toStream(QDataStream& stream) const
 {
     stream << (quint8)nodeType;
@@ -96,37 +128,3 @@ QDataStream & operator>> (QDataStream& stream, ObjectInfo& objInfo)
     return objInfo.fromStream(stream);
 }
 
-QDataStream & ObjectContainerAttribs::toStream (QDataStream& out) const
-{
-    out << position;
-//    out << size;
-    out << editorVisible;
-    out << editorPosition;
-    out << editorSize;
-    out << editorHScroll;
-    out << editorVScroll;
-
-    return out;
-}
-
-QDataStream & ObjectContainerAttribs::fromStream (QDataStream& in)
-{
-    in >> position;
-//    in >> size;
-    in >> editorVisible;
-    in >> editorPosition;
-    in >> editorSize;
-    in >> editorHScroll;
-    in >> editorVScroll;
-    return in;
-}
-
-QDataStream & operator<< (QDataStream & out, const ObjectContainerAttribs& value)
-{
-    return value.toStream(out);
-}
-
-QDataStream & operator>> (QDataStream & in, ObjectContainerAttribs& value)
-{
-    return value.fromStream(in);
-}

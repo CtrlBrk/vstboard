@@ -80,8 +80,9 @@ Object::Object(MainHost *host, int index, const ObjectInfo &info) :
     setObjectName(objInfo.name);
     if(myHost)
         doublePrecision=myHost->doublePrecision;
-
+#ifdef DEBUG_OBJECTS
     LOG("crtObject:"<<objInfo.forcedObjId<<":"<<objInfo.name);
+#endif
 
 #ifdef SCRIPTENGINE
     QScriptValue scriptObj = myHost->scriptEngine->newQObject(this);
@@ -160,8 +161,9 @@ Object::Object(MainHost *host, int index, const ObjectInfo &info) :
   */
 Object::~Object()
 {
+#ifdef DEBUG_OBJECTS
     LOG(" delObject:"<<objInfo.forcedObjId<<":"<<objInfo.name);
-
+#endif
     pinLists.clear();
 
     if(containerId!=FixedObjId::noContainer) {
@@ -327,7 +329,9 @@ void Object::LoadProgram(int prog)
 {
     //if prog is already loaded, update model
     if(prog==currentProgId && currentProgram) {
+#ifdef DEBUG_OBJECTS
 //        LOG("load same program"<<prog)
+#endif
         return;
     }
 
@@ -367,12 +371,16 @@ void Object::LoadProgram(int prog)
 void Object::RemoveProgram(int prg)
 {
     if(prg == currentProgId) {
+#ifdef DEBUG_OBJECTS
         LOG("removing current program ! "<<prg<<objectName());
+#endif
         return;
     }
 
     if(!listPrograms.contains(prg)) {
+#ifdef DEBUG_OBJECTS
         LOG("prog not found"<<prg);
+#endif
         return;
     }
     delete listPrograms.take(prg);
@@ -677,6 +685,52 @@ Pin* Object::CreatePin(const ConnectionInfo &info)
     return 0;
 }
 
+void Object::fromJson(QJsonObject &json)
+{
+    QJsonObject jsonInfo = json["objInfo"].toObject();
+    objInfo = ObjectInfo(jsonInfo);
+    savedIndex=json["id"].toInt();
+    SetSleep( json["sleep"].toBool() );
+    listenProgramChanges = json["listenProgramChanges"].toBool();
+
+    //progs
+    QJsonArray jProgs = json["progs"].toArray();
+    for (int i = 0; i < jProgs.size(); ++i) {
+        QJsonObject jProg = jProgs[i].toObject();
+        int progId=0;
+        ObjectProgram *prog = new ObjectProgram(jProg,progId);
+
+        if(listPrograms.contains(progId)) {
+            if(progId==currentProgId) {
+                currentProgram=prog;
+            }
+            delete listPrograms.take(progId);
+        }
+        listPrograms.insert(progId,prog);
+    }
+}
+
+void Object::toJson(QJsonObject &json) const
+{
+    QJsonObject jsonInfo;
+    objInfo.toJson(jsonInfo);
+    json["objInfo"] = jsonInfo;
+    json["id"] = GetIndex();
+    json["sleep"] = GetSleep();
+    json["listenProgramChanges"] = listenProgramChanges;
+
+    //progs
+    QJsonArray jProgs;
+    hashPrograms::const_iterator i = listPrograms.constBegin();
+    while(i!=listPrograms.constEnd()) {
+        QJsonObject jProg;
+        i.value()->toJson(jProg,i.key());
+        jProgs.append(jProg);
+        ++i;
+    }
+    json["progs"]=jProgs;
+}
+
 /*!
   Put the object in a stream
   \param[in] out a QDataStream
@@ -852,7 +906,9 @@ void Object::ReceiveMsg(const MsgObject &msg)
     if(msg.prop.contains(MsgObject::Remove)) {
         QSharedPointer<Connectables::Object> objPtr = myHost->objFactory->GetObjectFromId( GetIndex() );
         if(!objPtr) {
+#ifdef DEBUG_OBJECTS
             LOG("obj not found")
+#endif
             return;
         }
 
@@ -866,12 +922,16 @@ void Object::ReceiveMsg(const MsgObject &msg)
         int insertType = msg.prop[MsgObject::Type].toInt();
         QSharedPointer<Object> targetObj = myHost->objFactory->GetObjectFromId( GetIndex() );
         if(!targetObj) {
+#ifdef DEBUG_OBJECTS
             LOG("obj not found")
+#endif
             return;
         }
         QSharedPointer<Container> targetContainer = myHost->objFactory->GetObjectFromId( containerId ).staticCast<Container>();;
         if(!targetContainer) {
+#ifdef DEBUG_OBJECTS
             LOG("obj not found")
+#endif
             return;
         }
 

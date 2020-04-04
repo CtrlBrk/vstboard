@@ -32,6 +32,7 @@
 #include "bridgepinout.h"
 #include "objectprogram.h"
 #include "objectinfo.h"
+#include "objectcontainerattribs.h"
 #include "pinslist.h"
 #include "msghandler.h"
 
@@ -130,6 +131,9 @@ namespace Connectables {
 //        virtual void Hide();
         virtual Pin * GetPin(const ConnectionInfo &pinInfo);
         virtual void SetSleep(bool sleeping);
+
+        virtual void fromJson(QJsonObject &json);
+        virtual void toJson(QJsonObject &json) const;
         virtual QDataStream & toStream (QDataStream &) const;
         virtual bool fromStream (QDataStream &);
         virtual void SetContainerId(quint16 id);

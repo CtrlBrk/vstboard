@@ -73,11 +73,14 @@ vstsdk {
 #}
 
 SOURCES += \
+    connectables/objectcontainerattribs.cpp \
     msghandler.cpp \
     mainhost.cpp \
     audiobuffer.cpp \
     mainwindow.cpp \
     circularbuffer.cpp \
+    projectfile/jsonreader.cpp \
+    projectfile/jsonwriter.cpp \
     settings.cpp \
     msgobject.cpp \
     msgcontroller.cpp \
@@ -175,11 +178,14 @@ SOURCES += \
     sceneview/bridgepinview.cpp
 
 HEADERS += \
+    connectables/objectcontainerattribs.h \
     globals.h \
     mainhost.h \
     audiobuffer.h \
     mainwindow.h \
     circularbuffer.h \
+    projectfile/jsonreader.h \
+    projectfile/jsonwriter.h \
     settings.h \
     msgobject.h \
     msghandler.h \
