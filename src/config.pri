@@ -7,7 +7,7 @@ DEFINES += APP_VERSION_PATCH=0
 #CONFIG += object_parallel_to_source
 
 #Release:DESTDIR = $${OUT_PWD}/release
-Debug:DESTDIR = $${OUT_PWD}/../
+DESTDIR = $${OUT_PWD}/../
 
 OBJECTS_DIR= $${OUT_PWD}
 RCC_DIR = $${OUT_PWD}

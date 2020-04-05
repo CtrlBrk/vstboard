@@ -27,8 +27,11 @@
 #define TEMP_PROGRAM 0xfffe
 
 #define SETUP_FILE_EXTENSION "vstbsetup"
+#define SETUP_JSON_FILE_EXTENSION "vbs.json"
+#define SETUP_JSON_BINARY_FILE_EXTENSION "vbs.zjson"
 #define PROJECT_FILE_EXTENSION "vstbproject"
-#define JSON_FILE_EXTENSION "vb.json"
+#define PROJECT_JSON_FILE_EXTENSION "vbp.json"
+#define PROJECT_JSON_BINARY_FILE_EXTENSION "vbp.zjson"
 #define NB_RECENT_FILES 5
 #define VST_BANK_FILE_EXTENSION "fxb"
 #define VST_PROGRAM_FILE_EXTENSION "fxp"

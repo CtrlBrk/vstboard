@@ -617,18 +617,12 @@ void MainWindow::LoadDefaultFiles()
 {
     //load default files
     QString file = ConfigDialog::defaultSetupFile(settings);
-    if(!file.isEmpty()) {
+    if(!file.isEmpty())
         myHost->LoadSetupFile( file );
-    } else {
-        myHost->CleanSetup();
-    }
 
     file = ConfigDialog::defaultProjectFile(settings);
-    if(!file.isEmpty()) {
+    if(!file.isEmpty())
         myHost->LoadProjectFile( file );
-    } else {
-        myHost->CleanProject();
-    }
 
     updateRecentFileActions();
 }

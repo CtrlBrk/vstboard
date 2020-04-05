@@ -56,8 +56,6 @@ public:
     void EnableSolverUpdate(bool enable);
     void GetTempo(int &tempo, int &sign1, int &sign2);
 
-    void CleanSetup();
-    void CleanProject();
     void Open();
 
 #ifdef VSTSDK
@@ -170,9 +168,9 @@ public slots:
     virtual void Kill();
     void SetTempo(int tempo=120, int sign1=0, int sign2=0);
     virtual void Render();
-    void LoadFile(const QString &filename);
-    void LoadSetupFile(const QString &filename = QString());
-    void LoadProjectFile(const QString &filename = QString());
+//    bool LoadFile(const QString &filename);
+    bool LoadSetupFile(const QString &filename = QString());
+    bool LoadProjectFile(const QString &filename = QString());
     void ReloadProject();
     void ReloadSetup();
     void ClearSetup();

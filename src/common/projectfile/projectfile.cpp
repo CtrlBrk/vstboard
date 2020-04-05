@@ -277,6 +277,7 @@ bool ProjectFile::FromStream(MainHost *myHost,QDataStream &in)
     if(in.status()!=QDataStream::Ok) {
         QMessageBox msg(QMessageBox::Warning, "", tr("The file is corrupted and cannot be fully loaded"), QMessageBox::Ok );
         msg.exec();
+        return false;
     }
 
     return true;

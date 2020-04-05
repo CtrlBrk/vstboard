@@ -7,7 +7,7 @@ class JsonWriter
 {
 public:
     JsonWriter(const MainHost *host);
-    bool writeProjectFile(QIODevice *device);
+    bool writeProjectFile(QIODevice *device, bool saveProject, bool saveSetup, bool binary);
 
 private:
     const MainHost *myHost;

@@ -185,27 +185,13 @@ void MainHost::Init()
             this,SLOT(UpdateRendererView()));
 }
 
-void MainHost::CleanSetup()
-{
-    EnableSolverUpdate(false);
-    SetupMainContainer();
-    EnableSolverUpdate(true);
-}
-void MainHost::CleanProject()
-{
-    EnableSolverUpdate(false);
-    SetupHostContainer();
-    SetupProjectContainer();
-    SetupProgramContainer();
-    SetupGroupContainer();
-    EnableSolverUpdate(true);
-    programManager->BuildDefaultPrograms();
-}
-
+//we must create a basic setup before the app loop starts (any dialog can start the app loop ?)
 void MainHost::Open()
 {
     EnableSolverUpdate(false);
     SetupMainContainer();
+    ClearSetup();
+    ClearProject();
     EnableSolverUpdate(true);
 }
 
@@ -878,103 +864,150 @@ void MainHost::GetTempo(int &tempo, int &sign1, int &sign2)
 #endif
 }
 
-void MainHost::LoadFile(const QString &filename)
-{
-    QFileInfo info(filename);
-    if ( info.suffix()==SETUP_FILE_EXTENSION ) {
-        LoadSetupFile(filename);
-    }
-    if ( info.suffix()==PROJECT_FILE_EXTENSION ) {
-        LoadProjectFile(filename);
-    }
-}
+//bool MainHost::LoadFile(const QString &filename)
+//{
+//    QFileInfo info(filename);
+//    if ( info.suffix()==SETUP_FILE_EXTENSION ) {
+//        return LoadSetupFile(filename);
+//    }
+//    if ( info.suffix()==PROJECT_FILE_EXTENSION ) {
+//        return LoadProjectFile(filename);
+//    }
+//}
 
-void MainHost::LoadSetupFile(const QString &filename)
+bool MainHost::LoadSetupFile(const QString &filename)
 {
+
     if(!programManager->userWantsToUnloadSetup())
-        return;
+        return false;
 
     QString name = filename;
 
     if(name.isEmpty()) {
         QString lastDir = settings->GetSetting("lastSetupDir").toString();
         name = QFileDialog::getOpenFileName(mainWindow, tr("Open a Setup file"), lastDir,
-                                            tr("Supported formats (*.%1 *.%2)").arg(SETUP_FILE_EXTENSION).arg(JSON_FILE_EXTENSION)
+                                            tr("Supported formats (*.%1 *.%2 *.%3)")
+                                                .arg(SETUP_JSON_BINARY_FILE_EXTENSION)
+                                                .arg(SETUP_JSON_FILE_EXTENSION)
+                                                .arg(SETUP_FILE_EXTENSION)
+                                            + ";;" +
+                                            tr("Binary Json (*.%1)").arg(SETUP_JSON_BINARY_FILE_EXTENSION)
+                                            + ";;" +
+                                            tr("Json (*.%1)").arg(SETUP_JSON_FILE_EXTENSION)
                                             + ";;" +
                                             tr("Setup Files (*.%1)").arg(SETUP_FILE_EXTENSION)
-                                            + ";;" +
-                                            tr("VstBoard Json (*.%1)").arg(JSON_FILE_EXTENSION)
                                             );
     }
 
     if(name.isEmpty())
-        return;
+        return false;
 
+    EnableSolverUpdate(false);
     undoStack.clear();
 
-    if(ProjectFile::LoadFromFile(this,name)) {
+    bool no_error = true;
+
+    QFile file(name);
+    if (file.open(QFile::ReadOnly)) {
+        //old format
+        if(name.endsWith(SETUP_FILE_EXTENSION, Qt::CaseInsensitive)) {
+            QDataStream in(&file);
+            no_error = ProjectFile::FromStream(this,in);
+        } else {
+        //new format
+            bool binary = true;
+            if(!name.endsWith(SETUP_JSON_BINARY_FILE_EXTENSION, Qt::CaseInsensitive))
+                binary = false;
+
+            JsonReader reader(this);
+            no_error = reader.readProjectFile(&file,binary);
+        }
+    } else {
+        no_error = false;
+        QMessageBox::warning(mainWindow, tr("VstBoard"),
+                             tr("Cannot read file %1:\n%2.")
+                             .arg(QDir::toNativeSeparators(name),
+                                  file.errorString()));
+    }
+
+    if(no_error) {
         currentSetupFile = name;
+        objFactory->ResetAllSavedId();
     } else {
         ClearSetup();
     }
 
-    currentFileChanged();
+//    currentFileChanged();
+    EnableSolverUpdate(true);
+
+    return no_error;
 }
 
-void MainHost::LoadProjectFile(const QString &filename)
+bool MainHost::LoadProjectFile(const QString &filename)
 {
     if(!programManager->userWantsToUnloadProject())
-        return;
+        return false;
 
     QString name = filename;
 
     if(name.isEmpty()) {
         QString lastDir = settings->GetSetting("lastProjectDir").toString();
         name = QFileDialog::getOpenFileName(mainWindow, tr("Open a Project file"), lastDir,
-                                            tr("Supported formats (*.%1 *.%2)").arg(PROJECT_FILE_EXTENSION).arg(JSON_FILE_EXTENSION)
+                                            tr("Supported formats (*.%1 *.%2 *.%3)")
+                                                .arg(PROJECT_JSON_BINARY_FILE_EXTENSION)
+                                                .arg(PROJECT_JSON_FILE_EXTENSION)
+                                                .arg(SETUP_FILE_EXTENSION)
+                                            + ";;" +
+                                            tr("Binary Json (*.%1)").arg(PROJECT_JSON_BINARY_FILE_EXTENSION)
+                                            + ";;" +
+                                            tr("Json (*.%1)").arg(PROJECT_JSON_FILE_EXTENSION)
                                             + ";;" +
                                             tr("Project Files (*.%1)").arg(PROJECT_FILE_EXTENSION)
-                                            + ";;" +
-                                            tr("VstBoard Json (*.%1)").arg(JSON_FILE_EXTENSION)
                                             );
     }
 
     if(name.isEmpty())
-        return;
+        return false;
 
     EnableSolverUpdate(false);
     undoStack.clear();
 
-    if(name.endsWith(PROJECT_FILE_EXTENSION, Qt::CaseInsensitive)) {
-        if(ProjectFile::LoadFromFile(this,name)) {
-            currentProjectFile = name;
-        } else {
-            ClearProject();
-        }
-    } else if(name.endsWith(".vb.json", Qt::CaseInsensitive)) {
-        QFile file(name);
-//        if (file.open(QFile::ReadOnly | QFile::Text)) {
-        if (file.open(QFile::ReadOnly)) {
-            JsonReader reader(this);
-            if(reader.readProjectFile(&file)) {
-                currentProjectFile = name;
-            } else {
-                LOG("json error");
-                ClearProject();
-            }
-        } else {
-            QMessageBox::warning(mainWindow, tr("VstBoard"),
-                                 tr("Cannot read file %1:\n%2.")
-                                 .arg(QDir::toNativeSeparators(name),
-                                      file.errorString()));
+    bool no_error = true;
 
+    QFile file(name);
+    if (file.open(QFile::ReadOnly)) {
+        //old format
+        if(name.endsWith(PROJECT_FILE_EXTENSION, Qt::CaseInsensitive)) {
+            QDataStream in(&file);
+            no_error = ProjectFile::FromStream(this,in);
+        } else {
+        //new format
+            bool binary = true;
+            if(!name.endsWith(PROJECT_JSON_BINARY_FILE_EXTENSION, Qt::CaseInsensitive))
+                binary = false;
+
+            JsonReader reader(this);
+            no_error = reader.readProjectFile(&file,binary);
         }
+    } else {
+        no_error = false;
+        QMessageBox::warning(mainWindow, tr("VstBoard"),
+                             tr("Cannot read file %1:\n%2.")
+                             .arg(QDir::toNativeSeparators(name),
+                                  file.errorString()));
     }
 
-    objFactory->ResetAllSavedId();
-    EnableSolverUpdate(true);
+    if(no_error) {
+        currentProjectFile = name;
+        objFactory->ResetAllSavedId();
+    } else {
+        ClearProject();
+    }
 
     currentFileChanged();
+    EnableSolverUpdate(true);
+
+    return no_error;
 }
 
 void MainHost::ReloadProject()
@@ -1033,85 +1066,130 @@ void MainHost::ClearProject()
 
 bool MainHost::SaveSetupFile(bool saveAs)
 {
-    QString filename;
+    QString name;
 
     if(currentSetupFile.isEmpty() || saveAs) {
         QString lastDir = settings->GetSetting("lastSetupDir").toString();
-        filename = QFileDialog::getSaveFileName(mainWindow, tr("Save Setup"), lastDir, tr("Setup Files (*.%1)").arg(SETUP_FILE_EXTENSION));
-
-        if(filename.isEmpty())
-            return false;
-
-        if(!filename.endsWith(SETUP_FILE_EXTENSION, Qt::CaseInsensitive)) {
-            filename += ".";
-            filename += SETUP_FILE_EXTENSION;
-        }
-    } else {
-        filename = currentSetupFile;
-    }
-
-    if(ProjectFile::SaveToSetupFile(this,filename)) {
-        currentSetupFile = filename;
-        currentFileChanged();
-    }
-
-//    EnableSolverUpdate(false);
-//    writer.writeSetupFile(&file);
-//    EnableSolverUpdate(true);
-
-    return true;
-}
-
-bool MainHost::SaveProjectFile(bool saveAs)
-{
-    QString filename;
-
-    if(currentProjectFile.isEmpty() || saveAs) {
-        QString lastDir = settings->GetSetting("lastProjectDir").toString();
-        filename = QFileDialog::getSaveFileName(mainWindow, tr("Save Project"), lastDir,
-                                                tr("Project Files (*.%1)").arg(PROJECT_FILE_EXTENSION)
+        name = QFileDialog::getSaveFileName(mainWindow, tr("Save Setup"), lastDir,
+                                                tr("Binary Json (*.%1)").arg(SETUP_JSON_BINARY_FILE_EXTENSION)
                                                 + ";;" +
-                                                tr("json (*.vb.json)")
+                                                tr("Json (*.%1)").arg(SETUP_JSON_FILE_EXTENSION)
+                                                + ";;" +
+                                                tr("Setup Files (*.%1)").arg(SETUP_FILE_EXTENSION)
                                                 );
-
-        if(filename.isEmpty())
+        if(name.isEmpty())
             return false;
-
-        if(!filename.endsWith(PROJECT_FILE_EXTENSION, Qt::CaseInsensitive) &&
-            !filename.endsWith(".vb.json", Qt::CaseInsensitive) ) {
-            filename += ".";
-            filename += PROJECT_FILE_EXTENSION;
-        }
     } else {
-        filename = currentProjectFile;
+        name = currentSetupFile;
+    }
+
+    //add default extension id needed
+    if(!name.endsWith(SETUP_FILE_EXTENSION, Qt::CaseInsensitive) &&
+            !name.endsWith(SETUP_JSON_FILE_EXTENSION, Qt::CaseInsensitive)  &&
+            !name.endsWith(SETUP_JSON_BINARY_FILE_EXTENSION, Qt::CaseInsensitive)) {
+        name += ".";
+        name += SETUP_JSON_BINARY_FILE_EXTENSION;
     }
 
     EnableSolverUpdate(false);
 
-    if(filename.endsWith(".vb.json", Qt::CaseInsensitive)) {
-        QFile file(filename);
-//        if (file.open(QFile::WriteOnly | QFile::Text)) {
-        if (file.open(QFile::WriteOnly)) {
-            JsonWriter writer(this);
-            writer.writeProjectFile(&file);
-            currentProjectFile = filename;
+    bool no_error = true;
+
+    QFile file(name);
+    if (file.open(QFile::WriteOnly)) {
+
+        //old format
+        if(name.endsWith(SETUP_FILE_EXTENSION, Qt::CaseInsensitive)) {
+            QDataStream out(&file);
+            no_error = ProjectFile::ToStream(this,out,SETUP_FILE_KEY);
         } else {
-            QMessageBox::warning(mainWindow, tr("VstBoard"),
-                                 tr("Cannot write file %1:\n%2.")
-                                 .arg(QDir::toNativeSeparators(filename),
-                                      file.errorString()));
+        //new format
+            bool binary = true;
+            if(!name.endsWith(SETUP_JSON_BINARY_FILE_EXTENSION, Qt::CaseInsensitive))
+                binary = false;
+
+            JsonWriter writer(this);
+            no_error = writer.writeProjectFile(&file,false,true,binary);
         }
 
-    } else if(filename.endsWith(PROJECT_FILE_EXTENSION, Qt::CaseInsensitive)) {
-        if(ProjectFile::SaveToProjectFile(this,filename)) {
-            currentProjectFile = filename;
-        }
+    } else {
+        no_error = false;
+        QMessageBox::warning(mainWindow, tr("VstBoard"),
+                     tr("Cannot write file %1:\n%2.")
+                     .arg(QDir::toNativeSeparators(name),
+                          file.errorString()));
     }
 
+    if(no_error) {
+        currentSetupFile = name;
+    }
 
     currentFileChanged();
     EnableSolverUpdate(true);
-    return true;
+    return no_error;
+}
+
+bool MainHost::SaveProjectFile(bool saveAs)
+{
+    QString name;
+
+    if(currentProjectFile.isEmpty() || saveAs) {
+        QString lastDir = settings->GetSetting("lastProjectDir").toString();
+        name = QFileDialog::getSaveFileName(mainWindow, tr("Save Project"), lastDir,
+                                                tr("Binary Json (*.%1)").arg(PROJECT_JSON_BINARY_FILE_EXTENSION)
+                                                + ";;" +
+                                                tr("Json (*.%1)").arg(PROJECT_JSON_FILE_EXTENSION)
+                                                + ";;" +
+                                                tr("Project Files (*.%1)").arg(PROJECT_FILE_EXTENSION)
+                                                );
+        if(name.isEmpty())
+            return false;
+    } else {
+        name = currentProjectFile;
+    }
+
+    //add default extension id needed
+    if(!name.endsWith(PROJECT_FILE_EXTENSION, Qt::CaseInsensitive) &&
+        !name.endsWith(PROJECT_JSON_FILE_EXTENSION, Qt::CaseInsensitive) &&
+        !name.endsWith(PROJECT_JSON_BINARY_FILE_EXTENSION, Qt::CaseInsensitive) ) {
+        name += ".";
+        name += PROJECT_JSON_BINARY_FILE_EXTENSION;
+    }
+
+    EnableSolverUpdate(false);
+
+    bool no_error = true;
+
+    QFile file(name);
+    if (file.open(QFile::WriteOnly)) {
+        //old format
+        if(name.endsWith(PROJECT_FILE_EXTENSION, Qt::CaseInsensitive)) {
+            QDataStream out(&file);
+            no_error = ProjectFile::ToStream(this,out,PROJECT_FILE_KEY);
+        } else {
+        //new format
+            bool binary = true;
+            if(!name.endsWith(PROJECT_JSON_BINARY_FILE_EXTENSION, Qt::CaseInsensitive))
+                binary = false;
+
+            JsonWriter writer(this);
+            no_error = writer.writeProjectFile(&file,true,false,binary);
+        }
+    } else {
+        no_error = false;
+        QMessageBox::warning(mainWindow, tr("VstBoard"),
+                             tr("Cannot write file %1:\n%2.")
+                             .arg(QDir::toNativeSeparators(name),
+                                  file.errorString()));
+    }
+
+    if(no_error) {
+        currentProjectFile = name;
+    }
+
+    currentFileChanged();
+    EnableSolverUpdate(true);
+    return no_error;
 }
 
 void MainHost::currentFileChanged()

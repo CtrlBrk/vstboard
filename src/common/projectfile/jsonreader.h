@@ -7,7 +7,7 @@ class JsonReader
 {
 public:
     JsonReader(MainHost *host);
-    bool readProjectFile(QIODevice *device);
+    bool readProjectFile(QIODevice *device, bool binary);
 
 private:
     MainHost *myHost;

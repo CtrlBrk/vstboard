@@ -92,8 +92,8 @@ public:
     MsgObject() :
         objIndex(FixedObjId::ND) { }
 
-//    MsgObject(int id) :
-//        objIndex(id) { }
+    MsgObject(int id) :
+        objIndex(id) { }
 
     MsgObject(QString func, int line, int id) :
         objIndex(id) {

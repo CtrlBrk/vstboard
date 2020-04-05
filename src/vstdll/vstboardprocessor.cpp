@@ -102,10 +102,7 @@ tresult PLUGIN_API VstBoardProcessor::initialize (FUnknown* context)
     if(!currentSetupFile.isEmpty()) {
         if(!ProjectFile::LoadFromFile(this,currentSetupFile)) {
             currentSetupFile = "";
-            CleanSetup();
         }
-    } else {
-        CleanSetup();
     }
 
     //load default project file
@@ -113,10 +110,7 @@ tresult PLUGIN_API VstBoardProcessor::initialize (FUnknown* context)
     if(!currentProjectFile.isEmpty()) {
         if(!ProjectFile::LoadFromFile(this,currentProjectFile)) {
             currentProjectFile = "";
-            CleanProject();
         }
-    } else {
-        CleanProject();
     }
 
     for(int i=0; i<NB_MAIN_BUSES_IN; i++) {
