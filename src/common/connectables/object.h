@@ -61,7 +61,10 @@ namespace Connectables {
         inline int GetSavedIndex() {return savedIndex;}
 
         /// Reset the savedIndex to the current index, when the file is loaded or before saving
-        inline void ResetSavedIndex(int id=-2) {savedIndex=id;}
+        inline void ResetSavedIndex(int id=-2) {
+//            LOG(QString("reset save id %1 %2=>%3").arg(objectName()).arg(savedIndex).arg(id));
+            savedIndex=id;
+        }
 
         /// \return the current ObjectInfo
         const ObjectInfo & info() const {return objInfo;}

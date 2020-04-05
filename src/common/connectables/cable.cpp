@@ -51,15 +51,10 @@ Cable::Cable(MainHost *myHost, const ConnectionInfo &pinOut, const ConnectionInf
 
 
 Cable::Cable(MainHost *myHost,QJsonObject &json) :
-    MsgHandler(myHost, -1),
-    pinOut( ConnectionInfo(myHost, json["out"].toObject() ) ),
-    pinIn( ConnectionInfo(myHost, json["in"].toObject() ) ),
-    myHost(myHost),
-    buffer(0),
-    delay(json["delay"].toInt()),
-    tmpBuf(0)
+    Cable(myHost,
+          ConnectionInfo(myHost, json["out"].toObject() ),
+          ConnectionInfo(myHost, json["in"].toObject() ) )
 {
-
 }
 
 //Cable::Cable(MainHost *myHost,const ConnectionInfo &pinOut, const ConnectionInfo &pinIn, int delay) :

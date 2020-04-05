@@ -1197,6 +1197,42 @@ tresult PLUGIN_API Vst3Plugin::restartComponent (int32 /*flags*/)
 //    xml.writeEndElement();
 //}
 
+void Vst3Plugin::fromJson(QJsonObject &json)
+{
+    Object::fromJson(json);
+
+    savedState = json["processorState"].toString().toUtf8();;
+
+    if(processorComponent && savedState.size()!=0) {
+        MemoryStream state;
+        state.write(savedState.data(),savedState.size(),0);
+        state.seek(0,IBStream::kIBSeekSet,0);
+        processorComponent->setState(&state);
+    }
+}
+
+void Vst3Plugin::toJson(QJsonObject &json) const
+{
+    Object::toJson(json);
+
+    MemoryStream state;
+    if(processorComponent && processorComponent->getState(&state)==kResultOk) {
+        state.seek(0,IBStream::kIBSeekSet,0);
+        int32 len=-1;
+        char *buf=new char[1024];
+        QByteArray bArray;
+        while(len!=0) {
+            if(state.read(buf,1024,&len)!=kResultOk)
+                len=0;
+            bArray.append(buf,len);
+        }
+        json["processorState"] = QString(bArray);
+    } else {
+        LOG("error saving state");
+        json["processorState"] = QString(savedState);
+    }
+}
+
 QDataStream & Vst3Plugin::toStream(QDataStream & out) const
 {
     Object::toStream(out);

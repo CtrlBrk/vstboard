@@ -56,6 +56,10 @@ public:
     void EnableSolverUpdate(bool enable);
     void GetTempo(int &tempo, int &sign1, int &sign2);
 
+    void CleanSetup();
+    void CleanProject();
+    void Open();
+
 #ifdef VSTSDK
     void SetTimeInfo(const VstTimeInfo *info);
 #endif
@@ -163,7 +167,6 @@ signals:
 
 public slots:
     virtual void Init();
-    void Open();
     virtual void Kill();
     void SetTempo(int tempo=120, int sign1=0, int sign2=0);
     virtual void Render();

@@ -72,10 +72,9 @@ bool JsonWriter::writeProjectFile(QIODevice *device)
 //    jsonObj["viewCfg"] = viewCfg;
 
     QJsonDocument saveDoc(jsonObj);
-//    device->write(saveFormat == Json
-//        ? saveDoc.toJson()
-//        : saveDoc.toBinaryData());
 
-    device->write(saveDoc.toJson());
+//    device->write(saveDoc.toJson(QJsonDocument::Compact));
+//    device->write(saveDoc.toJson(QJsonDocument::Indented));
+    device->write( qCompress(saveDoc.toBinaryData()) );
     return true;
 }

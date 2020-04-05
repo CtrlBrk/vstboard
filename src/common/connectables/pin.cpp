@@ -146,6 +146,7 @@ void Pin::EnableVuUpdates(bool enab)
     if(!parent->getHost()->updateViewTimer)
         return;
 
+    //if enabled and visible
     if(visible && enab) {
         connect(parent->getHost()->updateViewTimer,SIGNAL(timeout()),
                 this,SLOT(updateView()),
@@ -153,6 +154,7 @@ void Pin::EnableVuUpdates(bool enab)
         return;
     }
 
+    //if not visible or disabled...
     disconnect(parent->getHost()->updateViewTimer,SIGNAL(timeout()),
             this,SLOT(updateView()));
 }

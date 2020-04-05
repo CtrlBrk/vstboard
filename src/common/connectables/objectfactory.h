@@ -45,17 +45,25 @@ namespace Connectables {
         }
 
         inline QSharedPointer<Object> GetObjectFromId(int id) {
-            if(id==0)
+            if(id==0) {
+#ifdef DEBUG_OBJECTS
+        LOG(QString("obj %1 not defined").arg(id));
+#endif
                 return QSharedPointer<Object>();
+            }
 
-            if(!listObjects.contains(id))
+            if(!listObjects.contains(id)) {
+#ifdef DEBUG_OBJECTS
+        LOG(QString("obj %1 not defined").arg(id));
+#endif
                 return QSharedPointer<Object>();
+            }
 
             return listObjects.value(id);
         }
 
         int IdFromSavedId(int savedId);
-        void ResetSavedId();
+        void ResetAllSavedId();
         Pin *GetPin(const ConnectionInfo &pinInfo);
         inline Pin *GetPin(const QModelIndex & index) {
             return GetPin( index.data(UserRoles::connectionInfo).value<ConnectionInfo>() );

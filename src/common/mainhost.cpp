@@ -185,19 +185,28 @@ void MainHost::Init()
             this,SLOT(UpdateRendererView()));
 }
 
-void MainHost::Open()
+void MainHost::CleanSetup()
 {
-
     EnableSolverUpdate(false);
-
     SetupMainContainer();
+    EnableSolverUpdate(true);
+}
+void MainHost::CleanProject()
+{
+    EnableSolverUpdate(false);
     SetupHostContainer();
     SetupProjectContainer();
     SetupProgramContainer();
     SetupGroupContainer();
-
     EnableSolverUpdate(true);
     programManager->BuildDefaultPrograms();
+}
+
+void MainHost::Open()
+{
+    EnableSolverUpdate(false);
+    SetupMainContainer();
+    EnableSolverUpdate(true);
 }
 
 void MainHost::SetupMainContainer()
@@ -889,7 +898,13 @@ void MainHost::LoadSetupFile(const QString &filename)
 
     if(name.isEmpty()) {
         QString lastDir = settings->GetSetting("lastSetupDir").toString();
-        name = QFileDialog::getOpenFileName(mainWindow, tr("Open a Setup file"), lastDir, tr("Setup Files (*.%1)").arg(SETUP_FILE_EXTENSION));
+        name = QFileDialog::getOpenFileName(mainWindow, tr("Open a Setup file"), lastDir,
+                                            tr("Supported formats (*.%1 *.%2)").arg(SETUP_FILE_EXTENSION).arg(JSON_FILE_EXTENSION)
+                                            + ";;" +
+                                            tr("Setup Files (*.%1)").arg(SETUP_FILE_EXTENSION)
+                                            + ";;" +
+                                            tr("VstBoard Json (*.%1)").arg(JSON_FILE_EXTENSION)
+                                            );
     }
 
     if(name.isEmpty())
@@ -916,9 +931,11 @@ void MainHost::LoadProjectFile(const QString &filename)
     if(name.isEmpty()) {
         QString lastDir = settings->GetSetting("lastProjectDir").toString();
         name = QFileDialog::getOpenFileName(mainWindow, tr("Open a Project file"), lastDir,
+                                            tr("Supported formats (*.%1 *.%2)").arg(PROJECT_FILE_EXTENSION).arg(JSON_FILE_EXTENSION)
+                                            + ";;" +
                                             tr("Project Files (*.%1)").arg(PROJECT_FILE_EXTENSION)
                                             + ";;" +
-                                            tr("json (*.vb.json)")
+                                            tr("VstBoard Json (*.%1)").arg(JSON_FILE_EXTENSION)
                                             );
     }
 
@@ -936,7 +953,8 @@ void MainHost::LoadProjectFile(const QString &filename)
         }
     } else if(name.endsWith(".vb.json", Qt::CaseInsensitive)) {
         QFile file(name);
-        if (file.open(QFile::ReadOnly | QFile::Text)) {
+//        if (file.open(QFile::ReadOnly | QFile::Text)) {
+        if (file.open(QFile::ReadOnly)) {
             JsonReader reader(this);
             if(reader.readProjectFile(&file)) {
                 currentProjectFile = name;
@@ -953,7 +971,7 @@ void MainHost::LoadProjectFile(const QString &filename)
         }
     }
 
-    objFactory->ResetSavedId();
+    objFactory->ResetAllSavedId();
     EnableSolverUpdate(true);
 
     currentFileChanged();
@@ -1072,7 +1090,8 @@ bool MainHost::SaveProjectFile(bool saveAs)
 
     if(filename.endsWith(".vb.json", Qt::CaseInsensitive)) {
         QFile file(filename);
-        if (file.open(QFile::WriteOnly | QFile::Text)) {
+//        if (file.open(QFile::WriteOnly | QFile::Text)) {
+        if (file.open(QFile::WriteOnly)) {
             JsonWriter writer(this);
             writer.writeProjectFile(&file);
             currentProjectFile = filename;

@@ -759,7 +759,6 @@ void Container::UserRemoveCableFromPin(const ConnectionInfo &pin)
     currentContainerProgram->CollectCableUpdatesIds();
 
     foreach(int id, removedCables) {
-
         MSGOBJ();
         msg.prop[MsgObject::Remove]=id;
         msgCtrl->SendMsg(msg);
@@ -1138,7 +1137,11 @@ void Container::ProgramFromStream (int progId, QDataStream &in)
         in >> tmpBa;
         ObjectInfo info;
         tmpStream >> info;
-        QSharedPointer<Object>obj = myHost->objFactory->GetObjectFromId( info.forcedObjId );
+
+        QSharedPointer<Object> obj;
+        if(info.forcedObjId!=0) {
+            obj = myHost->objFactory->GetObjectFromId( info.forcedObjId );
+        }
         if(!obj) {
             obj = myHost->objFactory->NewObject(info);
             AddParkedObject(obj);
@@ -1175,7 +1178,7 @@ void Container::ProgramFromStream (int progId, QDataStream &in)
         listContainerPrograms.insert(progId,prog);
 
     }
-    myHost->objFactory->ResetSavedId();
+    myHost->objFactory->ResetAllSavedId();
 }
 
 void Container::GetInfos(MsgObject &msg)

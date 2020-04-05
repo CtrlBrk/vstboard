@@ -59,8 +59,12 @@ void ComAddObject::undo ()
 
     //get the container
     QSharedPointer<Connectables::Container> container = ContainerPtr.toStrongRef();
-    if(!container)
+    if(!container) {
+#ifdef DEBUG_OBJECTS
+        LOG("container not found");
+#endif
         return;
+    }
 
     QDataStream stream(&objState, QIODevice::ReadWrite);
     obj->SaveProgram();
@@ -111,17 +115,28 @@ void ComAddObject::redo ()
 
     //get the container
     QSharedPointer<Connectables::Container> container = ContainerPtr.toStrongRef();
-    if(!container)
+    if(!container) {
+#ifdef DEBUG_OBJECTS
+        LOG("container not found");
+#endif
         return;
+    }
 
     //get the object
-    QSharedPointer<Connectables::Object> obj = myHost->objFactory->GetObjectFromId( objectInfo.forcedObjId );
+    QSharedPointer<Connectables::Object> obj;
+    if(objectInfo.forcedObjId!=0) {
+        obj = myHost->objFactory->GetObjectFromId( objectInfo.forcedObjId );
+    }
     if(!obj) {
         //object was deleted, create a new one
         obj = myHost->objFactory->NewObject( objectInfo, container->GetIndex() );
     }
-    if(!obj)
+    if(!obj) {
+#ifdef DEBUG_OBJECTS
+        LOG("obj not found");
+#endif
         return;
+    }
 
     setText(QObject::tr("Add %1").arg(obj->objectName()));
     objectInfo = obj->info();

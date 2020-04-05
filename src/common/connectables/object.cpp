@@ -81,7 +81,7 @@ Object::Object(MainHost *host, int index, const ObjectInfo &info) :
     if(myHost)
         doublePrecision=myHost->doublePrecision;
 #ifdef DEBUG_OBJECTS
-    LOG("crtObject:"<<objInfo.forcedObjId<<":"<<objInfo.name);
+//    LOG("crtObject:"<<objInfo.forcedObjId<<":"<<objInfo.name);
 #endif
 
 #ifdef SCRIPTENGINE
@@ -688,7 +688,12 @@ Pin* Object::CreatePin(const ConnectionInfo &info)
 void Object::fromJson(QJsonObject &json)
 {
     QJsonObject jsonInfo = json["objInfo"].toObject();
+
+    //keep the current id
+    int id = objInfo.forcedObjId;
     objInfo = ObjectInfo(jsonInfo);
+    objInfo.forcedObjId = id;
+
     savedIndex=json["id"].toInt();
     SetSleep( json["sleep"].toBool() );
     listenProgramChanges = json["listenProgramChanges"].toBool();
@@ -904,11 +909,13 @@ void Object::GetInfos(MsgObject &msg)
 void Object::ReceiveMsg(const MsgObject &msg)
 {
     if(msg.prop.contains(MsgObject::Remove)) {
+
+        foreach(PinsList *lst, pinLists) {
+            lst->EnableVuUpdates(false);
+        }
+
         QSharedPointer<Connectables::Object> objPtr = myHost->objFactory->GetObjectFromId( GetIndex() );
         if(!objPtr) {
-#ifdef DEBUG_OBJECTS
-            LOG("obj not found")
-#endif
             return;
         }
 
@@ -922,16 +929,10 @@ void Object::ReceiveMsg(const MsgObject &msg)
         int insertType = msg.prop[MsgObject::Type].toInt();
         QSharedPointer<Object> targetObj = myHost->objFactory->GetObjectFromId( GetIndex() );
         if(!targetObj) {
-#ifdef DEBUG_OBJECTS
-            LOG("obj not found")
-#endif
             return;
         }
         QSharedPointer<Container> targetContainer = myHost->objFactory->GetObjectFromId( containerId ).staticCast<Container>();;
         if(!targetContainer) {
-#ifdef DEBUG_OBJECTS
-            LOG("obj not found")
-#endif
             return;
         }
 

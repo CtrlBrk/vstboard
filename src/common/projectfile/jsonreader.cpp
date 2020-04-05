@@ -13,11 +13,8 @@ bool JsonReader::readProjectFile(QIODevice *device)
 {
     QByteArray saveData = device->readAll();
 
-//    QJsonDocument loadDoc(saveFormat == Json
-//            ? QJsonDocument::fromJson(saveData)
-//            : QJsonDocument::fromBinaryData(saveData));
-
-    QJsonDocument loadDoc( QJsonDocument::fromJson(saveData) );
+//    QJsonDocument loadDoc( QJsonDocument::fromJson(saveData) );
+    QJsonDocument loadDoc( QJsonDocument::fromBinaryData( qUncompress(saveData) ) );
     QJsonObject json = loadDoc.object();
 
     if (json.contains("containers") && json["containers"].isArray()) {

@@ -276,7 +276,7 @@ bool ProgramManager::userWantsToUnloadGroup()
 
     //no changes
     //plugins internal state may ahve changed
-    if(!myHost->groupContainer->IsDirty())
+    if(!myHost->groupContainer || !myHost->groupContainer->IsDirty())
         return true;
 
     //auto save
@@ -308,7 +308,7 @@ bool ProgramManager::userWantsToUnloadProgram()
 
     //no changes
     //plugins internal state may have changed
-    if(!myHost->programContainer->IsDirty())
+    if(!myHost->programContainer || !myHost->programContainer->IsDirty())
         return true;
 
     //auto save
@@ -379,7 +379,7 @@ bool ProgramManager::userWantsToUnloadSetup()
         return true;
 
     //no changes
-    if(!myHost->hostContainer->IsDirty())
+    if(!myHost->hostContainer || !myHost->hostContainer->IsDirty())
         return true;
 
     //auto save

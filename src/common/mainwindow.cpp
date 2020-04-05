@@ -170,7 +170,7 @@ void MainWindow::ReceiveMsg(const MsgObject &msg)
             msg.objIndex!=FixedObjId::groupParking &&
             msg.objIndex!=FixedObjId::programParking) {
         if(!listObj.contains(msg.prop[MsgObject::Remove].toInt())) {
-            LOG("obj not found"<<msg.objIndex<<msg.prop)
+            LOG("obj not found"<<msg.objIndex<<msg.prop<<" from:"<<msg.sender)
             return;
         }
         delete listObj[msg.prop[MsgObject::Remove].toInt()];
@@ -617,12 +617,18 @@ void MainWindow::LoadDefaultFiles()
 {
     //load default files
     QString file = ConfigDialog::defaultSetupFile(settings);
-    if(!file.isEmpty())
+    if(!file.isEmpty()) {
         myHost->LoadSetupFile( file );
+    } else {
+        myHost->CleanSetup();
+    }
 
     file = ConfigDialog::defaultProjectFile(settings);
-    if(!file.isEmpty())
+    if(!file.isEmpty()) {
         myHost->LoadProjectFile( file );
+    } else {
+        myHost->CleanProject();
+    }
 
     updateRecentFileActions();
 }
@@ -632,18 +638,18 @@ void MainWindow::currentFileChanged(const MsgObject &msg)
     QFileInfo setup( msg.prop[MsgObject::Setup].toString() );
 
     if(setup.fileName().isEmpty()) {
-        ui->actionSave_Setup_As->setEnabled( false );
+//        ui->actionSave_Setup_As->setEnabled( false );
     } else {
-        ui->actionSave_Setup_As->setEnabled( true );
+//        ui->actionSave_Setup_As->setEnabled( true );
         settings->SetSetting("lastSetupDir",setup.absolutePath());
         ConfigDialog::AddRecentSetupFile(setup.absoluteFilePath(),settings);
     }
 
     QFileInfo project( msg.prop[MsgObject::Project].toString() );
     if(project.fileName().isEmpty()) {
-        ui->actionSave_Project_As->setEnabled( false );
+//        ui->actionSave_Project_As->setEnabled( false );
     } else {
-        ui->actionSave_Project_As->setEnabled( true );
+//        ui->actionSave_Project_As->setEnabled( true );
         settings->SetSetting("lastProjectDir",project.absolutePath());
         ConfigDialog::AddRecentProjectFile(project.absoluteFilePath(),settings);
     }

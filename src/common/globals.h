@@ -28,6 +28,7 @@
 
 #define SETUP_FILE_EXTENSION "vstbsetup"
 #define PROJECT_FILE_EXTENSION "vstbproject"
+#define JSON_FILE_EXTENSION "vb.json"
 #define NB_RECENT_FILES 5
 #define VST_BANK_FILE_EXTENSION "fxb"
 #define VST_PROGRAM_FILE_EXTENSION "fxp"

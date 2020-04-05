@@ -54,7 +54,8 @@ ObjectInfo::ObjectInfo(NodeType::Enum nodeType, ObjType::Enum objType, QString n
 
 }
 
-ObjectInfo::ObjectInfo(QJsonObject &json)
+ObjectInfo::ObjectInfo(QJsonObject &json) :
+    ObjectInfo()
 {
     nodeType = static_cast<NodeType::Enum>(json["nodeType"].toInt());
     objType = static_cast<ObjType::Enum>(json["objType"].toInt());

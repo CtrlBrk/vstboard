@@ -58,7 +58,7 @@ ObjectFactory::~ObjectFactory()
     listObjects.clear();
 }
 
-void ObjectFactory::ResetSavedId()
+void ObjectFactory::ResetAllSavedId()
 {
     hashObjects::iterator i = listObjects.begin();
     while(i != listObjects.end()) {
@@ -212,7 +212,7 @@ QSharedPointer<Object> ObjectFactory::NewObject(const ObjectInfo &info, int cont
     }
 
 #ifdef DEBUG_OBJECTS
-    LOG("Loading Obj:"<<objId<<" : "<<info.name);
+//    LOG("Loading Obj:"<<objId<<" : "<<info.name);
 #endif
     QSharedPointer<Object> sharedObj(obj);
 

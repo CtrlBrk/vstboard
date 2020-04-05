@@ -100,15 +100,23 @@ tresult PLUGIN_API VstBoardProcessor::initialize (FUnknown* context)
     //load default setup file
     QString currentSetupFile = ConfigDialog::defaultSetupFile(settings);
     if(!currentSetupFile.isEmpty()) {
-        if(!ProjectFile::LoadFromFile(this,currentSetupFile))
+        if(!ProjectFile::LoadFromFile(this,currentSetupFile)) {
             currentSetupFile = "";
+            CleanSetup();
+        }
+    } else {
+        CleanSetup();
     }
 
     //load default project file
     QString currentProjectFile = ConfigDialog::defaultProjectFile(settings);
     if(!currentProjectFile.isEmpty()) {
-        if(!ProjectFile::LoadFromFile(this,currentProjectFile))
+        if(!ProjectFile::LoadFromFile(this,currentProjectFile)) {
             currentProjectFile = "";
+            CleanProject();
+        }
+    } else {
+        CleanProject();
     }
 
     for(int i=0; i<NB_MAIN_BUSES_IN; i++) {

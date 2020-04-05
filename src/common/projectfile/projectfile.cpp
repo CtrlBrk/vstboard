@@ -261,7 +261,7 @@ bool ProjectFile::FromStream(MainHost *myHost,QDataStream &in)
 
         if(tmpStream.status()==QDataStream::ReadPastEnd) {
             LOG("err"<<tmpStream.status());
-            myHost->objFactory->ResetSavedId();
+            myHost->objFactory->ResetAllSavedId();
 //            myHost->GetRenderer()->SetEnabled(true);
             myHost->EnableSolverUpdate(true);
             QMessageBox msg(QMessageBox::Warning, "", tr("The file is corrupted and cannot be loaded"), QMessageBox::Ok );
@@ -270,7 +270,7 @@ bool ProjectFile::FromStream(MainHost *myHost,QDataStream &in)
         }
     }
 
-    myHost->objFactory->ResetSavedId();
+//    myHost->objFactory->ResetAllSavedId();
 //    myHost->GetRenderer()->SetEnabled(true);
 //    myHost->EnableSolverUpdate(true);
 
