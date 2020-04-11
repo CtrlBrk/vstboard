@@ -38,7 +38,7 @@ public:
 
 protected:
     bool DeleteFile(const QModelIndex &index, int &deleteConfirmed,bool &skipErrors);
-    void changeEvent(QEvent *e);
+    void changeEvent(QEvent *e) override;
     QAction *actRename;
     QAction *actDel;
     QAction *actNewFolder;
