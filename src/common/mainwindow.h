@@ -146,6 +146,12 @@ private slots:
     void on_dockSolver_visibilityChanged(bool visible);
     void on_actionFullscreen_toggled(bool arg1);
     void on_actionPause_output_toggled(bool arg1);
+
+#ifdef DEBUG_MESSAGES
+    void updateLog();
+private:
+    QMap<QString, float> msgcounter;
+#endif
 };
 
 #endif // MAINWINDOW_H

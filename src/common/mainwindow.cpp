@@ -87,6 +87,11 @@ void MainWindow::UpdateDebugGraph(QVector<float> grph)  {
 
 void MainWindow::Init()
 {
+#ifdef DEBUG_MESSAGES
+    QTimer *timerMsg = new QTimer(this);
+   connect(timerMsg, SIGNAL(timeout()), this, SLOT(updateLog()));
+   timerMsg->start(1000);
+#endif
 
     QStyle *style = new QProxyStyle (QStyleFactory::create("fusion"));
     if(style!=nullptr) QApplication::setStyle(style);
@@ -138,8 +143,33 @@ void MainWindow::Init()
 
 }
 
+#ifdef DEBUG_MESSAGES
+void MainWindow::updateLog()
+{
+    QString l;
+    QString v;
+
+    QMap<QString, float>::const_iterator i = msgcounter.constBegin();
+    while(i!=msgcounter.constEnd()) {
+        l += QString("%1|").arg( i.key().left(10) ,-10 );
+        v += QString("%1|").arg( i.value(),-10 );
+        ++i;
+    }
+    LOG(l);
+    LOG(v);
+
+}
+#endif
+
 void MainWindow::ReceiveMsg(const MsgObject &msg)
 {
+#ifdef DEBUG_MESSAGES
+    QString nobj = msg.prop[MsgObject::Name].toString();
+    auto p = nobj.split(":");
+    nobj = p[0];
+    msgcounter[nobj] ++;
+#endif
+
     if(msg.objIndex==FixedObjId::mainWindow) {
         if(msg.prop.contains(MsgObject::Setup) && msg.prop.contains(MsgObject::Project)) {
             currentFileChanged(msg);

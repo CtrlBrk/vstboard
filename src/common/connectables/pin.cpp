@@ -241,18 +241,28 @@ void Pin::updateView()
     if(!MsgEnabled())
         return;
 
+//    if(!valueChanged)
+//        return;
+
     QMutexLocker l(&objMutex);
 
     MSGOBJ();
     if(!displayedText.isEmpty()) {
         msg.prop[MsgObject::Name]=displayedText;
 //        displayedText="";
+    } else {
+#ifdef DEBUG_MESSAGES
+        msg.prop[MsgObject::Name]=objectName();
+#endif
     }
 
     float newVu = GetValue();
     if(valueChanged) {
         valueChanged=false;
         msg.prop[MsgObject::Value]=newVu;
+    } else {
+        //shouldn't need to update view...
+        return;
     }
 
     if(msg.prop.count()>0) {
