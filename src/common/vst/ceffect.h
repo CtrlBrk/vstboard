@@ -25,15 +25,20 @@
 #pragma warning( push, 1 )
 #endif
 
-#include "../precomp.h"
+//#include "../precomp.h"
+#include "const.h"
 
-#ifdef _MSC_VER
-#pragma warning( push, 1 )
-#endif
-#include "audioeffectx.h"
-#ifdef _MSC_VER
-#pragma warning( pop )
-#endif
+
+//#ifdef _MSC_VER
+//#pragma warning( push, 1 )
+//#endif
+//#include "public.sdk/source/vst2.x/audioeffectx.h"
+//#ifdef _MSC_VER
+//#pragma warning( pop )
+//#endif
+
+
+
 
 class MainHost;
 namespace vst

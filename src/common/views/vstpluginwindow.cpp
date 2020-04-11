@@ -31,8 +31,8 @@ using namespace View;
 VstPluginWindow::VstPluginWindow(QWidget *parent) :
     QFrame(parent),
     IPlugFrame(),
-    ui(new Ui::VstPluginWindow),
     plugin(0),
+    ui(new Ui::VstPluginWindow),
     canResize(false)
 {
     setAttribute(Qt::WA_DeleteOnClose);
@@ -156,7 +156,7 @@ void VstPluginWindow::SetWindowSize(int newWidth, int newHeight)
     resize(newWidth,newHeight);
 }
 
-void VstPluginWindow::showEvent ( QShowEvent * event )
+void VstPluginWindow::showEvent ( QShowEvent * /*event*/ )
 {
     ui->scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

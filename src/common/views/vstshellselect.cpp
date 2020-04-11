@@ -25,8 +25,8 @@ using namespace View;
 VstShellSelect::VstShellSelect(MsgController *msgCtrl, int objId, QWidget *parent) :
     QDialog(parent),
     MsgHandler(msgCtrl,objId),
-    ui(new Ui::VstShellSelect),
-    senderObjId(0)
+    senderObjId(0),
+    ui(new Ui::VstShellSelect)
 {
     setWindowFlags(Qt::Tool);
     ui->setupUi(this);
@@ -45,7 +45,7 @@ void VstShellSelect::ReceiveMsg(const MsgObject &msg)
 
     foreach(const MsgObject &plug, msg.children) {
         QListWidgetItem *item = new QListWidgetItem( plug.prop[MsgObject::Name].toString());
-        item->setData(Qt::UserRole, plug.prop[MsgObject::Id].toUInt());
+        item->setData(Qt::UserRole, plug.prop[MsgObject::Id].toString());
         ui->listPlugins->addItem(item);
     }
 
@@ -56,7 +56,8 @@ void VstShellSelect::ReceiveMsg(const MsgObject &msg)
 
 void View::VstShellSelect::accept()
 {
-    info.id = ui->listPlugins->currentIndex().data(Qt::UserRole).toUInt();
+  //  info.id = ui->listPlugins->currentIndex().data(Qt::UserRole).toUInt();
+	info.apiName = ui->listPlugins->currentIndex().data(Qt::UserRole).toString();
     ui->listPlugins->clear();
     QDialog::accept();
 

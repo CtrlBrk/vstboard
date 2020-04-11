@@ -131,7 +131,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST3SDK;..\..\libs\VST3SDK\public.sdk\source\vst2.x;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets\5.14.1\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1\QtCore;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST_SDK\VST3_SDK;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets\5.14.1\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1\QtCore;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -193,7 +193,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST3SDK;..\..\libs\VST3SDK\public.sdk\source\vst2.x;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets\5.14.1\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1\QtCore;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST_SDK\VST3_SDK;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets\5.14.1\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1\QtCore;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -255,7 +255,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST3SDK;..\..\libs\VST3SDK\public.sdk\source\vst2.x;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets\5.14.1\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1\QtCore;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST_SDK\VST3_SDK;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets\5.14.1\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1\QtCore;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -276,6 +276,7 @@
       <WarningLevel>Level3</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <ShowIncludes>true</ShowIncludes>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)\common.lib</OutputFile>
@@ -316,7 +317,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST3SDK;..\..\libs\VST3SDK\public.sdk\source\vst2.x;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets\5.14.1\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1\QtCore;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST_SDK\VST3_SDK;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets\5.14.1\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1\QtCore;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -337,6 +338,7 @@
       <WarningLevel>Level3</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <ShowIncludes>true</ShowIncludes>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)\common.lib</OutputFile>
@@ -376,15 +378,22 @@
     </QtUic>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\common\memorystream.cpp" />
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\connectionproxy.cpp" />
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\hostclasses.cpp" />
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\module.cpp" />
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\module_win32.cpp" />
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\parameterchanges.cpp" />
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\pluginterfacesupport.cpp" />
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\plugprovider.cpp" />
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\processdata.cpp" />
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\stringconvert.cpp" />
     <ClCompile Include="connectables\objectcontainerattribs.cpp" />
     <ClCompile Include="projectfile\jsonreader.cpp" />
     <ClCompile Include="projectfile\jsonwriter.cpp" />
     <ClCompile Include="views\aboutdialog.cpp" />
     <ClCompile Include="audiobuffer.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst2.x\audioeffect.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst2.x\audioeffectx.cpp" />
     <ClCompile Include="connectables\audiopin.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\base\source\baseiids.cpp" />
     <ClCompile Include="connectables\bridge.cpp" />
     <ClCompile Include="connectables\bridgepinin.cpp" />
     <ClCompile Include="connectables\bridgepinout.cpp" />
@@ -394,6 +403,7 @@
     <ClCompile Include="views\buttonswidget.cpp" />
     <ClCompile Include="connectables\cable.cpp" />
     <ClCompile Include="sceneview\cableview.cpp" />
+    <ClCompile Include="views\filebrowsertree.cpp" />
     <ClCompile Include="vst\ceffect.cpp" />
     <ClCompile Include="circularbuffer.cpp" />
     <ClCompile Include="commands\comaddcable.cpp" />
@@ -412,25 +422,17 @@
     <ClCompile Include="sceneview\connectableobjectview.cpp" />
     <ClCompile Include="sceneview\connectablepinview.cpp" />
     <ClCompile Include="connectables\connectioninfo.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\pluginterfaces\base\conststringtable.cpp" />
     <ClCompile Include="connectables\container.cpp" />
     <ClCompile Include="sceneview\containercontent.cpp" />
     <ClCompile Include="connectables\containerprogram.cpp" />
     <ClCompile Include="connectables\cursor.cpp" />
     <ClCompile Include="sceneview\cursorview.cpp" />
     <ClCompile Include="vst\cvsthost.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\base\source\fatomic.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\base\source\fdebug.cpp" />
     <ClCompile Include="views\filebrowser.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\base\source\fobject.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\base\source\fstring.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\base\source\fthread.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\pluginterfaces\base\funknown.cpp" />
     <ClCompile Include="views\gradientwidget.cpp" />
     <ClCompile Include="views\gradientwidgethue.cpp" />
     <ClCompile Include="views\grouplistview.cpp" />
     <ClCompile Include="models\groupsprogramsmodel.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\hosting\hostclasses.cpp" />
     <ClCompile Include="connectables\hostcontroller.cpp" />
     <ClCompile Include="views\keybind.cpp" />
     <ClCompile Include="views\keybindingdialog.cpp" />
@@ -442,7 +444,6 @@
     <ClCompile Include="views\maingraphicsview.cpp" />
     <ClCompile Include="mainhost.cpp" />
     <ClCompile Include="mainwindow.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\common\memorystream.cpp" />
     <ClCompile Include="connectables\midipinin.cpp" />
     <ClCompile Include="connectables\midipinout.cpp" />
     <ClCompile Include="connectables\midisender.cpp" />
@@ -462,7 +463,6 @@
     <ClCompile Include="sceneview\objectview.cpp" />
     <ClCompile Include="renderer\optimizemap.cpp" />
     <ClCompile Include="renderer\optimizernode.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\hosting\parameterchanges.cpp" />
     <ClCompile Include="connectables\parameterpin.cpp" />
     <ClCompile Include="connectables\parameterpinin.cpp" />
     <ClCompile Include="connectables\parameterpinout.cpp" />
@@ -471,9 +471,6 @@
     <ClCompile Include="connectables\pin.cpp" />
     <ClCompile Include="connectables\pinslist.cpp" />
     <ClCompile Include="sceneview\pinview.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\main\pluginfactoryvst3.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\common\pluginview.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\hosting\processdata.cpp" />
     <ClCompile Include="views\proglistview.cpp" />
     <ClCompile Include="views\programlist.cpp" />
     <ClCompile Include="programmanager.cpp" />
@@ -489,21 +486,12 @@
     <ClCompile Include="renderer\solvernode.cpp" />
     <ClCompile Include="views\splash.cpp" />
     <ClCompile Include="renderer\updatedelays.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\base\source\updatehandler.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\pluginterfaces\base\ustring.cpp" />
     <ClCompile Include="views\viewconfig.cpp" />
     <ClCompile Include="views\viewconfigdialog.cpp" />
     <ClCompile Include="vst\vst3host.cpp" />
     <ClCompile Include="connectables\vst3plugin.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstaudioeffect.cpp" />
     <ClCompile Include="vst\vstbank.cpp" />
     <ClCompile Include="vst\vstbankbase.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstbus.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstcomponent.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstcomponentbase.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vsteditcontroller.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstinitiids.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstparameters.cpp" />
     <ClCompile Include="connectables\vstplugin.cpp" />
     <ClCompile Include="sceneview\vstpluginview.cpp" />
     <ClCompile Include="views\vstpluginwindow.cpp" />
@@ -535,6 +523,7 @@
     <ClInclude Include="connectables\objectcontainerattribs.h" />
     <ClInclude Include="projectfile\jsonreader.h" />
     <ClInclude Include="projectfile\jsonwriter.h" />
+    <QtMoc Include="views\filebrowsertree.h" />
     <ClInclude Include="vst\ceffect.h" />
     <ClInclude Include="circularbuffer.h" />
     <ClInclude Include="commands\comaddcable.h" />
@@ -818,25 +807,6 @@ echo #include "precomp.h"&gt;&gt;precomp.h.cpp</Command>
     <ClInclude Include="renderer\waitall.h" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="$(intdir)\moc_predefs.h.cbt">
-      <FileType>Document</FileType>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\features\data\dummy.cpp;%(AdditionalInputs)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\features\data\dummy.cpp;%(AdditionalInputs)</AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cl -Bx"$(QTDIR)\bin\qmake.exe" -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -O2 -MD -GL -W3 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 -wd4577 -wd4467 -E ..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\features\data\dummy.cpp 2&gt;NUL &gt;$(intdir)\moc_predefs.h</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">cl -Bx"$(QTDIR)\bin\qmake.exe" -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -O2 -MD -GL -W3 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 -wd4577 -wd4467 -E ..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\features\data\dummy.cpp 2&gt;NUL &gt;$(intdir)\moc_predefs.h</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generate moc_predefs.h</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generate moc_predefs.h</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(intdir)\moc_predefs.h;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(intdir)\moc_predefs.h;%(Outputs)</Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\features\data\dummy.cpp;%(AdditionalInputs)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\features\data\dummy.cpp;%(AdditionalInputs)</AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cl -Bx"$(QTDIR)\bin\qmake.exe" -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -Zi -MDd -W3 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 -wd4577 -wd4467 -E ..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\features\data\dummy.cpp 2&gt;NUL &gt;$(intdir)\moc_predefs.h</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">cl -Bx"$(QTDIR)\bin\qmake.exe" -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -Zi -MDd -W3 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 -wd4577 -wd4467 -E ..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\features\data\dummy.cpp 2&gt;NUL &gt;$(intdir)\moc_predefs.h</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generate moc_predefs.h</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generate moc_predefs.h</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(intdir)\moc_predefs.h;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(intdir)\moc_predefs.h;%(Outputs)</Outputs>
-    </CustomBuild>
     <ClCompile Include="precomp.h.cpp">
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NOINHERIT)</ForcedIncludeFiles>
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NOINHERIT)</ForcedIncludeFiles>

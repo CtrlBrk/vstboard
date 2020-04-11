@@ -21,15 +21,15 @@
 #include "myvst2wrapper.h"
 #include "vstboardprocessor.h"
 
-MyVst2Wrapper::MyVst2Wrapper(Vst::IAudioProcessor *processor, Vst::IEditController *controller, audioMasterCallback audioMaster, const TUID vst3ComponentID, VstInt32 vst2ID, IPluginFactory *factory) :
-    Vst2Wrapper(processor,controller,audioMaster,vst3ComponentID,vst2ID,factory)
+MyVst2Wrapper::MyVst2Wrapper(BaseWrapper::SVST3Config& config, audioMasterCallback audioMaster, VstInt32 vst2ID) :
+    Vst2Wrapper(config,audioMaster,vst2ID)
 {
 
 }
 
 VstInt32 MyVst2Wrapper::processEvents(VstEvents* events)
 {
-    VstBoardProcessor* proc = static_cast<VstBoardProcessor*>(mProcessor);
+    VstBoardProcessor* proc = 0; //static_cast<VstBoardProcessor*>(mProcessor);
     if(!proc)
         return 0;
 
@@ -41,61 +41,67 @@ AudioEffect* MyVst2Wrapper::crt (IPluginFactory* factory, const TUID vst3Compone
     if (!factory)
         return 0;
 
-    Vst::IAudioProcessor* processor = 0;
-    FReleaser factoryReleaser (factory);
+    SVST3Config conf;
+    conf.factory = factory;
+    conf.processor = nullptr;
+    conf.controller = nullptr;
+//    conf.vst3ComponentID = vst3ComponentID;
 
-    factory->createInstance (vst3ComponentID, Vst::IAudioProcessor::iid, (void**)&processor);
-    if (processor)
-    {
-        Vst::IEditController* controller = 0;
-        if (processor->queryInterface (Vst::IEditController::iid, (void**)&controller) != kResultTrue)
-        {
-            FUnknownPtr<Vst::IComponent> component (processor);
-            if (component)
-            {
-                FUID editorCID;
-                if (component->getControllerClassId (editorCID) == kResultTrue)
-                {
-                    factory->createInstance (editorCID, Vst::IEditController::iid, (void**)&controller);
-                }
-            }
-        }
+//    Vst::IAudioProcessor* processor = 0;
+//    FReleaser factoryReleaser (factory);
 
-        MyVst2Wrapper* wrapper = new MyVst2Wrapper (processor, controller, audioMaster, vst3ComponentID, vst2ID, factory);
-        if (wrapper->init () == false)
-        {
-            delete wrapper;
-            return 0;
-        }
+//    factory->createInstance (vst3ComponentID, Vst::IAudioProcessor::iid, (void**)&processor);
+//    if (processor)
+//    {
+//        Vst::IEditController* controller = 0;
+//        if (processor->queryInterface (Vst::IEditController::iid, (void**)&controller) != kResultTrue)
+//        {
+//            FUnknownPtr<Vst::IComponent> component (processor);
+//            if (component)
+//            {
+//                FUID editorCID;
+//                if (component->getControllerClassId (editorCID) == kResultTrue)
+//                {
+//                    factory->createInstance (editorCID, Vst::IEditController::iid, (void**)&controller);
+//                }
+//            }
+//        }
 
-        FUnknownPtr<IPluginFactory2> factory2 (factory);
-        if (factory2)
-        {
-            PFactoryInfo factoryInfo;
-            if (factory2->getFactoryInfo (&factoryInfo) == kResultTrue)
-                wrapper->setVendorName (factoryInfo.vendor);
+//        MyVst2Wrapper* wrapper = new MyVst2Wrapper (conf, audioMaster, vst2ID);
+//        if (wrapper->init () == false)
+//        {
+//            delete wrapper;
+//            return 0;
+//        }
 
-            for (int32 i = 0; i < factory2->countClasses (); i++)
-            {
-                Steinberg::PClassInfo2 classInfo2;
-                if (factory2->getClassInfo2 (i, &classInfo2) == Steinberg::kResultTrue)
-                {
-                    if (memcmp (classInfo2.cid, vst3ComponentID, sizeof (TUID)) == 0)
-                    {
-                        wrapper->setSubCategories (classInfo2.subCategories);
-                        wrapper->setEffectName (classInfo2.name);
+//        FUnknownPtr<IPluginFactory2> factory2 (factory);
+//        if (factory2)
+//        {
+//            PFactoryInfo factoryInfo;
+//            if (factory2->getFactoryInfo (&factoryInfo) == kResultTrue)
+//                wrapper->setVendorName (factoryInfo.vendor);
 
-                        if (classInfo2.vendor[0] != 0)
-                            wrapper->setVendorName (classInfo2.vendor);
+//            for (int32 i = 0; i < factory2->countClasses (); i++)
+//            {
+//                Steinberg::PClassInfo2 classInfo2;
+//                if (factory2->getClassInfo2 (i, &classInfo2) == Steinberg::kResultTrue)
+//                {
+//                    if (memcmp (classInfo2.cid, vst3ComponentID, sizeof (TUID)) == 0)
+//                    {
+//                        wrapper->setSubCategories (classInfo2.subCategories);
+//                        wrapper->setEffectName (classInfo2.name);
 
-                        break;
-                    }
-                }
-            }
-        }
+//                        if (classInfo2.vendor[0] != 0)
+//                            wrapper->setVendorName (classInfo2.vendor);
 
-        return wrapper;
-    }
+//                        break;
+//                    }
+//                }
+//            }
+//        }
+
+//        return wrapper;
+//    }
 
     return 0;
 }
@@ -125,8 +131,8 @@ inline void MyVst2Wrapper::doProcess (VstInt32 sampleFrames)
     {
         mProcessData.numSamples = sampleFrames;
 
-        if (processing == false)
-            startProcess ();
+//        if (processing == false)
+//            startProcess ();
 
         mProcessData.inputEvents = mInputEvents;
         mProcessData.outputEvents = mOutputEvents;
@@ -155,7 +161,7 @@ inline void MyVst2Wrapper::doProcess (VstInt32 sampleFrames)
 
 inline void MyVst2Wrapper::processOutputEvents ()
 {
-    VstBoardProcessor* proc = static_cast<VstBoardProcessor*>(mProcessor);
+    VstBoardProcessor* proc = 0;//static_cast<VstBoardProcessor*>(mProcessor);
     if(!proc)
         return;
 

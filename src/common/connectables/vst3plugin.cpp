@@ -28,6 +28,8 @@
 //#include "public.sdk/source/common/pluginview.h"
 #include "commands/comaddpin.h"
 #include "commands/comremovepin.h"
+//#include "pluginterfaces/vst/ivstparameterchanges.h"
+
 
 namespace Steinberg {
     FUnknown* gStandardPluginContext = 0;
@@ -44,12 +46,16 @@ extern "C"
 
 Vst3Plugin::Vst3Plugin(MainHost *host, int index, const ObjectInfo &info) :
     Object(host,index,info),
+    Vst::IComponentHandler(),
+    Vst::IComponentHandler2(),
+    Vst::IComponentHandler3(),
+    Vst::IContextMenuTarget(),
     editorWnd(0),
     pluginLib(0),
     factory(0),
-    processorComponent(0),
+    plugInstance(0),
     editController(0),
-    audioEffect(0),
+    audioProcessor(0),
     iConnectionPointComponent(0),
     iConnectionPointController(0),
     hasEditor(false),
@@ -74,6 +80,9 @@ Vst3Plugin::~Vst3Plugin()
 
 bool Vst3Plugin::Open()
 {
+
+    //===============
+    //replaced by Hosting::Module ?
     pluginLib = new QLibrary(objInfo.filename, this);
     if(!pluginLib->load()) {
         Unload();
@@ -96,19 +105,39 @@ bool Vst3Plugin::Open()
         return false;
     }
     factory = entryProc();
+    //================================
 
-    if(objInfo.id!=FixedObjId::noContainer) {
+    std::string error;
+    module = VST3::Hosting::Module::create (objInfo.filename.toStdString(), error);
+    if (!module)
+    {
+        Unload();
+        return false;
+    }
+
+    //can't get a "cid" from that other kind of factory, keep the original one for now
+    auto AnotherTypeOfFactoryIDontKnowWhy = module->getFactory ();
+
+    if(objInfo.apiName!="") {
         return initPlugin();
     }
 
     int countPlugins = 0;
-    for (qint32 i = 0; i < factory->countClasses(); i++) {
-        PClassInfo classInfo;
-        factory->getClassInfo(i, &classInfo);
+    for (auto& classInfo : AnotherTypeOfFactoryIDontKnowWhy.classInfos ())
+    {
+//    for (qint32 i = 0; i < factory.countClasses(); i++) {
+//        PClassInfo classInfo;
+//        factory.getClassInfo(i, &classInfo);
 
-        if (strcmp(kVstAudioEffectClass, classInfo.category)==0) {
-            objInfo.id=i;
+//        if (strcmp(kVstAudioEffectClass, classInfo.category)==0) {
+        if (classInfo.category () == kVstAudioEffectClass) {
+//            objInfo.id=i;
+			objInfo.apiName = QString::fromStdString(classInfo.ID().toString());
+           // VST3::UID id = classInfo.ID();
+            //vstinfo = classInfo;
             ++countPlugins;
+
+            plugProvider = owned (new Vst::PlugProvider (AnotherTypeOfFactoryIDontKnowWhy, classInfo, true));
         }
     }
     if(countPlugins==0) {
@@ -118,38 +147,53 @@ bool Vst3Plugin::Open()
 
     if(countPlugins>1) {
         //shell
-        objInfo.id=FixedObjId::noContainer;
-//        MsgObject msg(FixedObjId::shellselect);
+        //objInfo.id=FixedObjId::noContainer;
+		objInfo.apiName = "";
         _MSGOBJ(msg,FixedObjId::shellselect);
         msg.prop[MsgObject::Id] = GetIndex();
         msg.prop[MsgObject::ObjInfo] = QVariant::fromValue(objInfo);
 
-        for (qint32 i = 0; i < factory->countClasses(); i++) {
-            PClassInfo classInfo;
-            if(factory->getClassInfo(i, &classInfo)==kResultOk) {
-                if (strcmp(kVstAudioEffectClass, classInfo.category)==0) {
-//                    MsgObject plug;
-                    _MSGOBJ(plug,FixedObjId::ND);
-                    plug.prop[MsgObject::Name] = classInfo.name;
-                    plug.prop[MsgObject::Id] = i;
-                    msg.children << plug;
-                }
+        for (auto& classInfo : AnotherTypeOfFactoryIDontKnowWhy.classInfos ())
+        {
+            if (classInfo.category () == kVstAudioEffectClass) {
+                _MSGOBJ(plug,FixedObjId::ND);
+                plug.prop[MsgObject::Name] = QString::fromStdString( classInfo.name() );
+                plug.prop[MsgObject::Id] = QString::fromStdString( classInfo.ID().toString() );
+                msg.children << plug;
             }
+
         }
+//        for (qint32 i = 0; i < factory->countClasses(); i++) {
+//            PClassInfo classInfo;
+//            if(factory->getClassInfo(i, &classInfo)==kResultOk) {
+//                if (strcmp(kVstAudioEffectClass, classInfo.category)==0) {
+//                    _MSGOBJ(plug,FixedObjId::ND);
+//                    plug.prop[MsgObject::Name] = classInfo.name;
+//                    plug.prop[MsgObject::Id] = i;
+//                    msg.children << plug;
+//                }
+//            }
+//        }
         msgCtrl->SendMsg(msg);
         return true;
     }
+
+    
+
     return initPlugin();
 }
 
 void Vst3Plugin::ReceiveMsg(const MsgObject &msg)
 {
     //reload a shell plugin with the selected id
-    if(msg.prop.contains(MsgObject::ObjInfo) && objInfo.id==FixedObjId::noContainer) {
+    if(msg.prop.contains(MsgObject::ObjInfo) && objInfo.apiName=="") {
         objInfo = msg.prop[MsgObject::ObjInfo].value<ObjectInfo>();
-        if(objInfo.id == FixedObjId::noContainer) {
+        if(objInfo.apiName == "") {
             myHost->undoStack.undo();
         } else {
+			VST3::UID id;
+			id.fromString(objInfo.apiName.toStdString());
+			
             SetMsgEnabled(false);
             int lastProg = currentProgId;
             Object::LoadProgram(TEMP_PROGRAM);
@@ -169,48 +213,117 @@ void Vst3Plugin::ReceiveMsg(const MsgObject &msg)
 
 bool Vst3Plugin::initPlugin()
 {
-    //    PFactoryInfo factoryInfo ;
-    //    factory->getFactoryInfo (&factoryInfo);
-    //    LOG("Factory Info:\n\tvendor = " << factoryInfo.vendor << "\n\turl = " << factoryInfo.url << "\n\temail = " << factoryInfo.email)
+//    PClassInfo classInfo;
+//    if(factory.getClassInfo(objInfo.id, &classInfo)!=kResultOk) {
+//        SetErrorMessage( tr("can't get classInfo") );
+//        return true;
+//    }
+//    setObjectName(classInfo.name);
+//    objInfo.name=objectName();
 
-    //        char8 cidString[50];
-    //        FUID(classInfo.cid).toRegistryString (cidString);
-    //        QString cidStr(cidString);
-    //        LOG("  Class Info " << i << ":\n\tname = " << classInfo.name << "\n\tcategory = " << classInfo.category << "\n\tcid = " << cidStr);
+//    auto factory = module->getFactory ();
+//    plugProvider = owned (new Vst::PlugProvider (factory, vstinfo, true));
+//    if (!plugProvider)
+//    {
+//        SetErrorMessage( tr("no plugProvider") );
+//        return true;
+//    }
+
+	VST3::Optional<VST3::UID> effectID;
+	if (objInfo.apiName != "")
+	{
+		
+		std::string str;
+		str = objInfo.apiName.toStdString();
+		effectID = VST3::UID::fromString(str);
+		
+	}
+
+	auto lfactory = module->getFactory();
+	for (auto& classInfo : lfactory.classInfos())
+	{
+		if (classInfo.category() == kVstAudioEffectClass)
+		{
+			if (effectID)
+			{
+				if (*effectID != classInfo.ID())
+					continue;
+			}
+			plugProvider = owned(new Vst::PlugProvider(lfactory, classInfo, true));
+			break;
+		}
+	}
+
+	if (!plugProvider)
+	{
+		if (effectID) {
+			SetErrorMessage( tr("no module with id %1").arg(QString::fromStdString(effectID->toString())) );
+		}
+		else {
+			SetErrorMessage(tr("no audio module"));
+		}
+		return true;
+	}
+
+	plugInstance = plugProvider->getComponent();
+	if (!plugInstance) {
+		SetErrorMessage( tr("plugin not created") );
+		return true;
+	}
+    //create inst
+    //id, uid, cid, fid, iid... which is what ?
+   // tresult result = factory->createInstance ( objInfo.apiName.toUtf8(), Vst::IComponent::iid, (void**)&plugInstance);
+   // if (!plugInstance || (result != kResultOk)) {
+   //     SetErrorMessage( tr("plugin not created") );
+   //     return true;
+   // }
+   // if(plugInstance->initialize(myHost->vst3Host) != kResultOk) {
+   //     SetErrorMessage( tr("plugin not initialized") );
+   //     return true;
+   // }
 
 
-
-    if(!initProcessor())
-        return true;
     if(!initController())
         return true;
+    if(!initProcessor())
+        return true;
 
+	//connect processor with controller
+	plugInstance->queryInterface(Vst::IConnectionPoint::iid, (void**)&iConnectionPointComponent);
+	editController->queryInterface(Vst::IConnectionPoint::iid, (void**)&iConnectionPointController);
+	if (iConnectionPointComponent && iConnectionPointController) {
+		iConnectionPointComponent->connect(iConnectionPointController);
+		iConnectionPointController->connect(iConnectionPointComponent);
+	}
+
+	//synchronize controller
+	MemoryStream stream;
+	if (plugInstance->getState(&stream)) {
+		stream.seek(0, IBStream::kIBSeekSet, 0);
+		editController->setComponentState(&stream);
+	}
+
+	if (hasEditor) {
+		listParameterPinIn->AddPin(FixedPinNumber::editorVisible);
+		listParameterPinIn->AddPin(FixedPinNumber::learningMode);
+	}
+
+	//    listParameterPinIn->AddPin(FixedPinNumber::vstProgNumber);
+
+	//    if(bypassParameter==FixedPinNumber::bypass) {
+	listParameterPinIn->AddPin(FixedPinNumber::bypass);
+	//    }
+
+
+    closed=false;
     return true;
 }
 
 bool Vst3Plugin::initProcessor()
 {
-    PClassInfo classInfo;
-    if(factory->getClassInfo(objInfo.id, &classInfo)!=kResultOk) {
-        SetErrorMessage( tr("can't get classInfo") );
-        return true;
-    }
-    setObjectName(classInfo.name);
-    objInfo.name=objectName();
-
-    //create processor
-    tresult result = factory->createInstance (classInfo.cid, Vst::IComponent::iid, (void**)&processorComponent);
-    if (!processorComponent || (result != kResultOk)) {
-        SetErrorMessage( tr("Processor not created") );
-        return true;
-    }
-    if(processorComponent->initialize(myHost->vst3Host) != kResultOk) {
-        SetErrorMessage( tr("plugin not initialized") );
-        return true;
-    }
 
     //init audio effect
-    tresult idAudioEff = processorComponent->queryInterface (Vst::IAudioProcessor::iid, (void**)&audioEffect);
+    tresult idAudioEff = plugInstance->queryInterface (Vst::IAudioProcessor::iid, (void**)&audioProcessor);
     if (idAudioEff == kResultTrue) {
         Vst::ProcessSetup processSetup;
         memset (&processSetup, 0, sizeof (Vst::ProcessSetup));
@@ -222,16 +335,16 @@ bool Vst3Plugin::initProcessor()
 
         processSetup.maxSamplesPerBlock = myHost->GetBufferSize();
         processSetup.sampleRate = myHost->GetSampleRate();
-
-        if(audioEffect->setupProcessing(processSetup)!= kResultOk) {
+        processSetup.processMode = Vst::kRealtime;
+        if(audioProcessor->setupProcessing(processSetup)!= kResultOk) {
             SetErrorMessage( tr("processSetup not accepted") );
             return true;
         }
     }
 
-    closed=false;
+//    closed=false;
 
-	processData.prepare(*processorComponent);
+    processData.prepare(*plugInstance,0,0);
 	if (doublePrecision)
 		processData.symbolicSampleSize = Vst::kSample64;
 	else
@@ -246,10 +359,10 @@ bool Vst3Plugin::initProcessor()
 
     //midi in
     qint32 cpt=0;
-    qint32 numBusEIn = processorComponent->getBusCount(Vst::kEvent, Vst::kInput);
+    qint32 numBusEIn = plugInstance->getBusCount(Vst::kEvent, Vst::kInput);
     for (qint32 i = 0; i < numBusEIn; i++) {
         Vst::BusInfo busInfo = {0};
-        if(processorComponent->getBusInfo(Vst::kEvent, Vst::kInput, i, busInfo) == kResultTrue) {
+        if(plugInstance->getBusInfo(Vst::kEvent, Vst::kInput, i, busInfo) == kResultTrue) {
             for(qint32 j=0; j<busInfo.channelCount; j++) {
                 Pin *p = listMidiPinIn->AddPin(cpt++);
                 p->setObjectName( QString::fromUtf16((char16_t*)busInfo.name) );
@@ -259,10 +372,10 @@ bool Vst3Plugin::initProcessor()
 
     //midi out
     cpt=0;
-    qint32 numBusEOut = processorComponent->getBusCount(Vst::kEvent, Vst::kOutput);
+    qint32 numBusEOut = plugInstance->getBusCount(Vst::kEvent, Vst::kOutput);
     for (qint32 i = 0; i < numBusEOut; i++) {
         Vst::BusInfo busInfo = {0};
-        if(processorComponent->getBusInfo(Vst::kEvent, Vst::kOutput, i, busInfo) == kResultTrue) {
+        if(plugInstance->getBusInfo(Vst::kEvent, Vst::kOutput, i, busInfo) == kResultTrue) {
             for(qint32 j=0; j<busInfo.channelCount; j++) {
                 Pin *p = listMidiPinOut->AddPin(cpt++);
                 p->setObjectName( QString::fromUtf16((char16_t*)busInfo.name) );
@@ -283,10 +396,10 @@ bool Vst3Plugin::initAudioBuffers(Vst::BusDirection dir)
 	}
 
     qint32 cpt=0;
-    qint32 numBusIn = processorComponent->getBusCount(Vst::kAudio, dir);
+    qint32 numBusIn = plugInstance->getBusCount(Vst::kAudio, dir);
     for (qint32 i = 0; i < numBusIn; i++) {
         Vst::BusInfo busInfo = {0};
-        if(processorComponent->getBusInfo(Vst::kAudio, dir, i, busInfo) == kResultTrue) {
+        if(plugInstance->getBusInfo(Vst::kAudio, dir, i, busInfo) == kResultTrue) {
             for(qint32 j=0; j<busInfo.channelCount; j++) {
                 Pin *p = 0;
                 if(dir==Vst::kInput) {
@@ -310,21 +423,36 @@ bool Vst3Plugin::initAudioBuffers(Vst::BusDirection dir)
 
 bool Vst3Plugin::initController()
 {
-    //create controller
-    if (processorComponent->queryInterface (Vst::IEditController::iid, (void**)&editController) != kResultTrue) {
-        FUID controllerCID;
-        bool initOk=false;
-        if (processorComponent->getControllerClassId (controllerCID) == kResultTrue && controllerCID.isValid ()) {
-            tresult result = factory->createInstance (controllerCID, Vst::IEditController::iid, (void**)&editController);
-            if (editController && (result == kResultOk)) {
-                initOk = (editController->initialize (myHost->vst3Host) == kResultOk);
-            }
-        }
 
-        if(!initOk) {
-            SetErrorMessage( tr("can't init controller") );
-            return false;
-        }
+    ////create controller
+    //if (plugProvider->queryInterface (Vst::IEditController::iid, (void**)&editController) != kResultTrue) {
+    //    TUID controllerCID = { 0 };
+    //    bool initOk=false;
+    //    if (plugProvider->getControllerClassId (controllerCID) == kResultTrue && FUID(controllerCID).isValid ()) {
+    //        tresult result = factory->createInstance (controllerCID, Vst::IEditController::iid, (void**)&editController);
+    //        if (editController && (result == kResultOk)) {
+    //            initOk = (editController->initialize (myHost->vst3Host) == kResultOk);
+    //        }
+    //    }
+
+    //    if(!initOk) {
+    //        SetErrorMessage( tr("can't init controller") );
+    //        return false;
+    //    }
+    //}
+
+	editController = plugProvider->getController();
+	if (!editController)
+	{
+		SetErrorMessage("No EditController found");
+		return true;
+	}
+	editController->release(); // plugProvider does an addRef // why?
+	
+    // set the host handler
+    if(editController->setComponentHandler(this) != kResultOk) {
+        SetErrorMessage( tr("can't set comp. handler") );
+        return true;
     }
 
     //init editor window
@@ -359,38 +487,9 @@ bool Vst3Plugin::initController()
         }
     }
 
-    // set the host handler
-    if(editController->setComponentHandler(this) != kResultOk) {
-        SetErrorMessage( tr("can't set comp. handler") );
-        return true;
-    }
 
-    //connect processor with controller
-    processorComponent->queryInterface (Vst::IConnectionPoint::iid, (void**)&iConnectionPointComponent);
-    editController->queryInterface (Vst::IConnectionPoint::iid, (void**)&iConnectionPointController);
-    if (iConnectionPointComponent && iConnectionPointController) {
-        iConnectionPointComponent->connect (iConnectionPointController);
-        iConnectionPointController->connect (iConnectionPointComponent);
-    }
 
-    //synchronize controller
-    MemoryStream stream;
-    if (processorComponent->getState (&stream)) {
-        stream.seek(0,IBStream::kIBSeekSet,0);
-        editController->setComponentState (&stream);
-    }
-
-    if(hasEditor) {
-        listParameterPinIn->AddPin(FixedPinNumber::editorVisible);
-        listParameterPinIn->AddPin(FixedPinNumber::learningMode);
-    }
-
-//    listParameterPinIn->AddPin(FixedPinNumber::vstProgNumber);
-
-//    if(bypassParameter==FixedPinNumber::bypass) {
-        listParameterPinIn->AddPin(FixedPinNumber::bypass);
-//    }
-
+   
     return true;
 }
 
@@ -400,7 +499,7 @@ void Vst3Plugin::SaveProgram()
         return;
 
     MemoryStream state;
-    if(processorComponent->getState(&state)!=kResultOk) {
+    if(plugInstance->getState(&state)!=kResultOk) {
         LOG("error saving state")
         return;
     }
@@ -434,9 +533,9 @@ void Vst3Plugin::LoadProgram(int prog)
         return;
     }
 
-    if(processorComponent) {
+    if(plugInstance) {
         state.seek(0,IBStream::kIBSeekSet,0);
-        processorComponent->setState(&state);
+        plugInstance->setState(&state);
     }
     if(editController) {
         state.seek(0,IBStream::kIBSeekSet,0);
@@ -455,7 +554,7 @@ bool Vst3Plugin::CreateEditorWindow()
     if(editorWnd)
         return true;
 
-    pView = editController->createView("editor");
+    pView = editController->createView(Vst::ViewType::kEditor);
     if(!pView) {
         LOG("view not created")
         return false;
@@ -655,16 +754,16 @@ void Vst3Plugin::SetSleep(bool sleeping)
     Lock();
 
     if(sleeping) {
-        audioEffect->setProcessing(false);
-        processorComponent->setActive(false);
+        audioProcessor->setProcessing(false);
+        plugInstance->setActive(false);
 
     } else {
         foreach(Pin *in, listAudioPinIn->listPins ) {
             AudioPin *audioIn = static_cast<AudioPin*>(in);
             audioIn->GetBuffer()->ResetStackCounter();
         }
-        processorComponent->setActive(true);
-        audioEffect->setProcessing(true);
+        plugInstance->setActive(true);
+        audioProcessor->setProcessing(true);
     }
 
     Unlock();
@@ -716,15 +815,15 @@ void Vst3Plugin::Unload()
 //        iConnectionPointController->release();
 //    }
 
-    if(audioEffect) {
-        audioEffect->release();
+    if(audioProcessor) {
+        audioProcessor->release();
     }
 
-    if(processorComponent) {
-        processorComponent->setActive(false);
-        processorComponent->terminate();
-        processorComponent->release();
-        processorComponent=0;
+    if(plugInstance) {
+        plugInstance->setActive(false);
+        plugInstance->terminate();
+        plugInstance->release();
+        plugInstance=0;
     }
 
     if(editController) {
@@ -785,7 +884,7 @@ void Vst3Plugin::Render()
     if(closed) // || GetSleep())
         return;
 
-    if(!audioEffect)
+    if(!audioProcessor)
         return;
 
     QMutexLocker lock(&objMutex);
@@ -800,11 +899,11 @@ void Vst3Plugin::Render()
 
 //  input buffers
     qint32 cpt=0;
-    qint32 numBusIn = processorComponent->getBusCount(Vst::kAudio, Vst::kInput);
+    qint32 numBusIn = plugInstance->getBusCount(Vst::kAudio, Vst::kInput);
 	processData.numInputs = numBusIn;
 	for (qint32 busIndex = 0; busIndex < numBusIn; busIndex++) {
         Vst::BusInfo busInfo = {0};
-        if(processorComponent->getBusInfo(Vst::kAudio, Vst::kInput, busIndex, busInfo) == kResultTrue) {
+        if(plugInstance->getBusInfo(Vst::kAudio, Vst::kInput, busIndex, busInfo) == kResultTrue) {
             for(qint32 channelIndex=0; channelIndex < busInfo.channelCount; channelIndex++) {
                 Pin *pin = listAudioPinIn->GetPin(cpt++);
 				if (pin) {
@@ -824,11 +923,11 @@ void Vst3Plugin::Render()
 
 //    output buffers
     cpt=0;
-    qint32 numBusOut = processorComponent->getBusCount(Vst::kAudio, Vst::kOutput);
+    qint32 numBusOut = plugInstance->getBusCount(Vst::kAudio, Vst::kOutput);
 	processData.numOutputs = numBusOut;
     for (qint32 busIndex = 0; busIndex < numBusOut; busIndex++) {
         Vst::BusInfo busInfo = {0};
-        if(processorComponent->getBusInfo(Vst::kAudio, Vst::kOutput, busIndex, busInfo) == kResultTrue) {
+        if(plugInstance->getBusInfo(Vst::kAudio, Vst::kOutput, busIndex, busInfo) == kResultTrue) {
             for(qint32 channelIndex=0; channelIndex<busInfo.channelCount; channelIndex++) {
                 Pin *pin = listAudioPinOut->GetPin(cpt++);
 				if (pin) {
@@ -850,21 +949,28 @@ void Vst3Plugin::Render()
     {
         QMutexLocker l(&paramLock);
 
+        qint32 numParameters = editController->getParameterCount ();
+
         QMap<qint32,float>::const_iterator i = listParamChanged.constBegin();
         while(i!=listParamChanged.constEnd()) {
 
-            //translate pin number to parameter id
-            Vst::ParamID pId=0;
-            Vst::ParameterInfo paramInfo;
-            tresult result = editController->getParameterInfo (i.key(), paramInfo);
-            if (result == kResultOk) {
-                pId = paramInfo.id;
-            }
+            if(i.key()<numParameters ) {
 
-            int32 idx=0;
-            Vst::IParamValueQueue* queue = vstParamChanges.addParameterData(pId, idx);
-            int32 pIdx=0;
-            queue->addPoint(0, i.value(), pIdx);
+                //translate pin number to parameter id
+                Vst::ParamID pId=0;
+                Vst::ParameterInfo paramInfo;
+                tresult result = editController->getParameterInfo (i.key(), paramInfo);
+                if (result == kResultOk) {
+                    pId = paramInfo.id;
+                }
+
+                int32 idx=0;
+                Vst::IParamValueQueue* queue = vstParamChanges.addParameterData(pId, idx);
+                int32 pIdx=0;
+                queue->addPoint(0, i.value(), pIdx);
+            } else {
+                LOG(QString("no param %1 %2").arg(i.key()).arg(objectName()));
+            }
             ++i;
         }
         listParamChanged.clear();
@@ -877,7 +983,7 @@ void Vst3Plugin::Render()
     processData.processContext = &myHost->vst3Host->processContext;
 
 //    audioEffect->setProcessing (true);
-    tresult result = audioEffect->process (processData);
+    tresult result = audioProcessor->process (processData);
     if (result != kResultOk) {
         LOG("error while processing")
     }
@@ -1103,17 +1209,32 @@ void Vst3Plugin::UserAddPin(const ConnectionInfo &info)
     OnProgramDirty();
 }
 
+tresult PLUGIN_API Vst3Plugin::createInstance (TUID cid, TUID _iid, void** obj)
+{
+    return kResultOk;
+}
+//tresult PLUGIN_API Vst3Plugin::notifyUnitSelection (UnitID unitId)
+//{
+
+//}
+//tresult PLUGIN_API notifyProgramListChange (Vst::ProgramListID listId, int32 programIndex)
+//{
+
+//}
 tresult PLUGIN_API Vst3Plugin::queryInterface (const TUID iid, void** obj)
 {
-    char8 cidString[50];
-    FUID(iid).toRegistryString (cidString);
-    QString cidStr(cidString);
-    LOG(cidStr)
+//    char8 cidString[50];
+//    FUID(iid).toRegistryString (cidString);
+//    QString cidStr(cidString);
+//    LOG(cidStr)
 
     QUERY_INTERFACE (iid, obj, Vst::IComponentHandler::iid, Vst::IComponentHandler)
+
 //    QUERY_INTERFACE (iid, obj, Vst::IComponentHandler2::iid, Vst::IComponentHandler2)
 //    QUERY_INTERFACE (iid, obj, FUnknown::iid, Vst::IComponentHandler)
     *obj = 0;
+//    doUIDsMatch  (iid, Vst::IComponentHandler)
+
     return kNoInterface;
 }
 
@@ -1168,34 +1289,35 @@ tresult PLUGIN_API Vst3Plugin::restartComponent (int32 /*flags*/)
 {
     return kResultOk;
 }
+tresult PLUGIN_API Vst3Plugin::setDirty(TBool /*state*/)
+{
+    OnProgramDirty();
+    return kResultOk;
+}
+tresult PLUGIN_API Vst3Plugin::requestOpenEditor (FIDString /*name*/)
+{
+    ToggleEditor(true);
+    return kResultOk;
+}
+tresult PLUGIN_API Vst3Plugin::startGroupEdit ()
+{
+    return kResultOk;
+}
 
-//void Vst3Plugin::toXml(QXmlStreamWriter &xml) const
-//{
-//    Object::toXml(xml);
-
-//    xml.writeStartElement("vst3plugin");
-
-//    MemoryStream state;
-//    if(processorComponent && processorComponent->getState(&state)==kResultOk) {
-
-//        state.seek(0,IBStream::kIBSeekSet,0);
-//        int32 len=-1;
-//        char *buf=new char[1024];
-//        QByteArray bArray;
-//        while(len!=0) {
-//            if(state.read(buf,1024,&len)!=kResultOk)
-//                len=0;
-//            bArray.append(buf,len);
-//        }
-//        xml.writeAttribute("processorState", bArray.toHex() );
-
-//    } else {
-//        LOG("error saving state");
-//        xml.writeAttribute("processorState", savedState.toHex() );
-//    }
-
-//    xml.writeEndElement();
-//}
+tresult PLUGIN_API Vst3Plugin::finishGroupEdit ()
+{
+    return kResultOk;
+}
+Vst::IContextMenu* PLUGIN_API Vst3Plugin::createContextMenu (IPlugView* plugView, const Vst::ParamID* paramID)
+{
+//    View::Vst3ContextMenu* menu = new View::Vst3ContextMenu(myHost->mainWindow);
+//    return menu;
+    return 0;
+}
+tresult PLUGIN_API Vst3Plugin::executeMenuItem (int32 tag)
+{
+    return kResultOk;
+}
 
 void Vst3Plugin::fromJson(QJsonObject &json)
 {
@@ -1203,11 +1325,11 @@ void Vst3Plugin::fromJson(QJsonObject &json)
 
     savedState = json["processorState"].toString().toUtf8();;
 
-    if(processorComponent && savedState.size()!=0) {
+    if(plugInstance && savedState.size()!=0) {
         MemoryStream state;
         state.write(savedState.data(),savedState.size(),0);
         state.seek(0,IBStream::kIBSeekSet,0);
-        processorComponent->setState(&state);
+        plugInstance->setState(&state);
     }
 }
 
@@ -1216,7 +1338,7 @@ void Vst3Plugin::toJson(QJsonObject &json) const
     Object::toJson(json);
 
     MemoryStream state;
-    if(processorComponent && processorComponent->getState(&state)==kResultOk) {
+    if(plugInstance && plugInstance->getState(&state)==kResultOk) {
         state.seek(0,IBStream::kIBSeekSet,0);
         int32 len=-1;
         char *buf=new char[1024];
@@ -1237,13 +1359,13 @@ QDataStream & Vst3Plugin::toStream(QDataStream & out) const
 {
     Object::toStream(out);
 
-    if(!processorComponent) {
+    if(!plugInstance) {
         out << savedState;
         return out;
     }
 
     MemoryStream state;
-    if(processorComponent->getState(&state)!=kResultOk) {
+    if(plugInstance->getState(&state)!=kResultOk) {
         LOG("error saving state")
         out << savedState;
         return out;
@@ -1269,33 +1391,14 @@ bool Vst3Plugin::fromStream(QDataStream & in)
 
     in >> savedState;
 
-    if(processorComponent && savedState.size()!=0) {
+    if(plugInstance && savedState.size()!=0) {
         MemoryStream state;
         state.write(savedState.data(),savedState.size(),0);
         state.seek(0,IBStream::kIBSeekSet,0);
-        processorComponent->setState(&state);
+        plugInstance->setState(&state);
     }
     return true;
 }
 
-//tresult PLUGIN_API Vst3Plugin::setDirty (TBool state)
-//{
-
-//}
-
-//tresult PLUGIN_API Vst3Plugin::requestOpenEditor (FIDString name)
-//{
-
-//}
-
-//tresult PLUGIN_API Vst3Plugin::startGroupEdit ()
-//{
-
-//}
-
-//tresult PLUGIN_API Vst3Plugin::finishGroupEdit ()
-//{
-
-//}
 
 #endif

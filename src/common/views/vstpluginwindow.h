@@ -23,9 +23,22 @@
 
 #ifdef VSTSDK
 
-#include "precomp.h"
-#include "base/source/fobject.h"
+//#include "precomp.h"
+
+#ifdef _MSC_VER
+#pragma warning( push, 1 )
+#endif
 #include "pluginterfaces/gui/iplugview.h"
+#include "base/source/fobject.h"
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
+
+
+//namespace Steinberg
+//{
+//    DEF_CLASS_IID (IPlugFrame)
+//}
 
 namespace Ui {
     class VstPluginWindow;

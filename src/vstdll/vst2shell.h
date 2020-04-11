@@ -21,9 +21,10 @@
 #ifndef VST2SHELL_H
 #define VST2SHELL_H
 
-#pragma warning ( push, 1 )
-#include "audioeffectx.h"
-#pragma warning ( pop )
+//#pragma warning ( push, 1 )
+//#include "audioeffectx.h"
+//#pragma warning ( pop )
+#include "vst/const.h"
 #include "ids.h"
 
 

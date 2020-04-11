@@ -53,16 +53,7 @@
     <ClCompile Include="audiobuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst2.x\audioeffect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst2.x\audioeffectx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="connectables\audiopin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\base\source\baseiids.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="connectables\bridge.cpp">
@@ -146,9 +137,6 @@
     <ClCompile Include="connectables\connectioninfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\pluginterfaces\base\conststringtable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="connectables\container.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -167,25 +155,7 @@
     <ClCompile Include="vst\cvsthost.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\base\source\fatomic.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\base\source\fdebug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="views\filebrowser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\base\source\fobject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\base\source\fstring.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\base\source\fthread.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\pluginterfaces\base\funknown.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="views\gradientwidget.cpp">
@@ -198,9 +168,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="models\groupsprogramsmodel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\hosting\hostclasses.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="connectables\hostcontroller.cpp">
@@ -234,9 +201,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mainwindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\common\memorystream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="connectables\midipinin.cpp">
@@ -296,9 +260,6 @@
     <ClCompile Include="renderer\optimizernode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\hosting\parameterchanges.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="connectables\parameterpin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -321,15 +282,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sceneview\pinview.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\main\pluginfactoryvst3.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\common\pluginview.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\hosting\processdata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="views\proglistview.cpp">
@@ -377,12 +329,6 @@
     <ClCompile Include="renderer\updatedelays.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\base\source\updatehandler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\pluginterfaces\base\ustring.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="views\viewconfig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -395,31 +341,10 @@
     <ClCompile Include="connectables\vst3plugin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstaudioeffect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="vst\vstbank.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="vst\vstbankbase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstbus.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstcomponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstcomponentbase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vsteditcontroller.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstinitiids.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vstparameters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="connectables\vstplugin.cpp">
@@ -440,13 +365,46 @@
     <ClCompile Include="renderer\waitall.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="connectables\objectcontainerattribs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="projectfile\jsonreader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="projectfile\jsonwriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\connectionproxy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\hostclasses.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\module.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\module_win32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\parameterchanges.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\pluginterfacesupport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\plugprovider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\processdata.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\stringconvert.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\common\memorystream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="connectables\objectcontainerattribs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\filebrowsertree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -781,12 +739,14 @@
     <ClInclude Include="renderer\waitall.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <QtMoc Include="views\filebrowsertree.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="precomp.h.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <CustomBuild Include="$(intdir)\moc_predefs.h.cbt" />
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="views\aboutdialog.ui">

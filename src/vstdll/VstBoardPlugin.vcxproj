@@ -133,7 +133,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST3SDK;..\..\libs\VST3SDK\public.sdk\source\vst2.x;..\common;..\..\libs\qtwinmigrate\src;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1\QtCore;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST_SDK\VST3_SDK;..\common;..\..\libs\qtwinmigrate\src;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1\QtCore;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -202,7 +202,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST3SDK;..\..\libs\VST3SDK\public.sdk\source\vst2.x;..\common;..\..\libs\qtwinmigrate\src;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1\QtCore;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST_SDK\VST3_SDK;..\common;..\..\libs\qtwinmigrate\src;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1\QtCore;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -271,7 +271,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST3SDK;..\..\libs\VST3SDK\public.sdk\source\vst2.x;..\common;..\..\libs\qtwinmigrate\src;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1\QtCore;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST_SDK\VST3_SDK;..\common;..\..\libs\qtwinmigrate\src;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1\QtCore;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -336,7 +336,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST3SDK;..\..\libs\VST3SDK\public.sdk\source\vst2.x;..\common;..\..\libs\qtwinmigrate\src;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1\QtCore;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST_SDK\VST3_SDK;..\common;..\..\libs\qtwinmigrate\src;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui\5.14.1\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore\5.14.1\QtCore;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -401,23 +401,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="views\configdialogvst.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\hosting\eventlist.cpp" />
     <ClCompile Include="factory.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\base\source\fbuffer.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\base\source\fstreamer.cpp" />
     <ClCompile Include="gui.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainwindowvst.cpp" />
     <ClCompile Include="myvst2wrapper.cpp" />
     <ClCompile Include="connectables\objectfactoryvst.cpp" />
-    <ClCompile Include="..\..\libs\qtwinmigrate\src\qmfcapp.cpp" />
-    <ClCompile Include="..\..\libs\qtwinmigrate\src\qwinhost.cpp" />
-    <ClCompile Include="..\..\libs\qtwinmigrate\src\qwinwidget.cpp" />
     <ClCompile Include="resizehandle.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\base\source\timer.cpp" />
     <ClCompile Include="vst.cpp" />
     <ClCompile Include="vst2shell.cpp" />
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vst2wrapper\vst2wrapper.cpp" />
     <ClCompile Include="connectables\vstaudiodevicein.cpp" />
     <ClCompile Include="connectables\vstaudiodeviceout.cpp" />
     <ClCompile Include="connectables\vstautomation.cpp" />

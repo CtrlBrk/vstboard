@@ -18,7 +18,7 @@ LIBS += -luser32
 
 SOURCES += \
     main.cpp \
-    ../../libs/VST3SDK/pluginterfaces/base/conststringtable.cpp
+#    ../../libs/VST3SDK/pluginterfaces/base/conststringtable.cpp
 
 HEADERS +=
 

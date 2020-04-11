@@ -24,6 +24,13 @@
 #ifdef VSTSDK
 
 #include "object.h"
+//#include "pluginterfaces/vst/ivsteditcontroller.h"
+//#include "pluginterfaces/vst/ivstcontextmenu.h"
+//#include "pluginterfaces/vst/ivstcomponent.h"
+//#include "pluginterfaces/vst/ivstaudioprocessor.h"
+//#include "public.sdk/source/vst/hosting/processdata.h"
+//#include "pluginterfaces/vst/ivstmessage.h"
+
 #ifdef _MSC_VER
 #pragma warning( push, 1 )
 #endif
@@ -37,6 +44,8 @@
 #include "pluginterfaces/vst/ivsthostapplication.h"
 #include "pluginterfaces/gui/iplugview.h"
 #include "pluginterfaces/vst/ivstevents.h"
+#include "pluginterfaces/vst/ivstcontextmenu.h"
+#include "public.sdk/source/vst/hosting/plugprovider.h"
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
@@ -49,7 +58,13 @@ using namespace Steinberg;
 
 namespace Connectables {
 
-class Vst3Plugin : public Object, public Vst::IComponentHandler
+class Vst3Plugin : public Object,
+        public Vst::IComponentHandler,
+        public Vst::IComponentHandler2,
+        public Vst::IComponentHandler3,
+        public Vst::IContextMenuTarget
+//        public Vst::IHostApplication
+//        public Vst::IUnitHandler
 {
     Q_OBJECT
 public:
@@ -65,6 +80,11 @@ public:
 
     View::VstPluginWindow *editorWnd;
 
+    tresult PLUGIN_API createInstance (TUID cid, TUID _iid, void** obj);
+
+//    tresult PLUGIN_API notifyUnitSelection (UnitID unitId);
+//    tresult PLUGIN_API notifyProgramListChange (Vst::ProgramListID listId, int32 programIndex);
+
     tresult PLUGIN_API queryInterface (const TUID iid, void** obj);
     uint32 PLUGIN_API addRef ();
     uint32 PLUGIN_API release ();
@@ -72,10 +92,13 @@ public:
     tresult PLUGIN_API performEdit (Vst::ParamID id, Vst::ParamValue valueNormalized);
     tresult PLUGIN_API endEdit (Vst::ParamID id);
     tresult PLUGIN_API restartComponent (int32 flags);
-//    tresult PLUGIN_API setDirty (TBool state);
-//    tresult PLUGIN_API requestOpenEditor (FIDString name=Vst::ViewType::kEditor);
-//    tresult PLUGIN_API startGroupEdit ();
-//    tresult PLUGIN_API finishGroupEdit ();
+    tresult PLUGIN_API setDirty(TBool state);
+    tresult PLUGIN_API requestOpenEditor (FIDString name = Vst::ViewType::kEditor);
+    tresult PLUGIN_API startGroupEdit ();
+    tresult PLUGIN_API finishGroupEdit ();
+
+    Vst::IContextMenu* PLUGIN_API createContextMenu (IPlugView* plugView, const Vst::ParamID* paramID);
+    tresult PLUGIN_API executeMenuItem (int32 tag);
 
     void MidiMsgFromInput(long msg);
 
@@ -88,6 +111,8 @@ public:
     void GetContainerAttribs(ObjectContainerAttribs &attr);
     void ReceiveMsg(const MsgObject &msg);
 
+
+
 private:
     void Unload();
     bool CreateEditorWindow();
@@ -99,9 +124,9 @@ private:
 
     QLibrary *pluginLib;
     IPluginFactory* factory;
-    Vst::IComponent* processorComponent;
+    Vst::IComponent* plugInstance;
     Vst::IEditController* editController;
-    Vst::IAudioProcessor* audioEffect;
+    Vst::IAudioProcessor* audioProcessor;
     Vst::HostProcessData processData;
     Vst::IConnectionPoint* iConnectionPointComponent;
     Vst::IConnectionPoint* iConnectionPointController;
@@ -124,6 +149,10 @@ private:
 
     qint32 progChangeParameter;
     qint32 bypassParameter;
+
+    VST3::Hosting::Module::Ptr module {nullptr};
+    IPtr<Vst::PlugProvider> plugProvider {nullptr};
+    VST3::Hosting::ClassInfo vstinfo;
 
 signals:
     void WindowSizeChange(int newWidth, int newHeight);

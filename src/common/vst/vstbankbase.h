@@ -3,7 +3,7 @@
 
 //#include "../precomp.h"
 #pragma warning ( push, 1 )
-#include "aeffeditor.h"
+#include "public.sdk/source/vst2.x/aeffeditor.h"
 #pragma warning ( pop )
 
 namespace vst

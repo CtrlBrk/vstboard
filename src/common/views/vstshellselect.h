@@ -21,7 +21,7 @@
 #ifndef VSTSHELLSELECT_H
 #define VSTSHELLSELECT_H
 
-#include "precomp.h"
+//#include "precomp.h"
 #include "msghandler.h"
 #include "connectables/objectinfo.h"
 

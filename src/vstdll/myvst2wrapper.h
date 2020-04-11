@@ -31,7 +31,7 @@ class MyVst2Wrapper : public Vst::Vst2Wrapper
 {
 public:
     static AudioEffect* crt (IPluginFactory* factory, const TUID vst3ComponentID, VstInt32 vst2ID, audioMasterCallback audioMaster);
-    MyVst2Wrapper (Vst::IAudioProcessor* processor, Vst::IEditController* controller, audioMasterCallback audioMaster, const TUID vst3ComponentID, VstInt32 vst2ID, IPluginFactory* factory = 0);
+    MyVst2Wrapper (BaseWrapper::SVST3Config& config, audioMasterCallback audioMaster, VstInt32 vst2ID);
     VstInt32 processEvents (VstEvents* events);
     void processReplacing (float** inputs, float** outputs, VstInt32 sampleFrames);
     void processDoubleReplacing (double** inputs, double** outputs, VstInt32 sampleFrames);

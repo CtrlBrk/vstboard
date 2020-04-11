@@ -135,7 +135,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST3SDK;..\..\libs\VST3SDK\public.sdk\source\vst2.x;$(QTDIR)\mkspecs\win32-msvc;$(outdir)common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST_SDK\VST3_SDK;$(QTDIR)\mkspecs\win32-msvc;$(outdir)common;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -181,7 +181,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST3SDK;..\..\libs\VST3SDK\public.sdk\source\vst2.x;$(QTDIR)\mkspecs\win32-msvc;$(outdir)common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST_SDK\VST3_SDK;$(QTDIR)\mkspecs\win32-msvc;$(outdir)common;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -227,7 +227,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST3SDK;..\..\libs\VST3SDK\public.sdk\source\vst2.x;$(QTDIR)\mkspecs\win32-msvc;$(outdir)common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST_SDK\VST3_SDK;$(QTDIR)\mkspecs\win32-msvc;$(outdir)common;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -269,7 +269,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST3SDK;..\..\libs\VST3SDK\public.sdk\source\vst2.x;$(QTDIR)\mkspecs\win32-msvc;$(outdir)common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST_SDK\VST3_SDK;$(QTDIR)\mkspecs\win32-msvc;$(outdir)common;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -310,7 +310,6 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\libs\VST3SDK\pluginterfaces\base\conststringtable.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -133,7 +133,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST3SDK;..\..\libs\VST3SDK\public.sdk\source\vst2.x;..\..\libs\portaudio\include;..\..\libs\portmidi\porttime;..\..\libs\portmidi\pm_common;..\common;..\portaudio;..\portmidi;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST_SDK\VST3_SDK;..\..\libs\portaudio\include;..\..\libs\portmidi\porttime;..\..\libs\portmidi\pm_common;..\common;..\portaudio;..\portmidi;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -206,7 +206,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST3SDK;..\..\libs\VST3SDK\public.sdk\source\vst2.x;..\..\libs\portaudio\include;..\..\libs\portmidi\porttime;..\..\libs\portmidi\pm_common;..\common;..\portaudio;..\portmidi;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST_SDK\VST3_SDK;..\..\libs\portaudio\include;..\..\libs\portmidi\porttime;..\..\libs\portmidi\pm_common;..\common;..\portaudio;..\portmidi;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -279,7 +279,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST3SDK;..\..\libs\VST3SDK\public.sdk\source\vst2.x;..\..\libs\portaudio\include;..\..\libs\portmidi\porttime;..\..\libs\portmidi\pm_common;..\common;..\portaudio;..\portmidi;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST_SDK\VST3_SDK;..\..\libs\portaudio\include;..\..\libs\portmidi\porttime;..\..\libs\portmidi\pm_common;..\common;..\portaudio;..\portmidi;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -302,8 +302,8 @@
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;user32.lib;advapi32.lib;ole32.lib;setupapi.lib;dsound.lib;common.lib;portaudio.lib;portmidi.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\ATLMFC\lib\x86;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\lib\x86;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x86;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\ucrt\x86;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\um\x86;$(outdir)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>winmm.lib;user32.lib;advapi32.lib;ole32.lib;setupapi.lib;dsound.lib;common.lib;portaudio.lib;portmidi.lib;shell32.lib;sdk.lib;base.lib;pluginterfaces.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\ATLMFC\lib\x86;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\lib\x86;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x86;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\ucrt\x86;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\um\x86;.\..\..\libs\VST_SDK\VST3_SDK\build\lib\Debug;$(outdir)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -348,7 +348,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST3SDK;..\..\libs\VST3SDK\public.sdk\source\vst2.x;..\..\libs\portaudio\include;..\..\libs\portmidi\porttime;..\..\libs\portmidi\pm_common;..\common;..\portaudio;..\portmidi;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(intdir);.\..\..\ui;.;..\..\libs\VST_SDK\VST3_SDK;..\..\libs\portaudio\include;..\..\libs\portmidi\porttime;..\..\libs\portmidi\pm_common;..\common;..\portaudio;..\portmidi;..\..\..\..\QT\5.14.1\MSVC2017\include;..\..\..\..\QT\5.14.1\MSVC2017\include\QtWidgets;..\..\..\..\QT\5.14.1\MSVC2017\include\QtGui;..\..\..\..\QT\5.14.1\MSVC2017\include\QtANGLE;..\..\..\..\QT\5.14.1\MSVC2017\include\QtCore;/include;..\..\..\..\QT\5.14.1\MSVC2017\mkspecs\win32-msvc;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -371,8 +371,8 @@
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;user32.lib;advapi32.lib;ole32.lib;setupapi.lib;dsound.lib;common.lib;portaudio.lib;portmidi.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\ATLMFC\lib\x64;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\lib\x64;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\ucrt\x64;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\um\x64;$(outdir)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>winmm.lib;user32.lib;advapi32.lib;ole32.lib;setupapi.lib;dsound.lib;common.lib;portaudio.lib;portmidi.lib;shell32.lib;sdk.lib;base.lib;pluginterfaces.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\ATLMFC\lib\x64;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\lib\x64;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\ucrt\x64;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\um\x64;.\..\..\libs\VST_SDK\VST3_SDK\build64\lib\Debug;$(outdir)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>true</GenerateDebugInformation>

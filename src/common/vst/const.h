@@ -22,7 +22,15 @@
 #define VSTCONST_H
 
 #include "../precomp.h"
-#include "audioeffectx.h"
+
+#ifdef _MSC_VER
+#pragma warning( push, 1 )
+#endif
+//#include "pluginterfaces/vst2.x/aeffect.h"
+#include "public.sdk/source/vst2.x/audioeffectx.h"
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
 namespace vst
 {

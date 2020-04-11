@@ -17,7 +17,7 @@
 #    You should have received a copy of the under the terms of the GNU Lesser General Public License
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
-#include "public.sdk/source/main/pluginfactoryvst3.h"
+#include "public.sdk/source/main/pluginfactory.h"
 #include "vstboardcontroller.h"
 #include "vstboardprocessor.h"
 #include "ids.h"
