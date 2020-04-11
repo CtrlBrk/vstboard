@@ -29,7 +29,8 @@
 #pragma warning( disable: 4100 )
 #endif
 
-#include "../precomp.h"
+
+//#include "../precomp.h"
 #include "const.h"
 //#include "vstbank.h"
 

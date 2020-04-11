@@ -21,7 +21,7 @@
 #ifndef GROUPSPROGRAMSMODEL_H
 #define GROUPSPROGRAMSMODEL_H
 
-#include "precomp.h"
+//#include "precomp.h"
 #include "msghandler.h"
 #include "views/viewconfig.h"
 

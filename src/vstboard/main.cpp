@@ -21,7 +21,7 @@
 //    #include "vld.h"
 //#endif
 
-#include "precomp.h"
+//#include "precomp.h"
 #include "mainhosthost.h"
 #include "mainwindowhost.h"
 #include "connectables/objectinfo.h"

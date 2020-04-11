@@ -18,7 +18,7 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 
-#include "precomp.h"
+//#include "precomp.h"
 #include "keybind.h"
 #include "keybindingdialog.h"
 #include "ui_keybindingdialog.h"

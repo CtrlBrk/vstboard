@@ -21,7 +21,7 @@
 #ifndef KEYBINDINGDIALOG_H
 #define KEYBINDINGDIALOG_H
 
-#include "precomp.h"
+//#include "precomp.h"
 
 namespace Ui {
     class KeyBindingDialog;

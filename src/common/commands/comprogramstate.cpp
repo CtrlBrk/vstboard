@@ -25,8 +25,8 @@ ComProgramState::ComProgramState(MainHost *myHost,
                                  const QList<Group> &lstGroup,
                                  QUndoCommand *parent) :
     QUndoCommand(parent),
-    lstGroup(lstGroup),
-    myHost(myHost)
+    myHost(myHost),
+    lstGroup(lstGroup)
 {
     setText(QObject::tr("ProgramList"));
 }

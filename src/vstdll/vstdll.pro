@@ -7,6 +7,7 @@ QMAKE_LFLAGS+="/DEF:$${_PRO_FILE_PWD_}/vstboard.def"
 TARGET = "VstBoardPlugin"
 TEMPLATE = lib
 
+CONFIG += precompile_header
 PRECOMPILED_HEADER = ../common/precomp.h
 
 #CONFIG(debug, debug|release) {
@@ -51,13 +52,13 @@ SOURCES += \
     vstboardcontroller.cpp \
     vstboardprocessor.cpp \
     vsttest.cpp \
-    $$VSTSDK_PATH/base/source/timer.cpp \
-    $$VSTSDK_PATH/base/source/fstreamer.cpp \
-    $$VSTSDK_PATH/base/source/fbuffer.cpp \
-    $$VSTSDK_PATH/public.sdk/source/vst/hosting/eventlist.cpp \
-    $$VSTSDK_PATH/public.sdk/source/vst/vst2wrapper/vst2wrapper.cpp \
     vst2shell.cpp \
     myvst2wrapper.cpp
+#    $$VST3SDK_PATH/base/source/timer.cpp \
+#    $$VST3SDK_PATH/base/source/fstreamer.cpp \
+#    $$VST3SDK_PATH/base/source/fbuffer.cpp \
+#    $$VST3SDK_PATH/public.sdk/source/vst/hosting/eventlist.cpp \
+#    $$VST3SDK_PATH/public.sdk/source/vst/vst2wrapper/vst2wrapper.cpp \
 
 HEADERS  += \
     gui.h \
@@ -81,21 +82,31 @@ RESOURCES += ../resources/resources.qrc
 
 #TRANSLATIONS = ../resources/translations/vstdll_fr.ts
 
-win32-g++:LIBS += -L$$DESTDIR -llibcommon
-else:win32:LIBS += -L$$DESTDIR -lcommon
-else:unix:LIBS += -L$$DESTDIR -lcommon
-
-INCLUDEPATH += $$DESTDIR/common
-DEPENDPATH += $$DESTDIR/common
-
-win32-g++:PRE_TARGETDEPS += $$DESTDIR/libcommon.a
-else:win32:PRE_TARGETDEPS += $$DESTDIR/common.lib
-else:unix:!symbian: PRE_TARGETDEPS += $$DESTDIR/libcommon.a
-
-OTHER_FILES += \
-    vstboard.def
+OTHER_FILES += vstboard.def
 
 
+LIBDEPS = common #portaudio portmidi
+for(a, LIBDEPS) {
+    LIBS += -L$$DESTDIR -l$${LIBPREFIX}$${a}
+    PRE_TARGETDEPS += $$DESTDIR/$${LIBPREFIX}$${a}.$${LIBEXT}
+    INCLUDEPATH += $$DESTDIR/$${a}
+    DEPENDPATH += $$DESTDIR/$${a}
+}
+
+
+SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/hostclasses.cpp
+SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/pluginterfacesupport.cpp
+SOURCES += $$VST3SDK_PATH/public.sdk/source/common/memorystream.cpp
+SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/processdata.cpp
+SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/parameterchanges.cpp
+
+
+LIBDEPS = sdk base pluginterfaces
+for(a, LIBDEPS) {
+    LIBS += -L$$VST3SDK_PATH/$${VSTLIB}/lib/$${MSBUILDDIR} -l$${LIBPREFIX}$${a}
+    PRE_TARGETDEPS += $$VST3SDK_PATH/$${VSTLIB}/lib/$${MSBUILDDIR}/$${LIBPREFIX}$${a}.$${LIBEXT}
+    DEPENDPATH += $$VST3SDK_PATH/$${VSTLIB}/lib/$${MSBUILDDIR}/$${a}
+}
 
 
 

@@ -21,7 +21,7 @@
 #ifndef LISTMIDIINTERFACESMODEL_H
 #define LISTMIDIINTERFACESMODEL_H
 
-#include "precomp.h"
+//#include "precomp.h"
 #include "msghandler.h"
 
 class ListMidiInterfacesModel : public QStandardItemModel, public MsgHandler

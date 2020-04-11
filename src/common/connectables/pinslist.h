@@ -21,7 +21,7 @@
 #ifndef PINSLIST_H
 #define PINSLIST_H
 
-#include "precomp.h"
+//#include "precomp.h"
 #include "globals.h"
 #include "connectioninfo.h"
 #include "objectinfo.h"

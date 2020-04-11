@@ -20,6 +20,7 @@ INCLUDEPATH += $$PORTMIDI_PATH/pm_common
 
 INCLUDEPATH += ../common
 
+CONFIG += precompile_header
 PRECOMPILED_HEADER = ../common/precomp.h
 
 #CONFIG(debug, debug|release) {
@@ -76,38 +77,31 @@ win32-msvc* {
     RC_FILE = vstboard.rc
 }
 
-#common
-win32-g++:LIBS += -L$$DESTDIR -llibcommon
-else:win32:LIBS += -L$$DESTDIR -lcommon
-else:unix:LIBS += -L$$DESTDIR -lcommon
 
-INCLUDEPATH += $$DESTDIR/common
-DEPENDPATH += $$DESTDIR/common
+LIBDEPS = common portaudio portmidi
+for(a, LIBDEPS) {
+    LIBS += -L$$DESTDIR -l$${LIBPREFIX}$${a}
+    PRE_TARGETDEPS += $$DESTDIR/$${LIBPREFIX}$${a}.$${LIBEXT}
+    INCLUDEPATH += $$DESTDIR/$${a}
+    DEPENDPATH += $$DESTDIR/$${a}
+}
 
-win32-g++:PRE_TARGETDEPS += $$DESTDIR/libcommon.a
-else:win32:PRE_TARGETDEPS += $$DESTDIR/common.lib
-else:unix:PRE_TARGETDEPS += $$DESTDIR/libcommon.a
 
-#portaudio
-win32-g++:LIBS += -L$$DESTDIR -llibportaudio
-else:win32:LIBS += -L$$DESTDIR -lportaudio
-else:unix:LIBS += -L$$DESTDIR -lportaudio
+SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/hostclasses.cpp
+SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/pluginterfacesupport.cpp
+SOURCES += $$VST3SDK_PATH/public.sdk/source/common/memorystream.cpp
+SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/processdata.cpp
+SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/parameterchanges.cpp
+SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module.cpp
+SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module_win32.cpp
+SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/stringconvert.cpp
 
-INCLUDEPATH += $$DESTDIR/portaudio
-DEPENDPATH += $$DESTDIR/portaudio
+SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/plugprovider.cpp
+SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/connectionproxy.cpp
 
-win32-g++:PRE_TARGETDEPS += $$DESTDIR/libportaudio.a
-else:win32:PRE_TARGETDEPS += $$DESTDIR/portaudio.lib
-else:unix:PRE_TARGETDEPS += $$DESTDIR/libportaudio.a
-
-#portmidi
-win32-g++:LIBS += -L$$DESTDIR -llibportmidi
-else:win32:LIBS += -L$$DESTDIR -lportmidi
-else:unix:LIBS += -L$$DESTDIR -lportmidi
-
-INCLUDEPATH += $$DESTDIR/portmidi
-DEPENDPATH += $$DESTDIR/portmidi
-
-win32-g++:PRE_TARGETDEPS += $$DESTDIR/libportmidi.a
-else:win32:PRE_TARGETDEPS += $$DESTDIR/portmidi.lib
-else:unix:PRE_TARGETDEPS += $$DESTDIR/libportmidi.a
+LIBDEPS = sdk base pluginterfaces
+for(a, LIBDEPS) {
+    LIBS += -L$$VST3SDK_PATH/$${VSTLIB}/lib/$${MSBUILDDIR} -l$${LIBPREFIX}$${a}
+    PRE_TARGETDEPS += $$VST3SDK_PATH/$${VSTLIB}/lib/$${MSBUILDDIR}/$${LIBPREFIX}$${a}.$${LIBEXT}
+    DEPENDPATH += $$VST3SDK_PATH/$${VSTLIB}/lib/$${MSBUILDDIR}/$${a}
+}

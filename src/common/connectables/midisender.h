@@ -21,7 +21,7 @@
 #ifndef MIDISENDER_H
 #define MIDISENDER_H
 
-#include "../precomp.h"
+//#include "../precomp.h"
 #include "object.h"
 
 namespace Connectables {

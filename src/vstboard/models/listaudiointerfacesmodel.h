@@ -21,7 +21,7 @@
 #ifndef AUDIOINTERFACESMODEL_H
 #define AUDIOINTERFACESMODEL_H
 
-#include "precomp.h"
+//#include "precomp.h"
 #include "msghandler.h"
 
 class ListAudioInterfacesModel : public QStandardItemModel, public MsgHandler

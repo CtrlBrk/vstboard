@@ -115,6 +115,7 @@ void ProgramManager::ReceiveMsg(const MsgObject &msg)
                 //create a default program in the group
                 Program prg;
                 prg.id = GetNextProgId();
+                prg.name = QString("Prg%1").arg(prg.id);
                 grp.listPrograms << prg;
 //                orderChanged=true;
             } else {
@@ -141,10 +142,12 @@ void ProgramManager::ReceiveMsg(const MsgObject &msg)
 //                        orderChanged=true;
                         prg.id = GetNextProgId();
                     }
+                    if(prg.name == "") prg.name = QString("Prg%1").arg(prg.id);
                     grp.listPrograms << prg;
                 }
             }
 
+            if(grp.name == "") grp.name = QString("Grp%1").arg(grp.id);
             newListGrp << grp;
         }
 

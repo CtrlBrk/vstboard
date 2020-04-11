@@ -21,7 +21,7 @@
 #ifndef CONNECTABLEPIN_H
 #define CONNECTABLEPIN_H
 
-#include "../precomp.h"
+//#include "../precomp.h"
 #include "../globals.h"
 #include "connectioninfo.h"
 #include "msghandler.h"

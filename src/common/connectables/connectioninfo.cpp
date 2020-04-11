@@ -32,8 +32,15 @@
 /*!
   default constructor
   */
-ConnectionInfo::ConnectionInfo()
-    : container(0), objId(0), type(PinType::Audio), direction(PinDirection::Output), pinNumber(0), bridge(false), isRemoveable(false), myHost(0)
+ConnectionInfo::ConnectionInfo() :
+	container(0), 
+	objId(0), 
+	type(PinType::Audio), 
+	direction(PinDirection::Output), 
+	pinNumber(0), 
+	bridge(false), 
+	isRemoveable(false), 
+	myHost(0)
 {
 }
 
@@ -95,9 +102,11 @@ bool ConnectionInfo::CanConnectTo(const ConnectionInfo &c) const
     return false;
 }
 
-ConnectionInfo::ConnectionInfo(MainHost *myHost,const QJsonObject &json ) :
-    myHost(myHost)
+ConnectionInfo::ConnectionInfo(MainHost *host,const QJsonObject &json ) :
+	ConnectionInfo()
 {
+	myHost = host;
+
     bridge = json["bridge"].toBool();
     int savedContainerId = json["container"].toInt();
     int cId = myHost->objFactory->IdFromSavedId(savedContainerId);

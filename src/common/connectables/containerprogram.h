@@ -21,7 +21,7 @@
 #ifndef CONTAINERPROGRAM_H
 #define CONTAINERPROGRAM_H
 
-#include "precomp.h"
+//#include "precomp.h"
 #include "cable.h"
 #include "objectinfo.h"
 #include "objectcontainerattribs.h"

@@ -21,7 +21,7 @@
 #ifndef COMADDOBJECT_H
 #define COMADDOBJECT_H
 
-#include "precomp.h"
+//#include "precomp.h"
 #include <QUndoCommand>
 #include "connectables/container.h"
 

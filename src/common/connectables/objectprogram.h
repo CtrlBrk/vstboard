@@ -21,7 +21,7 @@
 #ifndef OBJECTPROGRAM_H
 #define OBJECTPROGRAM_H
 
-#include "../precomp.h"
+//#include "../precomp.h"
 #include "objectparameter.h"
 #include "pinslist.h"
 

@@ -21,7 +21,7 @@
 #ifndef PARAMETERPIN_H
 #define PARAMETERPIN_H
 
-#include "../precomp.h"
+//#include "../precomp.h"
 #include "pin.h"
 #include "objectprogram.h"
 #include "objectparameter.h"

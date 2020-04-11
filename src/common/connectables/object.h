@@ -21,7 +21,7 @@
 #ifndef CONNECTABLEOBJECT_H
 #define CONNECTABLEOBJECT_H
 
-#include "precomp.h"
+//#include "precomp.h"
 
 #include "audiopin.h"
 #include "midipinin.h"

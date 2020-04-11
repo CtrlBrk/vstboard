@@ -25,11 +25,6 @@ ConfigDialogHost::ConfigDialogHost(Settings *settings,MainHost *myHost, QWidget 
     ConfigDialog(settings,myHost, parent)
 {
     QList<float> rates {
-    8000,
-    9600,
-    11025,
-    12000,
-    16000,
     22050,
     24000,
     32000,

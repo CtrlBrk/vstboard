@@ -30,8 +30,7 @@ class ConnectionInfo
 public:
     ConnectionInfo();
     ConnectionInfo(MainHost *myHost,quint16 objId, PinType::Enum type, PinDirection::Enum direction, quint16 pinNumber, bool bridge, bool removeable=false);
-    ConnectionInfo(const ConnectionInfo &c) {*this = c;}
-    ConnectionInfo(MainHost *myHost,const QJsonObject &json );
+    ConnectionInfo(MainHost *host,const QJsonObject &json );
     ConnectionInfo(const MsgObject &msg);
 
     bool CanConnectTo(const ConnectionInfo &c) const;

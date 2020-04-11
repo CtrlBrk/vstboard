@@ -21,7 +21,7 @@
 #ifndef LISTPINSVIEW_H
 #define LISTPINSVIEW_H
 
-#include "../precomp.h"
+//#include "../precomp.h"
 #include "msghandler.h"
 #include "views/viewconfig.h"
 namespace View {

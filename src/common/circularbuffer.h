@@ -20,7 +20,7 @@
 
 #ifndef CIRCULARBUFFER_H
 #define CIRCULARBUFFER_H
-#include "precomp.h"
+//#include "precomp.h"
 class CircularBuffer
 {
 public:

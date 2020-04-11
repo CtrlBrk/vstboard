@@ -21,7 +21,7 @@
 #ifndef PROJECTFILE_H
 #define PROJECTFILE_H
 
-#include "../precomp.h"
+//#include "../precomp.h"
 
 #define PROJECT_FILE_KEY 0x757b0a5d
 #define SETUP_FILE_KEY 0x7575e711

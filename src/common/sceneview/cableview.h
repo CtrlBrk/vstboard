@@ -21,7 +21,7 @@
 #ifndef CABLEVIEW_H
 #define CABLEVIEW_H
 
-#include "precomp.h"
+//#include "precomp.h"
 #include "globals.h"
 #include "pinview.h"
 #include "views/viewconfig.h"

@@ -21,7 +21,7 @@
 #ifndef MSGOBJECT_H
 #define MSGOBJECT_H
 
-#include "precomp.h"
+//#include "precomp.h"
 #include "connectables/objectinfo.h"
 
 #ifdef QT_NO_DEBUG

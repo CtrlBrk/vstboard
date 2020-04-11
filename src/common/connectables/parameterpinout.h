@@ -21,7 +21,7 @@
 #ifndef PARAMETERPINOUT_H
 #define PARAMETERPINOUT_H
 
-#include "../precomp.h"
+//#include "../precomp.h"
 #include "parameterpin.h"
 
 namespace Connectables {

@@ -17,7 +17,7 @@
 #    You should have received a copy of the under the terms of the GNU Lesser General Public License
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
-#include "precomp.h"
+//#include "precomp.h"
 #include "filebrowser.h"
 #include "ui_filebrowser.h"
 
@@ -51,6 +51,11 @@ FileBrowser::FileBrowser(QWidget *parent) :
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->treeFiles, SIGNAL(customContextMenuRequested(QPoint)),
             this, SLOT(OnContextMenu(QPoint)));
+
+    connect(ui->treeFiles, SIGNAL(historyBack()),
+            this, SLOT(on_previousDir_clicked() ));
+    connect(ui->treeFiles, SIGNAL(historyForward()),
+            this, SLOT(on_nextDir_clicked() ));
 }
 
 FileBrowser::~FileBrowser()
@@ -143,9 +148,12 @@ void FileBrowser::on_rootDir_clicked()
 
 void FileBrowser::on_previousDir_clicked()
 {
-    int cpt = historyPosition-1;
-    if(cpt<0)
+    if(historyPosition<=0) {
         return;
+    }
+
+    int cpt = historyPosition-1;
+
     while(cpt>0 && !QFileInfo(dirHistory[cpt]).exists() )
         cpt--;
 
@@ -166,9 +174,12 @@ void FileBrowser::on_previousDir_clicked()
 
 void FileBrowser::on_nextDir_clicked()
 {
-    int cpt = historyPosition+1;
-    if(cpt>=dirHistory.size())
+    if(historyPosition >= dirHistory.size()-1) {
         return;
+    }
+
+    int cpt = historyPosition+1;
+
     while(cpt<dirHistory.size() && !QFileInfo(dirHistory[cpt]).exists() )
         cpt++;
     if(cpt==dirHistory.size())

@@ -21,7 +21,7 @@
 #ifndef SEMAPHOREINVERTED_H
 #define SEMAPHOREINVERTED_H
 
-#include "precomp.h"
+//#include "precomp.h"
 
 class SemaphoreInverted
 {

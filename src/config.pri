@@ -20,11 +20,12 @@ PORTAUDIO_PATH 	= ../../libs/portaudio
 PORTMIDI_PATH 	= ../../libs/portmidi
 
 win32|macx {
-    VSTSDK_PATH	= "../../libs/VST3SDK"
     CONFIG += vstsdk
     DEFINES += VSTSDK
-    INCLUDEPATH += $$VSTSDK_PATH
-    INCLUDEPATH += $$VSTSDK_PATH/public.sdk/source/vst2.x/
+
+    VST3SDK_PATH = "../../libs/VST_SDK/VST3_SDK"
+    INCLUDEPATH += $$VST3SDK_PATH
+
 }
 
 #deprecated
@@ -41,8 +42,9 @@ DEFINES += CIRCULAR_BUFFER
 
 #DEFINES += DEBUG_RENDERER
 #DEFINES += DEBUG_BUFFERS
-DEFINES += DEBUG_OBJECTS
+#DEFINES += DEBUG_OBJECTS
 #DEFINES += DEBUG_DEVICES
+#DEFINES += DEBUG_MESSAGES
 
 #scriptengine {
 #    DEFINES += SCRIPTENGINE
@@ -63,6 +65,8 @@ CONFIG(debug, debug|release) {
 win32-g++ {
     DEFINES += WINVER=0x0501
     DEFINES += _WIN32_WINNT=0x0501
+    LIBPREFIX = lib
+    LIBEXT = a
 #    LIBS += -L$$quote($$MINGW_PATH/lib)
 #    INCLUDEPATH += $$quote($$MINGW_PATH/include)
 }
@@ -73,6 +77,9 @@ win32-msvc* {
     LIBS += -L$$quote($$(LIB))
  #   QMAKE_CFLAGS += -Fd$$top_destdir/$$TARGET
 
+    LIBPREFIX = ""
+    LIBEXT = lib
+
 #to add symbols :
 #    QMAKE_CXXFLAGS_RELEASE +=  -Zi
 #    QMAKE_LFLAGS_RELEASE += /DEBUG
@@ -80,4 +87,22 @@ win32-msvc* {
 #ltcg
     QMAKE_CXXFLAGS_RELEASE +=  -GL
     QMAKE_LFLAGS_RELEASE += /LTCG
+}
+
+
+#unix {
+#    LIBPREFIX = lib
+#    LIBEXT = a
+#}
+
+contains(QT_ARCH, i386) {
+    VSTLIB = build
+} else {
+    VSTLIB = build64
+}
+
+CONFIG(debug, debug|release) {
+    MSBUILDDIR = Debug
+} else {
+    MSBUILDDIR = Release
 }

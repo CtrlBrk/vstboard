@@ -21,7 +21,7 @@
 #ifndef CONFIGDIALOG_H
 #define CONFIGDIALOG_H
 
-#include "../precomp.h"
+//#include "../precomp.h"
 #include "settings.h"
 
 namespace Ui {

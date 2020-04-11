@@ -21,7 +21,7 @@
 #ifndef KEYBIND_H
 #define KEYBIND_H
 
-#include "precomp.h"
+//#include "precomp.h"
 #include "settings.h"
 
 class KeyBind : public QObject
@@ -77,7 +77,9 @@ public:
         zoomReset,
         hideAllEditors,
         autoOpenEditors,
-        fullScreen
+        fullScreen,
+//        back,
+//        forward,
         /*
         increaseValue,
         decreaseValue

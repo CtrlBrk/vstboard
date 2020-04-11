@@ -21,7 +21,7 @@
 #ifndef OBJECTFACTORY_H
 #define OBJECTFACTORY_H
 
-#include "../precomp.h"
+//#include "../precomp.h"
 #include "../globals.h"
 #include "object.h"
 #include "objectinfo.h"

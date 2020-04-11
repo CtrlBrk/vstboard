@@ -50,25 +50,7 @@ RendererThread2::RendererThread2(Renderer2 *renderer, int id) :
         FunctionAvRevertMmThreadCharacteristics = (AVREVERTMMTHREADCHARACTERISTICS*)GetProcAddress(DllAvRt, "AvRevertMmThreadCharacteristics");
         FunctionAvSetMmThreadPriority = (AVSETMMTHREADPRIORITY*)GetProcAddress(DllAvRt, "AvSetMmThreadPriority");
     }
-
-    /* If we have access to AVRT.DLL (Vista and later), use it */
-    if (FunctionAvSetMmThreadCharacteristics != NULL) {
-        DWORD dwTask = 0;
-        hMmTask = FunctionAvSetMmThreadCharacteristics("Pro Audio", &dwTask);
-        if (hMmTask != NULL && hMmTask != INVALID_HANDLE_VALUE) {
-            BOOL bret = FunctionAvSetMmThreadPriority(hMmTask, PA_AVRT_PRIORITY_CRITICAL);
-            if (!bret) {                
-                LOG("can't set msc priority");
-            }
-        } else {
-            LOG("can't set msc priority, hMmTask null");
-        }
-
-    } else {
-        LOG("can't set msc priority, avrt.dll not loaded");
-    }
 #endif
-
     start(QThread::TimeCriticalPriority);
 }
 
@@ -111,6 +93,25 @@ bool RendererThread2::IsStopped()
 
 void RendererThread2::run()
 {
+#ifdef WIN32
+    /* If we have access to AVRT.DLL, use it */
+    if (FunctionAvSetMmThreadCharacteristics != NULL) {
+        DWORD dwTask = 0;
+        hMmTask = FunctionAvSetMmThreadCharacteristics("Pro Audio", &dwTask);
+        if (hMmTask != NULL && hMmTask != INVALID_HANDLE_VALUE) {
+            BOOL bret = FunctionAvSetMmThreadPriority(hMmTask, PA_AVRT_PRIORITY_CRITICAL);
+            if (!bret) {
+                LOG(QString("can't set msc priority %1").arg(GetLastError()));
+            }
+        } else {
+            LOG(QString("can't set msc priority, hMmTask null %1").arg(GetLastError()));
+        }
+
+    } else {
+        LOG("can't set msc priority, avrt.dll not loaded");
+    }
+#endif
+
     {
         QMutexLocker locker(&mutexStop);
         stop=false;

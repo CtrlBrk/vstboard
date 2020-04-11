@@ -21,7 +21,7 @@
 #ifndef PARKINGMODEL_H
 #define PARKINGMODEL_H
 
-#include "precomp.h"
+//#include "precomp.h"
 #include "msghandler.h"
 
 class ParkingModel : public QStandardItemModel, public MsgHandler

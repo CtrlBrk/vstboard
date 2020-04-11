@@ -21,7 +21,7 @@
 #ifndef MAINGRAPHICSVIEW_H
 #define MAINGRAPHICSVIEW_H
 
-#include "../precomp.h"
+//#include "../precomp.h"
 
 
 namespace View {

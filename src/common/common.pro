@@ -5,6 +5,7 @@ QT += core gui widgets
 TEMPLATE = lib
 CONFIG += staticlib
 
+CONFIG += precompile_header
 PRECOMPILED_HEADER = precomp.h
 
 vstsdk {
@@ -28,34 +29,37 @@ vstsdk {
         vst/vstprogram.cpp \
         views/vstpluginwindow.cpp \
         views/vstshellselect.cpp \
-        $$VSTSDK_PATH/public.sdk/source/vst2.x/audioeffectx.cpp \
-        $$VSTSDK_PATH/public.sdk/source/vst2.x/audioeffect.cpp \
 
     SOURCES += vst/vst3host.cpp \
-        connectables/vst3plugin.cpp \
-        $$VSTSDK_PATH/base/source/fobject.cpp \
-        $$VSTSDK_PATH/base/source/fstring.cpp \
-        $$VSTSDK_PATH/base/source/fatomic.cpp \
-        $$VSTSDK_PATH/base/source/updatehandler.cpp \
-        $$VSTSDK_PATH/base/source/fdebug.cpp \
-        $$VSTSDK_PATH/base/source/fthread.cpp \
-        $$VSTSDK_PATH/base/source/baseiids.cpp \
-        $$VSTSDK_PATH/pluginterfaces/base/ustring.cpp \
-        $$VSTSDK_PATH/pluginterfaces/base/funknown.cpp \
-        $$VSTSDK_PATH/pluginterfaces/base/conststringtable.cpp \
-        $$VSTSDK_PATH/public.sdk/source/main/pluginfactoryvst3.cpp \
-        $$VSTSDK_PATH/public.sdk/source/common/pluginview.cpp \
-        $$VSTSDK_PATH/public.sdk/source/common/memorystream.cpp \
-        $$VSTSDK_PATH/public.sdk/source/vst/vstaudioeffect.cpp \
-        $$VSTSDK_PATH/public.sdk/source/vst/vstcomponent.cpp \
-        $$VSTSDK_PATH/public.sdk/source/vst/vstcomponentbase.cpp \
-        $$VSTSDK_PATH/public.sdk/source/vst/vstparameters.cpp \
-        $$VSTSDK_PATH/public.sdk/source/vst/vstbus.cpp \
-        $$VSTSDK_PATH/public.sdk/source/vst/vsteditcontroller.cpp \
-        $$VSTSDK_PATH/public.sdk/source/vst/vstinitiids.cpp \
-        $$VSTSDK_PATH/public.sdk/source/vst/hosting/hostclasses.cpp \
-        $$VSTSDK_PATH/public.sdk/source/vst/hosting/processdata.cpp \
-        $$VSTSDK_PATH/public.sdk/source/vst/hosting/parameterchanges.cpp
+        connectables/vst3plugin.cpp
+
+#    SOURCES += $$VST3SDK_PATH/base/source/fobject.cpp \
+#        $$VST3SDK_PATH/base/source/fstring.cpp \
+##        $$VST3SDK_PATH/base/source/fatomic.cpp \
+#        $$VST3SDK_PATH/base/source/updatehandler.cpp \
+#        $$VST3SDK_PATH/base/source/fdebug.cpp \
+#        $$VST3SDK_PATH/base/source/baseiids.cpp \
+#        $$VST3SDK_PATH/base/thread/source/flock.cpp \
+#        $$VST3SDK_PATH/pluginterfaces/base/ustring.cpp \
+#        $$VST3SDK_PATH/pluginterfaces/base/funknown.cpp \
+#        $$VST3SDK_PATH/pluginterfaces/base/coreiids.cpp \
+#        $$VST3SDK_PATH/pluginterfaces/base/conststringtable.cpp \
+#        $$VST3SDK_PATH/public.sdk/source/vst/vstinitiids.cpp \
+##        $$VST3SDK_PATH/public.sdk/source/main/pluginfactoryvst3.cpp \
+#        $$VST3SDK_PATH/public.sdk/source/common/pluginview.cpp \
+#        $$VST3SDK_PATH/public.sdk/source/common/memorystream.cpp \
+#        $$VST3SDK_PATH/public.sdk/source/vst/vstaudioeffect.cpp \
+#        $$VST3SDK_PATH/public.sdk/source/vst/vstcomponent.cpp \
+#        $$VST3SDK_PATH/public.sdk/source/vst/vstcomponentbase.cpp \
+##        $$VST3SDK_PATH/public.sdk/source/vst/vstguieditor.cpp \
+#        $$VST3SDK_PATH/public.sdk/source/vst/vstparameters.cpp \
+#        $$VST3SDK_PATH/public.sdk/source/vst/vstbus.cpp \
+#        $$VST3SDK_PATH/public.sdk/source/vst/vsteditcontroller.cpp \
+#        $$VST3SDK_PATH/public.sdk/source/vst/vstinitiids.cpp \
+#        $$VST3SDK_PATH/public.sdk/source/vst/hosting/hostclasses.cpp \
+#        $$VST3SDK_PATH/public.sdk/source/vst/hosting/processdata.cpp \
+#        $$VST3SDK_PATH/public.sdk/source/vst/hosting/pluginterfacesupport.cpp \
+#        $$VST3SDK_PATH/public.sdk/source/vst/hosting/parameterchanges.cpp
 
 
     FORMS += views/vstpluginwindow.ui \
@@ -139,7 +143,9 @@ SOURCES += \
     models/groupsprogramsmodel.cpp \
     models/parkingmodel.cpp \
     renderer/pathsolver.cpp \
-    views/keypressedwidget.cpp
+    views/filebrowsertree.cpp \
+    views/keypressedwidget.cpp \
+    views/vst3contextmenu.cpp
 
 SOURCES += \
     views/programlist.cpp \
@@ -246,7 +252,9 @@ HEADERS += \
     commands/comaddpin.h \
     commands/comprogramstate.h \
     renderer/pathsolver.h \
-    views/keypressedwidget.h
+    views/filebrowsertree.h \
+    views/keypressedwidget.h \
+    views/vst3contextmenu.h
 
 HEADERS += \
     views/configdialog.h \
@@ -283,7 +291,7 @@ HEADERS += \
     sceneview/cursorview.h \
     sceneview/connectablepinview.h \
     sceneview/bridgepinview.h
-    
+
 FORMS += \
     mainwindow.ui \
     views/configdialog.ui \
@@ -301,26 +309,4 @@ FORMS += \
 
 RESOURCES += \
     ../resources/resources.qrc
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

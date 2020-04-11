@@ -21,7 +21,7 @@
 #ifndef WAITALL_H
 #define WAITALL_H
 
-#include "precomp.h"
+//#include "precomp.h"
 
 class WaitAll
 {

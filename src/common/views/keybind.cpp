@@ -19,7 +19,7 @@
 **************************************************************************/
 
 #include "keybind.h"
-#include "precomp.h"
+//#include "precomp.h"
 
 KeyBind::KeyBind(Settings *settings) :
     QObject(settings),
@@ -270,6 +270,8 @@ void KeyBind::SetDefaults()
     mapMainShortcuts.insert(unplugPin,          "Backspace");
     mapMainShortcuts.insert(deletePin,          "Delete");
     mapMainShortcuts.insert(fullScreen,         "F11");
+//    mapMainShortcuts.insert(back,               "");
+//    mapMainShortcuts.insert(forward,            "");
 
     {
         QMap<MovesBindings, MoveBind>mapMv;

@@ -21,7 +21,7 @@
 #ifndef OBJECTVIEW_H
 #define OBJECTVIEW_H
 
-#include "precomp.h"
+//#include "precomp.h"
 #include "globals.h"
 #include "connectables/object.h"
 #include "listpinsview.h"

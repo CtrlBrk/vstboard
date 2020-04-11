@@ -21,7 +21,7 @@
 #ifndef OBJECTPARAMETER_H
 #define OBJECTPARAMETER_H
 
-#include "../precomp.h"
+//#include "../precomp.h"
 
 namespace Connectables {
 
@@ -34,9 +34,9 @@ namespace Connectables {
         ObjectParameter(int index, bool visible=false) : value(.0f), index(index), visible(visible), limitInMin(.0f), limitInMax(1.0f), limitOutMin(.0f), limitOutMax(1.0f) {}
         ObjectParameter(bool visible) : value(.0f), index(0), visible(visible), limitInMin(.0f), limitInMax(1.0f), limitOutMin(.0f), limitOutMax(1.0f) {}
         ObjectParameter(QJsonObject &json, int &id);
-        ObjectParameter(const ObjectParameter &c) {
-            *this = c;
-        }
+ //       ObjectParameter(const ObjectParameter &c) {
+ //           *this = c;
+ //       }
 
         float value;
         int index;

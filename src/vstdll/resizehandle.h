@@ -21,7 +21,7 @@
 #ifndef RESIZEHANDLE_H
 #define RESIZEHANDLE_H
 
-#include "precomp.h"
+//#include "precomp.h"
 
 class ResizeHandle : public QWidget
 {

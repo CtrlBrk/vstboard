@@ -18,7 +18,6 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 #include "mainhosthost.h"
-
 #include "connectables/mididevice.h"
 #include "connectables/audiodevice.h"
 #include "connectables/objectfactoryhost.h"

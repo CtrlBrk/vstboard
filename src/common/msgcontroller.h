@@ -21,7 +21,7 @@
 #ifndef MSGCONTROLLER_H
 #define MSGCONTROLLER_H
 
-#include "precomp.h"
+//#include "precomp.h"
 #include "msgobject.h"
 
 class MsgHandler;

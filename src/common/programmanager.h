@@ -21,7 +21,7 @@
 #ifndef PROGRAMMANAGER_H
 #define PROGRAMMANAGER_H
 
-#include "precomp.h"
+//#include "precomp.h"
 #include "msghandler.h"
 
 class Program

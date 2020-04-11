@@ -21,7 +21,7 @@
 #ifndef CABLE_H
 #define CABLE_H
 
-#include "precomp.h"
+//#include "precomp.h"
 #include "connectioninfo.h"
 #include "msghandler.h"
 
