@@ -63,7 +63,7 @@ static PmDeviceID pm_get_default_device_id(int is_input, char *key) {
 #define PATTERN_MAX 256
     char pattern[PATTERN_MAX];
     long pattern_max = PATTERN_MAX;
-    DWORD dwType;
+    DWORD_PTR dwType;
     /* Find first input or device -- this is the default. */
     PmDeviceID id = pmNoDevice;
     int i, j;
@@ -91,7 +91,7 @@ static PmDeviceID pm_get_default_device_id(int is_input, char *key) {
         ERROR_SUCCESS) {
         return id;
     }
-    if (RegQueryValueEx(hkey, key, NULL, &dwType, pattern, &pattern_max) != 
+    if (RegQueryValueEx(hkey, key, NULL, &dwType, pattern, &pattern_max) !=
 	ERROR_SUCCESS) {
         return id;
     }

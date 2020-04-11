@@ -15,9 +15,7 @@ qrc_*.cpp
 ui_*.h
 *.log
 *.tlog
-libs/VST3SDK/
-libs/vstsdk2.4/
-libs/VST3 SDK/
+libs/VST*/
 debug/
 release/
 .vs/

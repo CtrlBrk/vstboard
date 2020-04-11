@@ -17,7 +17,7 @@ static MMRESULT timer_id;
 static PtCallback *time_callback;
 
 void CALLBACK winmm_time_callback(UINT uID, UINT uMsg, DWORD_PTR dwUser, 
-                                  DWORD_PTR dw1, DWORD_PTR dw2)
+                                  DWORD dw1, DWORD dw2)
 {
     (*time_callback)(Pt_Time(), (void *) dwUser);
 }

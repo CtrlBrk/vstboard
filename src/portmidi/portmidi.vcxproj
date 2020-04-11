@@ -59,7 +59,7 @@
     <PlatformToolset>v141</PlatformToolset>
     <OutputDirectory>..\..\x86\portmidi\debug\</OutputDirectory>
     <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
-    <CharacterSet>NotSet</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <IntermediateDirectory>..\..\x86\portmidi\debug\obj\</IntermediateDirectory>
     <PrimaryOutput>portmidi</PrimaryOutput>
