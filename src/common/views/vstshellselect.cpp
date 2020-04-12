@@ -56,7 +56,9 @@ void VstShellSelect::ReceiveMsg(const MsgObject &msg)
 
 void View::VstShellSelect::accept()
 {
-  //  info.id = ui->listPlugins->currentIndex().data(Qt::UserRole).toUInt();
+	//vst2 simple id
+    info.id = ui->listPlugins->currentIndex().data(Qt::UserRole).toUInt();
+	//vst3 id
 	info.apiName = ui->listPlugins->currentIndex().data(Qt::UserRole).toString();
     ui->listPlugins->clear();
     QDialog::accept();

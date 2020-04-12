@@ -21,8 +21,10 @@
 
 using namespace Steinberg;
 
-class Vst3Host : public Vst::HostApplication
+class Vst3Host : public QObject, public Vst::HostApplication
 {
+    Q_OBJECT
+
 public:
     Vst3Host();
     tresult PLUGIN_API getName (Vst::String128 name);
@@ -37,6 +39,9 @@ public:
   //  VstTimeInfo vst2TimeInfo;
     int currentBar;
     int loopLenght;
+
+public slots:
+    void SetSampleRate(float rate=44100.0);
 };
 
 #endif // VST3HOST_H

@@ -2,7 +2,7 @@
 
 using namespace Steinberg;
 
-Vst3Host::Vst3Host()
+Vst3Host::Vst3Host() : QObject(), Vst::HostApplication()
 {
     currentBar=0;
     loopLenght=4;
@@ -183,4 +183,9 @@ void Vst3Host::GetTempo(int &tempo, int &sign1, int &sign2)
         sign1=processContext.timeSigNumerator;
         sign2=processContext.timeSigDenominator;
     }
+}
+
+void Vst3Host::SetSampleRate(float rate)
+{
+    processContext.sampleRate = rate;
 }

@@ -380,6 +380,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\common\memorystream.cpp" />
     <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\connectionproxy.cpp" />
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\eventlist.cpp" />
     <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\hostclasses.cpp" />
     <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\module.cpp" />
     <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\module_win32.cpp" />
@@ -790,7 +791,7 @@ echo #include "precomp.h"&gt;&gt;precomp.h.cpp</Command>
     </QtMoc>
     <QtMoc Include="views\viewconfigdialog.h">
     </QtMoc>
-    <ClInclude Include="vst\vst3host.h" />
+    <QtMoc Include="vst\vst3host.h" />
     <QtMoc Include="connectables\vst3plugin.h">
     </QtMoc>
     <ClInclude Include="vst\vstbank.h" />

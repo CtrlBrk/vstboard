@@ -24,16 +24,16 @@
 #ifdef VSTSDK
 
 #include "object.h"
-//#include "pluginterfaces/vst/ivsteditcontroller.h"
-//#include "pluginterfaces/vst/ivstcontextmenu.h"
-//#include "pluginterfaces/vst/ivstcomponent.h"
-//#include "pluginterfaces/vst/ivstaudioprocessor.h"
-//#include "public.sdk/source/vst/hosting/processdata.h"
-//#include "pluginterfaces/vst/ivstmessage.h"
 
 #ifdef _MSC_VER
 #pragma warning( push, 1 )
 #endif
+//#include "public.sdk/samples/vst-hosting/audiohost/source/media/imediaserver.h"
+//#include "public.sdk/samples/vst-hosting/audiohost/source/media/iparameterclient.h"
+#include "public.sdk/source/vst/hosting/eventlist.h"
+#include "public.sdk/source/vst/hosting/parameterchanges.h"
+#include "public.sdk/source/vst/hosting/processdata.h"
+#include "pluginterfaces/vst/ivstaudioprocessor.h"
 #include "public.sdk/source/common/memorystream.h"
 #include "public.sdk/source/vst/hosting/processdata.h"
 #include "public.sdk/source/vst/hosting/parameterchanges.h"
@@ -46,6 +46,7 @@
 #include "pluginterfaces/vst/ivstevents.h"
 #include "pluginterfaces/vst/ivstcontextmenu.h"
 #include "public.sdk/source/vst/hosting/plugprovider.h"
+#include "public.sdk/source/vst/hosting/eventlist.h"
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
@@ -63,20 +64,19 @@ class Vst3Plugin : public Object,
         public Vst::IComponentHandler2,
         public Vst::IComponentHandler3,
         public Vst::IContextMenuTarget
-//        public Vst::IHostApplication
-//        public Vst::IUnitHandler
+
 {
     Q_OBJECT
 public:
     explicit Vst3Plugin(MainHost *host, int index, const ObjectInfo &info);
     ~Vst3Plugin();
-    bool Open();
-    bool Close();
-    void Render();
-    Pin* CreatePin(const ConnectionInfo &info);
-    void SetSleep(bool sleeping);
-    void SaveProgram();
-    void LoadProgram(int prog);
+    bool Open() override;
+    bool Close() override;
+    void Render() override;
+    Pin* CreatePin(const ConnectionInfo &info) override;
+    void SetSleep(bool sleeping) override;
+    void SaveProgram() override;
+    void LoadProgram(int prog) override;
 
     View::VstPluginWindow *editorWnd;
 
@@ -85,31 +85,31 @@ public:
 //    tresult PLUGIN_API notifyUnitSelection (UnitID unitId);
 //    tresult PLUGIN_API notifyProgramListChange (Vst::ProgramListID listId, int32 programIndex);
 
-    tresult PLUGIN_API queryInterface (const TUID iid, void** obj);
-    uint32 PLUGIN_API addRef ();
-    uint32 PLUGIN_API release ();
-    tresult PLUGIN_API beginEdit (Vst::ParamID id);
-    tresult PLUGIN_API performEdit (Vst::ParamID id, Vst::ParamValue valueNormalized);
-    tresult PLUGIN_API endEdit (Vst::ParamID id);
-    tresult PLUGIN_API restartComponent (int32 flags);
-    tresult PLUGIN_API setDirty(TBool state);
-    tresult PLUGIN_API requestOpenEditor (FIDString name = Vst::ViewType::kEditor);
-    tresult PLUGIN_API startGroupEdit ();
-    tresult PLUGIN_API finishGroupEdit ();
+    tresult PLUGIN_API queryInterface (const TUID iid, void** obj) override;
+    uint32 PLUGIN_API addRef () override;
+    uint32 PLUGIN_API release () override;
+    tresult PLUGIN_API beginEdit (Vst::ParamID id) override;
+    tresult PLUGIN_API performEdit (Vst::ParamID id, Vst::ParamValue valueNormalized) override;
+    tresult PLUGIN_API endEdit (Vst::ParamID id) override;
+    tresult PLUGIN_API restartComponent (int32 flags) override;
+    tresult PLUGIN_API setDirty(TBool state) override;
+    tresult PLUGIN_API requestOpenEditor (FIDString name = Vst::ViewType::kEditor) override;
+    tresult PLUGIN_API startGroupEdit () override;
+    tresult PLUGIN_API finishGroupEdit () override;
 
-    Vst::IContextMenu* PLUGIN_API createContextMenu (IPlugView* plugView, const Vst::ParamID* paramID);
-    tresult PLUGIN_API executeMenuItem (int32 tag);
+    Vst::IContextMenu* PLUGIN_API createContextMenu (IPlugView* plugView, const Vst::ParamID* paramID) override;
+    tresult PLUGIN_API executeMenuItem (int32 tag) override;
 
-    void MidiMsgFromInput(long msg);
+    void MidiMsgFromInput(long msg) override;
 
-    void fromJson(QJsonObject &json);
-    void toJson(QJsonObject &json) const;
-    QDataStream & toStream (QDataStream &) const;
-    bool fromStream (QDataStream &);
+    void fromJson(QJsonObject &json) override;
+    void toJson(QJsonObject &json) const override;
+    QDataStream & toStream (QDataStream &) const override;
+    bool fromStream (QDataStream &) override;
 
-    void SetContainerAttribs(const ObjectContainerAttribs &attr);
-    void GetContainerAttribs(ObjectContainerAttribs &attr);
-    void ReceiveMsg(const MsgObject &msg);
+    void SetContainerAttribs(const ObjectContainerAttribs &attr) override;
+    void GetContainerAttribs(ObjectContainerAttribs &attr) override;
+    void ReceiveMsg(const MsgObject &msg) override;
 
 
 
@@ -121,13 +121,16 @@ private:
     bool initProcessor();
     bool initController();
     bool initAudioBuffers(Vst::BusDirection dir);
+    void initProcessData();
 
     QLibrary *pluginLib;
-    IPluginFactory* factory;
-    Vst::IComponent* plugInstance;
+    //IPluginFactory* factory;
+//    Vst::IComponent* plugComponent;
+    Vst::IComponent* component;
+//    Vst::IEditController* editController;
     Vst::IEditController* editController;
-    Vst::IAudioProcessor* audioProcessor;
-    Vst::HostProcessData processData;
+//    Vst::IAudioProcessor* audioProcessor;
+
     Vst::IConnectionPoint* iConnectionPointComponent;
     Vst::IConnectionPoint* iConnectionPointController;
 //    Vst::ParameterChanges vstParamChanges;
@@ -154,18 +157,24 @@ private:
     IPtr<Vst::PlugProvider> plugProvider {nullptr};
     VST3::Hosting::ClassInfo vstinfo;
 
+    Vst::HostProcessData processData;
+	Vst::EventList inEvents;
+    Vst::ParameterChanges inputParameterChanges;
+    bool isProcessing;
+
 signals:
     void WindowSizeChange(int newWidth, int newHeight);
 
 public slots:
-    void SetBufferSize(unsigned long size);
-    void OnParameterChanged(ConnectionInfo pinInfo, float value);
+    void SetBufferSize(unsigned long size) override;
+    void SetSampleRate(float rate=44100.0) override;
+    void OnParameterChanged(ConnectionInfo pinInfo, float value) override;
     void EditorDestroyed();
     void OnEditorClosed();
-    void OnShowEditor();
-    void OnHideEditor();
-    void UserRemovePin(const ConnectionInfo &info);
-    void UserAddPin(const ConnectionInfo &info);
+    void OnShowEditor() override;
+    void OnHideEditor() override;
+    void UserRemovePin(const ConnectionInfo &info) override;
+    void UserAddPin(const ConnectionInfo &info) override;
 
     friend class View::VstPluginWindow;
 };

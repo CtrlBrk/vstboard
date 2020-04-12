@@ -416,6 +416,7 @@
     </QtUic>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\eventlist.cpp" />
     <ClCompile Include="connectables\audiodevice.cpp" />
     <ClCompile Include="connectables\audiodevicein.cpp" />
     <ClCompile Include="connectables\audiodeviceout.cpp" />

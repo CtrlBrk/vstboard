@@ -98,6 +98,8 @@ SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/stringconvert.cpp
 
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/plugprovider.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/connectionproxy.cpp
+SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/eventlist.cpp
+#SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/vsteditcontroller.cpp
 
 LIBDEPS = sdk base pluginterfaces
 for(a, LIBDEPS) {

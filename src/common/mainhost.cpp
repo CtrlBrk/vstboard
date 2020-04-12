@@ -151,7 +151,8 @@ void MainHost::Init()
     }
 
     vst3Host = new Vst3Host();
-
+    connect(this,SIGNAL(sampleRate(float)),
+            vst3Host,SLOT(SetSampleRate(float)));
     vstUsersCounter++;
 #endif
 

@@ -407,6 +407,9 @@
     <ClCompile Include="views\filebrowsertree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\eventlist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="views\aboutdialog.h">
@@ -709,9 +712,6 @@
     <QtMoc Include="views\viewconfigdialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <ClInclude Include="vst\vst3host.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <QtMoc Include="connectables\vst3plugin.h">
       <Filter>Header Files</Filter>
     </QtMoc>
@@ -740,6 +740,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <QtMoc Include="views\filebrowsertree.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="vst\vst3host.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
