@@ -73,16 +73,13 @@ namespace View {
         void LoadAttribs(const ObjectContainerAttribs &attr);
         void SaveAttribs(ObjectContainerAttribs &attr);
 
-//        tresult PLUGIN_API queryInterface (const TUID iid, void** obj);
-//        uint32 PLUGIN_API addRef ();
-//        uint32 PLUGIN_API release ();
-        tresult PLUGIN_API resizeView (IPlugView* view, ViewRect* newSize);
+        tresult PLUGIN_API resizeView (IPlugView* view, ViewRect* newSize) override;
 
 
         //---Interface------
         OBJ_METHODS (VstPluginWindow, FObject)
         DEFINE_INTERFACES
-            DEF_INTERFACE (IPlugFrame)
+        DEF_INTERFACE (IPlugFrame)
         END_DEFINE_INTERFACES (FObject)
         REFCOUNT_METHODS(FObject)
 

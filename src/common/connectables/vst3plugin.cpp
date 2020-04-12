@@ -260,8 +260,6 @@ void Vst3Plugin::initProcessData() {
         processData.symbolicSampleSize = Vst::kSample32;
     processData.numSamples = myHost->GetBufferSize();
 
-    //difference between that buffer samble and umSample ?
-    processData.prepare(*component,myHost->GetBufferSize(),myHost->GetSampleRate());
 }
 
 bool Vst3Plugin::initProcessor()
@@ -277,7 +275,8 @@ bool Vst3Plugin::initProcessor()
 
     initAudioBuffers(Vst::kInput);
     initAudioBuffers(Vst::kOutput);
-
+	//difference between that buffer samble and umSample ?
+	processData.prepare(*component, myHost->GetBufferSize(), myHost->GetSampleRate());
 
     //midi in
     qint32 cpt=0;
@@ -331,7 +330,8 @@ bool Vst3Plugin::initAudioBuffers(Vst::BusDirection dir)
                 }
                 p->setObjectName( QString::fromUtf16((char16_t*)busInfo.name) );
                 AudioBuffer* buff = static_cast<AudioPin*>(p)->GetBuffer();
-                if(doublePrecision) {
+                
+				if(doublePrecision) {
                     processData.setChannelBuffer64(dir, i, j, (double*)buff->GetPointer());
                 } else {
                     processData.setChannelBuffer(dir, i, j, (float*)buff->GetPointer());
@@ -362,7 +362,6 @@ bool Vst3Plugin::initController()
 	if (hasEditor) {
 		listParameterPinIn->AddPin(FixedPinNumber::editorVisible);
 		listParameterPinIn->AddPin(FixedPinNumber::learningMode);
-		//OnShowEditor();
 	}
 
 	listParameterPinIn->AddPin(FixedPinNumber::bypass);
@@ -463,7 +462,9 @@ bool Vst3Plugin::CreateEditorWindow()
         LOG("view not created")
         return false;
     }
-//    uint32 r1 = pView->addRef();
+    //uint32 r1 = pView->addRef();
+	
+	
 
 #if WINDOWS
     if(pView->isPlatformTypeSupported(kPlatformTypeHWND)!=kResultTrue) {
@@ -486,45 +487,35 @@ bool Vst3Plugin::CreateEditorWindow()
     }
         #endif
 #endif
-
+	
     editorWnd = new View::VstPluginWindow(myHost->mainWindow);
     editorWnd->SetPlugin(this);
     editorWnd->setWindowTitle(objectName());
 
-    tresult result;
-
-    result = pView->setFrame(editorWnd);
-    if(result!=kResultOk) {
+    if(pView->setFrame(editorWnd) !=kResultOk) {
         LOG("frame not set")
     }
-    result = pView->attached((void*)editorWnd->GetWinId(),kPlatformString);
-    if(result!=kResultOk) {
-        LOG("editor not attached")
+
+	HWND w = (HWND)editorWnd->GetWinId();
+    if(pView->attached(w, kPlatformTypeHWND) !=kResultOk) {
+		LOG("editor not attached");
+		//will retry :
+		editorWnd->deleteLater();
+		editorWnd = 0;
+		return true;
     }
 
     ViewRect size;
     if(pView->getSize(&size)!=kResultOk) {
-        LOG("can't get size")
-//        return false;
+		LOG("can't get size");
     }
 
     editorWnd->SetWindowSize(size.getWidth(),size.getHeight());
 
     if(pView->onSize(&size)!=kResultOk) {
-        LOG("can't set size")
-//        return false;
+		LOG("can't set size");
     }
 
-//    result = pView->canResize();
-//    if(result == kResultTrue) {
-//        LOG("can resize")
-//        ViewRect rec(0,0,600,600);
-//        result = pView->checkSizeConstraint(&rec);
-//        if(result == kResultTrue) {
-////            editorWnd->SetWindowSize(rec.getWidth(),rec.getHeight());
-//            result = pView->onSize(&rec);
-//        }
-//    }
 
     connect(this,SIGNAL(HideEditorWindow()),
             editorWnd,SLOT(hide()),
@@ -813,10 +804,6 @@ void Vst3Plugin::Render()
     if(closed) // || GetSleep())
         return;
 
-//    if(!audioProcessor)
-//        return;
-
-	
     QMutexLocker lock(&objMutex);
 
     foreach(Pin *pin, listAudioPinIn->listPins) {
@@ -876,38 +863,13 @@ void Vst3Plugin::Render()
 	
 	{
 		QMutexLocker l(&paramLock);
-
-//		qint32 numParameters = editController->getParameterCount();
-
-//		QMap<qint32, float>::const_iterator i = listParamChanged.constBegin();
-//		while (i != listParamChanged.constEnd()) {
-
-//			if (i.key() < numParameters) {
-//				int32 idx = 0;
-//                Vst::IParamValueQueue* queue = inputParameterChanges.addParameterData(i.key(), idx);
-//				int32 pIdx = 0;
-//				queue->addPoint(0, i.value(), pIdx);
-//			}
-//			else {
-//				LOG(QString("no param %1 %2").arg(i.key()).arg(objectName()));
-//			}
-//			++i;
-//		}
-//		listParamChanged.clear();
-
-
-
-
-		//    audioEffect->setProcessing (true);
-        FUnknownPtr<Vst::IAudioProcessor> processor = component;
-        if (!processor)
-            return;
-
-        tresult result = processor->process(processData);
+	
+		FUnknownPtr<Vst::IAudioProcessor> processor = component;
+		tresult result = processor->process(processData);
 		if (result != kResultOk) {
 			LOG("error while processing")
 		}
-
+	
         inEvents.clear ();
         inputParameterChanges.clearQueue ();
 	}
@@ -925,14 +887,6 @@ void Vst3Plugin::Render()
             }
         }
     }
-
-//    audioEffect->setProcessing (false);
-
-//    for(int32 i=0; i<vstParamChanges.getParameterCount(); i++) {
-//        delete vstParamChanges.getParameterData(i);
-//    }
-//    vstParamChanges.clearQueue();
-//    listParamQueue.clear();
 
     //send result
     //=========================
@@ -952,7 +906,6 @@ void Vst3Plugin::MidiMsgFromInput(long msg)
 	QMutexLocker l(&paramLock);
 
 	Vst::Event event;
-	event.noteOn.channel = MidiStatus(msg) & MidiConst::channelMask;
 	event.flags = Vst::Event::kIsLive;
 	//event.sampleOffset = ;
 	//event.ppqPosition = ;
@@ -981,11 +934,13 @@ void Vst3Plugin::MidiMsgFromInput(long msg)
 
 			if (MidiData2(msg) == 0 ) {
 				event.type = Vst::Event::kNoteOffEvent;
+				event.noteOff.channel = MidiStatus(msg) & MidiConst::channelMask;
 				event.noteOff.pitch = MidiData1(msg);
 				event.noteOff.tuning = currentPitchbend;
 			}
 			else {
 				event.type = Vst::Event::kNoteOnEvent;
+				event.noteOn.channel = MidiStatus(msg) & MidiConst::channelMask;
 				event.noteOn.pitch = MidiData1(msg);
 				event.noteOn.velocity = MidiData2(msg) / 128.0f;
 				event.noteOn.tuning = currentPitchbend;
@@ -1081,8 +1036,8 @@ void Vst3Plugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
 		}
 
         //send value to the processor
-        {
-            QMutexLocker l(&paramLock);
+       // {
+          //  QMutexLocker l(&paramLock);
 
             //send our own bypass
             if(pinInfo.pinNumber == FixedPinNumber::bypass) {
@@ -1107,7 +1062,7 @@ void Vst3Plugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
 
 
 
-        }
+       // }
 
     }
 }

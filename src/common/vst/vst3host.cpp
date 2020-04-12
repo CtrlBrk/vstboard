@@ -17,7 +17,7 @@ Vst3Host::Vst3Host() : QObject(), Vst::HostApplication()
             Vst::ProcessContext::kCycleValid |
             Vst::ProcessContext::kTempoValid |
             Vst::ProcessContext::kTimeSigValid;
-    processContext.sampleRate = 44.1;
+    processContext.sampleRate = 44100;
     processContext.projectTimeSamples = 0;
 
     processContext.systemTime = 0;
