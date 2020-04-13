@@ -24,11 +24,11 @@
 //#include "precomp.h"
 #include "connectables/object.h"
 
-class Node
+class NodeBase
 {
 public:
-    Node();
-    Node(const Node &c);
+    NodeBase();
+    NodeBase(const NodeBase &c);
 
     int minRenderOrder;
     int maxRenderOrder;

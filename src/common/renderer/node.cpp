@@ -20,20 +20,21 @@
 
 #include "node.h"
 
-Node::Node() :
+NodeBase::NodeBase() :
     minRenderOrder(0),
     maxRenderOrder(9999),
     internalDelay(0L),
-    totalDelayAtOutput(0L)
+    totalDelayAtOutput(0L),
+    listOfObj()
 {
 }
 
-Node::Node(const Node &c) :
+NodeBase::NodeBase(const NodeBase &c) :
     minRenderOrder(c.minRenderOrder),
     maxRenderOrder(c.maxRenderOrder),
-    listOfObj(c.listOfObj),
     internalDelay(c.internalDelay),
-    totalDelayAtOutput(c.totalDelayAtOutput)
+    totalDelayAtOutput(c.totalDelayAtOutput),
+    listOfObj(c.listOfObj)
 {
 
 }

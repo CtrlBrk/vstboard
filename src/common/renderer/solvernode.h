@@ -25,7 +25,7 @@
 
 class PathSolver;
 class RendererNode2;
-class SolverNode : public Node
+class SolverNode : public NodeBase
 {
 public:
     SolverNode();

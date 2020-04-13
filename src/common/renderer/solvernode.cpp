@@ -22,14 +22,14 @@
 #include "renderernode2.h"
 
 SolverNode::SolverNode() :
-    Node(),
+    NodeBase(),
     loopFlag(0),
     countSteps(0)
 {
 }
 
 SolverNode::SolverNode(const SolverNode &c) :
-    Node(c),
+    NodeBase(c),
     loopFlag(c.loopFlag),
     countSteps(c.countSteps),
     listParents(c.listParents),
@@ -39,7 +39,7 @@ SolverNode::SolverNode(const SolverNode &c) :
 }
 
 SolverNode::SolverNode(const RendererNode2 &c) :
-    Node(),
+    NodeBase(),
     loopFlag(0),
     countSteps(0)
 {
