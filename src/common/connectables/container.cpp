@@ -63,10 +63,10 @@ Container::Container(MainHost *myHost,int index, const ObjectInfo &info) :
 
 //    parkModel.setObjectName("parkModel"%objectName());
     LoadProgram(TEMP_PROGRAM);
-    connect(myHost,SIGNAL(BufferSizeChanged(ulong)),
-            this,SLOT(SetBufferSize(ulong)));
-    connect(myHost,SIGNAL(SampleRateChanged(float)),
-            this,SLOT(SetSampleRate(float)));
+//    connect(myHost,SIGNAL(BufferSizeChanged(ulong)),
+//            this,SLOT(SetBufferSize(ulong)));
+//    connect(myHost,SIGNAL(SampleRateChanged(float)),
+//            this,SLOT(SetSampleRate(float)));
 }
 
 /*!

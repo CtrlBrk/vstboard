@@ -244,6 +244,11 @@ void MainHost::SetupHostContainer()
     hostContainer->SetLoadingMode(true);
     mainContainer->AddObject(hostContainer);
 
+    connect(this,SIGNAL(BufferSizeChanged(ulong)),
+            hostContainer.get(),SLOT(SetBufferSize(ulong)));
+    connect(this,SIGNAL(SampleRateChanged(float)),
+            hostContainer.get(),SLOT(SetSampleRate(float)));
+
     QSharedPointer<Connectables::Object> bridge;
 
 
@@ -346,6 +351,11 @@ void MainHost::SetupProjectContainer()
 
     projectContainer->SetLoadingMode(true);
     mainContainer->AddObject(projectContainer);
+
+    connect(this,SIGNAL(BufferSizeChanged(ulong)),
+            projectContainer.get(),SLOT(SetBufferSize(ulong)));
+    connect(this,SIGNAL(SampleRateChanged(float)),
+            projectContainer.get(),SLOT(SetSampleRate(float)));
 
     QSharedPointer<Connectables::Object> bridge;
 
@@ -461,6 +471,11 @@ void MainHost::SetupProgramContainer()
     programContainer->SetOptimizerFlag(true);
     mainContainer->AddObject(programContainer);
 
+    connect(this,SIGNAL(BufferSizeChanged(ulong)),
+            programContainer.get(),SLOT(SetBufferSize(ulong)));
+    connect(this,SIGNAL(SampleRateChanged(float)),
+            programContainer.get(),SLOT(SetSampleRate(float)));
+
     QSharedPointer<Connectables::Object> bridge;
 
     //bridge in
@@ -570,6 +585,11 @@ void MainHost::SetupGroupContainer()
     groupContainer->SetLoadingMode(true);
 
     mainContainer->AddObject(groupContainer);
+
+    connect(this,SIGNAL(BufferSizeChanged(ulong)),
+            groupContainer.get(),SLOT(SetBufferSize(ulong)));
+    connect(this,SIGNAL(SampleRateChanged(float)),
+            groupContainer.get(),SLOT(SetSampleRate(float)));
 
     QSharedPointer<Connectables::Object> bridge;
 
