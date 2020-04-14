@@ -57,7 +57,8 @@ class Vst3Plugin : public Object,
         public Vst::IComponentHandler,
         public Vst::IComponentHandler2,
         public Vst::IComponentHandler3,
-        public Vst::IContextMenuTarget
+        public Vst::IContextMenuTarget,
+        public Vst::IComponentHandlerBusActivation
 
 {
     Q_OBJECT
@@ -94,6 +95,8 @@ public:
     Vst::IContextMenu* PLUGIN_API createContextMenu (IPlugView* plugView, const Vst::ParamID* paramID) override;
     tresult PLUGIN_API executeMenuItem (int32 tag) override;
 
+    tresult PLUGIN_API requestBusActivation (Vst::MediaType type, Vst::BusDirection dir, int32 index, TBool state) override;
+
     void MidiMsgFromInput(long msg) override;
 
     void fromJson(QJsonObject &json) override;
@@ -114,22 +117,17 @@ private:
     bool initPlugin();
     bool initProcessor();
     bool initController();
-    bool initAudioBuffers(Vst::BusDirection dir);
+    bool initAudioBuffers(Vst::BusDirection dir, bool unassign=false);
     void initProcessData();
 
     QLibrary *pluginLib;
-    //IPluginFactory* factory;
-//    Vst::IComponent* plugComponent;
     Vst::IComponent* component;
-//    Vst::IEditController* editController;
     Vst::IEditController* editController;
-//    Vst::IAudioProcessor* audioProcessor;
 
     Vst::IConnectionPoint* iConnectionPointComponent;
     Vst::IConnectionPoint* iConnectionPointController;
-//    Vst::ParameterChanges vstParamChanges;
-//    QMap<qint32,qint32>listParamQueue;
-    bool hasEditor;
+
+	bool hasEditor;
     IPlugView *pView;
     QMap<qint32,float>listParamChanged;
 
