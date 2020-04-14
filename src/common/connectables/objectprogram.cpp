@@ -148,7 +148,7 @@ ObjectProgram::ObjectProgram(QJsonObject &json, int &id) :
     for (int i = 0; i < jOtherPara.size(); ++i) {
         QJsonObject jPara = jOtherPara[i].toObject();
         int id = jPara["id"].toInt();
-        QVariant param = jPara["value"].toVariant();
+        QVariant param = QByteArray::fromHex( jPara["value"].toString().toUtf8() );
         listOtherValues.insert(id, param);
     }
 }
@@ -182,7 +182,7 @@ void ObjectProgram::toJson(QJsonObject &json, int id) const
     while(k!=listOtherValues.constEnd()) {
         QJsonObject jPara;
         jPara["id"] = k.key();
-        jPara["value"] = k.value().toJsonValue();
+        jPara["value"] = QString(k.value().toByteArray().toHex());
         jOtherPara.append(jPara);
         ++k;
     }

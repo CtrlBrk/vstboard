@@ -106,14 +106,14 @@ namespace Connectables {
         void WindowSizeChange(int newWidth, int newHeight);
 
     public slots:
-        void SetBufferSize(unsigned long size);
-        void SetSampleRate(float rate=44100.0);
+        void SetBufferSize(unsigned long size) override;
+        void SetSampleRate(float rate=44100.0) override;
         void RaiseEditor();
         void EditorDestroyed();
         void EditIdle();
-        void OnParameterChanged(ConnectionInfo pinInfo, float value);
-        void OnShowEditor();
-        void OnHideEditor();
+        void OnParameterChanged(ConnectionInfo pinInfo, float value) override;
+        void OnShowEditor() override;
+        void OnHideEditor() override;
         void OnEditorClosed();
         void LoadBank();
         bool LoadBank(const QString &filename);
@@ -121,8 +121,8 @@ namespace Connectables {
         bool LoadProgramFile(const QString &filename);
         void SaveProgramFile(const QString &filename);
 //        void TakeScreenshot();
-        void UserRemovePin(const ConnectionInfo &info);
-        void UserAddPin(const ConnectionInfo &info);
+        void UserRemovePin(const ConnectionInfo &info) override;
+        void UserAddPin(const ConnectionInfo &info) override;
 
         friend class View::VstPluginWindow;
 //        friend class View::VstShellSelect;

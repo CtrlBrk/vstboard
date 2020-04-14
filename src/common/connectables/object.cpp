@@ -695,7 +695,7 @@ void Object::fromJson(QJsonObject &json)
     objInfo.forcedObjId = id;
 
     savedIndex=json["id"].toInt();
-    SetSleep( json["sleep"].toBool() );
+    //SetSleep( json["sleep"].toBool() );
     listenProgramChanges = json["listenProgramChanges"].toBool();
 
     //progs

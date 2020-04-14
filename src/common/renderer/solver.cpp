@@ -42,8 +42,6 @@ long Solver::GetMap(const hashObjects &listObject, const hashCables &listCables,
 {
     nbThreads=nbTh;
 
-//
-//    solverNodes.clear();
     QList<SolverNode*>solverNodes;
     PathSolver path;
     long globalDelay = path.GetNodes(listObject, listCables, solverNodes);

@@ -784,13 +784,12 @@ bool AudioDevice::RingBuffersToDevice( void *outputBuffer, unsigned long framesP
         cpt++;
     }
 
-    if(outputBuffer) {
+    /*if(outputBuffer) {
         QVector<float> grph;
         grph.reserve(framesPerBuffer * sizeof(float));
         std::copy(((float **) outputBuffer)[0], ((float **) outputBuffer)[0] + framesPerBuffer, std::back_inserter(grph));
-//        myHost->mainWindow->DrawBuffer( ((float **) outputBuffer)[0], framesPerBuffer );
         emit DebugGraphUpdated(grph);
-    }
+    }*/
     return true;
 }
 #else
