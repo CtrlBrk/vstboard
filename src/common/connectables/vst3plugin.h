@@ -44,12 +44,32 @@
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+#include <array>
 
 namespace View {
     class VstPluginWindow;
 }
 
 using namespace Steinberg;
+
+using namespace Vst;
+enum
+{
+    kMaxMidiMappingBusses = 4,
+    kMaxMidiChannels = 16
+};
+using Controllers = std::vector<int32>;
+using Channels = std::array<Controllers, kMaxMidiChannels>;
+using Busses = std::array<Channels, kMaxMidiMappingBusses>;
+using MidiCCMapping = Busses;
+
+using ToParameterIdFunc = std::function<ParamID (int32, uint8_t)>;
+using ParameterChange = std::pair<ParamID, ParamValue>;
+using OptionParamChange = VST3::Optional<ParameterChange>;
+using OptionalEvent = VST3::Optional<Event>;
+
+const float kMidiScaler = 1.f / 127.f;
+static const uint32 kDataMask = 0x7F;
 
 namespace Connectables {
 
@@ -97,7 +117,12 @@ public:
 
     tresult PLUGIN_API requestBusActivation (Vst::MediaType type, Vst::BusDirection dir, int32 index, TBool state) override;
 
+    static MidiCCMapping initMidiCtrlerAssignment (IComponent* component, IMidiMapping* midiMapping);
+    bool isPortInRange (int32 port, int32 channel) const;
+    bool processParamChange (uint8_t status, uint8_t channel, uint8_t midiData1, uint8_t midiData2, int32 port);
     void MidiMsgFromInput(long msg) override;
+    OptionalEvent midiToEvent (uint8_t status, uint8_t channel, uint8_t midiData0, uint8_t midiData1);
+    OptionParamChange midiToParameter (uint8_t status, uint8_t channel, uint8_t midiData1, uint8_t midiData2, const ToParameterIdFunc& toParamID);
 
     void fromJson(QJsonObject &json) override;
     void toJson(QJsonObject &json) const override;
@@ -108,8 +133,6 @@ public:
     void GetContainerAttribs(ObjectContainerAttribs &attr) override;
     void ReceiveMsg(const MsgObject &msg) override;
 
-
-
 private:
     void Unload();
     bool CreateEditorWindow();
@@ -119,6 +142,8 @@ private:
     bool initController();
     bool initAudioBuffers(Vst::BusDirection dir, bool unassign=false);
     void initProcessData();
+
+    MidiCCMapping midiCCMapping;
 
     QLibrary *pluginLib;
     Vst::IComponent* component;

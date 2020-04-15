@@ -33,7 +33,7 @@ public:
     void SetTempo(int tempo, int sign1, int sign2);
     void GetTempo(int &tempo, int &sign1, int &sign2);
     void SetTimeInfo(const Vst::ProcessContext *info);
-    void GetTimeInfo(VstTimeInfo *info);
+//    void GetTimeInfo(VstTimeInfo *info);
 
     Vst::ProcessContext processContext;
   //  VstTimeInfo vst2TimeInfo;

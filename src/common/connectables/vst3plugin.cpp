@@ -27,6 +27,7 @@
 
 #include "commands/comaddpin.h"
 #include "commands/comremovepin.h"
+#include "pluginterfaces/vst/ivstmidicontrollers.h"
 //#include "pluginterfaces/vst/ivsteditcontroller.h"
 
 //#include "public.sdk/source/vst/hosting/eventlist.h"
@@ -398,9 +399,12 @@ bool Vst3Plugin::initController()
         }
     }
 
+    FUnknownPtr<Vst::IMidiMapping> midiMapping = editController;
+    if (midiMapping)
+        midiCCMapping = initMidiCtrlerAssignment (component, midiMapping);
 
 
-   
+
     return true;
 }
 
@@ -445,9 +449,8 @@ void Vst3Plugin::LoadProgram(int prog)
     SetMsgEnabled(false);
 
     Object::LoadProgram(prog);
-
 	{
-		//QMutexLocker lock(&objMutex);
+        QMutexLocker lock(&objMutex);
 		
 		if (component) {
 			QByteArray compstate = currentProgram->listOtherValues.value(0, QByteArray()).toByteArray();
@@ -936,107 +939,183 @@ void Vst3Plugin::Render()
 	}
 }
 
+//from miditovst
+OptionalEvent Vst3Plugin::midiToEvent (uint8_t status, uint8_t channel, uint8_t midiData0, uint8_t midiData1)
+{
+    Event new_event = {};
+    if (status == MidiConst::noteOn || status == MidiConst::noteOff)
+    {
+        if (status == MidiConst::noteOff) // note off
+        {
+            new_event.noteOff.noteId = -1;
+            new_event.type = Event::kNoteOffEvent;
+            new_event.noteOff.channel = channel;
+            new_event.noteOff.pitch = midiData0;
+            new_event.noteOff.velocity = midiData1 / 127.f;
+            return std::move (new_event);
+        }
+        else if (status == MidiConst::noteOn) // note on
+        {
+            new_event.noteOn.noteId = -1;
+            new_event.type = Event::kNoteOnEvent;
+            new_event.noteOn.channel = channel;
+            new_event.noteOn.pitch = midiData0;
+            new_event.noteOn.velocity = midiData1 / 127.f;
+            return std::move (new_event);
+        }
+    }
+    //--- -----------------------------
+    else if (status == MidiConst::aftertouch)
+    {
+        new_event.type = Event::kPolyPressureEvent;
+        new_event.polyPressure.channel = channel;
+        new_event.polyPressure.pitch = midiData0;
+        new_event.polyPressure.pressure = midiData1 / 127.f;
+        return std::move (new_event);
+    }
+
+    return {};
+}
+
+//from miditovst
+OptionParamChange Vst3Plugin::midiToParameter (uint8_t status, uint8_t channel, uint8_t midiData1, uint8_t midiData2, const ToParameterIdFunc& toParamID)
+{
+    if (!toParamID)
+        return {};
+
+    ParameterChange paramChange;
+    if (status == MidiConst::ctrl) // controller
+    {
+        paramChange.first = toParamID (channel, midiData1);
+        if (paramChange.first != kNoParamId)
+        {
+            paramChange.second = (double)midiData2 * kMidiScaler;
+            return std::move (paramChange);
+        }
+    }
+    else if (status == MidiConst::pitchbend)
+    {
+        paramChange.first = toParamID (channel, kPitchBend);
+        if (paramChange.first != kNoParamId)
+        {
+            const double kPitchWheelScaler = 1. / (double)0x3FFF;
+
+            const int32 ctrl = (midiData1 & kDataMask) | (midiData2 & kDataMask) << 7;
+            paramChange.second = kPitchWheelScaler * (double)ctrl;
+            return std::move (paramChange);
+        };
+    }
+    else if (status == MidiConst::aftertouch)
+    {
+        paramChange.first = toParamID (channel, kAfterTouch);
+        if (paramChange.first != kNoParamId)
+        {
+            paramChange.second = (ParamValue) (midiData1 & kDataMask) * kMidiScaler;
+            return std::move (paramChange);
+        };
+    }
+    else if (status == MidiConst::prog)
+    {
+        // TODO
+    }
+
+    return {};
+}
+
+bool Vst3Plugin::isPortInRange (int32 port, int32 channel) const
+{
+    return port < kMaxMidiMappingBusses && !midiCCMapping[port][channel].empty ();
+}
+
+// From Vst2Wrapper
+MidiCCMapping Vst3Plugin::initMidiCtrlerAssignment (IComponent* component, IMidiMapping* midiMapping)
+{
+    MidiCCMapping midiCCMapping {};
+
+    if (!midiMapping || !component)
+        return midiCCMapping;
+
+    int32 busses = std::min<int32> (component->getBusCount (kEvent, kInput), kMaxMidiMappingBusses);
+
+    if (midiCCMapping[0][0].empty ())
+    {
+        for (int32 b = 0; b < busses; b++)
+            for (int32 i = 0; i < kMaxMidiChannels; i++)
+                midiCCMapping[b][i].resize (kCountCtrlNumber);
+    }
+
+    ParamID paramID;
+    for (int32 b = 0; b < busses; b++)
+    {
+        for (int16 ch = 0; ch < kMaxMidiChannels; ch++)
+        {
+            for (int32 i = 0; i < kCountCtrlNumber; i++)
+            {
+                paramID = kNoParamId;
+                if (midiMapping->getMidiControllerAssignment (b, ch, (CtrlNumber)i, paramID) == kResultTrue)
+                {
+                    // TODO check if tag is associated to a parameter
+                    midiCCMapping[b][ch][i] = paramID;
+                }
+                else
+                    midiCCMapping[b][ch][i] = kNoParamId;
+            }
+        }
+    }
+    return midiCCMapping;
+}
+
+bool Vst3Plugin::processParamChange (uint8_t status, uint8_t channel, uint8_t midiData1, uint8_t midiData2, int32 port)
+{
+    auto paramMapping = [port, this] (int32 channel, uint8_t data1) -> ParamID {
+        if (!isPortInRange (port, channel))
+            return kNoParamId;
+
+        return midiCCMapping[port][channel][data1];
+    };
+
+    auto paramChange =
+        midiToParameter (status, channel, midiData1, midiData2, paramMapping);
+    if (paramChange)
+    {
+        int32 index = 0;
+        IParamValueQueue* queue = inputParameterChanges.addParameterData ((*paramChange).first, index);
+        if (queue)
+        {
+            const int32 sampleOffset = 0;
+            if (queue->addPoint (sampleOffset, (*paramChange).second, index) != kResultOk)
+            {
+                assert (false && "Parameter point was not added to ParamValueQueue!");
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
 void Vst3Plugin::MidiMsgFromInput(long msg)
 {
-	static float currentPitchbend = .0f;
     if(closed)
         return;
 
     uint8 command = MidiStatus(msg) & MidiConst::codeMask;
-	QMutexLocker l(&paramLock);
-
-    Vst::Event event = {0};
-	event.flags = Vst::Event::kIsLive;
     int8 chan = MidiStatus(msg) & MidiConst::channelMask;
-	//event.sampleOffset = ;
-	//event.ppqPosition = ;
 
-	switch(command) {
-//        case MidiConst::ctrl: {
-//            ChangeValue(MidiData1(msg),MidiData2(msg));
-//            break;
-//        }
-        case MidiConst::prog :
-            if(progChangeParameter!=-1) {
-                Pin* p = listParameterPinIn->GetPin(progChangeParameter,false);
-                if(p) {
-                    static_cast<ParameterPin*>(p)->ChangeValue( (int)MidiData1(msg) );
-                }
-            }
-            break;
+//    Vst::Event event = {0};
+    auto event = midiToEvent (command, chan, MidiData1(msg), MidiData2(msg));
+    if (event) {
+        event->flags = Vst::Event::kIsLive;
+        QMutexLocker l(&paramLock);
+        inEvents.addEvent(*event);
 
-        case MidiConst::noteOn : 
-//            ChangeValue(para_velocity, MidiData2(msg) );
-//            ChangeValue(para_notes+MidiData1(msg), MidiData2(msg) );
-//            ChangeValue(para_notepitch, MidiData1(msg) );
-			
-			
-			
-
-			if (MidiData2(msg) == 0 ) {
-				event.type = Vst::Event::kNoteOffEvent;
-                event.noteOff.channel = chan;
-				event.noteOff.pitch = MidiData1(msg);
-				event.noteOff.tuning = currentPitchbend;
-			}
-			else {
-				event.type = Vst::Event::kNoteOnEvent;
-                event.noteOn.channel = chan;
-				event.noteOn.pitch = MidiData1(msg);
-				event.noteOn.velocity = MidiData2(msg) / 128.0f;
-				event.noteOn.tuning = currentPitchbend;
-			}
-			//event.noteOn.length;
-			//event.noteOn.noteId;
-            break;
-        
-        case MidiConst::noteOff : 
-//            ChangeValue(para_notepitch, MidiData1(msg) );
-//            ChangeValue(para_notes+MidiData1(msg), MidiData2(msg) );
-			
-			event.type = Vst::Event::kNoteOffEvent;
-			event.noteOff.pitch = MidiData1(msg);
-			event.noteOff.tuning = currentPitchbend;
-            event.noteOff.channel = chan;
-			//event.noteOff.velocity;
-			//event.noteOff.noteId;
-
-            break;
-        
-        case MidiConst::pitchbend : 
-//            ChangeValue(para_pitchbend, MidiData2(msg) );
-			currentPitchbend = MidiData2(msg)-64;
-
-            event.type = Vst::Event::kLegacyMIDICCOutEvent;
-            int8 n = MidiData1(msg);
-            int8 pitch = MidiData2(msg);
-            event.midiCCOut = Vst::LegacyMIDICCOutEvent {command, chan, n, pitch};
-            break;
-        
-//        case MidiConst::chanpressure : {
-//            ChangeValue(para_chanpress, MidiData1(msg) );
-//            break;
-//        }
-//        case MidiConst::aftertouch : {
-//            ChangeValue(para_velocity, MidiData1(msg) );
-//            ChangeValue(para_aftertouch, MidiData2(msg) );
-//        }
+//        vstEvent->busIndex = port;
+//            if (eventList.addEvent (*vstEvent) != kResultOk)
+        return;
     }
-	
-//    Vst::Event *evnt = new Vst::Event;
-//    memset(evnt, 0, sizeof(Vst::Event));
-//    evnt->type = Vst::Event::kNoteOnEvent;
-//    evnt->byteSize = sizeof(VstMidiEvent);
-//    memcpy(evnt->midiData, &msg, sizeof(evnt->midiData));
-//    evnt->flags = kVstMidiEventIsRealtime;
-
-//    midiEventsMutex.lock();
-//    listVstMidiEvents << evnt;
-//    midiEventsMutex.unlock();
-
-
-    //add midi event to the queue
-	inEvents.addEvent(event);
+    int32 port=0;
+    processParamChange (command, chan, MidiData1(msg), MidiData2(msg), port);
 }
 
 void Vst3Plugin::OnParameterChanged(ConnectionInfo pinInfo, float value)

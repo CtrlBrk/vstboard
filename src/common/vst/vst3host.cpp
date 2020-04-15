@@ -120,47 +120,47 @@ void Vst3Host::SetTimeInfo(const Vst::ProcessContext *info) {
     processContext = newCxt;
 }
 
-void Vst3Host::GetTimeInfo(VstTimeInfo *vst2timeInfo) {
-    const uint32 portableFlags =
-        Vst::ProcessContext::kPlaying |
-        Vst::ProcessContext::kCycleActive |
-        Vst::ProcessContext::kRecording |
-        Vst::ProcessContext::kSystemTimeValid |
-        Vst::ProcessContext::kProjectTimeMusicValid |
-        Vst::ProcessContext::kBarPositionValid |
-        Vst::ProcessContext::kCycleValid |
-        Vst::ProcessContext::kTempoValid |
-        Vst::ProcessContext::kTimeSigValid |
-        Vst::ProcessContext::kSmpteValid |
-        Vst::ProcessContext::kClockValid;
+//void Vst3Host::GetTimeInfo(VstTimeInfo *vst2timeInfo) {
+//    const uint32 portableFlags =
+//        Vst::ProcessContext::kPlaying |
+//        Vst::ProcessContext::kCycleActive |
+//        Vst::ProcessContext::kRecording |
+//        Vst::ProcessContext::kSystemTimeValid |
+//        Vst::ProcessContext::kProjectTimeMusicValid |
+//        Vst::ProcessContext::kBarPositionValid |
+//        Vst::ProcessContext::kCycleValid |
+//        Vst::ProcessContext::kTempoValid |
+//        Vst::ProcessContext::kTimeSigValid |
+//        Vst::ProcessContext::kSmpteValid |
+//        Vst::ProcessContext::kClockValid;
 
-    vst2timeInfo->flags = processContext.state & portableFlags;
-    vst2timeInfo->sampleRate = processContext.sampleRate;
-    vst2timeInfo->samplePos = processContext.projectTimeSamples;
+//    vst2timeInfo->flags = processContext.state & portableFlags;
+//    vst2timeInfo->sampleRate = processContext.sampleRate;
+//    vst2timeInfo->samplePos = processContext.projectTimeSamples;
 
-    if (processContext.state & Vst::ProcessContext::kSystemTimeValid)
-        vst2timeInfo->nanoSeconds = processContext.systemTime;
+//    if (processContext.state & Vst::ProcessContext::kSystemTimeValid)
+//        vst2timeInfo->nanoSeconds = processContext.systemTime;
 
-    if (processContext.state & Vst::ProcessContext::kProjectTimeMusicValid)
-        vst2timeInfo->ppqPos = processContext.projectTimeMusic;
+//    if (processContext.state & Vst::ProcessContext::kProjectTimeMusicValid)
+//        vst2timeInfo->ppqPos = processContext.projectTimeMusic;
 
-    if (processContext.state & Vst::ProcessContext::kBarPositionValid)
-        vst2timeInfo->barStartPos = processContext.barPositionMusic;
+//    if (processContext.state & Vst::ProcessContext::kBarPositionValid)
+//        vst2timeInfo->barStartPos = processContext.barPositionMusic;
 
-    if (processContext.state & Vst::ProcessContext::kCycleValid) {
-        vst2timeInfo->cycleStartPos = processContext.cycleStartMusic;
-        vst2timeInfo->cycleEndPos = processContext.cycleEndMusic;
-    }
+//    if (processContext.state & Vst::ProcessContext::kCycleValid) {
+//        vst2timeInfo->cycleStartPos = processContext.cycleStartMusic;
+//        vst2timeInfo->cycleEndPos = processContext.cycleEndMusic;
+//    }
 
-    if (processContext.state & Vst::ProcessContext::kTempoValid)
-        vst2timeInfo->tempo = processContext.tempo;
+//    if (processContext.state & Vst::ProcessContext::kTempoValid)
+//        vst2timeInfo->tempo = processContext.tempo;
 
-    if (processContext.state & Vst::ProcessContext::kTimeSigValid)
-    {
-        vst2timeInfo->timeSigNumerator = processContext.timeSigNumerator;
-        vst2timeInfo->timeSigDenominator = processContext.timeSigDenominator;
-    }
-}
+//    if (processContext.state & Vst::ProcessContext::kTimeSigValid)
+//    {
+//        vst2timeInfo->timeSigNumerator = processContext.timeSigNumerator;
+//        vst2timeInfo->timeSigDenominator = processContext.timeSigDenominator;
+//    }
+//}
 
 void Vst3Host::SetTempo(int tempo, int sign1, int sign2)
 {
