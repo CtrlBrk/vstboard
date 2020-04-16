@@ -299,7 +299,17 @@ bool Vst3Plugin::initProcessor()
     
 	//difference between that buffer sample and ProcessSetup.numSample ?
 	processData.prepare(*component, myHost->GetBufferSize(), doublePrecision ? Vst::kSample64 : Vst::kSample32);
-	processor->setupProcessing(setup);
+    if(processor->setupProcessing(setup)!=kResultOk) {
+        LOG("no double precision ?");
+        if(doublePrecision) {
+            doublePrecision=false;
+            setup.symbolicSampleSize = Vst::kSample32;
+            if(processor->setupProcessing(setup)!=kResultOk) {
+                LOG("nope, it's something else, abort");
+                return false;
+            }
+        }
+    }
 
     initAudioBuffers(Vst::kInput);
     initAudioBuffers(Vst::kOutput);
@@ -451,7 +461,7 @@ void Vst3Plugin::LoadProgram(int prog)
     Object::LoadProgram(prog);
 	{
         QMutexLocker lock(&objMutex);
-		
+        try {
 		if (component) {
 			QByteArray compstate = currentProgram->listOtherValues.value(0, QByteArray()).toByteArray();
 			if (!compstate.isEmpty()) {
@@ -477,7 +487,12 @@ void Vst3Plugin::LoadProgram(int prog)
 				}
 			}
 		}
-		
+        }
+        catch(std::exception& e) {
+            LOG(e.what())
+        } catch(...) {
+            LOG("eeexption")
+        }
 	}
     if(msgWasEnabled)
         SetMsgEnabled(true);
@@ -866,10 +881,13 @@ void Vst3Plugin::Render()
 				for (qint32 channelIndex = 0; channelIndex < busInfo.channelCount; channelIndex++) {
 					Pin *pin = listAudioPinIn->GetPin(cpt++);
 					if (pin) {
-						float *buf = (float*)static_cast<AudioPin*>(pin)->GetBuffer()->ConsumeStack();
 						Vst::AudioBusBuffers* bus = &processData.inputs[busIndex];
 						if (bus) {
-							bus->channelBuffers32[channelIndex] = buf;
+                            if(doublePrecision) {
+                                bus->channelBuffers64[channelIndex] = (double*)static_cast<AudioPin*>(pin)->GetBuffer()->ConsumeStack();
+                            } else {
+                                bus->channelBuffers32[channelIndex] = (float*)static_cast<AudioPin*>(pin)->GetBuffer()->ConsumeStack();
+                            }
 						}
 					}
 					else {
@@ -890,10 +908,13 @@ void Vst3Plugin::Render()
 				for (qint32 channelIndex = 0; channelIndex < busInfo.channelCount; channelIndex++) {
 					Pin *pin = listAudioPinOut->GetPin(cpt++);
 					if (pin) {
-						float *buf = (float*)static_cast<AudioPin*>(pin)->GetBuffer()->GetPointerWillBeFilled();
 						Vst::AudioBusBuffers* bus = &processData.outputs[busIndex];
 						if (bus) {
-							bus->channelBuffers32[channelIndex] = buf;
+                            if(doublePrecision) {
+                                bus->channelBuffers64[channelIndex] = (double*)static_cast<AudioPin*>(pin)->GetBuffer()->GetPointerWillBeFilled();
+                            } else {
+                                bus->channelBuffers32[channelIndex] = (float*)static_cast<AudioPin*>(pin)->GetBuffer()->GetPointerWillBeFilled();
+                            }
 						}
 					}
 					else {
@@ -903,6 +924,7 @@ void Vst3Plugin::Render()
 			}
 		}
 
+        try
 		{
 			QMutexLocker l(&paramLock);
 
@@ -914,7 +936,9 @@ void Vst3Plugin::Render()
 
 			inEvents.clear();
 			inputParameterChanges.clearQueue();
-		}
+        } catch(...) {
+            LOG("ex")
+        }
 
 		//output params
 		if (processData.outputParameterChanges) {
