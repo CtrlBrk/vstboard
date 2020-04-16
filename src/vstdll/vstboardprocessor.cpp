@@ -29,11 +29,15 @@
 #include "connectables/vstaudiodeviceout.h"
 #include "connectables/objectfactoryvst.h"
 
+#include "projectfile/jsonwriter.h"
+#include "projectfile/jsonreader.h"
+
 #include "msgobject.h"
 
 #include "pluginterfaces/base/ibstream.h"
 #include "pluginterfaces/vst/ivstparameterchanges.h"
 #include "pluginterfaces/vst/ivstevents.h"
+#include "public.sdk/source/common/memorystream.h"
 
 VstBoardProcessor::VstBoardProcessor () :
     MainHost(0,0),
@@ -139,7 +143,22 @@ tresult PLUGIN_API VstBoardProcessor::initialize (FUnknown* context)
 
 tresult PLUGIN_API VstBoardProcessor::setState (IBStream* state)
 {
-    int32 size=0;
+	MemoryStream* stateCtrl = static_cast<MemoryStream*>(state);
+	QByteArray bArray(stateCtrl->getData(), stateCtrl->getSize());
+	QBuffer buffer(&bArray);
+	buffer.open(QIODevice::ReadOnly);
+
+	QByteArray saveData = buffer.readAll();
+
+	//QJsonDocument loadDoc(QJsonDocument::fromBinaryData(qUncompress(saveData));
+	QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
+	QJsonObject json = loadDoc.object();
+	if (json.contains("proc")) {
+		JsonReader::readProjectProcess(json["proc"].toObject(), this);
+	}
+	
+
+    /*int32 size=0;
     if (state->read (&size, sizeof (int32)) != kResultOk)
         return kResultFalse;
 
@@ -148,15 +167,17 @@ tresult PLUGIN_API VstBoardProcessor::setState (IBStream* state)
 #endif
 
     if(size==0)
-        return kResultFalse;
+        return kResultFalse;*/
 
+
+/*
     char *buf = new char[size];
     if (state->read (buf, size) != kResultOk) {
         delete[] buf;
         return kResultFalse;
     }
 
-
+	
     QByteArray bArray(buf,size);
     QDataStream stream( &bArray , QIODevice::ReadOnly);
     if(!ProjectFile::FromStream(this,stream)) {
@@ -166,21 +187,32 @@ tresult PLUGIN_API VstBoardProcessor::setState (IBStream* state)
         return kResultFalse;
     }
 
-    delete[] buf;
+    delete[] buf;*/
     return kResultOk;
 }
 
 tresult PLUGIN_API VstBoardProcessor::getState (IBStream* state)
 {
-    QByteArray bArray;
-    QDataStream stream( &bArray , QIODevice::WriteOnly);
-    ProjectFile::ToStream(this,stream);
+	QByteArray bArray;
+	QBuffer buffer(&bArray);
+	buffer.open(QIODevice::WriteOnly);
 
-    int32 size =  bArray.size();
+	QJsonObject jsonObj;
+	jsonObj["proc"] = JsonWriter::writeProjectProcess(this, true, true);
+	QJsonDocument saveDoc(jsonObj);
+
+	//buffer.write(qCompress(saveDoc.toBinaryData()));
+	buffer.write(saveDoc.toJson(QJsonDocument::Indented));
+	
+    
+    //QDataStream stream( &bArray , QIODevice::WriteOnly);
+    //ProjectFile::ToStream(this,stream);
+
+   /* int32 size =  bArray.size();
 #if BYTEORDER == kBigEndian
     SWAP_32 (size)
 #endif
-    state->write(&size, sizeof (int32));
+    state->write(&size, sizeof (int32));*/
     state->write(bArray.data(), bArray.size());
 
     return kResultOk;
@@ -197,10 +229,8 @@ tresult PLUGIN_API VstBoardProcessor::setupProcessing (Vst::ProcessSetup& newSet
     if(sampleRate != sRate)
         SetSampleRate(sRate);
 
-//    if(newSetup.symbolicSampleSize!=Vst::kSample32 && newSetup.symbolicSampleSize!=Vst::kSample64) {
-//        return kResultFalse;
-//    }
-
+	doublePrecision = newSetup.symbolicSampleSize == Vst::kSample64 ? true : false;
+	settings->SetSetting("currentDoublePrecision", doublePrecision);
     return kResultOk;
 }
 

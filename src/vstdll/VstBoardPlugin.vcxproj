@@ -226,8 +226,8 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;advapi32.lib;ws2_32.lib;ole32.lib;user32.lib;common.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\ATLMFC\lib\x64;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\lib\x64;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\ucrt\x64;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\um\x64;$(outdir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>winmm.lib;advapi32.lib;ws2_32.lib;ole32.lib;user32.lib;common.lib;sdk.lib;base.lib;pluginterfaces.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\ATLMFC\lib\x64;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\lib\x64;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\ucrt\x64;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\um\x64;$(outdir);.\..\..\libs\VST_SDK\VST3_SDK\build64\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreImportLibrary>true</IgnoreImportLibrary>
@@ -268,6 +268,9 @@
       <QmlCacheFilteredOutputFile>$(intdir)\qrc_%(Filename)_qmlcache.cpp</QmlCacheFilteredOutputFile>
       <QmlCacheLoaderFile>$(intdir)\qmlcache_loader.cpp</QmlCacheLoaderFile>
     </QtRcc>
+    <PostBuildEvent>
+      <Command>copy "$(OutDir)$(TargetName).dll" "$(OutDir)$(TargetName).vst3"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -359,8 +362,8 @@
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;advapi32.lib;ws2_32.lib;ole32.lib;user32.lib;common.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\ATLMFC\lib\x64;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\lib\x64;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\ucrt\x64;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\um\x64;$(outdir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>winmm.lib;advapi32.lib;ws2_32.lib;ole32.lib;user32.lib;common.lib;sdk.lib;base.lib;pluginterfaces.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\ATLMFC\lib\x64;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\lib\x64;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\ucrt\x64;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\um\x64;$(outdir);.\..\..\libs\VST_SDK\VST3_SDK\build64\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreImportLibrary>true</IgnoreImportLibrary>
@@ -398,8 +401,17 @@
       <QtMocDir>$(intdir)</QtMocDir>
       <QtMocFileName>moc_%(Filename).cpp</QtMocFileName>
     </QtMoc>
+    <PostBuildEvent>
+      <Command>copy "$(OutDir)$(TargetName).dll" "$(OutDir)$(TargetName).vst3"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\libs\qtwinmigrate\src\qmfcapp.cpp" />
+    <ClCompile Include="..\..\libs\qtwinmigrate\src\qwinwidget.cpp" />
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst2.x\audioeffect.cpp" />
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst2.x\audioeffectx.cpp" />
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\basewrapper\basewrapper.cpp" />
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\vst2wrapper\vst2wrapper.cpp" />
     <ClCompile Include="views\configdialogvst.cpp" />
     <ClCompile Include="factory.cpp" />
     <ClCompile Include="gui.cpp" />

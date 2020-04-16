@@ -28,4 +28,7 @@ ConfigDialogVst::ConfigDialogVst(Settings *settings, MainHost *myHost, QWidget *
     //ui->groupSampleFormat->setVisible(false);
     ui->sampleRate->setVisible(false);
     ui->labelsampleRate->setVisible(false);
+
+    ui->samplePrecision->setVisible(false);
+    ui->labelsamplePrecision->setVisible(false);
 }

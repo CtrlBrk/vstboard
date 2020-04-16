@@ -259,11 +259,13 @@ bool Vst3Plugin::initPlugin()
 
 	//synchronize controller
 	//shouldn't we do that regularly ?
-	MemoryStream stream;
+	//and do it after loading the first program (containing prov&view states)
+	//and.. does the process state contains the controller state ??
+	/*MemoryStream stream;
 	if (component->getState(&stream)) {
 		stream.seek(0, IBStream::kIBSeekSet, 0);
 		editController->setComponentState(&stream);
-	}
+	}*/
 
 	
 
@@ -329,7 +331,6 @@ bool Vst3Plugin::initAudioBuffers(Vst::BusDirection dir, bool unassign)
 //			listAudioPinOut->SetNbPins(0);
 //		}
 //	}
-
     qint32 cpt=0;
 	qint32 numBusIn = component->getBusCount(Vst::kAudio, dir);
     for (qint32 i = 0; i < numBusIn; i++) {
@@ -754,8 +755,10 @@ void Vst3Plugin::Unload()
 	
 	//TODO:probably need a better cleanup 
 	//processData;
-	initAudioBuffers(Vst::kInput,true);
-	initAudioBuffers(Vst::kOutput,true);
+	if (component) {
+		initAudioBuffers(Vst::kInput, true);
+		initAudioBuffers(Vst::kOutput, true);
+	}
 
     if (iConnectionPointComponent && iConnectionPointController) {
         iConnectionPointComponent->disconnect (iConnectionPointController);
@@ -777,8 +780,11 @@ void Vst3Plugin::Unload()
         //editorWnd=0;
     }
 
-	plugProvider.reset();
-	module.reset();
+	if(plugProvider)
+		plugProvider.reset();
+
+	if(module)
+		module.reset();
 
 //    Vst::IConnectionPoint* iConnectionPointComponent = 0;
 //    Vst::IConnectionPoint* iConnectionPointController = 0;

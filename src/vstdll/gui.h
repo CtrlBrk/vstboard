@@ -47,6 +47,7 @@ public:
 
     void ReceiveMsg(const MsgObject &msg);
 
+	MainWindow* GetWindow() { return myWindow; };
 //    bool getRect (ERect** rect);
 //    void SetMainWindow(MainWindowVst *win);
 

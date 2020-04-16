@@ -224,6 +224,9 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;NDEBUG;APP_NAME=\"VstBoard\";APP_VERSION_MAJOR=0;APP_VERSION_MINOR=6;APP_VERSION_BUILD=0;APP_VERSION_PATCH=0;VSTSDK;CIRCULAR_BUFFER;RELEASE;_CRT_SECURE_NO_WARNINGS;QT_NO_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Command>copy "$(OutDir)$(TargetName).dll" "$(OutDir)$(TargetName).vst3"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -308,6 +311,9 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;APP_NAME=\"VstBoard\";APP_VERSION_MAJOR=0;APP_VERSION_MINOR=6;APP_VERSION_BUILD=0;APP_VERSION_PATCH=0;VSTSDK;CIRCULAR_BUFFER;DEBUG;_CRT_SECURE_NO_WARNINGS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Command>copy "$(OutDir)$(TargetName).dll" "$(OutDir)$(TargetName).vst3"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

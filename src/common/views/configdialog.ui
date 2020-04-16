@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>525</width>
-    <height>370</height>
+    <height>418</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -76,7 +76,7 @@
          <string comment="Browse"/>
         </property>
         <property name="icon">
-         <iconset resource="../../resources/resources.qrc">
+         <iconset>
           <normaloff>:/img16x16/folder.png</normaloff>:/img16x16/folder.png</iconset>
         </property>
        </widget>
@@ -122,7 +122,7 @@
          <string comment="Browse"/>
         </property>
         <property name="icon">
-         <iconset resource="../../resources/resources.qrc">
+         <iconset>
           <normaloff>:/img16x16/folder.png</normaloff>:/img16x16/folder.png</iconset>
         </property>
        </widget>
@@ -168,7 +168,7 @@
          <string comment="Browse"/>
         </property>
         <property name="icon">
-         <iconset resource="../../resources/resources.qrc">
+         <iconset>
           <normaloff>:/img16x16/folder.png</normaloff>:/img16x16/folder.png</iconset>
         </property>
        </widget>
@@ -208,7 +208,7 @@
          <string comment="Browse"/>
         </property>
         <property name="icon">
-         <iconset resource="../../resources/resources.qrc">
+         <iconset>
           <normaloff>:/img16x16/folder.png</normaloff>:/img16x16/folder.png</iconset>
         </property>
        </widget>
@@ -360,6 +360,16 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="QLabel" name="currentSampleprecision">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -381,11 +391,7 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../../resources/resources.qrc"/>
-  <include location="../../resources/resources.qrc"/>
-  <include location="../../resources/resources.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>

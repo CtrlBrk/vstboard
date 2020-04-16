@@ -134,7 +134,7 @@ void MainHost::Init()
 {
     programManager =new ProgramManager(this);
     doublePrecision=settings->GetSetting("doublePrecision",false).toBool();
-
+	settings->SetSetting("currentDoublePrecision", doublePrecision);
     setObjectName("MainHost");
 
 #ifdef SCRIPTENGINE
@@ -941,8 +941,7 @@ bool MainHost::LoadSetupFile(const QString &filename)
             if(!name.endsWith(SETUP_JSON_BINARY_FILE_EXTENSION, Qt::CaseInsensitive))
                 binary = false;
 
-            JsonReader reader(this);
-            no_error = reader.readProjectFile(&file,binary);
+            no_error = JsonReader::readProjectFile(&file,this,mainWindow,binary);
         }
     } else {
         no_error = false;
@@ -1008,8 +1007,7 @@ bool MainHost::LoadProjectFile(const QString &filename)
             if(!name.endsWith(PROJECT_JSON_BINARY_FILE_EXTENSION, Qt::CaseInsensitive))
                 binary = false;
 
-            JsonReader reader(this);
-            no_error = reader.readProjectFile(&file,binary);
+			no_error = JsonReader::readProjectFile(&file, this, mainWindow, binary);
         }
     } else {
         no_error = false;
@@ -1130,8 +1128,7 @@ bool MainHost::SaveSetupFile(bool saveAs)
             if(!name.endsWith(SETUP_JSON_BINARY_FILE_EXTENSION, Qt::CaseInsensitive))
                 binary = false;
 
-            JsonWriter writer(this);
-            no_error = writer.writeProjectFile(&file,false,true,binary);
+            no_error = JsonWriter::writeProjectFile(&file,this, mainWindow,false,true,binary);
         }
 
     } else {
@@ -1194,8 +1191,7 @@ bool MainHost::SaveProjectFile(bool saveAs)
             if(!name.endsWith(PROJECT_JSON_BINARY_FILE_EXTENSION, Qt::CaseInsensitive))
                 binary = false;
 
-            JsonWriter writer(this);
-            no_error = writer.writeProjectFile(&file,true,false,binary);
+            no_error = JsonWriter::writeProjectFile(&file,this,mainWindow,true,false,binary);
         }
     } else {
         no_error = false;

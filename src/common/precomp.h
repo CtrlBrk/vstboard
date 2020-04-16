@@ -42,6 +42,7 @@
     #include <QAbstractItemView>
     #include <QtAlgorithms>
     #include <QApplication>
+    #include <QBuffer>
     #include <QButtonGroup>
     #include <QCheckBox>
     #include <QHBoxLayout>

@@ -127,6 +127,15 @@ ConfigDialog::ConfigDialog(Settings *settings, MainHost *myHost, QWidget *parent
     }
     ui->samplePrecision->setCurrentIndex(index);
 
+//current sample precision
+	QString doubText;
+	if (settings->GetSetting("currentDoublePrecision", false).toBool()) {
+		doubText = "64 bits";
+	}
+	else {
+		doubText = "32 bits";
+	}
+	ui->currentSampleprecision->setText(tr("Current precision: %1").arg(doubText));
 
 //on unsaved setup
     ui->onUnsavedSetup->addItem(tr("Always ask"),Qt::PartiallyChecked);

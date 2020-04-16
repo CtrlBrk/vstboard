@@ -40,16 +40,7 @@
     <ClCompile Include="views\configdialogvst.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\hosting\eventlist.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="factory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\base\source\fbuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\base\source\fstreamer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="gui.cpp">
@@ -67,28 +58,13 @@
     <ClCompile Include="connectables\objectfactoryvst.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\libs\qtwinmigrate\src\qmfcapp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\qtwinmigrate\src\qwinhost.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\qtwinmigrate\src\qwinwidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="resizehandle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\base\source\timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="vst.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="vst2shell.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST3SDK\public.sdk\source\vst\vst2wrapper\vst2wrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="connectables\vstaudiodevicein.cpp">
@@ -110,6 +86,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="vsttest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst2.x\audioeffectx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst2.x\audioeffect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\qtwinmigrate\src\qwinwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\qtwinmigrate\src\qmfcapp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\basewrapper\basewrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\vst2wrapper\vst2wrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

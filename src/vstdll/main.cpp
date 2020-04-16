@@ -108,7 +108,7 @@ BOOL WINAPI DllMain (HINSTANCE hInst, DWORD dwReason, LPVOID /*lpvReserved*/)
 	
     static bool ownApplication = FALSE;
 
-    if (dwReason == DLL_PROCESS_ATTACH)
+    if ( dwReason == DLL_PROCESS_ATTACH)
     {
         ownApplication = QMfcApp::pluginInstance( 0 );
 

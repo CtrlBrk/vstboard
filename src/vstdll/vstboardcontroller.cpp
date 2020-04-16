@@ -23,6 +23,9 @@
 #include "pluginterfaces/base/ustring.h"
 #include "gui.h"
 #include "mainwindowvst.h"
+#include "projectfile/jsonwriter.h"
+#include "projectfile/jsonreader.h"
+#include "public.sdk/source/common/memorystream.h"
 
 //-----------------------------------------------------------------------------
 tresult PLUGIN_API VstBoardController::initialize (FUnknown* context)
@@ -123,10 +126,40 @@ tresult PLUGIN_API VstBoardController::notify (Vst::IMessage* message)
 
 tresult PLUGIN_API VstBoardController::setState (IBStream* state)
 {
+	MemoryStream* stateCtrl = static_cast<MemoryStream*>(state);
+	QByteArray bArray(stateCtrl->getData(), stateCtrl->getSize());
+	QBuffer buffer(&bArray);
+	buffer.open(QIODevice::ReadOnly);
+
+	QByteArray saveData = buffer.readAll();
+
+	MainWindow *win = dynamic_cast<MainWindow*>(listGui.first());
+	if (win) {
+		//QJsonDocument loadDoc(QJsonDocument::fromBinaryData(qUncompress(saveData));
+		QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
+		QJsonObject json = loadDoc.object();
+
+		if (json.contains("view")) {
+			JsonReader::readProjectView(json["view"].toObject(), win, 0);
+		}
+	}
     return kResultOk;
 }
 
 tresult PLUGIN_API VstBoardController::getState (IBStream* state)
 {
-    return kResultOk;
+	QByteArray bArray;
+	QBuffer buffer(&bArray);
+	buffer.open(QIODevice::WriteOnly);
+
+	MainWindow *win = dynamic_cast<MainWindow*>( listGui.first() );
+	if (win) {
+		QJsonObject jsonObj;
+		jsonObj["proc"] = JsonWriter::writeProjectView(win, true, true);
+		QJsonDocument saveDoc(jsonObj);
+		buffer.write(saveDoc.toJson(QJsonDocument::Indented));
+		state->write(bArray.data(), bArray.size());
+	}
+
+	return kResultOk;
 }

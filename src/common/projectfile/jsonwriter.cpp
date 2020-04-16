@@ -2,35 +2,47 @@
 #include "mainhost.h"
 #include "mainwindow.h"
 
-JsonWriter::JsonWriter(const MainHost *host) :
-    myHost(host)
+bool JsonWriter::writeProjectFile(QIODevice *device, MainHost *host, MainWindow *window, bool saveProject, bool saveSetup, bool binary)
 {
+	bool no_error = true;
 
+	QJsonObject jsonObj;
+	jsonObj["proc"] = writeProjectProcess(host, saveProject, saveSetup);
+	jsonObj["view"] = writeProjectView(window, saveProject, saveSetup);
+
+	QJsonDocument saveDoc(jsonObj);
+
+	device->write(binary
+		? qCompress(saveDoc.toBinaryData())
+		: saveDoc.toJson(QJsonDocument::Indented)
+	);
+
+	return no_error;
 }
 
-bool JsonWriter::writeProjectFile(QIODevice *device, bool saveProject, bool saveSetup, bool binary)
+QJsonObject JsonWriter::writeProjectProcess(MainHost *host, bool saveProject, bool saveSetup)
 {
-    QJsonObject jsonObj;
+	QJsonObject jsonObj;
 
     QJsonArray contArray;
     QJsonObject contObj;
 
     if(saveSetup) {
-        myHost->hostContainer->SaveProgram();
-        myHost->hostContainer->toJson(contObj);
+		host->hostContainer->SaveProgram();
+		host->hostContainer->toJson(contObj);
         contArray.append(contObj);
     }
     if(saveProject) {
-        myHost->projectContainer->SaveProgram();
-        myHost->projectContainer->toJson(contObj);
+		host->projectContainer->SaveProgram();
+		host->projectContainer->toJson(contObj);
         contArray.append(contObj);
 
-        myHost->programContainer->SaveProgram();
-        myHost->programContainer->toJson(contObj);
+		host->programContainer->SaveProgram();
+		host->programContainer->toJson(contObj);
         contArray.append(contObj);
 
-        myHost->groupContainer->SaveProgram();
-        myHost->groupContainer->toJson(contObj);
+		host->groupContainer->SaveProgram();
+		host->groupContainer->toJson(contObj);
         contArray.append(contObj);
     }
 
@@ -38,53 +50,51 @@ bool JsonWriter::writeProjectFile(QIODevice *device, bool saveProject, bool save
 
     if(saveProject) {
         QJsonObject jProgs;
-        myHost->programManager->toJson(jProgs);
+		host->programManager->toJson(jProgs);
         jsonObj["programs"] = jProgs;
     }
 
-    if(myHost->mainWindow) {
-        myHost->mainWindow->mySceneView->viewProject->SaveProgram();
-        myHost->mainWindow->mySceneView->viewProgram->SaveProgram();
-        myHost->mainWindow->mySceneView->viewGroup->SaveProgram();
+    return jsonObj;
+}
 
-        QJsonArray viewArray;
-        QJsonObject jView;
+QJsonObject JsonWriter::writeProjectView(MainWindow *window, bool saveProject, bool saveSetup)
+{
+	QJsonObject jsonObj;
 
-        if(saveSetup) {
-            jView["name"] = "viewHost";
-            myHost->mainWindow->mySceneView->viewHost->toJson(jView);
-            viewArray.append(jView);
-        }
+	window->mySceneView->viewProject->SaveProgram();
+	window->mySceneView->viewProgram->SaveProgram();
+	window->mySceneView->viewGroup->SaveProgram();
 
-        if(saveProject) {
-            jView["name"] = "viewProject";
-            myHost->mainWindow->mySceneView->viewProject->toJson(jView);
-            viewArray.append(jView);
+	QJsonArray viewArray;
+	QJsonObject jView;
 
-            jView["name"] = "viewProgram";
-            myHost->mainWindow->mySceneView->viewProgram->toJson(jView);
-            viewArray.append(jView);
+	if (saveSetup) {
+		jView["name"] = "viewHost";
+		window->mySceneView->viewHost->toJson(jView);
+		viewArray.append(jView);
+	}
 
-            jView["name"] = "viewGroup";
-            myHost->mainWindow->mySceneView->viewGroup->toJson(jView);
-            viewArray.append(jView);
-        }
+	if (saveProject) {
+		jView["name"] = "viewProject";
+		window->mySceneView->viewProject->toJson(jView);
+		viewArray.append(jView);
 
-        jsonObj["contViews"] = viewArray;
-    }
+		jView["name"] = "viewProgram";
+		window->mySceneView->viewProgram->toJson(jView);
+		viewArray.append(jView);
 
-    if(saveSetup) {
-        QJsonObject viewCfg;
-        myHost->mainWindow->viewConfig->toJson(viewCfg);
-        jsonObj["viewCfg"] = viewCfg;
-    }
+		jView["name"] = "viewGroup";
+		window->mySceneView->viewGroup->toJson(jView);
+		viewArray.append(jView);
+	}
 
-    QJsonDocument saveDoc(jsonObj);
+	jsonObj["contViews"] = viewArray;
 
-    device->write( binary
-        ? qCompress(saveDoc.toBinaryData())
-        : saveDoc.toJson(QJsonDocument::Indented)
-    );
+	if (saveSetup) {
+		QJsonObject viewCfg;
+		window->viewConfig->toJson(viewCfg);
+		jsonObj["viewCfg"] = viewCfg;
+	}
 
-    return true;
+	return jsonObj;
 }
