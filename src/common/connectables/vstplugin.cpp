@@ -1141,14 +1141,15 @@ void VstPlugin::fromJson(QJsonObject &json)
     if(savedChunk) {
         delete savedChunk;
         savedChunk=0;
+        savedChunkSize=0;
     }
 
     if(json.contains("chunk")) {
-        long savedChunkSize = json.value("chunksize").toVariant().toLongLong();
+        QByteArray ba = QByteArray::fromHex( json["chunk"].toString().toUtf8() );
 
+        savedChunkSize = ba.size();
         savedChunk = new char[savedChunkSize];
-        QByteArray data = json["chunk"].toString().toUtf8();
-        std::memcpy(savedChunk,data.constData(),savedChunkSize);
+        std::memcpy(savedChunk,ba.constData(),savedChunkSize);
 
         if(pEffect && (pEffect->flags & effFlagsProgramChunks)) {
             EffSetChunk(savedChunk ,savedChunkSize);
@@ -1161,17 +1162,17 @@ void VstPlugin::toJson(QJsonObject &json) const
 {
     Object::toJson(json);
 
+    //if plugin in error, save last known chunk
     if(!errorMessage.isEmpty() && savedChunk) {
+        QByteArray ba(QByteArray::fromRawData(savedChunk, savedChunkSize));
+        json["chunk"] = QString(ba.toHex());
+
+    //else save current chunk
+    } else if(pEffect && (pEffect->flags & effFlagsProgramChunks)) {
         void *ptr=0;
         long size = EffGetChunk(&ptr,false);
         QByteArray ba(QByteArray::fromRawData((char*)ptr, size));
-        json["chunksize"] = static_cast<qlonglong>(size);
-        json["chunk"] = QString(ba);
-
-    } else if(pEffect && (pEffect->flags & effFlagsProgramChunks)) {
-        QByteArray ba(QByteArray::fromRawData(savedChunk, savedChunkSize));
-        json["chunksize"] = static_cast<qlonglong>(savedChunkSize);
-        json["chunk"] = QString(ba);
+        json["chunk"] = QString(ba.toHex());
     }
 }
 

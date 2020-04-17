@@ -41,13 +41,13 @@ namespace Connectables {
     public:
         VstPlugin(MainHost *myHost,int index, const ObjectInfo & info);
         ~VstPlugin();
-        bool Open();
-        bool Close();
-        void Render();
-        VstIntPtr OnMasterCallback(long opcode, long index, long value, void *ptr, float opt, long currentReturnCode);
-        void SetSleep(bool sleeping);
-        void MidiMsgFromInput(long msg);
-        QString GetParameterName(ConnectionInfo pinInfo);
+        bool Open() override;
+        bool Close() override;
+        void Render() override;
+        VstIntPtr OnMasterCallback(long opcode, long index, long value, void *ptr, float opt, long currentReturnCode) override;
+        void SetSleep(bool sleeping) override;
+        void MidiMsgFromInput(long msg) override;
+        QString GetParameterName(ConnectionInfo pinInfo) override;
         inline AEffect* GetPlugin() {return pEffect;}
 
         View::VstPluginWindow *editorWnd;
@@ -59,20 +59,20 @@ namespace Connectables {
 
 //        static View::VstShellSelect *shellSelectView;
 
-        void SetContainerAttribs(const ObjectContainerAttribs &attr);
-        void GetContainerAttribs(ObjectContainerAttribs &attr);
-        Pin* CreatePin(const ConnectionInfo &info);
+        void SetContainerAttribs(const ObjectContainerAttribs &attr) override;
+        void GetContainerAttribs(ObjectContainerAttribs &attr) override;
+        Pin* CreatePin(const ConnectionInfo &info) override;
 
         bool DropFile(const QString &filename);
 
-        void fromJson(QJsonObject &json);
-        void toJson(QJsonObject &json) const;
-        QDataStream & toStream (QDataStream &) const;
-        bool fromStream (QDataStream &);
+        void fromJson(QJsonObject &json) override;
+        void toJson(QJsonObject &json) const override;
+        QDataStream & toStream (QDataStream &) const override;
+        bool fromStream (QDataStream &) override;
 
         void AddPluginToDatabase();
-        void ReceiveMsg(const MsgObject &msg);
-        void GetInfos(MsgObject &msg);
+        void ReceiveMsg(const MsgObject &msg) override;
+        void GetInfos(MsgObject &msg) override;
 
     protected:
         void SetId(int id) {objInfo.id = id;}

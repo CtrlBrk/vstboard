@@ -150,44 +150,13 @@ tresult PLUGIN_API VstBoardProcessor::setState (IBStream* state)
 
 	QByteArray saveData = buffer.readAll();
 
-	//QJsonDocument loadDoc(QJsonDocument::fromBinaryData(qUncompress(saveData));
-	QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
+    QJsonDocument loadDoc(QJsonDocument::fromBinaryData(qUncompress(saveData)));
+//	QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
 	QJsonObject json = loadDoc.object();
 	if (json.contains("proc")) {
 		JsonReader::readProjectProcess(json["proc"].toObject(), this);
 	}
-	
 
-    /*int32 size=0;
-    if (state->read (&size, sizeof (int32)) != kResultOk)
-        return kResultFalse;
-
-#if BYTEORDER == kBigEndian
-    SWAP_32 (size)
-#endif
-
-    if(size==0)
-        return kResultFalse;*/
-
-
-/*
-    char *buf = new char[size];
-    if (state->read (buf, size) != kResultOk) {
-        delete[] buf;
-        return kResultFalse;
-    }
-
-	
-    QByteArray bArray(buf,size);
-    QDataStream stream( &bArray , QIODevice::ReadOnly);
-    if(!ProjectFile::FromStream(this,stream)) {
-        ClearSetup();
-        ClearProject();
-        delete[] buf;
-        return kResultFalse;
-    }
-
-    delete[] buf;*/
     return kResultOk;
 }
 
@@ -200,19 +169,9 @@ tresult PLUGIN_API VstBoardProcessor::getState (IBStream* state)
 	QJsonObject jsonObj;
 	jsonObj["proc"] = JsonWriter::writeProjectProcess(this, true, true);
 	QJsonDocument saveDoc(jsonObj);
+    buffer.write(qCompress(saveDoc.toBinaryData()));
+//	buffer.write(saveDoc.toJson(QJsonDocument::Indented));
 
-	//buffer.write(qCompress(saveDoc.toBinaryData()));
-	buffer.write(saveDoc.toJson(QJsonDocument::Indented));
-	
-    
-    //QDataStream stream( &bArray , QIODevice::WriteOnly);
-    //ProjectFile::ToStream(this,stream);
-
-   /* int32 size =  bArray.size();
-#if BYTEORDER == kBigEndian
-    SWAP_32 (size)
-#endif
-    state->write(&size, sizeof (int32));*/
     state->write(bArray.data(), bArray.size());
 
     return kResultOk;

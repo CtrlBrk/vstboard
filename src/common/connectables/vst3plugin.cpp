@@ -469,7 +469,7 @@ void Vst3Plugin::LoadProgram(int prog)
 				MemoryStream state;
 				int32 s = 0;
 				state.write(compstate.data(), compstate.size(), &s);
-				//state.seek(0, IBStream::kIBSeekSet, 0);
+                //state.seek(0, IBStream::kIBSeekSet, 0);
 				if (component->setState(&state) != kResultOk) {
 					LOG("err loading component state");
 				}
@@ -482,7 +482,7 @@ void Vst3Plugin::LoadProgram(int prog)
 				MemoryStream state;
 				int32 s = 0;
 				state.write(ctrlstate.data(), ctrlstate.size(), &s);
-				//state.seek(0, IBStream::kIBSeekSet, 0);
+                //state.seek(0, IBStream::kIBSeekSet, 0);
 				if (editController->setState(&state) != kResultOk) {
 					LOG("err loading controller state");
 				}
@@ -935,7 +935,7 @@ void Vst3Plugin::Render()
 			QMutexLocker l(&paramLock);
 
 			FUnknownPtr<Vst::IAudioProcessor> processor = component;
-			tresult result = processor->process(processData);
+            tresult result = processor->process(processData);
 			if (result != kResultOk) {
 				LOG("error while processing")
 			}

@@ -19,8 +19,9 @@
 **************************************************************************/
 #pragma warning ( push, 1 )
 #include "pluginterfaces/base/ftypes.h"
+#include "public.sdk/source/vst/vst2wrapper/vst2wrapper.h"
 #pragma warning ( pop )
-#include "myvst2wrapper.h"
+//#include "myvst2wrapper.h"
 #include "ids.h"
 #include "vst2shell.h"
 #include <windows.h>
@@ -52,6 +53,8 @@ const std::wstring GetCurrentDllPath(HINSTANCE hInst)
 }
 
 
+using namespace Steinberg;
+
 AudioEffect *createShell(audioMasterCallback audioMaster);
 
 ::AudioEffect* createEffectInstance(audioMasterCallback audioMaster)
@@ -60,9 +63,11 @@ AudioEffect *createShell(audioMasterCallback audioMaster);
 
     switch(id) {
     case uniqueIDEffect:
-        return MyVst2Wrapper::crt (GetPluginFactory (), VstBoardProcessorUID, uniqueIDEffect, audioMaster);
+//        return MyVst2Wrapper::crt (GetPluginFactory (), VstBoardProcessorUID, uniqueIDEffect, audioMaster);
+        return Vst::Vst2Wrapper::create(GetPluginFactory (), VstBoardProcessorUID, uniqueIDEffect, audioMaster);
     case uniqueIDInstrument:
-        return MyVst2Wrapper::crt (GetPluginFactory (), VstBoardInstProcessorUID, uniqueIDInstrument, audioMaster);
+//        return MyVst2Wrapper::crt (GetPluginFactory (), VstBoardInstProcessorUID, uniqueIDInstrument, audioMaster);
+        return Vst::Vst2Wrapper::create(GetPluginFactory (), VstBoardInstProcessorUID, uniqueIDInstrument, audioMaster);
     default:
         return createShell(audioMaster);
     }

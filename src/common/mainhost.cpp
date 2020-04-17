@@ -85,7 +85,7 @@ void MainHost::Close()
 
     if(updateViewTimer) {
         updateViewTimer->stop();
-        delete updateViewTimer;
+        updateViewTimer->deleteLater();
         updateViewTimer=0;
     }
 

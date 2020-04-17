@@ -135,8 +135,8 @@ tresult PLUGIN_API VstBoardController::setState (IBStream* state)
 
 	MainWindow *win = dynamic_cast<MainWindow*>(listGui.first());
 	if (win) {
-		//QJsonDocument loadDoc(QJsonDocument::fromBinaryData(qUncompress(saveData));
-		QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
+        QJsonDocument loadDoc(QJsonDocument::fromBinaryData(qUncompress(saveData)));
+//		QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
 		QJsonObject json = loadDoc.object();
 
 		if (json.contains("view")) {
@@ -157,7 +157,8 @@ tresult PLUGIN_API VstBoardController::getState (IBStream* state)
 		QJsonObject jsonObj;
 		jsonObj["proc"] = JsonWriter::writeProjectView(win, true, true);
 		QJsonDocument saveDoc(jsonObj);
-		buffer.write(saveDoc.toJson(QJsonDocument::Indented));
+        buffer.write(qCompress(saveDoc.toBinaryData()));
+//		buffer.write(saveDoc.toJson(QJsonDocument::Indented));
 		state->write(bArray.data(), bArray.size());
 	}
 
