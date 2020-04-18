@@ -172,7 +172,8 @@ private:
     qint32 bypassParameter;
 
     VST3::Hosting::Module::Ptr module {nullptr};
-    IPtr<Vst::PlugProvider> plugProvider {nullptr};
+    //IPtr<Vst::PlugProvider> plugProvider {nullptr};
+	Vst::PlugProvider* plugProvider{ nullptr };
     VST3::Hosting::ClassInfo vstinfo;
 
     Vst::HostProcessData processData;
