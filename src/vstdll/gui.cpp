@@ -193,7 +193,7 @@ tresult PLUGIN_API Gui::removed ()
 //        delete widget;
 //        widget=0;
 //    }
-
+//	myWindow = 0;
     Vst::EditorView::removedFromParent();
     return kResultOk;
 }

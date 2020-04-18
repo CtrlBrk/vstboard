@@ -85,14 +85,16 @@ void MainHost::Close()
 
     if(updateViewTimer) {
         updateViewTimer->stop();
-        updateViewTimer->deleteLater();
-        updateViewTimer=0;
+		//is a child of mainhost : autodelete
+        //updateViewTimer->deleteLater();
+        //updateViewTimer=0;
     }
 
-    if(renderer) {
-        delete renderer;
-        renderer=0;
-    }
+	//is a child of mainhost : autodelete
+    //if(renderer) {
+    //    delete renderer;
+    //    renderer=0;
+    //}
 
     hostContainer.clear();
     projectContainer.clear();
@@ -100,10 +102,11 @@ void MainHost::Close()
     programContainer.clear();
     mainContainer.clear();
 
-    if(objFactory) {
-        delete objFactory;
-        objFactory=0;
-    }
+	//is a child of mainhost : autodelete
+    //if(objFactory) {
+    //    delete objFactory;
+    //    objFactory=0;
+    //}
 
     if(solver) {
         delete solver;
@@ -115,14 +118,15 @@ void MainHost::Close()
     if(vstUsersCounter==0)
         delete vstHost;
 
-    if(vst3Host)
-        delete vst3Host;
+    //if(vst3Host)
+    //    delete vst3Host;
 #endif
 
-    if(programManager) {
-        delete programManager;
-        programManager=0;
-    }
+	//is a child of mainhost : autodelete
+    //if(programManager) {
+        //delete programManager;
+        //programManager=0;
+    //}
 }
 
 void MainHost::Kill()
@@ -150,8 +154,8 @@ void MainHost::Init()
         vstHost = vst::CVSTHost::Get();
     }
 
-    vst3Host = new Vst3Host();
-    connect(this,SIGNAL(sampleRate(float)),
+    vst3Host = new Vst3Host(this);
+    connect(this,SIGNAL(SampleRateChanged(float)),
             vst3Host,SLOT(SetSampleRate(float)));
     vstUsersCounter++;
 #endif

@@ -37,15 +37,15 @@ BEGIN_FACTORY_DEF ("CtrlBrk",
                                 kVstVersionString,
                                 VstBoardProcessor::createInstance)
 
-        DEF_CLASS2 (INLINE_UID_FROM_FUID(VstBoardInstProcessorUID),
-                                PClassInfo::kManyInstances,
-                                kVstAudioEffectClass,
-                                "VstBoard Instrument",
-                                Vst::kDistributable,
-                                Vst::PlugType::kInstrument,
-                                QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toLatin1(),
-                                kVstVersionString,
-                                VstBoardProcessor::createInstance)
+//        DEF_CLASS2 (INLINE_UID_FROM_FUID(VstBoardInstProcessorUID),
+//                                PClassInfo::kManyInstances,
+//                                kVstAudioEffectClass,
+//                                "VstBoard Instrument",
+//                                Vst::kDistributable,
+//                                Vst::PlugType::kInstrument,
+//                                QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toLatin1(),
+//                                kVstVersionString,
+//                                VstBoardProcessor::createInstance)
 
         DEF_CLASS2 (INLINE_UID_FROM_FUID(VstBoardControllerUID),
                                 PClassInfo::kManyInstances,

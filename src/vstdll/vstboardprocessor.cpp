@@ -46,6 +46,7 @@ VstBoardProcessor::VstBoardProcessor () :
     currentProg(0),
     currentGroup(0)
 {
+	objFactory = new Connectables::ObjectFactoryVst(this);
 
 #if defined(_M_X64) || defined(__amd64__)
     settings = new Settings("x64/plugin/",this);
@@ -58,7 +59,7 @@ VstBoardProcessor::VstBoardProcessor () :
 
 VstBoardProcessor::~VstBoardProcessor()
 {
-    Close();
+    //Close();
 
     if(listEvnts) {
         free(listEvnts);
@@ -69,7 +70,6 @@ VstBoardProcessor::~VstBoardProcessor()
 void VstBoardProcessor::Init()
 {
     MainHost::Init();
-    objFactory = new Connectables::ObjectFactoryVst(this);
     QObject::connect(this, SIGNAL(ChangeProg(quint16)),
             programManager, SLOT(UserChangeProg(quint16)));
     QObject::connect(this, SIGNAL(ChangeGroup(quint16)),

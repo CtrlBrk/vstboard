@@ -28,12 +28,12 @@ MainHostHost::MainHostHost(Settings *settings, QObject *parent) :
 	audioDevices(0),
 	midiDevices(0)
 {
+	objFactory = new Connectables::ObjectFactoryHost(this);
 }
 
 void MainHostHost::Init()
 {
     MainHost::Init();
-    objFactory = new Connectables::ObjectFactoryHost(this);
     midiDevices = new MidiDevices(this,this,FixedObjId::midiDevices);
     audioDevices = new AudioDevices(this,this,FixedObjId::audioDevices);
 }

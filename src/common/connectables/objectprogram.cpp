@@ -177,6 +177,7 @@ void ObjectProgram::toJson(QJsonObject &json, int id) const
     }
     json["paraOut"] = jParaOut;
 
+    //other informations, like vst3 plugin state
     QJsonArray jOtherPara;
     QMap<int, QVariant>::ConstIterator k = listOtherValues.constBegin();
     while(k!=listOtherValues.constEnd()) {

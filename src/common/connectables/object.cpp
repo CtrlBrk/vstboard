@@ -878,7 +878,7 @@ void Object::GetInfos(MsgObject &msg)
     msg.prop[MsgObject::Type]=info().objType;
 
     if(myHost->doublePrecision && !doublePrecision) {
-        msg.prop[MsgObject::Name] = QString("%1 %2").arg(objectName()).arg("32bits");
+        msg.prop[MsgObject::Name] = QString("%1 (%2)").arg(objectName()).arg("notDouble");
     } else {
         msg.prop[MsgObject::Name] = objectName();
     }

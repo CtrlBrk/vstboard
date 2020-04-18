@@ -2,7 +2,9 @@
 
 using namespace Steinberg;
 
-Vst3Host::Vst3Host() : QObject(), Vst::HostApplication()
+Vst3Host::Vst3Host(QObject *parent) : 
+	QObject(parent), 
+	Vst::HostApplication()
 {
     currentBar=0;
     loopLenght=4;

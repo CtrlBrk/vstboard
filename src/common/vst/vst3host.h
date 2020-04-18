@@ -26,7 +26,7 @@ class Vst3Host : public QObject, public Vst::HostApplication
     Q_OBJECT
 
 public:
-    Vst3Host();
+    Vst3Host(QObject *parent);
     tresult PLUGIN_API getName (Vst::String128 name) override;
     void UpdateTime(long buffSize, float sampleRate);
     float GetCurrentBarTic();
