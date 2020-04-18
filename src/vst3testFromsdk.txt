@@ -1,0 +1,235 @@
+//as a reference, loading a vst3 plugin 
+//steps needed to load a plugin an precess
+//base on validator from the sdk
+
+bool TstsetupBuffers (AudioBusBuffers& audioBuffers, ProcessSetup &processSetup, HostProcessData &processData)
+{
+    if (processSetup.symbolicSampleSize != processData.symbolicSampleSize)
+        return false;
+    audioBuffers.silenceFlags = 0;
+    for (int32 chIdx = 0; chIdx < audioBuffers.numChannels; chIdx++)
+    {
+        if (processSetup.symbolicSampleSize == kSample32)
+        {
+            if (audioBuffers.channelBuffers32)
+            {
+                audioBuffers.channelBuffers32[chIdx] =
+                    new Sample32[processSetup.maxSamplesPerBlock];
+                if (audioBuffers.channelBuffers32[chIdx])
+                    memset (audioBuffers.channelBuffers32[chIdx], 0,
+                            processSetup.maxSamplesPerBlock * sizeof (Sample32));
+                else
+                    return false;
+            }
+            else
+                return false;
+        }
+        else if (processSetup.symbolicSampleSize == kSample64)
+        {
+            if (audioBuffers.channelBuffers64)
+            {
+                audioBuffers.channelBuffers64[chIdx] =
+                    new Sample64[processSetup.maxSamplesPerBlock];
+                if (audioBuffers.channelBuffers64[chIdx])
+                    memset (audioBuffers.channelBuffers64[chIdx], 0,
+                            processSetup.maxSamplesPerBlock * sizeof (Sample64));
+                else
+                    return false;
+            }
+            else
+                return false;
+        }
+        else
+            return false;
+    }
+    return true;
+}
+
+bool TstsetupBuffers (int32 numBusses, AudioBusBuffers* audioBuffers, BusDirection dir,IComponent* vstPlug, ProcessSetup &processSetup, HostProcessData &processData)
+{
+    if (((numBusses > 0) && !audioBuffers) || !vstPlug)
+        return false;
+    for (int32 busIndex = 0; busIndex < numBusses; busIndex++) // buses
+    {
+        BusInfo busInfo;
+        if (vstPlug->getBusInfo (kAudio, dir, busIndex, busInfo) == kResultTrue)
+        {
+            if (!TstsetupBuffers (audioBuffers[busIndex], processSetup, processData))
+                return false;
+
+            if ((busInfo.flags & BusInfo::kDefaultActive) != 0)
+            {
+                for (int32 chIdx = 0; chIdx < busInfo.channelCount; chIdx++) // channels per bus
+                    audioBuffers[busIndex].silenceFlags = false;
+                    //audioBuffers[busIndex].silenceFlags |=
+                    //    (TestDefaults::instance ().channelIsSilent << chIdx);
+            }
+        }
+        else
+            return false;
+    }
+    return true;
+}
+
+void Vst3Plugin::Tst() {
+    std::string error;
+    VST3::Hosting::Module::Ptr module = VST3::Hosting::Module::create (objInfo.filename.toStdString(), error);
+    if (!module)
+        return;
+    auto factory = module->getFactory ();
+    auto factoryInfo = factory.info ();
+    uint32 i = 0;
+
+//    for (auto& classInfo : factory.classInfos ())
+//    {
+//        LOG( QString(
+//             "  Class Info %1 :\n\tname = %2 "
+//             "category = %3 "
+//             "subCategories = %4 "
+//             "version = %5 "
+//             "sdkVersion = %6 "
+//             "cid = %7 ")
+//                .arg(i)
+//                .arg(classInfo.name())
+//                .arg(classInfo.category ())
+//                .arg(classInfo.subCategoriesString ())
+//                .arg(classInfo.version ())
+//                .arg(classInfo.sdkVersion ())
+//                .arg(classInfo.ID ().toString ())
+//        )
+//        ++i;
+//    }
+
+
+
+    ProcessSetup processSetup;
+    processSetup.processMode = kRealtime;
+    processSetup.symbolicSampleSize = kSample32;
+    processSetup.maxSamplesPerBlock = 64;
+    processSetup.sampleRate = 44100;
+
+    HostProcessData processData;
+    processData.numSamples = processSetup.maxSamplesPerBlock;
+    processData.symbolicSampleSize = processSetup.symbolicSampleSize;
+
+    for (auto& classInfo : factory.classInfos ())
+    {
+        if (strcmp (kVstAudioEffectClass, classInfo.category ().data ())==0)
+        //if (classInfo.category () == kVstAudioEffectClass)
+        {
+            auto plugProvider = owned (new PlugProvider (factory, classInfo, true));
+            if (plugProvider)
+            {
+		   
+				IComponent* vstPlug = plugProvider->getComponent ();
+				IEditController* controller = plugProvider->getController ();
+
+				if (vstPlug)
+				{
+					vstPlug->activateBus (kAudio, kInput, 0, true);
+					vstPlug->activateBus (kAudio, kOutput, 0, true);
+				}
+
+				if (vstPlug->terminate () != kResultTrue)
+				{
+
+				}
+
+				FUnknown* gStandardPluginContext = nullptr;
+				gStandardPluginContext = myHost->vst3Host;
+
+				//what is that ?
+				//TestingPluginContext::set (gStandardPluginContext);
+				//if (vstPlug->initialize (TestingPluginContext::get ()) != kResultTrue)
+				//i'm trying that instead..
+				if (vstPlug->initialize (gStandardPluginContext) != kResultTrue)
+				{
+
+				}
+
+				IAudioProcessor* audioEffect;
+				tresult check = vstPlug->queryInterface (IAudioProcessor::iid, (void**)&audioEffect);
+				if (check != kResultTrue)
+					return;
+
+
+				if (audioEffect)
+				{
+					if (audioEffect->canProcessSampleSize (kSample32) == kResultOk)
+						processSetup.symbolicSampleSize = kSample32;
+					else if (audioEffect->canProcessSampleSize (kSample64) == kResultOk)
+						processSetup.symbolicSampleSize = kSample64;
+				}
+
+				if (audioEffect->setupProcessing (processSetup) != kResultOk)
+				{
+					return;
+				}
+
+				tresult result = vstPlug->setActive (true);
+				if (result != kResultOk)
+					return;
+
+				result = vstPlug->setActive (false);
+				if (result != kResultOk)
+					return;
+
+
+
+
+				if (audioEffect->setupProcessing (processSetup) == kResultOk)
+				{
+
+					processData.prepare (*vstPlug, 0, processSetup.symbolicSampleSize);
+
+					for (BusDirection dir = kInput; dir <= kOutput; dir++)
+					{
+						int32 numBusses = vstPlug->getBusCount (kAudio, dir);
+						AudioBusBuffers* audioBuffers =
+							dir == kInput ? processData.inputs :
+											processData.outputs; // new AudioBusBuffers [numBusses];
+
+						if (!TstsetupBuffers (numBusses, audioBuffers, dir, vstPlug, processSetup, processData))
+							return ;
+
+						if (dir == kInput)
+						{
+							processData.numInputs = numBusses;
+							processData.inputs = audioBuffers;
+						}
+						else
+						{
+							processData.numOutputs = numBusses;
+							processData.outputs = audioBuffers;
+						}
+					}
+
+
+					if (vstPlug->setActive (true) != kResultTrue)
+							return;
+
+					audioEffect->setProcessing (true);
+
+					tresult result = audioEffect->process (processData);
+					if (result != kResultOk) {
+						audioEffect->setProcessing (false);
+						return;
+					}
+					audioEffect->setProcessing (false);
+				}
+
+
+
+
+
+				if (vstPlug)
+				{
+					vstPlug->activateBus (kAudio, kInput, 0, false);
+					vstPlug->activateBus (kAudio, kOutput, 0, false);
+				}
+		   
+
+            }
+        }
+    }
+}

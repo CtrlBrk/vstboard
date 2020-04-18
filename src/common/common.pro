@@ -185,7 +185,6 @@ SOURCES += \
 
 HEADERS += \
     connectables/objectcontainerattribs.h \
-    connectables/vst3midi.h \
     globals.h \
     mainhost.h \
     audiobuffer.h \

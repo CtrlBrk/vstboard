@@ -83,6 +83,7 @@ class Vst3Plugin : public Object,
 {
     Q_OBJECT
 public:
+
     explicit Vst3Plugin(MainHost *host, int index, const ObjectInfo &info);
     ~Vst3Plugin();
     bool Open() override;

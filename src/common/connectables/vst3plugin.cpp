@@ -205,21 +205,28 @@ bool Vst3Plugin::initPlugin()
 		SetErrorMessage( tr("plugin not created") );
 		return true;
 	}
+    bool res = (component->initialize (gStandardPluginContext) == kResultOk);
 
+//    if (component->queryInterface (Vst::IEditController::iid, (void**)&editController) != kResultTrue)
+//    {
+
+//    }
     editController = plugProvider->getController();
     if (!editController)
     {
+
         SetErrorMessage("No EditController found");
         return true;
     }
-    //editController->release(); // plugProvider does an addRef // do I need that ?
+    res = (editController->initialize (gStandardPluginContext) == kResultOk);
 
-    initProcessData();
+    
 
+	if (!initProcessor())
+		return true;
     if(!initController())
         return true;
-    if(!initProcessor())
-        return true;
+    
 
    
     //midi in
@@ -267,14 +274,6 @@ bool Vst3Plugin::initPlugin()
 		editController->setComponentState(&stream);
 	}*/
 
-	
-
-    /*
-	if (component->initialize(myHost->vst3Host) != kResultOk) {
-		SetErrorMessage( tr("plugin not initialized") );
-		return true;
-	}
-	*/
 
     closed=false;
 	//SetSleep(false);
@@ -282,39 +281,46 @@ bool Vst3Plugin::initPlugin()
 }
 
 void Vst3Plugin::initProcessData() {
-    processData.inputEvents = &inEvents;
-    processData.inputParameterChanges = &inputParameterChanges;
-    processData.processContext = &myHost->vst3Host->processContext;
+    qint32 numBusEIn = component->getBusCount(Vst::kEvent, Vst::kInput);
+    if(numBusEIn>0) {
+        processData.inputEvents = &inEvents;
+    } else {
+        processData.inputEvents = nullptr;
+    }
+//    processData.inputParameterChanges = &inputParameterChanges;
+//    processData.processContext = &myHost->vst3Host->processContext;
 	processData.symbolicSampleSize = doublePrecision ? Vst::kSample64 : Vst::kSample32;
     processData.numSamples = myHost->GetBufferSize();
 }
 
 bool Vst3Plugin::initProcessor()
 {
-    Vst::ProcessSetup setup {
-        Vst::kRealtime,
-        doublePrecision?Vst::kSample64:Vst::kSample32,
-        static_cast<int32>(myHost->GetBufferSize()),
-        myHost->GetSampleRate()
-    };
-    FUnknownPtr<Vst::IAudioProcessor> processor = component;
+	FUnknownPtr<Vst::IAudioProcessor> processor = component;
+	if (doublePrecision && processor->canProcessSampleSize(Vst::kSample64) != kResultOk) {
+		//can't process double
+		doublePrecision = false;
+	}
+
+	initProcessData();
+
+//    Vst::ProcessSetup setup {
+//        Vst::kRealtime,
+//        doublePrecision?Vst::kSample64:Vst::kSample32,
+//        static_cast<int32>(myHost->GetBufferSize()),
+//        myHost->GetSampleRate()
+//    };
+    
     
 	//difference between that buffer sample and ProcessSetup.numSample ?
-	processData.prepare(*component, myHost->GetBufferSize(), doublePrecision ? Vst::kSample64 : Vst::kSample32);
-    if(processor->setupProcessing(setup)!=kResultOk) {
-        LOG("no double precision ?");
-        if(doublePrecision) {
-            doublePrecision=false;
-            setup.symbolicSampleSize = Vst::kSample32;
-            if(processor->setupProcessing(setup)!=kResultOk) {
-                LOG("nope, it's something else, abort");
-                return false;
-            }
-        }
-    }
+	//processData.prepare(*component, myHost->GetBufferSize(), doublePrecision ? Vst::kSample64 : Vst::kSample32);
+//	processData.prepare(*component, 0, doublePrecision ? Vst::kSample64 : Vst::kSample32);
+//    if(processor->setupProcessing(setup)!=kResultOk) {
+//        LOG("no processor");
+//		return false;
+//    }
 
-    initAudioBuffers(Vst::kInput);
-    initAudioBuffers(Vst::kOutput);
+//    initAudioBuffers(Vst::kInput);
+//    initAudioBuffers(Vst::kOutput);
 	
 
 
@@ -331,6 +337,8 @@ bool Vst3Plugin::initAudioBuffers(Vst::BusDirection dir, bool unassign)
 //			listAudioPinOut->SetNbPins(0);
 //		}
 //	}
+    component->activateBus (kAudio, dir, 0, !unassign);
+
     qint32 cpt=0;
 	qint32 numBusIn = component->getBusCount(Vst::kAudio, dir);
     for (qint32 i = 0; i < numBusIn; i++) {
@@ -348,7 +356,7 @@ bool Vst3Plugin::initAudioBuffers(Vst::BusDirection dir, bool unassign)
 
                 p->setObjectName( QString::fromUtf16((char16_t*)busInfo.name) );
                 AudioBuffer* buff = static_cast<AudioPin*>(p)->GetBuffer();
-                
+
 				if(doublePrecision) {
                     processData.setChannelBuffer64(dir, i, j, unassign ? nullptr : (double*)buff->GetPointer());
                 } else {
@@ -359,6 +367,9 @@ bool Vst3Plugin::initAudioBuffers(Vst::BusDirection dir, bool unassign)
             }
         }
     }
+
+
+
 
     return true;
 }
@@ -714,7 +725,6 @@ void Vst3Plugin::SetSleep(bool sleeping)
     {
         QMutexLocker l(&objMutex);
 
-
         if(sleeping) {
             processor->setProcessing(false);
             component->setActive(false);
@@ -732,6 +742,9 @@ void Vst3Plugin::SetSleep(bool sleeping)
                 myHost->GetSampleRate()
             };
             if (processor->setupProcessing (setup) == kResultOk) {
+                processData.prepare(*component, 0, doublePrecision ? Vst::kSample64 : Vst::kSample32);
+                initAudioBuffers(Vst::kInput);
+                initAudioBuffers(Vst::kOutput);
                 component->setActive(true);
                 processor->setProcessing(true);
             }
@@ -759,8 +772,8 @@ void Vst3Plugin::Unload()
 		initAudioBuffers(Vst::kInput, true);
 		initAudioBuffers(Vst::kOutput, true);
 	}
-
-    if (iConnectionPointComponent && iConnectionPointController) {
+	
+	if (iConnectionPointComponent && iConnectionPointController) {
         iConnectionPointComponent->disconnect (iConnectionPointController);
         iConnectionPointController->disconnect (iConnectionPointComponent);
     }
@@ -780,6 +793,11 @@ void Vst3Plugin::Unload()
         //editorWnd=0;
     }
 
+    if(plugProvider) {
+        plugProvider->releasePlugIn(component,editController);
+    }
+    component->terminate();
+    editController->terminate();
 	if(plugProvider)
 		plugProvider.reset();
 
@@ -933,10 +951,10 @@ void Vst3Plugin::Render()
         try
 		{
 			QMutexLocker l(&paramLock);
-
 			FUnknownPtr<Vst::IAudioProcessor> processor = component;
             tresult result = processor->process(processData);
 			if (result != kResultOk) {
+                processor->setProcessing(false);
 				LOG("error while processing")
 			}
 
