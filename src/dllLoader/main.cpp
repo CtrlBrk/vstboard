@@ -22,6 +22,8 @@
 #include <string>
 #include <list>
 
+#include "../vstdll/loaderhelpers.h"
+
 #ifndef __ipluginbase__
 #include "pluginterfaces/base/ipluginbase.h"
 #endif
@@ -38,18 +40,18 @@ static bool __dummyLoaderLocation;
 
 HMODULE HpluginDll = 0;
 
-const std::wstring  GetCurrentDllPath()
+const std::wstring GetCurrentDllPath()
 {
 	WCHAR buffer[MAX_PATH];
 	HMODULE hm = NULL;
 
 	if (GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCWSTR)&__dummyLoaderLocation, &hm) == 0)
 	{
-		return L"";
+		throw FileError{ L"Can't get module handle", 1, L"" };
 	}
 	if (GetModuleFileName(hm, buffer, sizeof(buffer)) == 0)
 	{
-		return L"";
+		throw FileError{ L"Can't get module filename", 1, L"" };
 	}
 
 	std::wstring path(buffer);
@@ -61,57 +63,6 @@ const std::wstring  GetCurrentDllPath()
 	return path;
 }
 
-const std::wstring GetPathFromRegistry()
-{
-#if defined(_M_X64) || defined(__amd64__)
-	std::wstring regBaseKey(L"Software\\CtrlBrk\\VstBoard\\x64");
-#else
-	std::wstring regBaseKey(L"Software\\CtrlBrk\\VstBoard\\x86");
-#endif
-
-	HKEY  hKey;
-	if (::RegOpenKeyEx(HKEY_CURRENT_USER, regBaseKey.c_str(), 0, KEY_QUERY_VALUE, &hKey) != ERROR_SUCCESS) {
-		return L"";
-	}
-
-#ifndef QT_NO_DEBUG
-	std::wstring installKey(L"DebugLocation");
-#else
-	std::wstring installKey(L"InstallLocation");
-#endif
-
-	DWORD dwSize = MAX_PATH;
-	DWORD dwDataType = 0;
-	BYTE value[1000];
-	if (::RegQueryValueEx(hKey, installKey.c_str(), 0, &dwDataType, (LPBYTE)value, &dwSize) != ERROR_SUCCESS) {
-		::RegCloseKey(hKey);
-		//MessageBox(NULL, (L"Registry key not found : HKCU\\" + regBaseKey + L"\\" + installKey).c_str(), L"VstBoard", MB_OK | MB_ICONERROR);
-		return L"";
-	}
-
-	::RegCloseKey(hKey);
-	std::wstring instDir((TCHAR*)value);
-	instDir.erase(remove(instDir.begin(), instDir.end(), '\"'), instDir.end());
-
-	return instDir;
-}
-
-HMODULE LoadDll( const std::wstring &dll) {
-
-	HMODULE h = 0;
-
-#ifndef QT_NO_DEBUG
-	//try to load the debug version
-	h = LoadLibrary(( dll + L"d.dll").c_str());
-	if (h) return h;
-
-#endif
-	h = LoadLibrary(( dll + L".dll").c_str());
-	if (h) return h;
-
-	return 0;
-}
-
 
 void AddDllPath()
 {
@@ -119,36 +70,104 @@ void AddDllPath()
 	::GetEnvironmentVariable(L"Path", newSearchPath, MAX_PATH);
 	std::wstring path(newSearchPath);
 	path += L";";
-	path += GetCurrentDllPath();
-	path += L";";
-	path += GetPathFromRegistry();
-	path += L";";
+
+	try {
+		path += GetCurrentDllPath();
+		path += L";";
+	}
+	catch (FileError &e) {}
+
+	try {
+		path += RegGetString(HKEY_LOCAL_MACHINE, regBaseKey, installKey);
+		path += L";";
+	}
+	catch (RegistryError &e) {}
+
+	try {
+		path += RegGetString(HKEY_CURRENT_USER, regBaseKey, installKey);
+		path += L";";
+	}
+	catch (RegistryError &e) {}
+
 	::SetEnvironmentVariable(L"Path", path.c_str());
 	//::SetEnvironmentVariable(L"QT_QPA_PLATFORM_PLUGIN_PATH", GetPathFromRegistry().c_str());
-	
 }
 
-bool InitModule()
+bool LoadRequiredDlls()
 {
-	AddDllPath();
-
 	std::list<std::wstring> dlls = {
 		L"Qt5Core",
 		/*	L"Qt5Gui",
 		L"Qt5Widgets",
 		L"Qt5Svg",
 		L"qwindows",
-		L"qsvgicon"
+		L"qsvgicon",
 	*/
+		L"VstBoardPlugin"
 	};
 
-	for (auto const& dll : dlls) {
-		if (!LoadDll( dll)) {
-			MessageBox(NULL, (dll + L"(d).dll : not loaded").c_str(), L"VstBoard", MB_OK | MB_ICONERROR);
-			return false;
+	for (auto const& dllName : dlls) {
+		if (!LoadDll(dllName)) {
+			throw FileError{ L"Can't load dll", 1, dllName };
 		}
 	}
+
+	return true;
+}
+
+bool InitModule()
+{
+	//add install path
+	AddDllPath();
+
+	//load requiered dlls
+	try {
+		LoadRequiredDlls();
+	}
+
+	//dlls not found, ask for a path
+	catch (FileError &e) {
+		MessageBox(NULL, 
+			(e.errMsg + L" " + e.filePath + L"\nSome VstBoard files are missing, please select the installation path").c_str(),
+			L"VstBoard", 
+			MB_OK | MB_ICONERROR);
+		
+		std::wstring newPath = openfilename();
+		if (newPath == L"")
+			return false;
+
+		const size_t last_slash_idx = newPath.rfind('\\');
+		if (std::wstring::npos != last_slash_idx)
+		{
+			newPath = newPath.substr(0, last_slash_idx);
+		}
+
+		//save path in registry & load dlls
+		try {
+			RegSetString(HKEY_CURRENT_USER, regBaseKey, installKey, newPath);
+			AddDllPath();
+			LoadRequiredDlls();
+		}
+		catch (RegistryError &r) {
+			MessageBox(NULL,
+				r.errMsg.c_str(),
+				L"VstBoard",
+				MB_OK | MB_ICONERROR);
+
+			return false;
+		}
+		catch (FileError &fe) {
+			MessageBox(NULL,
+				(fe.errMsg + L" " + fe.filePath).c_str(),
+				L"VstBoard",
+				MB_OK | MB_ICONERROR);
+
+			return false;
+		}
+		
+	}
 	
+	//load the plugin dll
 	HpluginDll = LoadDll( L"VstBoardPlugin");
 	if (!HpluginDll) {
 		MessageBox(NULL, L"VstBoardPlugin(d).dll : not loaded", L"VstBoard", MB_OK | MB_ICONERROR);

@@ -152,15 +152,16 @@ tresult PLUGIN_API VstBoardController::getState (IBStream* state)
 	QBuffer buffer(&bArray);
 	buffer.open(QIODevice::WriteOnly);
 
-	MainWindow *win = dynamic_cast<MainWindow*>( listGui.first() );
-	if (win) {
-		QJsonObject jsonObj;
-		jsonObj["proc"] = JsonWriter::writeProjectView(win, true, true);
-		QJsonDocument saveDoc(jsonObj);
-        buffer.write(qCompress(saveDoc.toBinaryData()));
-//		buffer.write(saveDoc.toJson(QJsonDocument::Indented));
-		state->write(bArray.data(), bArray.size());
+	if (listGui.size() > 0) {
+		MainWindow *win = dynamic_cast<MainWindow*>(listGui.first());
+		if (win) {
+			QJsonObject jsonObj;
+			jsonObj["proc"] = JsonWriter::writeProjectView(win, true, true);
+			QJsonDocument saveDoc(jsonObj);
+			buffer.write(qCompress(saveDoc.toBinaryData()));
+			//		buffer.write(saveDoc.toJson(QJsonDocument::Indented));
+			state->write(bArray.data(), bArray.size());
+		}
 	}
-
 	return kResultOk;
 }

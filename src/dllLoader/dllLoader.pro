@@ -15,6 +15,7 @@ TEMPLATE = lib
 QT       -= core gui
 LIBS += -ladvapi32
 LIBS += -luser32
+LIBS += -lcomdlg32
 
 SOURCES += \
     main.cpp \

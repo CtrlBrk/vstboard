@@ -431,6 +431,7 @@
     <ClCompile Include="vsttest.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="loaderhelpers.h" />
     <ClInclude Include="views\configdialogvst.h" />
     <QtMoc Include="gui.h">
     </QtMoc>

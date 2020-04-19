@@ -168,6 +168,9 @@
     <ClInclude Include="vsttest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="loaderhelpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\precomp.h.cpp">

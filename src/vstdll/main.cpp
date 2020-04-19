@@ -31,6 +31,8 @@
         #include <crtdbg.h>
 #endif
 
+#include "loaderhelpers.h"
+
 #ifdef UNICODE
 #define tstrrchr wcsrchr
 #else
@@ -106,9 +108,15 @@ extern "C" {
 BOOL WINAPI DllMain (HINSTANCE hInst, DWORD dwReason, LPVOID /*lpvReserved*/)
 {
 	//custom Qt plugin path : Qt will not find the "platforms" directory in the host's dir
-	QString p = QString("%1").arg( GetCurrentDllPath(hInst) );
-	QCoreApplication::addLibraryPath( p );
+	std::wstring libPath = TestInstallPath( GetCurrentDllPath(hInst) );
+	if (libPath == L"") {
+		MessageBox(NULL, L"Qt dll not found", L"VstBoard", MB_OK | MB_ICONERROR);
+		return FALSE;
+	}
 	
+	QString p = QString("%1").arg(libPath);
+	QCoreApplication::addLibraryPath(p);
+
     static bool ownApplication = FALSE;
 
     if ( dwReason == DLL_PROCESS_ATTACH)
