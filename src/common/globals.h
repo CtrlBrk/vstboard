@@ -126,6 +126,7 @@ namespace ObjType {
 }
 
 namespace FixedObjId {
+    static const quint16 dynamicIdStart = 50;
     enum Enum {
         ND,
         mainContainer,
@@ -266,5 +267,10 @@ namespace RemoveType {
     };
 }
 
+namespace Connectables {
+    class Object;
+}
+//typedef QHash<int, QWeakPointer<Connectables::Object> > hashObjects;
+typedef QMap<int, QWeakPointer<Connectables::Object> > hashObjects;
 
 #endif // GLOBALS_H

@@ -31,6 +31,11 @@ MainHostHost::MainHostHost(Settings *settings, QObject *parent) :
 	objFactory = new Connectables::ObjectFactoryHost(this);
 }
 
+MainHostHost::~MainHostHost()
+{
+    Close();
+}
+
 void MainHostHost::Init()
 {
     MainHost::Init();
@@ -38,8 +43,9 @@ void MainHostHost::Init()
     audioDevices = new AudioDevices(this,this,FixedObjId::audioDevices);
 }
 
-MainHostHost::~MainHostHost()
+void MainHostHost::Close()
 {
+    MainHost::Close();
     //must be set to zero, devices will check this on close
     delete audioDevices;
     delete midiDevices;

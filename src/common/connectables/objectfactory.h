@@ -27,8 +27,6 @@
 #include "objectinfo.h"
 class MainHost;
 
-typedef QHash<int,QWeakPointer<Connectables::Object> > hashObjects;
-
 namespace Connectables {
 
     class ObjectFactory : public QObject
@@ -37,6 +35,8 @@ namespace Connectables {
     public:
         ObjectFactory(MainHost *myHost);
         ~ObjectFactory();
+
+        void Close();
 
         QSharedPointer<Object> NewObject(const ObjectInfo &info, int containerId=0);
         QSharedPointer<Object> GetObj(const QModelIndex & index);
@@ -59,6 +59,7 @@ namespace Connectables {
                 return QSharedPointer<Object>();
             }
 
+            QSharedPointer<Object> o = listObjects.value(id);
             return listObjects.value(id);
         }
 
@@ -73,16 +74,11 @@ namespace Connectables {
 
         QList<int>listDelayObj;
 
-        int GetNewObjId() { return cptListObjects++; }
-
     protected:
         virtual Object *CreateOtherObjects(const ObjectInfo &info, int objId)=0;
 
         hashObjects listObjects;
         MainHost *myHost;
-
-    private :
-        int cptListObjects;
     };
 
 }

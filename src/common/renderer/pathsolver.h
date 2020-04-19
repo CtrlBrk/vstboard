@@ -30,7 +30,7 @@
 class MainHost;
 
 
-typedef QHash<int,QWeakPointer<Connectables::Object> > hashObjects;
+//typedef QHash<int,QWeakPointer<Connectables::Object> > hashObjects;
 
 class PathSolver : public QObject
 {

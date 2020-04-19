@@ -103,13 +103,17 @@ void ComRemoveObject::redo()
 
     //get the object
     QSharedPointer<Connectables::Object> obj = myHost->objFactory->GetObjectFromId( objectInfo.forcedObjId );
-    if(!obj)
+    if(!obj) {
+#ifdef DEBUG_OBJECTS
+        LOG("obj not found")
+#endif
         return;
+    }
 
     //get the container
     QSharedPointer<Connectables::Container> container = ContainerPtr.toStrongRef();
     if(!container) {
-#ifdef DEBUG_COMMANDS
+#ifdef DEBUG_OBJECTS
         LOG("container not found");
 #endif
         return;

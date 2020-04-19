@@ -31,3 +31,19 @@ MsgController::~MsgController()
         h->msgCtrl=0;
     }
 }
+
+int MsgController::GetNewObjId() {
+    //find first free id
+    int currentId = FixedObjId::dynamicIdStart;
+    hashMsgHandlers::const_iterator i = listObj.constBegin();
+    while (i != listObj.constEnd()) {
+        if(i.key() >= FixedObjId::dynamicIdStart) {
+            if(i.key() > currentId)
+                return currentId;
+            else
+                ++currentId;
+        }
+        ++i;
+    }
+    return currentId;
+}

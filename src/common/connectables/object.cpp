@@ -66,14 +66,19 @@ Object::Object(MainHost *host, int index, const ObjectInfo &info) :
     sleep(true)
 {
     if(myHost && myHost->objFactory) {
-        listAudioPinIn = new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId());
-        listAudioPinOut = new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId());
-        listMidiPinIn = new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId());
-        listMidiPinOut = new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId());
-        listBridgePinIn = new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId());
-        listBridgePinOut = new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId());
-        listParameterPinIn = new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId());
-        listParameterPinOut = new PinsList(host, this, msgCtrl, myHost->objFactory->GetNewObjId());
+        //we should only create pinlists when needed, but for now just ignore containers
+        if(info.nodeType==NodeType::bridge) {
+            listBridgePinIn     = new PinsList(host, this, msgCtrl, myHost->GetNewObjId());
+            listBridgePinOut    = new PinsList(host, this, msgCtrl, myHost->GetNewObjId());
+        } else if(info.nodeType!=NodeType::container) {
+            listAudioPinIn      = new PinsList(host, this, msgCtrl, myHost->GetNewObjId());
+            listAudioPinOut     = new PinsList(host, this, msgCtrl, myHost->GetNewObjId());
+            listMidiPinIn       = new PinsList(host, this, msgCtrl, myHost->GetNewObjId());
+            listMidiPinOut      = new PinsList(host, this, msgCtrl, myHost->GetNewObjId());
+
+            listParameterPinIn  = new PinsList(host, this, msgCtrl, myHost->GetNewObjId());
+            listParameterPinOut = new PinsList(host, this, msgCtrl, myHost->GetNewObjId());
+        }
     }
 
     objInfo.forcedObjId = index;
@@ -345,12 +350,13 @@ void Object::LoadProgram(int prog)
 
     currentProgId=prog;
 
-    if(!listPrograms.contains(currentProgId))
-        listPrograms.insert(currentProgId,new ObjectProgram(listParameterPinIn,listParameterPinOut));
+    if(listParameterPinIn && listParameterPinOut) {
+        if(!listPrograms.contains(currentProgId))
+            listPrograms.insert(currentProgId,new ObjectProgram(listParameterPinIn,listParameterPinOut));
 
-    currentProgram=listPrograms.value(currentProgId);
-    currentProgram->Load(listParameterPinIn,listParameterPinOut);
-
+        currentProgram=listPrograms.value(currentProgId);
+        currentProgram->Load(listParameterPinIn,listParameterPinOut);
+    }
 
     foreach(PinsList *lst, pinLists) {
         lst->EnableVuUpdates(true);

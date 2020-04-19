@@ -24,7 +24,7 @@
 #include "connectables/cable.h"
 #include "solvernode.h"
 
-typedef QHash<int,QWeakPointer<Connectables::Object> > hashObjects;
+//typedef QHash<int,QWeakPointer<Connectables::Object> > hashObjects;
 
 class MainHost;
 class UpdateDelays

@@ -37,6 +37,8 @@ public:
 
     AudioDevices *audioDevices;
     MidiDevices *midiDevices;
+protected:
+    void Close() override;
 
 signals:
     void SendMsgSignal(const MsgObject &msg);

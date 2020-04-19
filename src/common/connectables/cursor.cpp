@@ -22,7 +22,7 @@
 #include "mainhost.h"
 
 Cursor::Cursor(MainHost *host, float value) :
-    MsgHandler(host, host->objFactory->GetNewObjId()),
+    MsgHandler(host, host->GetNewObjId()),
     value(value)
 {
 }

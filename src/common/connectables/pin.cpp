@@ -39,7 +39,7 @@ using namespace Connectables;
   */
 Pin::Pin(Object *parent,PinType::Enum type, PinDirection::Enum direction, int number, bool bridge) :
     QObject(parent),
-    MsgHandler(parent->getHost(), parent->getHost()->objFactory->GetNewObjId()),
+    MsgHandler(parent->getHost(), parent->getHost()->GetNewObjId()),
     connectInfo(parent->getHost(),parent->GetIndex(),type,direction,number,bridge),
     value(.0f),
     stepSize(.1f),

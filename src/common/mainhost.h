@@ -118,7 +118,7 @@ public:
     void SetRenderMap(const RenderMap &map);
 
 protected:
-    void Close();
+    virtual void Close();
     QElapsedTimer timeFromStart;
     float sampleRate;
     unsigned long bufferSize;

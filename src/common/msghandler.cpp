@@ -23,8 +23,8 @@
 
 MsgHandler::MsgHandler(MsgController *msgCtrl, int objId) :
     msgCtrl(msgCtrl),
-    objId(objId),
-    msgEnabled(false)
+    msgEnabled(false),
+    objId(objId)
 {
     if(objId==-1 || !msgCtrl)
         return;
@@ -37,8 +37,12 @@ MsgHandler::MsgHandler(MsgController *msgCtrl, int objId) :
 
 MsgHandler::~MsgHandler()
 {
-    if(msgCtrl)
-        msgCtrl->listObj.remove(objId);
+    if(msgCtrl && objId!=-1) {
+        int n = msgCtrl->listObj.remove(objId);
+        if(n!=1) {
+            LOG("nb removed handlers " << n)
+        }
+    }
 }
 
 bool MsgHandler::SetIndex(int id)

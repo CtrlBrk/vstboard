@@ -25,6 +25,10 @@
 #include "msgobject.h"
 
 class MsgHandler;
+
+//typedef QHash<int,MsgHandler*> hashMsgHandlers;
+typedef QMap<int,MsgHandler*> hashMsgHandlers;
+
 class MsgController
 {
 public:
@@ -32,8 +36,8 @@ public:
     ~MsgController();
     virtual void SendMsg(const MsgObject & /*msg*/) {}
     virtual void ReceiveMsg(const MsgObject & /*msg*/) {}
-
-    QHash<int,MsgHandler*>listObj;
+    int GetNewObjId();
+    hashMsgHandlers listObj;
 };
 
 #endif // MSGCONTROLLER_H

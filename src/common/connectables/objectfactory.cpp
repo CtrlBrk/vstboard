@@ -42,8 +42,7 @@ using namespace Connectables;
 
 ObjectFactory::ObjectFactory(MainHost *myHost) :
     QObject(myHost),
-    myHost(myHost),
-    cptListObjects(50)
+    myHost(myHost)
 {
     setObjectName("ObjectFactory");
 
@@ -55,21 +54,30 @@ ObjectFactory::ObjectFactory(MainHost *myHost) :
 
 ObjectFactory::~ObjectFactory()
 {
+    Close();
+}
+
+void ObjectFactory::Close()
+{
     listObjects.clear();
 }
 
 void ObjectFactory::ResetAllSavedId()
 {
     hashObjects::iterator i = listObjects.begin();
-    while(i != listObjects.end()) {
+    while(i != listObjects.end())
+    {
         QSharedPointer<Object> objPtr = i.value().toStrongRef();
-        if(!objPtr) {
+        if(!objPtr)
+        {
             i=listObjects.erase(i);
         } else {
-            //don't reset forcced ids
-            if(i.key()>=50) {
+            //don't reset static ids
+            if(i.key()>=FixedObjId::dynamicIdStart)
+            {
                 objPtr->ResetSavedIndex();
             }
+
             ++i;
         }
     }
@@ -120,7 +128,7 @@ QSharedPointer<Object> ObjectFactory::GetObj(const QModelIndex & index)
 
 QSharedPointer<Object> ObjectFactory::NewObject(const ObjectInfo &info, int containerId)
 {
-    int objId = GetNewObjId();
+    int objId = -1;
 
     if(info.forcedObjId!=0) {
         objId = info.forcedObjId;
@@ -129,6 +137,8 @@ QSharedPointer<Object> ObjectFactory::NewObject(const ObjectInfo &info, int cont
             LOG("forcedId already exists"<<objId);
 #endif
         }
+    } else {
+        objId = myHost->GetNewObjId();
     }
 
     Object *obj=0;
@@ -223,6 +233,12 @@ QSharedPointer<Object> ObjectFactory::NewObject(const ObjectInfo &info, int cont
         return sharedObj;
     }
 
+    uint16 maxId = -1;
+    if(objId>maxId) {
+        LOG("objId overflow " << objId << maxId)
+        return sharedObj;
+    }
+    LOG("add obj " << objId << obj->objectName())
     listObjects.insert(objId,sharedObj.toWeakRef());
     obj->SetSleep(false);
 

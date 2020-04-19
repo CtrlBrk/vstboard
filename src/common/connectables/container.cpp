@@ -50,16 +50,17 @@ Container::Container(MainHost *myHost,int index, const ObjectInfo &info) :
     progToSet(-1),
     loadingMode(false)
 {
-    qDeleteAll(pinLists);
-    pinLists.clear();
-    listAudioPinIn=0;
-    listAudioPinOut=0;
-    listParameterPinIn=0;
-    listParameterPinOut=0;
-    listMidiPinIn=0;
-    listMidiPinOut=0;
-    listBridgePinIn=0;
-    listBridgePinOut=0;
+//    qDeleteAll(pinLists);
+//    pinLists.clear();
+//    listAudioPinIn=0;
+//    listAudioPinOut=0;
+//    listParameterPinIn=0;
+//    listParameterPinOut=0;
+//    listMidiPinIn=0;
+//    listMidiPinOut=0;
+//    listBridgePinIn=0;
+//    listBridgePinOut=0;
+
 
 //    parkModel.setObjectName("parkModel"%objectName());
     LoadProgram(TEMP_PROGRAM);
@@ -126,9 +127,14 @@ void Container::ConnectObjects(QSharedPointer<Object> fromObjOutputs, QSharedPoi
     if(!fromObjOutputs || !toObjInputs)
         return;
 
-    fromObjOutputs->GetListAudioPinOut()->ConnectAllTo(this,toObjInputs->GetListAudioPinIn(), hiddenCables);
-    fromObjOutputs->GetListMidiPinOut()->ConnectAllTo(this,toObjInputs->GetListMidiPinIn(), hiddenCables);
-    fromObjOutputs->GetListBridgePinOut()->ConnectAllTo(this,toObjInputs->GetListBridgePinIn(), hiddenCables);
+    PinsList *a = fromObjOutputs->GetListAudioPinOut();
+    if(a) a->ConnectAllTo(this,toObjInputs->GetListAudioPinIn(), hiddenCables);
+
+    PinsList *m = fromObjOutputs->GetListMidiPinOut();
+    if(m) m->ConnectAllTo(this,toObjInputs->GetListMidiPinIn(), hiddenCables);
+
+    PinsList *b = fromObjOutputs->GetListBridgePinOut();
+    if(b) b->ConnectAllTo(this,toObjInputs->GetListBridgePinIn(), hiddenCables);
 }
 
 bool Container::Close()
