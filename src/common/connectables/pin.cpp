@@ -112,7 +112,7 @@ void Pin::SetPinList(PinsList *lst)
   Set the new container id
   \param id the new container id
   */
-void Pin::SetContainerId(quint16 id)
+void Pin::SetContainerId(qint32 id)
 {
     connectInfo.container = id;
 }

@@ -642,10 +642,10 @@ void ContainerProgram::toJson(QJsonObject &json, int id) const
 
 QDataStream & ContainerProgram::toStream (QDataStream& out) const
 {
-    quint16 nbObj = listObjects.size();
+    qint32 nbObj = listObjects.size();
     out << nbObj;
     foreach(QSharedPointer<Object> objPtr, listObjects) {
-        out << (qint16)objPtr->GetIndex();
+        out << (qint32)objPtr->GetIndex();
     }
 
     out << (quint16)listCables.size();
@@ -655,8 +655,8 @@ QDataStream & ContainerProgram::toStream (QDataStream& out) const
         out << (quint32)cab->GetDelay();
     }
 
-    out << (quint16)mapObjAttribs.size();
-    QMap<int,ObjectContainerAttribs>::ConstIterator i = mapObjAttribs.constBegin();
+    out << (qint32)mapObjAttribs.size();
+    QMap<qint32,ObjectContainerAttribs>::ConstIterator i = mapObjAttribs.constBegin();
     while(i!=mapObjAttribs.constEnd()) {
         out << i.key();
         out << i.value();
@@ -668,12 +668,12 @@ QDataStream & ContainerProgram::toStream (QDataStream& out) const
 
 QDataStream & ContainerProgram::fromStream (QDataStream& in)
 {
-    quint16 nbobj;
+    qint32 nbobj;
     in >> nbobj;
-    for(quint16 i=0; i<nbobj; i++) {
-        quint16 id;
+    for(qint32 i=0; i<nbobj; i++) {
+        qint32 id;
         in >> id;
-        int newid = myHost->objFactory->IdFromSavedId(id);
+        qint32 newid = myHost->objFactory->IdFromSavedId(id);
         if(newid==-1)
             return in;
         listObjects << myHost->objFactory->GetObjectFromId(newid);
@@ -703,10 +703,10 @@ QDataStream & ContainerProgram::fromStream (QDataStream& in)
         listCables << QSharedPointer<Cable>(cab);
     }
 
-    quint16 nbPos;
+    qint32 nbPos;
     in >> nbPos;
-    for(quint16 i=0; i<nbPos; i++) {
-        int objId;
+    for(qint32 i=0; i<nbPos; i++) {
+        qint32 objId;
         ObjectContainerAttribs attr;
         in >> objId;
         in >> attr;

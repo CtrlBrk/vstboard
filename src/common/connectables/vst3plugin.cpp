@@ -267,9 +267,9 @@ void Vst3Plugin::initProcessData() {
         processData.inputEvents = nullptr;
     }
 	//couture doesnt have connection point and crashes when inputParameter is set... is there a link between those ?
-	if (iConnectionPointComponent && iConnectionPointController) {
+    if (iConnectionPointComponent && iConnectionPointController) {
 		processData.inputParameterChanges = &inputParameterChanges;
-	}
+    }
     processData.processContext = &myHost->vst3Host->processContext;
 	processData.symbolicSampleSize = doublePrecision ? Vst::kSample64 : Vst::kSample32;
     processData.numSamples = myHost->GetBufferSize();
@@ -747,6 +747,7 @@ void Vst3Plugin::SetSleep(bool sleeping)
                 static_cast<int32>(myHost->GetBufferSize()),
                 myHost->GetSampleRate()
             };
+
             if (processor->setupProcessing (setup) == kResultOk) {
 				processData.prepare(*component, 0, doublePrecision ? Vst::kSample64 : Vst::kSample32);
                 initAudioBuffers(Vst::kInput);
@@ -1131,8 +1132,7 @@ bool Vst3Plugin::processParamChange (uint8_t status, uint8_t channel, uint8_t mi
         return midiCCMapping[port][channel][data1];
     };
 
-    auto paramChange =
-        midiToParameter (status, channel, midiData1, midiData2, paramMapping);
+    auto paramChange = midiToParameter (status, channel, midiData1, midiData2, paramMapping);
     if (paramChange)
     {
         int32 index = 0;
@@ -1225,6 +1225,8 @@ void Vst3Plugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
             if(pinInfo.pinNumber == FixedPinNumber::bypass) {
                 pId = bypassParameter;
                 value = bypass?1.0f:.0f;
+                //test, disabling that bypass parameter:
+                return;
             }
 
             //don't know what those indexes are yet

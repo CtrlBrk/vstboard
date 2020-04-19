@@ -35,7 +35,7 @@ public:
 
     NodeType::Enum nodeType;
     ObjType::Enum objType;
-    quint32 id;
+    qint32 id;
     QString name;
     QString filename;
     quint16 inputs;
@@ -43,7 +43,7 @@ public:
     quint16 duplicateNamesCounter;
     quint8 api;
     QString apiName;
-    quint16 forcedObjId;
+    qint32 forcedObjId;
     long initDelay;
 };
 

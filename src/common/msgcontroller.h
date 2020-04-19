@@ -27,7 +27,7 @@
 class MsgHandler;
 
 //typedef QHash<int,MsgHandler*> hashMsgHandlers;
-typedef QMap<int,MsgHandler*> hashMsgHandlers;
+typedef QMap<qint32,MsgHandler*> hashMsgHandlers;
 
 class MsgController
 {
@@ -36,8 +36,9 @@ public:
     ~MsgController();
     virtual void SendMsg(const MsgObject & /*msg*/) {}
     virtual void ReceiveMsg(const MsgObject & /*msg*/) {}
-    int GetNewObjId();
+    qint32 GetNewObjId();
     hashMsgHandlers listObj;
+    qint32 lastFreeId;
 };
 
 #endif // MSGCONTROLLER_H

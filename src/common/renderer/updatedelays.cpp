@@ -132,7 +132,7 @@ bool UpdateDelays::SynchronizeAudioOutputs()
     return false;
 }
 
-void UpdateDelays::GetListCablesConnectedTo(quint16 objId, QList<QSharedPointer<Connectables::Cable> > &list)
+void UpdateDelays::GetListCablesConnectedTo(qint32 objId, QList<QSharedPointer<Connectables::Cable> > &list)
 {
     hashCables::const_iterator i = listCables->constBegin();
     while (i != listCables->constEnd()) {

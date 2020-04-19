@@ -29,7 +29,7 @@ class ConnectionInfo
 {
 public:
     ConnectionInfo();
-    ConnectionInfo(MainHost *myHost,quint16 objId, PinType::Enum type, PinDirection::Enum direction, quint16 pinNumber, bool bridge, bool removeable=false);
+    ConnectionInfo(MainHost *myHost,qint32 objId, PinType::Enum type, PinDirection::Enum direction, quint16 pinNumber, bool bridge, bool removeable=false);
     ConnectionInfo(MainHost *host,const QJsonObject &json );
     ConnectionInfo(const MsgObject &msg);
 
@@ -42,10 +42,10 @@ public:
     void GetInfos(MsgObject &msg);
 
     /// the Connectables::Container id (can connect to other pins in the same container)
-    quint16 container;
+    qint32 container;
 
     /// the parent Connectables::Object id
-    quint16 objId;
+    qint32 objId;
 
     /// pin type
     PinType::Enum type;

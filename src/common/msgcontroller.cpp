@@ -23,6 +23,7 @@
 
 MsgController::MsgController()
 {
+    lastFreeId = FixedObjId::dynamicIdStart;
 }
 
 MsgController::~MsgController()
@@ -32,18 +33,22 @@ MsgController::~MsgController()
     }
 }
 
-int MsgController::GetNewObjId() {
-    //find first free id
-    int currentId = FixedObjId::dynamicIdStart;
-    hashMsgHandlers::const_iterator i = listObj.constBegin();
-    while (i != listObj.constEnd()) {
-        if(i.key() >= FixedObjId::dynamicIdStart) {
-            if(i.key() > currentId)
-                return currentId;
-            else
-                ++currentId;
-        }
-        ++i;
-    }
-    return currentId;
+qint32 MsgController::GetNewObjId() {
+//    if(lastFreeId >= listObj.lastKey() ){
+//        return ++lastFreeId;
+//    }
+//    hashMsgHandlers::const_iterator i = listObj.constBegin();
+//    while (i != listObj.constEnd()) {
+//        if(i.key() >= FixedObjId::dynamicIdStart) {
+//            if(i.key() > lastFreeId)
+//                return lastFreeId;
+//            else
+//                ++lastFreeId;
+//        }
+//        ++i;
+//    }
+//    return lastFreeId;
+    lastFreeId = listObj.lastKey()+1;
+    lastFreeId = std::max(lastFreeId,FixedObjId::dynamicIdStart);
+    return lastFreeId;
 }

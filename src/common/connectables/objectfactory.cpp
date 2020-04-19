@@ -233,11 +233,11 @@ QSharedPointer<Object> ObjectFactory::NewObject(const ObjectInfo &info, int cont
         return sharedObj;
     }
 
-    uint16 maxId = -1;
-    if(objId>maxId) {
-        LOG("objId overflow " << objId << maxId)
-        return sharedObj;
-    }
+//    uint16 maxId = -1;
+//    if(objId>maxId) {
+//        LOG("objId overflow " << objId << maxId)
+//        return sharedObj;
+//    }
     LOG("add obj " << objId << obj->objectName())
     listObjects.insert(objId,sharedObj.toWeakRef());
     obj->SetSleep(false);

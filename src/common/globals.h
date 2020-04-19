@@ -126,7 +126,7 @@ namespace ObjType {
 }
 
 namespace FixedObjId {
-    static const quint16 dynamicIdStart = 50;
+    static const qint32 dynamicIdStart = 50;
     enum Enum {
         ND,
         mainContainer,

@@ -69,7 +69,7 @@ namespace Connectables {
 
         void SetPinList(PinsList *lst);
 //        virtual void SetParentModelIndex(PinsList *list, const QModelIndex &newParent);
-        void SetContainerId(quint16 id);
+        void SetContainerId(qint32 id);
 
         /// \return true if visible
         inline bool GetVisible() {return visible;}

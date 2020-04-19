@@ -52,7 +52,7 @@ ConnectionInfo::ConnectionInfo() :
   \param pinNumber the pin number in a list of pins
   \param bridge true if it's a bridge pin (can connect with the pins of the parent container)
   */
-ConnectionInfo::ConnectionInfo(MainHost *myHost,quint16 objId, PinType::Enum type, PinDirection::Enum direction, quint16 pinNumber, bool bridge, bool removeable) :
+ConnectionInfo::ConnectionInfo(MainHost *myHost,qint32 objId, PinType::Enum type, PinDirection::Enum direction, quint16 pinNumber, bool bridge, bool removeable) :
     container(-1),
     objId(objId),
     type(type),
@@ -159,7 +159,7 @@ QDataStream & ConnectionInfo::toStream(QDataStream& out) const
 QDataStream & ConnectionInfo::fromStream(QDataStream& in)
 {
     in >> bridge;
-    quint16 savedContainerId;
+    qint32 savedContainerId;
     in >> savedContainerId;
     int id = myHost->objFactory->IdFromSavedId(savedContainerId);
     if(id==-1) {
@@ -168,7 +168,7 @@ QDataStream & ConnectionInfo::fromStream(QDataStream& in)
     }
     container = id;
 
-    quint16 savedId;
+    qint32 savedId;
     in >> savedId;
     id = myHost->objFactory->IdFromSavedId(savedId);
     if(id==-1) {

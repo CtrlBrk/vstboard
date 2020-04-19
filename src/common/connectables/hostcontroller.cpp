@@ -181,7 +181,7 @@ void HostController::OnHostTempoChange(int tempo, int sign1, int sign2)
     static_cast<ParameterPin*>(listParameterPinOut->listPins.value(Param_Sign2))->SetVariantValue( sign2 );
 }
 
-void HostController::SetContainerId(quint16 id)
+void HostController::SetContainerId(qint32 id)
 {
     switch(id) {
         case FixedObjId::programContainer :

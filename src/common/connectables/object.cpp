@@ -40,7 +40,7 @@ using namespace Connectables;
   \param index unique id
   \param info ObjectInfo defining this object
   */
-Object::Object(MainHost *host, int index, const ObjectInfo &info) :
+Object::Object(MainHost *host, qint32 index, const ObjectInfo &info) :
     QObject(),
     MsgHandler(host,index),
     parkingId(FixedObjId::ND),
@@ -447,7 +447,7 @@ Pin * Object::GetPin(const ConnectionInfo &pinInfo)
   notify the children pins
   \param id the new container id
   */
-void Object::SetContainerId(quint16 id)
+void Object::SetContainerId(qint32 id)
 {
     containerId = id;
 
@@ -696,7 +696,7 @@ void Object::fromJson(QJsonObject &json)
     QJsonObject jsonInfo = json["objInfo"].toObject();
 
     //keep the current id
-    int id = objInfo.forcedObjId;
+    qint32 id = objInfo.forcedObjId;
     objInfo = ObjectInfo(jsonInfo);
     objInfo.forcedObjId = id;
 
@@ -749,7 +749,7 @@ void Object::toJson(QJsonObject &json) const
   */
 QDataStream & Object::toStream(QDataStream & out) const
 {
-    out << (qint16)GetIndex();
+    out << (qint32)GetIndex();
     out << GetSleep();
     out << listenProgramChanges;
 
@@ -772,7 +772,7 @@ QDataStream & Object::toStream(QDataStream & out) const
   */
 bool Object::fromStream(QDataStream & in)
 {
-    qint16 id;
+    qint32 id;
     in >> id;
     savedIndex=id;
     bool s;

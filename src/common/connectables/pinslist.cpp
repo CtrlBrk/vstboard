@@ -33,7 +33,7 @@
 
 using namespace Connectables;
 
-PinsList::PinsList(MainHost *myHost, Object *parent, MsgController *msgCtrl, int objId) :
+PinsList::PinsList(MainHost *myHost, Object *parent, MsgController *msgCtrl, qint32 objId) :
     QObject(parent),
     MsgHandler(msgCtrl,objId),
     parent(parent),
@@ -57,7 +57,7 @@ PinsList::~PinsList()
     }
 }
 
-void PinsList::SetContainerId(quint16 id)
+void PinsList::SetContainerId(qint32 id)
 {
     connInfo.container=id;
     foreach(Pin* pin, listPins) {

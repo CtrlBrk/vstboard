@@ -21,7 +21,7 @@
 #include "msghandler.h"
 #include "msgobject.h"
 
-MsgHandler::MsgHandler(MsgController *msgCtrl, int objId) :
+MsgHandler::MsgHandler(MsgController *msgCtrl, qint32 objId) :
     msgCtrl(msgCtrl),
     msgEnabled(false),
     objId(objId)
@@ -39,13 +39,16 @@ MsgHandler::~MsgHandler()
 {
     if(msgCtrl && objId!=-1) {
         int n = msgCtrl->listObj.remove(objId);
+//        if(objId < msgCtrl->lastFreeId)
+//            msgCtrl->lastFreeId=objId;
+
         if(n!=1) {
             LOG("nb removed handlers " << n)
         }
     }
 }
 
-bool MsgHandler::SetIndex(int id)
+bool MsgHandler::SetIndex(qint32 id)
 {
     if(!msgCtrl)
         return true;

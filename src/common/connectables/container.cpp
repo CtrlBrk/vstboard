@@ -106,7 +106,7 @@ Container::~Container()
 //    return cablesNode;
 //}
 
-void Container::SetContainerId(quint16 id)
+void Container::SetContainerId(qint32 id)
 {
     Object::SetContainerId(id);
 
@@ -927,7 +927,7 @@ QDataStream & Container::toStream (QDataStream& out) const
         QDataStream tmpStream( &tmpBa, QIODevice::ReadWrite);
 
         //save container header
-        tmpStream << (qint16)GetIndex();
+        tmpStream << (qint32)GetIndex();
         tmpStream << objectName();
         tmpStream << GetSleep();
         ProjectFile::SaveChunk( "CntHead", tmpBa, out);
@@ -1026,7 +1026,7 @@ bool Container::fromStream (QDataStream& in)
 bool Container::loadHeaderStream (QDataStream &in)
 {
     //load header
-    qint16 id;
+    qint32 id;
     in >> id;
     savedIndex = id;
 
@@ -1101,7 +1101,7 @@ void Container::ProgramToStream (int progId, QDataStream &out)
 
     out << (quint8)IsDirty();
 
-    quint16 nbObj = prog->listObjects.size();
+    qint32 nbObj = prog->listObjects.size();
     out << nbObj;
     foreach(QSharedPointer<Object>obj, prog->listObjects) {
         QByteArray tmpBa;
@@ -1135,9 +1135,9 @@ void Container::ProgramFromStream (int progId, QDataStream &in)
 
     QList<QSharedPointer<Object> >tmpListObj;
 
-    quint16 nbObj;
+    qint32 nbObj;
     in >> nbObj;
-    for(int i=0; i<nbObj; i++) {
+    for(qint32 i=0; i<nbObj; i++) {
         QByteArray tmpBa;
         QDataStream tmpStream( &tmpBa , QIODevice::ReadWrite);
         in >> tmpBa;

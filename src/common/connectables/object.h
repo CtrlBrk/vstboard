@@ -48,7 +48,7 @@ namespace Connectables {
     Q_OBJECT
     public:
 
-        Object(MainHost *host, int index, const ObjectInfo &info);
+        Object(MainHost *host, qint32 index, const ObjectInfo &info);
         virtual ~Object();
 
         void setObjectName(const QString &name);
@@ -61,7 +61,7 @@ namespace Connectables {
         inline int GetSavedIndex() {return savedIndex;}
 
         /// Reset the savedIndex to the current index, when the file is loaded or before saving
-        inline void ResetSavedIndex(int id=-2) {
+        inline void ResetSavedIndex(qint32 id=-2) {
 //            LOG(QString("reset save id %1 %2=>%3").arg(objectName()).arg(savedIndex).arg(id));
                 savedIndex=id;
         }
@@ -139,7 +139,7 @@ namespace Connectables {
         virtual void toJson(QJsonObject &json) const;
         virtual QDataStream & toStream (QDataStream &) const;
         virtual bool fromStream (QDataStream &);
-        virtual void SetContainerId(quint16 id);
+        virtual void SetContainerId(qint32 id);
 //        virtual void SetBridgePinsInVisible(bool visible);
 //        virtual void SetBridgePinsOutVisible(bool visible);
         virtual void RemoveProgram(int prg);
@@ -165,8 +165,8 @@ namespace Connectables {
         /// the current model index
 //        QPersistentModelIndex modelIndex;
 
-        /// true if the object is parked (no rendering)
-        quint16 parkingId;
+        ///if the object is parked (no rendering)
+        qint32 parkingId;
 
         /// true if the object is rendered at double precision
         bool doublePrecision;
@@ -233,7 +233,7 @@ namespace Connectables {
         hashPrograms listPrograms;
 
         /// the index the object had when the project was saved
-        int savedIndex;
+        qint32 savedIndex;
 
         /// pointer to the currently loaded program
         ObjectProgram *currentProgram;
@@ -254,7 +254,7 @@ namespace Connectables {
 
     private:
         /// the current container id if not parked
-        quint16 containerId;
+        qint32 containerId;
         long initialDelay;
         QTimer updateViewDelay;
 

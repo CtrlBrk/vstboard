@@ -40,9 +40,9 @@ namespace Connectables {
         Q_PROPERTY(int nbPins READ nbPins WRITE SetNbPins)
 
     public:
-        PinsList(MainHost *myHost, Object *parent, MsgController *msgCtrl, int objId);
+        PinsList(MainHost *myHost, Object *parent, MsgController *msgCtrl, qint32 objId);
         virtual ~PinsList();
-        void SetContainerId(const quint16 id);
+        void SetContainerId(const qint32 id);
         void Hide();
 //        void SetVisible(bool visible);
         void EnableVuUpdates(bool enab);

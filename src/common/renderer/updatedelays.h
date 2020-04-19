@@ -41,7 +41,7 @@ private:
     void UpdateGlobalDelay();
 //    void CreateDelayNode(SolverNode *node, SolverNode *childNode, long delay);
 
-    void GetListCablesConnectedTo(quint16 objId, QList<QSharedPointer<Connectables::Cable> > &list);
+    void GetListCablesConnectedTo(qint32 objId, QList<QSharedPointer<Connectables::Cable> > &list);
 
     hashObjects listObjects;
     hashCables *listCables;

@@ -27,11 +27,11 @@ class MsgObject;
 class MsgHandler
 {
 public:
-    MsgHandler(MsgController *msgCtrl, int objId);
+    MsgHandler(MsgController *msgCtrl, qint32 objId);
     virtual ~MsgHandler();
     virtual void GetInfos(MsgObject &) {}
-    int GetIndex() const {return objId;}
-    bool SetIndex(int id);
+    qint32 GetIndex() const {return objId;}
+    bool SetIndex(qint32 id);
     virtual void ReceiveMsg(const MsgObject &) {}
     MsgController *msgCtrl;
 
@@ -40,7 +40,7 @@ public:
 
 private:
     bool msgEnabled;
-    int objId;
+    qint32 objId;
 };
 
 #endif // MSGHANDLER_H

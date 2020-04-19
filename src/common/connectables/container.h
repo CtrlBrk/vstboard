@@ -36,7 +36,7 @@ namespace Connectables {
 
 //        void Hide();
         void ConnectObjects(QSharedPointer<Object> fromObjOutputs, QSharedPointer<Object> toObjInputs, bool hiddenCables);
-        void SetContainerId(quint16 id);
+        void SetContainerId(qint32 id);
 //        const QModelIndex &GetCablesIndex();
 
         void fromJson(QJsonObject &json);
@@ -114,7 +114,7 @@ namespace Connectables {
 
         void GetInfos(MsgObject &msg);
 
-        quint16 containersParkingId;
+        qint32 containersParkingId;
 
         void ReceiveMsg(const MsgObject &msg);
         void SetMsgEnabled(bool enab);
