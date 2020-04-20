@@ -37,16 +37,6 @@ BEGIN_FACTORY_DEF ("CtrlBrk",
                                 kVstVersionString,
                                 VstBoardProcessor::createInstance)
 
-//        DEF_CLASS2 (INLINE_UID_FROM_FUID(VstBoardInstProcessorUID),
-//                                PClassInfo::kManyInstances,
-//                                kVstAudioEffectClass,
-//                                "VstBoard Instrument",
-//                                Vst::kDistributable,
-//                                Vst::PlugType::kInstrument,
-//                                QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toLatin1(),
-//                                kVstVersionString,
-//                                VstBoardProcessor::createInstance)
-
         DEF_CLASS2 (INLINE_UID_FROM_FUID(VstBoardControllerUID),
                                 PClassInfo::kManyInstances,
                                 kVstComponentControllerClass,
@@ -68,6 +58,49 @@ BEGIN_FACTORY_DEF ("CtrlBrk",
 //                                VstBoardTestFactory::createInstance)
 
 END_FACTORY
+
+
+
+//the 2.4 factory creates plugin & instrument classes
+IPluginFactory* PLUGIN_API GetPluginFactoryVst24() {
+	if (!gPluginFactory)
+	{
+		static PFactoryInfo factoryInfo("CtrlBrk", "http://vstboard.blogspot.com", "mailto:ctrlbrk76@gmail.com", Vst::kDefaultFactoryFlags);
+		gPluginFactory = new CPluginFactory(factoryInfo);
+
+		DEF_CLASS2(INLINE_UID_FROM_FUID(VstBoardProcessorUID),
+			PClassInfo::kManyInstances,
+			kVstAudioEffectClass,
+			"VstBoard Effect",
+			Vst::kDistributable,
+			Vst::PlugType::kFx,
+			QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toLatin1(),
+			kVstVersionString,
+			VstBoardProcessor::createInstance)
+		
+		DEF_CLASS2 (INLINE_UID_FROM_FUID(VstBoardInstProcessorUID),
+			PClassInfo::kManyInstances,
+			kVstAudioEffectClass,
+			"VstBoard Instrument",
+			Vst::kDistributable,
+			Vst::PlugType::kInstrument,
+			QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toLatin1(),
+			kVstVersionString,
+			VstBoardProcessor::createInstance)
+
+		DEF_CLASS2(INLINE_UID_FROM_FUID(VstBoardControllerUID),
+			PClassInfo::kManyInstances,
+			kVstComponentControllerClass,
+			"VstBoard",
+			0,
+			"",
+			QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toLatin1(),
+			kVstVersionString,
+			VstBoardController::createInstance)
+	}
+	else gPluginFactory->addRef(); 
+	return gPluginFactory; 
+}
 
 bool InitModule () { return true; }
 bool DeinitModule () { return true; }

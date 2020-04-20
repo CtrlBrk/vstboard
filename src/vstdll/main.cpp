@@ -57,21 +57,23 @@ const std::wstring GetCurrentDllPath(HINSTANCE hInst)
 
 using namespace Steinberg;
 
-//AudioEffect *createShell(audioMasterCallback audioMaster);
+//the vst2.4 factory creates plugin & instrument classes
+extern IPluginFactory* PLUGIN_API GetPluginFactoryVst24();
+
+AudioEffect *createShell(audioMasterCallback audioMaster);
 
 ::AudioEffect* createEffectInstance(audioMasterCallback audioMaster)
 {
-//    long id = audioMaster(0,audioMasterCurrentId,0,0,0,0);
+    long id = audioMaster(0,audioMasterCurrentId,0,0,0,0);
 
-//    switch(id) {
-//    case uniqueIDEffect:
-        return Vst::Vst2Wrapper::create(GetPluginFactory (), VstBoardProcessorUID, uniqueIDEffect, audioMaster);
-//    case uniqueIDInstrument:
-//        return Vst::Vst2Wrapper::create(GetPluginFactory (), VstBoardInstProcessorUID, uniqueIDInstrument, audioMaster);
-//    default:
-//        return createShell(audioMaster);
-//    }
-
+    switch(id) {
+    case uniqueIDEffect:
+        return Vst::Vst2Wrapper::create(GetPluginFactoryVst24(), VstBoardProcessorUID, uniqueIDEffect, audioMaster);
+    case uniqueIDInstrument:
+        return Vst::Vst2Wrapper::create(GetPluginFactoryVst24(), VstBoardInstProcessorUID, uniqueIDInstrument, audioMaster);
+    default:
+        return createShell(audioMaster);
+    }
 
 }
 
