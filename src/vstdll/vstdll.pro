@@ -20,6 +20,7 @@ win32 {
     LIBS += -ladvapi32
     LIBS += -lws2_32
     LIBS += -lole32
+    LIBS += -lcomdlg32
 }
 
 win32-g++ {
@@ -64,6 +65,7 @@ HEADERS  += \
     gui.h \
     connectables/vstaudiodevicein.h \
     connectables/vstaudiodeviceout.h \
+    loaderhelpers.h \
     vst.h \
     connectables/vstautomation.h \
     connectables/vstmididevice.h \
