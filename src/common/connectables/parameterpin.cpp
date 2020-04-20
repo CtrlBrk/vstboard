@@ -26,6 +26,46 @@
 
 using namespace Connectables;
 
+ParameterPin::ParameterPin(const pinConstructArgs &conf) :
+	Pin(conf),
+	listValues(conf.listValues),
+	stepIndex(0),
+    defaultVisible(conf.visible),
+//	defaultValue(conf.defaultValue),
+	defaultIndex(0),
+	loading(false),
+	nameCanChange(conf.nameCanChange),
+	dirty(false),
+	limitInMin(0),
+	limitInMax(0),
+	limitOutMin(0),
+	limitOutMax(0),
+	outStepIndex(0),
+	outValue(.0f),
+	limitsEnabled(true)
+{
+	InitCursors();
+	setObjectName(conf.name);
+	
+	loading = true;
+
+	if (listValues != 0) {
+		stepSize = 1.0f / (listValues->size() - 1);
+		stepIndex = listValues->indexOf(conf.defaultVariantValue);
+		defaultIndex = stepIndex;
+		//update display
+		OnValueChanged(.0f);
+		UpdateView();
+	}
+	else 
+	{
+		value = defaultValue;
+		OnValueChanged(defaultValue);
+	}
+		
+	loading = false;
+}
+
 //parameter is a float
 ParameterPin::ParameterPin(Object *parent, PinDirection::Enum direction, int number, float defaultValue, const QString &name, bool nameCanChange, bool isRemoveable, bool bridge) :
         Pin(parent,PinType::Parameter,direction,number,bridge),
@@ -77,7 +117,7 @@ ParameterPin::ParameterPin(Object *parent, PinDirection::Enum direction, int num
 {
     InitCursors();
 
-//    SetVisible(true);
+    SetVisible(true);
     connectInfo.isRemoveable=isRemoveable;
     setObjectName(name);
     stepSize=1.0f/(listValues->size()-1);
@@ -196,7 +236,13 @@ void ParameterPin::ChangeValue(float val, bool fromObj)
 //from int
 void ParameterPin::ChangeValue(int index, bool fromObj)
 {
-    index = std::min(index,listValues->size()-1);
+	if (listValues != 0) {
+		index = std::min(index, listValues->size() - 1);
+	}
+	else {
+		LOG("listValues not defined");
+	}
+    
     index = std::max(index,0);
 
     if(!loading && index==stepIndex)

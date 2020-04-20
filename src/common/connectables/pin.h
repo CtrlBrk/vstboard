@@ -29,14 +29,53 @@
 
 
 namespace Connectables {
+	class Object;
+	class Cable;
 
-    class Object;
-    class Cable;
+	class pinConstructArgs : public ConnectionInfo {
+	public:
+		
+		pinConstructArgs(const ConnectionInfo &i) {
+			container = i.container;
+			objId = i.objId;
+			type = i.type;
+			direction = i.direction;
+			pinNumber = i.pinNumber;
+			bridge = i.bridge;
+			isRemoveable = i.isRemoveable;
+			myHost = i.myHost;
+
+			parent = 0;
+			value = .0f;
+			stepSize = .0f;
+			visible = true;
+			pinList = 0;
+			listValues = 0;
+            defaultVariantValue = 0;
+//			defaultValue = .0f;
+			nameCanChange = false;
+			name = "";
+		};
+
+		Object *parent = 0;
+		float value = .0f;
+		float stepSize = .0f;
+		bool visible = true;
+		PinsList *pinList = 0;
+		QVariantList *listValues = 0;
+		QVariant defaultVariantValue;
+//		float defaultValue = .0f;
+		bool nameCanChange = false;
+		QString name = "";
+	};
+
+    
     class Pin : public QObject, public MsgHandler
     {
     Q_OBJECT
         Q_PROPERTY(float value READ GetValNoReset)
     public:
+		Pin(const pinConstructArgs &conf);
         Pin(Object *parent,PinType::Enum type, PinDirection::Enum direction, int number, bool bridge=false );
         virtual ~Pin();
 

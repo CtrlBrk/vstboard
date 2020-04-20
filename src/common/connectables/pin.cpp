@@ -29,6 +29,21 @@ using namespace Connectables;
   \brief virtual pin
   */
 
+Pin::Pin(const pinConstructArgs &conf) :
+	QObject(conf.parent),
+	MsgHandler(conf.parent->getHost(), conf.parent->getHost()->GetNewObjId()),
+	connectInfo(static_cast<ConnectionInfo>(conf)),
+	value(conf.value),
+	stepSize(conf.stepSize),
+	parent(conf.parent),
+    visible(conf.visible),
+	closed(false),
+	valueChanged(false),
+	pinList(conf.pinList)
+{
+	connectInfo.container = parent->GetContainerId();
+}
+
 /*!
   Constructor, used by PinsList with the help of Object::CreatePin
   \param parent pointer to the parent Object

@@ -654,9 +654,16 @@ Pin* Object::CreatePin(const ConnectionInfo &info)
 
                 case PinType::Parameter : {
                     if(info.pinNumber == FixedPinNumber::editorVisible ) {
-                        listEditorVisible << "hide";
-                        listEditorVisible << "show";
-                        return new ParameterPinIn(this,info.pinNumber,"show",&listEditorVisible,tr("Editor"));
+						listEditorVisible << "hide";
+						listEditorVisible << "show";
+						
+						pinConstructArgs args(info);
+						args.parent = this;
+						args.listValues = &listEditorVisible;
+						args.defaultVariantValue = "show";
+						args.name = tr("Editor");
+
+                        return PinFactory::MakePin(args);
                     }
                 }
 

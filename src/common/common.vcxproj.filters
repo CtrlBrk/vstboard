@@ -410,6 +410,9 @@
     <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\eventlist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="connectables\pinfactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="views\aboutdialog.h">
@@ -1037,6 +1040,9 @@
     </ClInclude>
     <ClInclude Include="connectables\objectcontainerattribs.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="connectables\pinfactory.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -29,6 +29,7 @@ namespace Connectables {
     class ParameterPinIn : public ParameterPin
     {
     public:
+		ParameterPinIn(const pinConstructArgs &conf);
         ParameterPinIn(Object *parent, int number, float defaultValue, QString name="", bool nameCanChange=false, bool isRemoveable=false);
         ParameterPinIn(Object *parent, int number, const QVariant &defaultVariantValue, QList<QVariant> *listValues, QString name="", bool nameCanChange=false, bool isRemoveable=false);
 

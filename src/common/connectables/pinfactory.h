@@ -17,36 +17,24 @@
 #    You should have received a copy of the under the terms of the GNU Lesser General Public License
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
+#ifndef PINFACTORY_H
+#define PINFACTORY_H
 
-
+#include "pin.h"
+#include "bridgepinin.h"
+#include "bridgepinout.h"
+#include "audiopin.h"
+#include "parameterpin.h"
 #include "parameterpinin.h"
-#include "object.h"
-#include "../globals.h"
+#include "parameterpinout.h"
+#include "midipinin.h"
+#include "midipinout.h"
 
-using namespace Connectables;
-
-ParameterPinIn::ParameterPinIn(const pinConstructArgs &conf) :
-	ParameterPin(conf)
-{
-
+namespace Connectables {
+    class PinFactory
+    {
+    public:
+        static Pin* MakePin(const pinConstructArgs &conf);
+    };
 }
-
-//parameter is a float
-ParameterPinIn::ParameterPinIn(Object *parent, int number, float defaultValue, QString name, bool nameCanChange, bool isRemoveable) :
-        ParameterPin(parent, PinDirection::Input, number, defaultValue, name, nameCanChange, isRemoveable)
-{
-}
-
-//parameter is a int, index in a list of values
-ParameterPinIn::ParameterPinIn(Object *parent, int number, const QVariant &defaultVariantValue, QList<QVariant> *listValues, QString name, bool nameCanChange, bool isRemoveable) :
-        ParameterPin(parent, PinDirection::Input, number, defaultVariantValue, listValues, name, nameCanChange, isRemoveable)
-{
-}
-
-void ParameterPinIn::ReceivePinMsg(const PinMessage::Enum msgType,void *data)
-{
-    if(msgType == PinMessage::ParameterValue) {
-        ChangeValue(*(float*)data);
-    }
-}
-
+#endif // PINFACTORY_H

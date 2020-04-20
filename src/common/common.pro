@@ -78,6 +78,7 @@ vstsdk {
 
 SOURCES += \
     connectables/objectcontainerattribs.cpp \
+    connectables/pinfactory.cpp \
     msghandler.cpp \
     mainhost.cpp \
     audiobuffer.cpp \
@@ -185,6 +186,7 @@ SOURCES += \
 
 HEADERS += \
     connectables/objectcontainerattribs.h \
+    connectables/pinfactory.h \
     globals.h \
     mainhost.h \
     audiobuffer.h \

@@ -23,13 +23,16 @@
 
 //#include "precomp.h"
 
-#include "audiopin.h"
-#include "midipinin.h"
-#include "midipinout.h"
-#include "parameterpinin.h"
-#include "parameterpinout.h"
-#include "bridgepinin.h"
-#include "bridgepinout.h"
+//#include "audiopin.h"
+//#include "midipinin.h"
+//#include "midipinout.h"
+//#include "parameterpinin.h"
+//#include "parameterpinout.h"
+//#include "bridgepinin.h"
+//#include "bridgepinout.h"
+
+#include "pinfactory.h"
+
 #include "objectprogram.h"
 #include "objectinfo.h"
 #include "objectcontainerattribs.h"

@@ -25,6 +25,12 @@
 
 using namespace Connectables;
 
+ParameterPinOut::ParameterPinOut(const pinConstructArgs &conf) :
+	ParameterPin(conf)
+{
+
+}
+
 //parameter is a float
 ParameterPinOut::ParameterPinOut(Object *parent, int number, float defaultValue, const QString &name, bool nameCanChange, bool isRemoveable) :
         ParameterPin(parent, PinDirection::Output, number, defaultValue, name, nameCanChange, isRemoveable)

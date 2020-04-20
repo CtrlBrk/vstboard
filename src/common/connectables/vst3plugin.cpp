@@ -36,6 +36,7 @@
 //#include "pluginterfaces/vst/ivsteditcontroller.h"
 //#include "pluginterfaces/vst/ivstmidicontrollers.h"
 
+
 namespace Steinberg {
     FUnknown* gStandardPluginContext = 0;
 }
@@ -412,11 +413,16 @@ bool Vst3Plugin::initController()
                     progChangeParameter = i;
                 }
 
-//                if(paramInfo.flags & Vst::ParameterInfo::kIsReadOnly) {
-//                    listParameterPinOut->AddPin(i);
-//                } else {
-//                    listParameterPinIn->AddPin(i);
-//                }
+				//create output parameters for readonly values (but values are not updating correctly)
+				if (paramInfo.flags & Vst::ParameterInfo::kIsReadOnly) {
+					listParameterPinOut->AddPin(i);
+				}
+				else {
+					//create all parameters pins if no gui
+					if (!hasEditor)
+						listParameterPinIn->AddPin(i);
+				}
+
             }
         }
     }
@@ -1257,13 +1263,6 @@ void Vst3Plugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
                 return;
             }
 
-            //don't know what those indexes are yet
-            /*int32 pindex = 0;
-            Vst::IParamValueQueue* queue = inputParameterChanges.addParameterData(pId, pindex);
-            int32 qindex = 0;
-            const int32 sampleOffset = 0;
-            queue->addPoint(sampleOffset, value, qindex);
-*/
 			int32 index = 0;
 			IParamValueQueue* queue = inputParameterChanges.addParameterData(pId, index);
 			if (queue)
@@ -1275,16 +1274,6 @@ void Vst3Plugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
 				}
 			}
 
-
-//            if(pinInfo.pinNumber < FIXED_PIN_STARTINDEX) {
-//                listParamChanged.insert(pId,value);
-//            }
-//            if(pinInfo.pinNumber == FixedPinNumber::bypass) {
-//                listParamChanged.insert(bypassParameter,bypass?1.0f:.0f);
-//            }
-
-
-
        // }
 
     }
@@ -1292,54 +1281,59 @@ void Vst3Plugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
 
 Pin* Vst3Plugin::CreatePin(const ConnectionInfo &info)
 {
-//    if(info.type == PinType::Audio) {
-//        return new AudioPin(this,info.direction,info.pinNumber,myHost->GetBufferSize(),doublePrecision,true);
-//    }
-
     Pin *newPin = Object::CreatePin(info);
     if(newPin)
         return newPin;
 
+    pinConstructArgs args(info);
+    args.parent = this;
+
     if(info.type == PinType::Parameter) {
 
         if(info.pinNumber==progChangeParameter) {
-            return new ParameterPinIn(this,info.pinNumber,0,&listValues,"prog");
+            args.listValues = &listValues;
+            args.defaultVariantValue = 0;
+            args.name = tr("prog");
+            return PinFactory::MakePin(args);
         }
 
         if(info.pinNumber==FixedPinNumber::bypass) {
-            return new ParameterPinIn(this,info.pinNumber,"On",&listBypass);
+            args.listValues = &listBypass;
+            args.defaultVariantValue = "On";
+            args.name = tr("prog");
+            return PinFactory::MakePin(args);
         }
 
-        switch(info.pinNumber) {
-            
-            case FixedPinNumber::learningMode :
-                if(!hasEditor && !IsInError())
-                    return 0;
-                return new ParameterPinIn(this,info.pinNumber,"off",&listIsLearning,tr("Learn"));
+        if(info.pinNumber==FixedPinNumber::learningMode) {
+            if(!hasEditor && !IsInError())
+                return 0;
 
-            default : {
-                ParameterPin *pin=0;
-                Vst::ParameterInfo paramInfo = {0};
-
-                if(editController) {
-                    tresult result = editController->getParameterInfo (info.pinNumber, paramInfo);
-                    if(result != kResultOk)
-                        return 0;
-                }
-
-                if(info.direction==PinDirection::Output) {
-                    pin = new ParameterPinOut(this,info.pinNumber,(float)paramInfo.defaultNormalizedValue,QString::fromUtf16((char16_t*)paramInfo.title),hasEditor,hasEditor);
-                } else {
-                    pin = new ParameterPinIn(this,info.pinNumber,(float)paramInfo.defaultNormalizedValue,QString::fromUtf16((char16_t*)paramInfo.title),hasEditor,hasEditor);
-                }
-                if(!hasEditor || (paramInfo.flags & Vst::ParameterInfo::kIsReadOnly))
-                    pin->SetDefaultVisible(true);
-                else
-                    pin->SetDefaultVisible(false);
-
-                return pin;
-            }
+            args.listValues = &listIsLearning;
+            args.defaultVariantValue = "off";
+            args.name = tr("Learn");
+            return PinFactory::MakePin(args);
         }
+
+        Vst::ParameterInfo paramInfo = {0};
+
+        if(editController) {
+            tresult result = editController->getParameterInfo (info.pinNumber, paramInfo);
+            if(result != kResultOk)
+                return 0;
+        }
+
+        args.value = (float)paramInfo.defaultNormalizedValue;
+        args.name = QString::fromUtf16((char16_t*)paramInfo.title);
+        args.isRemoveable = hasEditor;
+        args.nameCanChange = hasEditor;
+        args.visible = !hasEditor;
+
+        if(info.direction==PinDirection::Output) {
+            //TODO: readonly parameters are not updated
+            args.visible = true;
+        }
+
+        return PinFactory::MakePin(args);
     }
 
     return 0;

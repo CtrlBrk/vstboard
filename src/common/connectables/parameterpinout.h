@@ -29,6 +29,7 @@ namespace Connectables {
     class ParameterPinOut : public ParameterPin
     {
     public:
+		ParameterPinOut(const pinConstructArgs &conf);
         ParameterPinOut(Object *parent, int number, float defaultValue, const QString &name="", bool nameCanChange=false, bool isRemoveable=false);
         ParameterPinOut(Object *parent, int number, const QVariant &defaultVariantValue, QList<QVariant> *listValues, const QString &name="", bool nameCanChange=false, bool isRemoveable=false);
 

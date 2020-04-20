@@ -389,6 +389,7 @@
     <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\processdata.cpp" />
     <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\stringconvert.cpp" />
     <ClCompile Include="connectables\objectcontainerattribs.cpp" />
+    <ClCompile Include="connectables\pinfactory.cpp" />
     <ClCompile Include="projectfile\jsonreader.cpp" />
     <ClCompile Include="projectfile\jsonwriter.cpp" />
     <ClCompile Include="views\aboutdialog.cpp" />
@@ -521,6 +522,7 @@
     <QtMoc Include="sceneview\cableview.h">
     </QtMoc>
     <ClInclude Include="connectables\objectcontainerattribs.h" />
+    <ClInclude Include="connectables\pinfactory.h" />
     <ClInclude Include="projectfile\jsonreader.h" />
     <ClInclude Include="projectfile\jsonwriter.h" />
     <QtMoc Include="views\filebrowsertree.h" />
