@@ -88,8 +88,9 @@ void Pin::SendMsg(const PinMessage::Enum msgType,void *data)
 void Pin::SetPinList(PinsList *lst)
 {
     pinList=lst;
+
     if(lst!=0) {
-        SetVisible(true);
+        SetVisible(visible);
     }
 }
 

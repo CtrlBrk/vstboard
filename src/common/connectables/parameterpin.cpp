@@ -47,7 +47,7 @@ ParameterPin::ParameterPin(Object *parent, PinDirection::Enum direction, int num
 {
     InitCursors();
 
-    SetVisible(true);
+//    SetVisible(true);
     connectInfo.isRemoveable=isRemoveable;
     value = defaultValue;
     setObjectName(name);
@@ -77,7 +77,7 @@ ParameterPin::ParameterPin(Object *parent, PinDirection::Enum direction, int num
 {
     InitCursors();
 
-    SetVisible(true);
+//    SetVisible(true);
     connectInfo.isRemoveable=isRemoveable;
     setObjectName(name);
     stepSize=1.0f/(listValues->size()-1);

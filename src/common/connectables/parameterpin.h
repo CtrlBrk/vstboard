@@ -57,7 +57,7 @@ namespace Connectables {
         void GetValues(ObjectParameter &param);
 
         void SetDefaultValue(float value) {defaultValue = value;}
-        void SetDefaultVisible(bool vis) {defaultVisible = vis;}
+        void SetDefaultVisible(bool vis) {defaultVisible = vis; visible = vis;}
         void SetFixedName(QString fixedName);
         void SetNameCanChange(bool canChange) {nameCanChange = canChange;}
         void SetRemoveable();

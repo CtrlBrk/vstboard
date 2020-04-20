@@ -388,7 +388,7 @@ bool Vst3Plugin::initController()
 
 	//init editor window
 	if (myHost->settings->GetSetting("fastEditorsOpenClose", true).toBool()) {
-		hasEditor = CreateEditorWindow();
+        CreateEditorWindow();
 	}
 	if (hasEditor) {
 		listParameterPinIn->AddPin(FixedPinNumber::editorVisible);
@@ -529,7 +529,7 @@ bool Vst3Plugin::CreateEditorWindow()
     }
     //uint32 r1 = pView->addRef();
 	
-	
+    hasEditor = true;
 
 #if WINDOWS
     if(pView->isPlatformTypeSupported(kPlatformTypeHWND)!=kResultTrue) {
@@ -1201,6 +1201,13 @@ void Vst3Plugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
     if(closed)
         return;
 
+    if(pinInfo.pinNumber==FixedPinNumber::editorVisible) {
+        return;
+    }
+    if(pinInfo.pinNumber==FixedPinNumber::learningMode) {
+        return;
+    }
+
     if(pinInfo.direction == PinDirection::Input) {
         if(pinInfo.pinNumber==FixedPinNumber::vstProgNumber) {
             return;
@@ -1222,6 +1229,8 @@ void Vst3Plugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
                 bypass=false;
             }
         }
+
+
 
 		Vst::ParamID pId = -1;
 
@@ -1421,6 +1430,8 @@ tresult PLUGIN_API Vst3Plugin::performEdit (Vst::ParamID id, Vst::ParamValue val
     Vst::String128 str;
     editController->getParamStringByValue(id,0,str);
 	
+    //find what pin represents that parameter
+    //TODO: should save that paramId=pinNb in a list
     qint32 numParameters = editController->getParameterCount ();
     for (qint32 i = 0; i < numParameters; i++) {
         Vst::ParameterInfo paramInfo = {0};
