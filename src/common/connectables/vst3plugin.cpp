@@ -90,8 +90,9 @@ bool Vst3Plugin::Open()
     module = VST3::Hosting::Module::create (objInfo.filename.toStdString(), error);
     if (!module)
     {
+        SetErrorMessage( tr("dll not found") );
         Unload();
-        return false;
+        return true;
     }
 	
     auto factory = module->getFactory ();
@@ -394,7 +395,7 @@ bool Vst3Plugin::initController()
 		listParameterPinIn->AddPin(FixedPinNumber::learningMode);
 	}
 
-	listParameterPinIn->AddPin(FixedPinNumber::bypass);
+    listParameterPinIn->AddPin(FixedPinNumber::bypass);
 
     //init parameters
     qint32 numParameters = editController->getParameterCount ();
@@ -411,11 +412,11 @@ bool Vst3Plugin::initController()
                     progChangeParameter = i;
                 }
 
-                if(paramInfo.flags & Vst::ParameterInfo::kIsReadOnly) {
-                    listParameterPinOut->AddPin(i);
-                } else {
-                    listParameterPinIn->AddPin(i);
-                }
+//                if(paramInfo.flags & Vst::ParameterInfo::kIsReadOnly) {
+//                    listParameterPinOut->AddPin(i);
+//                } else {
+//                    listParameterPinIn->AddPin(i);
+//                }
             }
         }
     }
@@ -516,6 +517,9 @@ bool Vst3Plugin::CreateEditorWindow()
 
     //already done
     if(editorWnd)
+        return true;
+
+    if(!editController)
         return true;
 
     pView = editController->createView(Vst::ViewType::kEditor);
@@ -718,9 +722,15 @@ void Vst3Plugin::SetSampleRate(float rate)
 
 void Vst3Plugin::SetSleep(bool sleeping)
 {
-    if(closed)
-        return;
     if(sleeping == GetSleep())
+        return;
+
+    if(IsInError()) {
+        Object::SetSleep(sleeping);
+        return;
+    }
+
+    if(closed)
         return;
 
     FUnknownPtr<Vst::IAudioProcessor> processor = component;
@@ -802,15 +812,24 @@ void Vst3Plugin::Unload()
     //if(plugProvider) {
     //    plugProvider->releasePlugIn(component,editController);
     //}
-    component->terminate();
-    editController->terminate();
+    if(component) {
+        component->terminate();
+        component = 0;
+    }
+    if(editController) {
+        editController->terminate();
+        editController = 0;
+    }
+
 	if (plugProvider) {
 		plugProvider->release();
+        plugProvider = 0;
 	}
 
-	if(module)
+    if(module) {
 		module.reset();
-
+        module = 0;
+    }
 
 
 
@@ -1292,9 +1311,12 @@ Pin* Vst3Plugin::CreatePin(const ConnectionInfo &info)
             default : {
                 ParameterPin *pin=0;
                 Vst::ParameterInfo paramInfo = {0};
-                tresult result = editController->getParameterInfo (info.pinNumber, paramInfo);
-                if(result != kResultOk)
-                    return 0;
+
+                if(editController) {
+                    tresult result = editController->getParameterInfo (info.pinNumber, paramInfo);
+                    if(result != kResultOk)
+                        return 0;
+                }
 
                 if(info.direction==PinDirection::Output) {
                     pin = new ParameterPinOut(this,info.pinNumber,(float)paramInfo.defaultNormalizedValue,QString::fromUtf16((char16_t*)paramInfo.title),hasEditor,hasEditor);
