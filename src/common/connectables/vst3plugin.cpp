@@ -1199,7 +1199,14 @@ void Vst3Plugin::MidiMsgFromInput(long msg)
     int32 port=0;
     processParamChange (command, chan, MidiData1(msg), MidiData2(msg), port);
 }
-
+/*
+void Vst3Plugin::EventFromInput(void *event)
+{
+	Vst::Event e = *(Vst::Event*)event;
+	QMutexLocker l(&paramLock);
+	inEvents.addEvent(e);
+}
+*/
 void Vst3Plugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
 {
     Object::OnParameterChanged(pinInfo,value);

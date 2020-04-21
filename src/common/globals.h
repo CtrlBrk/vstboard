@@ -187,7 +187,8 @@ namespace PinMessage {
         ND,
         AudioBuffer,
         MidiMsg,
-        ParameterValue
+        ParameterValue,
+		VstEvent
     };
 }
 

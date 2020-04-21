@@ -27,6 +27,8 @@
 #pragma warning( push, 1 )
 #endif
 #include "public.sdk/source/vst/vsteditcontroller.h"
+#include "public.sdk/source/vst/vstparameters.h"
+#include "pluginterfaces/vst/ivstmidicontrollers.h"
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
@@ -41,19 +43,25 @@ namespace Steinberg {
 using namespace Steinberg;
 
 //-----------------------------------------------------------------------------
-class VstBoardController : public Vst::EditController
+class VstBoardController : public Vst::EditController, public Vst::IMidiMapping
 {
 public:
     static FUnknown* createInstance (void*) { return (IEditController*)new VstBoardController (); }
     ~VstBoardController();
-    tresult PLUGIN_API initialize (FUnknown* context);
-    IPlugView* PLUGIN_API createView (const char* name);
-    void editorAttached (Vst::EditorView* editor);
-    void editorRemoved (Vst::EditorView* editor);
-    void editorDestroyed (Vst::EditorView* editor);
-    tresult PLUGIN_API notify (Vst::IMessage* message);
-    tresult PLUGIN_API setState (IBStream* state);
-    tresult PLUGIN_API getState (IBStream* state);
+    tresult PLUGIN_API initialize (FUnknown* context) SMTG_OVERRIDE;
+    IPlugView* PLUGIN_API createView (const char* name) SMTG_OVERRIDE;
+    void editorAttached (Vst::EditorView* editor) SMTG_OVERRIDE;
+    void editorRemoved (Vst::EditorView* editor) SMTG_OVERRIDE;
+    void editorDestroyed (Vst::EditorView* editor) SMTG_OVERRIDE;
+    tresult PLUGIN_API notify (Vst::IMessage* message) SMTG_OVERRIDE;
+    tresult PLUGIN_API setState (IBStream* state) SMTG_OVERRIDE;
+    tresult PLUGIN_API getState (IBStream* state) SMTG_OVERRIDE;
+	tresult PLUGIN_API getMidiControllerAssignment(int32 busIndex, int16 channel, Vst::CtrlNumber midiControllerNumber, Vst::ParamID& tag /*out*/) SMTG_OVERRIDE;
+	DELEGATE_REFCOUNT(EditController)
+	tresult PLUGIN_API queryInterface(const char* iid, void** obj) SMTG_OVERRIDE;
+
+protected:
+	int32 midiCCParamID[Vst::kCountCtrlNumber];
 
 private:
     QList<Gui*> listGui;

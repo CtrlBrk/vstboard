@@ -21,10 +21,20 @@
 #ifndef VSTMIDIDEVICE_H
 #define VSTMIDIDEVICE_H
 
+#ifdef _MSC_VER
+#pragma warning( push, 1 )
+#endif
+#include "pluginterfaces/vst/ivstevents.h"
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
+
 //#include "precomp.h"
 #include "connectables/object.h"
 
 #define QUEUE_SIZE 1024
+
+using namespace Steinberg;
 
 namespace Connectables {
 
@@ -39,8 +49,10 @@ namespace Connectables {
         bool Close();
         void Render();
         void MidiMsgFromInput(long msg);
+		void EventFromInput(const Vst::Event &event);
 
         QList<long>midiQueue;
+		//QList<Vst::Event>eventQueue;
 
     signals:
         void SendMsg(int msgType,void *data=0);

@@ -402,7 +402,7 @@
       <QtMocFileName>moc_%(Filename).cpp</QtMocFileName>
     </QtMoc>
     <PostBuildEvent>
-      <Command>copy "$(OutDir)$(TargetName).dll" "$(OutDir)$(TargetName).vst3"</Command>
+      <Command>copy "$(OutDir)$(TargetName).dll" "C:\dev\vb_installpath\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -126,7 +126,7 @@ void MainWindowVst::BuildListTools()
     ObjectInfo infomi;
     infomi.nodeType = NodeType::object;
     infomi.objType = ObjType::MidiInterface;
-    infomi.inputs = 1;
+    infomi.outputs = 1;
     infomi.name = "Vst midi In";
     item->setData(QVariant::fromValue(infomi), UserRoles::objInfo);
     parentItem->appendRow(item);
@@ -136,7 +136,7 @@ void MainWindowVst::BuildListTools()
     ObjectInfo infomo;
     infomo.nodeType = NodeType::object;
     infomo.objType = ObjType::MidiInterface;
-    infomo.outputs = 1;
+    infomo.inputs = 1;
     infomo.name = "Vst midi Out";
     item->setData(QVariant::fromValue(infomo), UserRoles::objInfo);
     parentItem->appendRow(item);

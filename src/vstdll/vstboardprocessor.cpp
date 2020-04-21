@@ -285,14 +285,9 @@ tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
             Vst::Event event;
             if (eventList->getEvent (i, event) == kResultOk)
             {
-                switch (event.type)
-                {
-                    case Vst::Event::kNoteOnEvent:
-                        break;
-
-                    case Vst::Event::kNoteOffEvent:
-                        break;
-                }
+				if (event.busIndex < lstMidiIn.count()) {
+					lstMidiIn[event.busIndex]->EventFromInput(event);
+				}
             }
         }
     }

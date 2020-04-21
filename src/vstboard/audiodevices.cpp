@@ -113,7 +113,7 @@ void AudioDevices::CloseDevices(bool close)
 		}
 	}
 
-    SleepAll();
+//    SleepAll();
 
 //    if(!close) {
 //        mutexClosing.lock();

@@ -87,8 +87,8 @@ void VstPlugin::SetSleep(bool sleeping)
     if(closed)
         return;
 
-    Lock();
-
+	QMutexLocker objlock(&objMutex);
+    
     if(sleeping) {
         EffStopProcess();
         EffSuspend();
@@ -103,8 +103,6 @@ void VstPlugin::SetSleep(bool sleeping)
         EffResume();
         EffStartProcess();
     }
-
-    Unlock();
 
     Object::SetSleep(sleeping);
 }

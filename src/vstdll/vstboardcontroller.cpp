@@ -27,6 +27,8 @@
 #include "projectfile/jsonreader.h"
 #include "public.sdk/source/common/memorystream.h"
 
+using namespace Steinberg;
+
 //-----------------------------------------------------------------------------
 tresult PLUGIN_API VstBoardController::initialize (FUnknown* context)
 {
@@ -164,4 +166,20 @@ tresult PLUGIN_API VstBoardController::getState (IBStream* state)
 		}
 	}
 	return kResultOk;
+}
+
+tresult PLUGIN_API VstBoardController::getMidiControllerAssignment(int32 busIndex, int16 channel, Vst::CtrlNumber midiControllerNumber, Vst::ParamID& tag /*out*/)
+{
+	if (busIndex == 0 && midiControllerNumber < Vst::kCountCtrlNumber && midiCCParamID[midiControllerNumber] != -1)
+	{
+		tag = midiCCParamID[midiControllerNumber];
+		return kResultTrue;
+	}
+	return kResultFalse;
+}
+
+tresult PLUGIN_API VstBoardController::queryInterface(const char* iid, void** obj)
+{
+	QUERY_INTERFACE(iid, obj, IMidiMapping::iid, IMidiMapping)
+	return EditController::queryInterface(iid, obj);
 }

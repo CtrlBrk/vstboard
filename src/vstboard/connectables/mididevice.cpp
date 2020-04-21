@@ -45,22 +45,20 @@ void MidiDevice::Render()
 
     if(devInfo->input) {
         PmEvent buffer;
-        Lock();
+		QMutexLocker objlock(&objMutex);
 
         while (Pm_Dequeue(queue, &buffer) == 1) {
             foreach(Pin *pin,listMidiPinOut->listPins) {
                 pin->SendMsg(PinMessage::MidiMsg,(void*)&buffer.message);
             }
         }
-        Unlock();
     }
 }
 
 void MidiDevice::MidiMsgFromInput(long msg) {
     if(devInfo->output) {
-        Lock();
+		QMutexLocker objlock(&objMutex);
         Pm_Enqueue(queue,(void*)&msg);
-        Unlock();
     }
 }
 
@@ -69,7 +67,7 @@ bool MidiDevice::OpenStream()
     if(deviceOpened)
         return true;
 
-    QMutexLocker l(&objMutex);
+	QMutexLocker objlock(&objMutex);
 
     if(!FindDeviceByName()){
         SetErrorMessage( tr("Device not found") );

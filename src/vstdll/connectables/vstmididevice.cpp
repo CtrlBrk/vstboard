@@ -36,27 +36,84 @@ VstMidiDevice::~VstMidiDevice()
 
 void VstMidiDevice::Render()
 {
-    if(objInfo.inputs) {
-        Lock();
+	//send msg from output pins
+    if(objInfo.outputs) {
+		QMutexLocker objlock(&objMutex);
 
         foreach(long msg, midiQueue) {
-
             foreach(Pin *pin,listMidiPinOut->listPins) {
                 //static_cast<MidiPinOut*>(pin)->SendMsg(PinMessage::MidiMsg,(void*)&buffer.message);
                 static_cast<MidiPinOut*>(pin)->SendMsg(PinMessage::MidiMsg,(void*)&msg);
             }
         }
-        midiQueue.clear();
-        Unlock();
+		midiQueue.clear();
+
+		/*
+		foreach(const Vst::Event &msg, eventQueue) {
+			foreach(Pin *pin, listMidiPinOut->listPins) {
+				static_cast<MidiPinOut*>(pin)->SendMsg(PinMessage::VstEvent, (void*)&msg);
+			}
+		}
+		eventQueue.clear();
+*/
     }
 }
 
 void VstMidiDevice::MidiMsgFromInput(long msg) {
     if(objInfo.outputs) {
-        Lock();
+		QMutexLocker objlock(&objMutex);
         midiQueue << msg;
-        Unlock();
     }
+}
+
+void VstMidiDevice::EventFromInput(const Vst::Event &event) {
+	if (objInfo.outputs) {
+		QMutexLocker objlock(&objMutex);
+		
+		//eventQueue << event;
+
+		uint8_t status = 0;
+		uint8_t channel = 0;
+		uint8_t midiData0 = 0;
+		uint8_t midiData1 = 0;
+
+		switch(event.type) {
+		case Vst::Event::kNoteOnEvent:
+			status = MidiConst::noteOn;
+			channel = event.noteOn.channel;
+			midiData0 = event.noteOn.pitch;
+			midiData1 = event.noteOn.velocity * 127.f;
+			midiQueue << MidiMessage(channel | status, midiData0, midiData1);
+			break;
+		case Vst::Event::kNoteOffEvent:
+			status = MidiConst::noteOff;
+			channel = event.noteOff.channel;
+			midiData0 = event.noteOff.pitch;
+			midiData1 = event.noteOff.velocity * 127.f;
+			midiQueue << MidiMessage(channel | status, midiData0, midiData1);
+			break;
+		case Vst::Event::kPolyPressureEvent:
+			status = MidiConst::aftertouch;
+			channel = event.polyPressure.channel;
+			midiData0 = event.polyPressure.pitch;
+			midiData1 = event.polyPressure.pressure * 127.f;
+			midiQueue << MidiMessage(channel | status, midiData0, midiData1);
+			break;
+		case Vst::Event::kLegacyMIDICCOutEvent:
+			status = MidiConst::ctrl;
+			channel = event.midiCCOut.channel;
+			midiData0 = event.midiCCOut.value;
+			midiData1 = event.midiCCOut.value2;
+			midiQueue << MidiMessage(channel | status, midiData0, midiData1);
+			break;
+		case Vst::Event::kDataEvent:
+			//a normal midi msg maybe ?
+			if (event.data.size == 3) {
+				long msg = *(long*)event.data.bytes;
+				midiQueue << msg;
+			}
+		}
+	}
 }
 
 bool VstMidiDevice::Close()
@@ -72,14 +129,16 @@ bool VstMidiDevice::Close()
 
 bool VstMidiDevice::Open()
 {
-    if(objInfo.inputs>0)
+	//has output pins, so that's a midi in
+    if(objInfo.outputs>0)
         static_cast<VstBoardProcessor*>(myHost)->addMidiIn(this);
 
-    if(objInfo.outputs>0)
+	//input pins of a midi out device
+    if(objInfo.inputs>0)
         static_cast<VstBoardProcessor*>(myHost)->addMidiOut(this);
 
-    listMidiPinOut->ChangeNumberOfPins(objInfo.inputs);
-    listMidiPinIn->ChangeNumberOfPins(objInfo.outputs);
+    listMidiPinOut->ChangeNumberOfPins(objInfo.outputs);
+    listMidiPinIn->ChangeNumberOfPins(objInfo.inputs);
 
     Object::Open();
     return true;

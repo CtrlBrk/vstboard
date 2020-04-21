@@ -157,6 +157,7 @@ namespace Connectables {
 
         /// Called by the midi pins when a midi message is received
         virtual void MidiMsgFromInput(long /*msg*/) {}
+		//virtual void EventFromInput(void * /*msg*/) {}
 
         /*!
           Get the name of a parameter pin

@@ -122,6 +122,7 @@ public:
     bool isPortInRange (int32 port, int32 channel) const;
     bool processParamChange (uint8_t status, uint8_t channel, uint8_t midiData1, uint8_t midiData2, int32 port);
     void MidiMsgFromInput(long msg) override;
+	//void EventFromInput(void *event) override;
     OptionalEvent midiToEvent (uint8_t status, uint8_t channel, uint8_t midiData0, uint8_t midiData1);
     OptionParamChange midiToParameter (uint8_t status, uint8_t channel, uint8_t midiData1, uint8_t midiData2, const ToParameterIdFunc& toParamID);
 

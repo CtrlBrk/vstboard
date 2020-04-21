@@ -45,12 +45,13 @@ void MainHostHost::Init()
 
 void MainHostHost::Close()
 {
-    MainHost::Close();
     //must be set to zero, devices will check this on close
     delete audioDevices;
     delete midiDevices;
     audioDevices=0;
     midiDevices=0;
+
+    MainHost::Close();
 }
 
 void MainHostHost::Render()

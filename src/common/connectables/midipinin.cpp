@@ -36,10 +36,16 @@ MidiPinIn::MidiPinIn(Object *parent, int number, bool bridge)
 
 void MidiPinIn::ReceivePinMsg(const PinMessage::Enum msgType,void* data)
 {
-    if(msgType==PinMessage::MidiMsg) {
+    if(msgType == PinMessage::MidiMsg) {
         parent->MidiMsgFromInput(*(long*)data);
-        valueChanged=true;
+        valueChanged = true;
     }
+	/*
+	if (msgType == PinMessage::VstEvent) {
+		parent->EventFromInput(data);
+		valueChanged = true;
+	}
+	*/
 }
 
 
