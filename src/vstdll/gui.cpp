@@ -20,6 +20,8 @@
 #include "gui.h"
 #include <QHBoxLayout>
 #include "settings.h"
+#include "projectfile/jsonwriter.h"
+#include "projectfile/jsonreader.h"
 
 namespace Steinberg
 {
@@ -256,4 +258,16 @@ tresult PLUGIN_API Gui::setFrame (IPlugFrame* frame)
 
 
 
+}
+
+void Gui::fromJson(QJsonObject &json)
+{
+	if(myWindow)
+		JsonReader::readProjectView(json, myWindow, 0);
+}
+
+void Gui::toJson(QJsonObject &json) const
+{
+	if(myWindow)
+		json = JsonWriter::writeProjectView(myWindow, true, true);
 }

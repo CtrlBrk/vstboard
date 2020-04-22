@@ -67,6 +67,10 @@ public:
     tresult PLUGIN_API canResize () { return kResultTrue; }
     tresult PLUGIN_API checkSizeConstraint (ViewRect* /*rect*/) { return kResultTrue; }
 
+	void fromJson(QJsonObject &json);
+	void toJson(QJsonObject &json) const;
+
+
     //---Interface------
     OBJ_METHODS (Gui, FObject)
     DEFINE_INTERFACES

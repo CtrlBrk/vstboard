@@ -23,8 +23,6 @@
 #include "pluginterfaces/base/ustring.h"
 #include "gui.h"
 #include "mainwindowvst.h"
-#include "projectfile/jsonwriter.h"
-#include "projectfile/jsonreader.h"
 #include "public.sdk/source/common/memorystream.h"
 
 using namespace Steinberg;
@@ -128,43 +126,48 @@ tresult PLUGIN_API VstBoardController::notify (Vst::IMessage* message)
 
 tresult PLUGIN_API VstBoardController::setState (IBStream* state)
 {
-	MemoryStream* stateCtrl = static_cast<MemoryStream*>(state);
-	QByteArray bArray(stateCtrl->getData(), stateCtrl->getSize());
-	QBuffer buffer(&bArray);
-	buffer.open(QIODevice::ReadOnly);
+	int size = 0;
+	state->read(&size, sizeof(int));
+	//don't know how to write directly to a bytearray
+	char* buf = new char[size];
+	state->read(buf, size);
+	
+	QByteArray bArray(QByteArray::fromRawData(buf, size));
 
-	QByteArray saveData = buffer.readAll();
-
-	MainWindow *win = dynamic_cast<MainWindow*>(listGui.first());
-	if (win) {
-        QJsonDocument loadDoc(QJsonDocument::fromBinaryData(qUncompress(saveData)));
-//		QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
-		QJsonObject json = loadDoc.object();
-
-		if (json.contains("view")) {
-			JsonReader::readProjectView(json["view"].toObject(), win, 0);
+	QJsonDocument loadDoc(QJsonDocument::fromBinaryData(qUncompress(bArray)));
+	//QJsonDocument loadDoc(QJsonDocument::fromJson(bArray));
+	QJsonObject json = loadDoc.object();
+	if (json.contains("ctrl")) {
+		QJsonArray jLstCtrl = json["ctrl"].toArray();
+		for (int i = 0; i < jLstCtrl.size(); ++i) {
+			QJsonObject jCtrl = jLstCtrl[i].toObject();
+			if (listGui.count() > i) {
+				listGui[i]->fromJson(jCtrl);
+			}
 		}
 	}
+		
     return kResultOk;
 }
 
 tresult PLUGIN_API VstBoardController::getState (IBStream* state)
 {
-	QByteArray bArray;
-	QBuffer buffer(&bArray);
-	buffer.open(QIODevice::WriteOnly);
-
-	if (listGui.size() > 0) {
-		MainWindow *win = dynamic_cast<MainWindow*>(listGui.first());
-		if (win) {
-			QJsonObject jsonObj;
-			jsonObj["proc"] = JsonWriter::writeProjectView(win, true, true);
-			QJsonDocument saveDoc(jsonObj);
-			buffer.write(qCompress(saveDoc.toBinaryData()));
-			//		buffer.write(saveDoc.toJson(QJsonDocument::Indented));
-			state->write(bArray.data(), bArray.size());
-		}
+	QJsonObject jsonObj;
+	QJsonArray jLst;
+	for (int i = 0; i < listGui.count(); i++) {
+		QJsonObject jObj;
+		listGui[i]->toJson(jObj);
+		jLst.append(jObj);
 	}
+
+	jsonObj["ctrl"] = jLst;
+	QJsonDocument saveDoc(jsonObj);
+	QByteArray bArray = qCompress(saveDoc.toBinaryData());
+	//QByteArray bArray = saveDoc.toJson(QJsonDocument::Indented);
+	int size = bArray.size();
+	state->write(&size, sizeof(int));
+	state->write(bArray.data(), bArray.size());
+
 	return kResultOk;
 }
 

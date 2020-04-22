@@ -143,38 +143,36 @@ tresult PLUGIN_API VstBoardProcessor::initialize (FUnknown* context)
 
 tresult PLUGIN_API VstBoardProcessor::setState (IBStream* state)
 {
-	MemoryStream* stateCtrl = static_cast<MemoryStream*>(state);
-	QByteArray bArray(stateCtrl->getData(), stateCtrl->getSize());
-	QBuffer buffer(&bArray);
-	buffer.open(QIODevice::ReadOnly);
-
-	QByteArray saveData = buffer.readAll();
-
-    QJsonDocument loadDoc(QJsonDocument::fromBinaryData(qUncompress(saveData)));
-//	QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
+	int size = 0;
+	state->read(&size, sizeof(int));
+	//don't know how to write directly to a bytearray
+	char* buf = new char[size];
+	state->read(buf, size);
+	
+	QByteArray bArray(QByteArray::fromRawData(buf, size));
+	
+	QJsonDocument loadDoc(QJsonDocument::fromBinaryData(qUncompress(bArray)));
+	//QJsonDocument loadDoc(QJsonDocument::fromJson(bArray));
 	QJsonObject json = loadDoc.object();
 	if (json.contains("proc")) {
 		JsonReader::readProjectProcess(json["proc"].toObject(), this);
 	}
-
-    return kResultOk;
+	
+    return kResultOk; 
 }
 
 tresult PLUGIN_API VstBoardProcessor::getState (IBStream* state)
 {
-	QByteArray bArray;
-	QBuffer buffer(&bArray);
-	buffer.open(QIODevice::WriteOnly);
-
 	QJsonObject jsonObj;
 	jsonObj["proc"] = JsonWriter::writeProjectProcess(this, true, true);
 	QJsonDocument saveDoc(jsonObj);
-    buffer.write(qCompress(saveDoc.toBinaryData()));
-//	buffer.write(saveDoc.toJson(QJsonDocument::Indented));
-
+	QByteArray bArray = qCompress(saveDoc.toBinaryData());
+	//QByteArray bArray = saveDoc.toJson(QJsonDocument::Indented);
+	int size = bArray.size();
+	state->write(&size, sizeof(int));
     state->write(bArray.data(), bArray.size());
 
-    return kResultOk;
+    return kResultOk; 
 }
 
 tresult PLUGIN_API VstBoardProcessor::setupProcessing (Vst::ProcessSetup& newSetup)
