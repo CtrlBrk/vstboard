@@ -72,7 +72,8 @@ Gui::~Gui()
 //        myWindow=0;
     }
     if(widget) {
-        widget->deleteLater();
+        //widget->deleteLater();
+		delete widget;
         widget=0;
     }
 }
@@ -215,7 +216,7 @@ tresult PLUGIN_API Gui::getSize (ViewRect* size)
 
     size->right = 600;
     size->bottom = 400;
-    return kResultFalse;
+    return kResultTrue;
 }
 
 tresult PLUGIN_API Gui::onSize (ViewRect* newSize)

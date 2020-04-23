@@ -97,9 +97,6 @@
     <ClCompile Include="..\..\libs\qtwinmigrate\src\qwinwidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\libs\qtwinmigrate\src\qmfcapp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\basewrapper\basewrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -129,12 +126,6 @@
     <CustomBuild Include="..\common\precomp.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <ClInclude Include="..\..\libs\qtwinmigrate\src\qmfcapp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <QtMoc Include="..\..\libs\qtwinmigrate\src\qwinhost.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="..\..\libs\qtwinmigrate\src\qwinwidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>

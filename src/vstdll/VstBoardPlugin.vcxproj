@@ -406,7 +406,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\libs\qtwinmigrate\src\qmfcapp.cpp" />
     <ClCompile Include="..\..\libs\qtwinmigrate\src\qwinwidget.cpp" />
     <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst2.x\audioeffect.cpp" />
     <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst2.x\audioeffectx.cpp" />
@@ -574,9 +573,6 @@ echo #include "precomp.h"&gt;&gt;..\common\precomp.h.cpp</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\common\precomp.h.cpp;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\common\precomp.h.cpp;%(Outputs)</Outputs>
     </CustomBuild>
-    <ClInclude Include="..\..\libs\qtwinmigrate\src\qmfcapp.h" />
-    <QtMoc Include="..\..\libs\qtwinmigrate\src\qwinhost.h">
-    </QtMoc>
     <QtMoc Include="..\..\libs\qtwinmigrate\src\qwinwidget.h">
     </QtMoc>
     <QtMoc Include="resizehandle.h">

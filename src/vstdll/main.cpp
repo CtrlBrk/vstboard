@@ -19,7 +19,7 @@
 **************************************************************************/
 
 #include <windows.h>
-#include <QMfcApp>
+//#include <QMfcApp>
 
 #pragma warning ( push, 1 )
 #include "pluginterfaces/base/ftypes.h"
@@ -30,9 +30,23 @@
 #include "vst2shell.h"
 #include "loaderhelpers.h"
 
-#if defined (_MSC_VER) && defined (DEVELOPMENT)
-        #include <crtdbg.h>
-#endif
+
+using namespace Steinberg;
+
+#define DllExport __declspec( dllexport )
+extern bool InitModule();
+extern bool DeinitModule();
+
+//the vst2.4 factory creates kFx & kInstrument classes, vst3 creates kFxInstrument
+extern IPluginFactory* PLUGIN_API GetPluginFactoryVst24();
+
+
+
+//#if defined (_MSC_VER) && defined (DEVELOPMENT)
+//	#define _CRTDBG_MAP_ALLOC
+//	#include <crtdbg.h>
+//#endif
+
 //
 //#ifdef UNICODE
 //#define tstrrchr wcsrchr
@@ -56,10 +70,6 @@ const std::wstring GetCurrentDllPath(HINSTANCE hInst)
 }
 
 
-using namespace Steinberg;
-
-//the vst2.4 factory creates plugin & instrument classes
-extern IPluginFactory* PLUGIN_API GetPluginFactoryVst24();
 
 AudioEffect *createShell(audioMasterCallback audioMaster);
 
@@ -75,16 +85,15 @@ AudioEffect *createShell(audioMasterCallback audioMaster);
     default:
         return createShell(audioMaster);
     }
-
 }
 
+QApplication* createQapp() {
+	if (qApp)
+		return FALSE;
 
-//------------------------------------------------------------------------
-#define DllExport __declspec( dllexport )
-
-//------------------------------------------------------------------------
-extern bool InitModule ();		///< must be provided by Plug-in: called when the library is loaded
-extern bool DeinitModule ();	///< must be provided by Plug-in: called when the library is unloaded
+	int argc = 0;
+	return new QApplication(argc, 0);
+}
 
 #ifdef __cplusplus
 extern "C" {
@@ -102,8 +111,6 @@ extern "C" {
 } // extern "C"
 #endif
 
-bool QtAppCreated = FALSE;
-
 //------------------------------------------------------------------------
 BOOL WINAPI DllMain (HINSTANCE hInst, DWORD dwReason, LPVOID /*lpvReserved*/)
 {
@@ -119,24 +126,26 @@ BOOL WINAPI DllMain (HINSTANCE hInst, DWORD dwReason, LPVOID /*lpvReserved*/)
 		QString p = QString("%1").arg(libPath);
 		QCoreApplication::addLibraryPath(p);
 
-		QtAppCreated = QMfcApp::pluginInstance( 0 );
+		createQapp();
 
-//    #if defined (_MSC_VER) && defined (DEVELOPMENT)
-//        _CrtSetReportMode ( _CRT_WARN, _CRTDBG_MODE_DEBUG );
-//        _CrtSetReportMode ( _CRT_ERROR, _CRTDBG_MODE_DEBUG );
-//        _CrtSetReportMode ( _CRT_ASSERT, _CRTDBG_MODE_DEBUG );
-//        int flag = _CrtSetDbgFlag (_CRTDBG_REPORT_FLAG);
-//        _CrtSetDbgFlag (flag | _CRTDBG_LEAK_CHECK_DF);
-//    #endif
+	//	QtAppCreated = QMfcApp::pluginInstance( 0 );
+
+    //#if defined (_MSC_VER) && defined (DEVELOPMENT)
+    //    _CrtSetReportMode ( _CRT_WARN, _CRTDBG_MODE_DEBUG );
+    //    _CrtSetReportMode ( _CRT_ERROR, _CRTDBG_MODE_DEBUG );
+    //    _CrtSetReportMode ( _CRT_ASSERT, _CRTDBG_MODE_DEBUG );
+    //    int flag = _CrtSetDbgFlag (_CRTDBG_REPORT_FLAG);
+    //    _CrtSetDbgFlag (flag | _CRTDBG_LEAK_CHECK_DF);
+    //#endif
 
     }
 	
 	//do not delete the app
 	//there's no way to know if another plugin is using our qapp
-	//if (dwReason == DLL_PROCESS_DETACH && QtAppCreated) {
-		//            if(qApp) {
-		//                qApp->exit(0);
-		//            }
-	//}
+	/*if (dwReason == DLL_PROCESS_DETACH) {
+		if(QtAppCreated && qApp) {
+		        qApp->exit(0);
+		}
+	}*/
     return TRUE;
 }
