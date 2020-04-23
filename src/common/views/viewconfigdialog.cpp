@@ -37,12 +37,12 @@ ViewConfigDialog::ViewConfigDialog(MainHost *myHost, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ViewConfigDialog),
     myHost(myHost),
+    conf(myHost->mainWindow->viewConfig),
     currentGrp(ColorGroups::ND),
     currentCol(Colors::ND),
 	backupSaveInSetup(false),
     modified(false),
-    updateInProgress(false),
-    conf(myHost->mainWindow->viewConfig)
+    updateInProgress(false)
 {
     ui->setupUi(this);
 
@@ -53,6 +53,24 @@ ViewConfigDialog::ViewConfigDialog(MainHost *myHost, QWidget *parent) :
             this,SLOT(onPickerColorSelected(QColor)));
     connect(ui->picker_hue,SIGNAL(colorSelected(QColor)),
             this,SLOT(onPickerHueSelected(QColor)));
+
+    connect(ui->RedSlider,SIGNAL(valueChanged(int)),
+            ui->RedSpinBox,SLOT(setValue(int)));
+    connect(ui->GreenSlider,SIGNAL(valueChanged(int)),
+            ui->GreenSpinBox,SLOT(setValue(int)));
+    connect(ui->BlueSlider,SIGNAL(valueChanged(int)),
+            ui->BlueSpinBox,SLOT(setValue(int)));
+    connect(ui->AlphaSlider,SIGNAL(valueChanged(int)),
+            ui->AlphaSpinBox,SLOT(setValue(int)));
+
+    connect(ui->RedSpinBox,SIGNAL(valueChanged(int)),
+            ui->RedSlider,SLOT(setValue(int)));
+    connect(ui->GreenSpinBox,SIGNAL(valueChanged(int)),
+            ui->GreenSlider,SLOT(setValue(int)));
+    connect(ui->BlueSpinBox,SIGNAL(valueChanged(int)),
+            ui->BlueSlider,SLOT(setValue(int)));
+    connect(ui->AlphaSpinBox,SIGNAL(valueChanged(int)),
+            ui->AlphaSlider,SLOT(setValue(int)));
 
     InitDialog();
 }

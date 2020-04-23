@@ -64,11 +64,15 @@ CONFIG(debug, debug|release) {
 
 win32-g++ {
     DEFINES += WINVER=0x0501
-    DEFINES += _WIN32_WINNT=0x0501
+    DEFINES += _WIN32_WINNT=0x0600
     LIBPREFIX = lib
     LIBEXT = a
 #    LIBS += -L$$quote($$MINGW_PATH/lib)
 #    INCLUDEPATH += $$quote($$MINGW_PATH/include)
+
+    DEFINES +=_NATIVE_WCHAR_T_DEFINED
+    DEFINES +=__wchar_t=wchar_t
+    QMAKE_CXXFLAGS += -fpermissive
 }
 
 win32-msvc* {

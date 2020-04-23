@@ -20,6 +20,7 @@
 
 #ifdef VSTSDK
 
+#include <cstring>
 #include "vstplugin.h"
 #include "globals.h"
 #include "audiobuffer.h"

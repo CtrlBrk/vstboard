@@ -1333,7 +1333,7 @@ static void CALLBACK winmm_out_callback(HMIDIOUT hmo, UINT wMsg,
 
 /* winmm_streamout_callback -- unprepare (free) buffer header */
 static void CALLBACK winmm_streamout_callback(HMIDIOUT hmo, UINT wMsg,
-        DWORD_PTR dwInstance, DWORD dwParam1, DWORD dwParam2)
+        DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD dwParam2)
 {
     PmInternal *midi = (PmInternal *) dwInstance;
     midiwinmm_type m = (midiwinmm_type) midi->descriptor;

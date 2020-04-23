@@ -456,8 +456,7 @@ void Vst3Plugin::SaveProgram()
         MemoryStream stateCtrl;
         if (editController->getState(&stateCtrl) != kResultOk) {
             LOG("error saving ctrl state")
-        }
-        else {
+        } else {
     		stateCtrl.seek(0, IBStream::kIBSeekSet, 0);
             QByteArray ba(stateCtrl.getData(), stateCtrl.getSize());
             currentProgram->listOtherValues.insert(1, ba);
@@ -1150,6 +1149,7 @@ MidiCCMapping Vst3Plugin::initMidiCtrlerAssignment (IComponent* component, IMidi
 
 bool Vst3Plugin::processParamChange (uint8_t status, uint8_t channel, uint8_t midiData1, uint8_t midiData2, int32 port)
 {
+	//TODO: that's wrong:
     auto paramMapping = [port, this] (int32 channel, uint8_t data1) -> ParamID {
         if (!isPortInRange (port, channel))
             return kNoParamId;
@@ -1196,8 +1196,15 @@ void Vst3Plugin::MidiMsgFromInput(long msg)
 //            if (eventList.addEvent (*vstEvent) != kResultOk)
         return;
     }
+
+	//mapped params
     int32 port=0;
-    processParamChange (command, chan, MidiData1(msg), MidiData2(msg), port);
+	if (processParamChange(command, chan, MidiData1(msg), MidiData2(msg), port)) {
+		return;
+	}
+
+	//maybe send the msg as a kDataEvent ?
+
 }
 /*
 void Vst3Plugin::EventFromInput(void *event)

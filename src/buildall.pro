@@ -9,8 +9,8 @@ SUBDIRS     = \
 
 vstsdk {
     SUBDIRS += \
-        vstdll \
-        dllLoader
+    vstdll \
+    dllLoader
 }
 
 CONFIG += ordered

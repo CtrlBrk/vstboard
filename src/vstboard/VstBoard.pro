@@ -1,4 +1,5 @@
 include(../config.pri)
+include(../vstsdk.pri)
 
 QT += core gui widgets
 
@@ -86,24 +87,3 @@ for(a, LIBDEPS) {
     DEPENDPATH += $$DESTDIR/$${a}
 }
 
-
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/hostclasses.cpp
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/pluginterfacesupport.cpp
-SOURCES += $$VST3SDK_PATH/public.sdk/source/common/memorystream.cpp
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/processdata.cpp
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/parameterchanges.cpp
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module.cpp
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module_win32.cpp
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/stringconvert.cpp
-
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/plugprovider.cpp
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/connectionproxy.cpp
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/eventlist.cpp
-#SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/vsteditcontroller.cpp
-
-LIBDEPS = sdk base pluginterfaces
-for(a, LIBDEPS) {
-    LIBS += -L$$VST3SDK_PATH/$${VSTLIB}/lib/$${MSBUILDDIR} -l$${LIBPREFIX}$${a}
-    PRE_TARGETDEPS += $$VST3SDK_PATH/$${VSTLIB}/lib/$${MSBUILDDIR}/$${LIBPREFIX}$${a}.$${LIBEXT}
-    DEPENDPATH += $$VST3SDK_PATH/$${VSTLIB}/lib/$${MSBUILDDIR}/$${a}
-}
