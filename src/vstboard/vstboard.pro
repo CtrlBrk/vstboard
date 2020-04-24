@@ -100,7 +100,7 @@ SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module_win32.cpp
 linux-g++{
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module_linux.cpp
 }
-mac??{
+macx{
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module_mac.cpp
 }
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/plugprovider.cpp

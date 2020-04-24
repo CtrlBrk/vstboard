@@ -250,7 +250,7 @@ bool AudioDevice::OpenStream(double sampleRate)
     if(devInfo.maxInputChannels > 0) {
 
         inputParameters = new PaStreamParameters;
-#ifdef win32
+#ifdef WIN32
         ZeroMemory( inputParameters, sizeof( PaStreamParameters ) );
 #else
         memset(inputParameters,0,sizeof( PaStreamParameters ) );
@@ -264,7 +264,7 @@ bool AudioDevice::OpenStream(double sampleRate)
 
         switch(Pa_GetHostApiInfo( devInfo.hostApi )->type) {
             case paDirectSound :
-#ifdef win32
+#ifdef WIN32
                 ZeroMemory( &directSoundStreamInfo, sizeof( PaWinDirectSoundStreamInfo) );
                 directSoundStreamInfo.size = sizeof( PaWinDirectSoundStreamInfo);
                 directSoundStreamInfo.hostApiType = paDirectSound;
@@ -278,7 +278,7 @@ bool AudioDevice::OpenStream(double sampleRate)
 #endif
                 break;
             case paMME :
-#ifdef win32
+#ifdef WIN32
                 ZeroMemory( &wmmeStreamInfo, sizeof(PaWinMmeStreamInfo) );
                 wmmeStreamInfo.size = sizeof(PaWinMmeStreamInfo);
                 wmmeStreamInfo.hostApiType = paMME;
@@ -309,7 +309,7 @@ bool AudioDevice::OpenStream(double sampleRate)
             case paJACK :
                 break;
             case paWASAPI : {
-#ifdef win32
+#ifdef WIN32
                 ZeroMemory( &wasapiStreamInfo, sizeof(PaWasapiStreamInfo) );
                 wasapiStreamInfo.size = sizeof(PaWasapiStreamInfo);
                 wasapiStreamInfo.hostApiType = paWASAPI;
@@ -333,7 +333,7 @@ bool AudioDevice::OpenStream(double sampleRate)
     if(devInfo.maxOutputChannels > 0) {
 
         outputParameters = new PaStreamParameters;
-#ifdef win32
+#ifdef WIN32
         ZeroMemory( outputParameters, sizeof( PaStreamParameters ) );
 #else
         memset(outputParameters,0,sizeof( PaStreamParameters ) );
@@ -346,7 +346,7 @@ bool AudioDevice::OpenStream(double sampleRate)
 
         switch(Pa_GetHostApiInfo( devInfo.hostApi )->type) {
             case paDirectSound :
-#ifdef win32
+#ifdef WIN32
                 ZeroMemory( &directSoundStreamInfo, sizeof(PaWinDirectSoundStreamInfo) );
                 directSoundStreamInfo.size = sizeof(PaWinDirectSoundStreamInfo);
                 directSoundStreamInfo.hostApiType = paDirectSound;
@@ -360,7 +360,7 @@ bool AudioDevice::OpenStream(double sampleRate)
 #endif
                 break;
             case paMME :
-#ifdef win32
+#ifdef WIN32
                 ZeroMemory( &wmmeStreamInfo, sizeof(PaWinMmeStreamInfo) );
                 wmmeStreamInfo.size = sizeof(PaWinMmeStreamInfo);
                 wmmeStreamInfo.hostApiType = paMME;
@@ -390,7 +390,7 @@ bool AudioDevice::OpenStream(double sampleRate)
             case paJACK :
                 break;
             case paWASAPI : {
-#ifdef win32
+#ifdef WIN32
                 ZeroMemory( &wasapiStreamInfo, sizeof(PaWasapiStreamInfo) );
                 wasapiStreamInfo.size = sizeof(PaWasapiStreamInfo);
                 wasapiStreamInfo.hostApiType = paWASAPI;
@@ -772,7 +772,7 @@ bool AudioDevice::RingBuffersToDevice( void *outputBuffer, unsigned long framesP
                 //empty the circular buffer, in case we reopen this device
                 buf->Clear();
                 //send a blank buffer to the device
-#ifdef win32
+#ifdef WIN32
         ZeroMemory( ((float **) outputBuffer)[cpt], sizeof(float)*framesPerBuffer );
 #else
         memset(((float **) outputBuffer)[cpt],0,sizeof(float)*framesPerBuffer  );
@@ -798,7 +798,7 @@ bool AudioDevice::RingBuffersToDevice( void *outputBuffer, unsigned long framesP
             buf->Get( ((float **) outputBuffer)[cpt], framesPerBuffer );
 
         } else {
-#ifdef win32
+#ifdef WIN32
             ZeroMemory( ((float **) outputBuffer)[cpt], sizeof(float)*framesPerBuffer );
 #else
             memset(((float **) outputBuffer)[cpt],0,sizeof(float)*framesPerBuffer);

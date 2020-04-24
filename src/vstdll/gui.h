@@ -27,7 +27,7 @@
 //#include "aeffeditor.h"
 #include "mainwindowvst.h"
 #include "resizehandle.h"
-#ifdef win32
+#ifdef WIN32
     #include <qwinwidget.h>
 #endif
 #include "pluginterfaces/gui/iplugview.h"
@@ -83,7 +83,7 @@ public:
 protected:
 //    bool hostCanSizeWindow;
     Settings *settings;
-#ifdef win32
+#ifdef WIN32
     QWinWidget *widget;
 #else
     QWidget *widget;

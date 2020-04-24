@@ -513,7 +513,7 @@ void AudioDevices::ConfigDevice(const ObjectInfo &info)
         }
 
         case paMME: {
-#ifdef win32
+#ifdef WIN32
             MmeConfigDialog dlg( myHost, myHost->mainWindow );
             dlg.exec();
 #endif
@@ -521,7 +521,7 @@ void AudioDevices::ConfigDevice(const ObjectInfo &info)
         }
 
         case paWASAPI: {
-#ifdef win32
+#ifdef WIN32
             WasapiConfigDialog dlg( myHost, myHost->mainWindow );
             dlg.exec();
 #endif
@@ -529,7 +529,7 @@ void AudioDevices::ConfigDevice(const ObjectInfo &info)
         }
 
         case paDirectSound: {
-#ifdef win32
+#ifdef WIN32
             DirectxConfigDialog dlg( myHost, myHost->mainWindow );
             dlg.exec();
 #endif

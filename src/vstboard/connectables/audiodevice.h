@@ -27,7 +27,7 @@
 #include "connectables/object.h"
 #include "connectables/objectinfo.h"
 #include "portaudio.h"
-#ifdef win32
+#ifdef WIN32
 #include "pa_win_wmme.h"
 #include "pa_win_ds.h"
 #include "pa_win_wasapi.h"
@@ -132,7 +132,7 @@ namespace Connectables {
 
         /// global audio devices mutex
         static QMutex mutexCountOpenedDevicesReady;
-#ifdef win32
+#ifdef WIN32
         /// windows mme stream options
         PaWinMmeStreamInfo wmmeStreamInfo;
 

@@ -18,7 +18,7 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 
-#ifdef win32
+#ifdef WIN32
     #include <windows.h>
     //#include <QMfcApp>
     #include "loaderhelpers.h"
@@ -84,7 +84,7 @@ QApplication* createQapp() {
     return new QApplication(argc, 0);
 }
 
-#ifdef win32
+#ifdef WIN32
 const std::wstring GetCurrentDllPath(HINSTANCE hInst)
 {
 	WCHAR buffer[MAX_PATH];

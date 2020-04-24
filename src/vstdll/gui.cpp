@@ -153,7 +153,7 @@ tresult PLUGIN_API Gui::attached (void* parent, FIDString /*type*/)
 {
     if(!myWindow)
         return kResultFalse;
-#ifdef win32
+#ifdef WIN32
     widget = new QWinWidget(static_cast<HWND>(parent));
 #else
     widget = new QWidget();

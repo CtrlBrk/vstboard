@@ -566,7 +566,7 @@ bool Vst3Plugin::CreateEditorWindow()
         LOG("frame not set")
     }
 
-#ifdef win32
+#ifdef WIN32
 	HWND w = (HWND)editorWnd->GetWinId();
     if(pView->attached(w, kPlatformTypeHWND) !=kResultOk) {
 		LOG("editor not attached");
