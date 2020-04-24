@@ -19,14 +19,17 @@ INCLUDEPATH += $${UI_DIR}
 PORTAUDIO_PATH 	= ../../libs/portaudio
 PORTMIDI_PATH 	= ../../libs/portmidi
 
+#trying to get it to compile, disable vst2.4 on linux for now
 win32|macx {
-    CONFIG += vstsdk
-    DEFINES += VSTSDK
-
-    VST3SDK_PATH = "../../libs/VST_SDK/VST3_SDK"
-    INCLUDEPATH += $$VST3SDK_PATH
-
+    CONFIG += vst24sdk
+    DEFINES += VST24SDK
 }
+
+CONFIG += vstsdk
+DEFINES += VSTSDK
+
+VST3SDK_PATH = "../../libs/VST_SDK/VST3_SDK"
+INCLUDEPATH += $$VST3SDK_PATH
 
 #deprecated
 #CONFIG += scriptengine
@@ -94,10 +97,11 @@ win32-msvc* {
 }
 
 
-#unix {
-#    LIBPREFIX = lib
-#    LIBEXT = a
-#}
+linux-g++ {
+#LIBS += -L$${OUT_PWD}
+    LIBPREFIX = lib
+    LIBEXT = a
+}
 
 contains(QT_ARCH, i386) {
     VSTLIB = build

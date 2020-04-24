@@ -65,7 +65,9 @@ namespace View {
         ~VstPluginWindow();
 
         bool SetPlugin(Connectables::Vst3Plugin *plugin);
+#ifndef __linux__
         bool SetPlugin(Connectables::VstPlugin *plugin);
+#endif
         void UnsetPlugin();
         WId GetWinId();
 //        const QPixmap GetScreenshot();

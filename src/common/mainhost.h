@@ -32,8 +32,10 @@
 #include "msgcontroller.h"
 #include "programmanager.h"
 
-#ifdef VSTSDK
+#ifdef VST24SDK
     #include "vst/cvsthost.h"
+#endif
+#ifdef VSTSDK
     #include "vst/vst3host.h"
 #endif
 
@@ -59,7 +61,9 @@ public:
     void Open();
 
 #ifdef VSTSDK
-    void SetTimeInfo(const VstTimeInfo *info);
+    #ifndef __linux__
+        void SetTimeInfo(const VstTimeInfo *info);
+    #endif
 #endif
 
     Renderer2 * GetRenderer() { return renderer; }
@@ -95,7 +99,9 @@ public:
     MainWindow *mainWindow;
 
 #ifdef VSTSDK
-    vst::CVSTHost *vstHost;
+    #ifndef __linux__
+        vst::CVSTHost *vstHost;
+    #endif
     static int vstUsersCounter;
     Vst3Host *vst3Host;
 #endif

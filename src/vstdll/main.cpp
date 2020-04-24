@@ -18,18 +18,21 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 
-#include <windows.h>
-//#include <QMfcApp>
+#ifdef win32
+    #include <windows.h>
+    //#include <QMfcApp>
+    #include "loaderhelpers.h"
+#endif
 
 #pragma warning ( push, 1 )
 #include "pluginterfaces/base/ftypes.h"
-#include "public.sdk/source/vst/vst2wrapper/vst2wrapper.h"
+#ifdef VST24SDK
+    #include "public.sdk/source/vst/vst2wrapper/vst2wrapper.h"
+    #include "vst2shell.h"
+#endif
 #pragma warning ( pop )
 
 #include "ids.h"
-#include "vst2shell.h"
-#include "loaderhelpers.h"
-
 
 using namespace Steinberg;
 
@@ -37,9 +40,28 @@ using namespace Steinberg;
 extern bool InitModule();
 extern bool DeinitModule();
 
-//the vst2.4 factory creates kFx & kInstrument classes, vst3 creates kFxInstrument
-extern IPluginFactory* PLUGIN_API GetPluginFactoryVst24();
+#ifdef VST24SDK
+    //the vst2.4 factory creates kFx & kInstrument classes, vst3 creates kFxInstrument
+    extern IPluginFactory* PLUGIN_API GetPluginFactoryVst24();
 
+
+    AudioEffect *createShell(audioMasterCallback audioMaster);
+
+    ::AudioEffect* createEffectInstance(audioMasterCallback audioMaster)
+    {
+        long id = audioMaster(0,audioMasterCurrentId,0,0,0,0);
+
+        switch(id) {
+        case uniqueIDEffect:
+            return Vst::Vst2Wrapper::create(GetPluginFactoryVst24(), VstBoardProcessorUID, uniqueIDEffect, audioMaster);
+        case uniqueIDInstrument:
+            return Vst::Vst2Wrapper::create(GetPluginFactoryVst24(), VstBoardInstProcessorUID, uniqueIDInstrument, audioMaster);
+        default:
+            return createShell(audioMaster);
+        }
+    }
+
+#endif
 
 
 //#if defined (_MSC_VER) && defined (DEVELOPMENT)
@@ -54,6 +76,15 @@ extern IPluginFactory* PLUGIN_API GetPluginFactoryVst24();
 //#define tstrrchr strrchr
 //#endif
 
+QApplication* createQapp() {
+    if (qApp)
+        return 0;
+
+    int argc = 0;
+    return new QApplication(argc, 0);
+}
+
+#ifdef win32
 const std::wstring GetCurrentDllPath(HINSTANCE hInst)
 {
 	WCHAR buffer[MAX_PATH];
@@ -71,39 +102,15 @@ const std::wstring GetCurrentDllPath(HINSTANCE hInst)
 
 
 
-AudioEffect *createShell(audioMasterCallback audioMaster);
-
-::AudioEffect* createEffectInstance(audioMasterCallback audioMaster)
-{
-    long id = audioMaster(0,audioMasterCurrentId,0,0,0,0);
-
-    switch(id) {
-    case uniqueIDEffect:
-        return Vst::Vst2Wrapper::create(GetPluginFactoryVst24(), VstBoardProcessorUID, uniqueIDEffect, audioMaster);
-    case uniqueIDInstrument:
-        return Vst::Vst2Wrapper::create(GetPluginFactoryVst24(), VstBoardInstProcessorUID, uniqueIDInstrument, audioMaster);
-    default:
-        return createShell(audioMaster);
-    }
-}
-
-QApplication* createQapp() {
-	if (qApp)
-		return FALSE;
-
-	int argc = 0;
-	return new QApplication(argc, 0);
-}
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-    bool DllExport InitDll () ///< must be called from host right after loading dll
+    bool DllExport InitDll ()
     {
             return InitModule ();
     }
-    bool DllExport ExitDll ()  ///< must be called from host right before unloading dll
+    bool DllExport ExitDll ()
     {
             return DeinitModule ();
     }
@@ -149,3 +156,4 @@ BOOL WINAPI DllMain (HINSTANCE hInst, DWORD dwReason, LPVOID /*lpvReserved*/)
 	}*/
     return TRUE;
 }
+#endif

@@ -17,6 +17,9 @@
 #    You should have received a copy of the under the terms of the GNU Lesser General Public License
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
+#ifdef __linux__
+    #include <ctime>
+#endif
 
 #include "programmanager.h"
 #include "mainhost.h"
@@ -417,7 +420,14 @@ int ProgramManager::WaitPromptAnswer(const QString &type)
 
     //wait for answer
     while(promptAnswer==-1) {
+#ifdef __linux__
+        struct timespec r,m;
+        r.tv_sec = 0;
+        r.tv_nsec = 50000;
+        nanosleep(&r,&m);
+#else
         Sleep(50);
+#endif
         qApp->processEvents();
     }
 

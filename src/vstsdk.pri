@@ -4,7 +4,11 @@ SOURCES += $$VST3SDK_PATH/public.sdk/source/common/memorystream.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/processdata.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/parameterchanges.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module.cpp
+win32 {
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module_win32.cpp
+}
+#SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module_linux.cpp
+#SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module_mac.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/stringconvert.cpp
 
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/plugprovider.cpp
@@ -86,8 +90,12 @@ SOURCES += $$VST3SDK_PATH/base/thread/source/flock.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/common/commoniids.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/common/pluginview.cpp
 HEADERS += $$VST3SDK_PATH/public.sdk/source/common/pluginview.h
+unix {
 SOURCES += $$VST3SDK_PATH/public.sdk/source/common/threadchecker_linux.cpp
+}
+win32 {
 SOURCES += $$VST3SDK_PATH/public.sdk/source/common/threadchecker_win32.cpp
+}
 HEADERS += $$VST3SDK_PATH/public.sdk/source/common/threadchecker.h
 SOURCES += $$VST3SDK_PATH/public.sdk/source/main/pluginfactory.cpp
 HEADERS += $$VST3SDK_PATH/public.sdk/source/main/pluginfactory.h

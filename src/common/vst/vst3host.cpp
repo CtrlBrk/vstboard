@@ -39,8 +39,10 @@ Vst3Host::Vst3Host(QObject *parent) :
 
 tresult PLUGIN_API Vst3Host::getName (Vst::String128 name)
 {
+#ifndef __linux__
     String str ("VstBoard");
     str.copyTo (name, 0, 127);
+#endif
     return kResultTrue;
 }
 

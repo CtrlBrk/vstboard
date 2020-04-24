@@ -250,7 +250,12 @@ bool AudioDevice::OpenStream(double sampleRate)
     if(devInfo.maxInputChannels > 0) {
 
         inputParameters = new PaStreamParameters;
+#ifdef win32
         ZeroMemory( inputParameters, sizeof( PaStreamParameters ) );
+#else
+        memset(inputParameters,0,sizeof( PaStreamParameters ) );
+#endif
+
         inputParameters->channelCount = devInfo.maxInputChannels;
         inputParameters->device = objInfo.id;
         inputParameters->hostApiSpecificStreamInfo = NULL;
@@ -259,6 +264,7 @@ bool AudioDevice::OpenStream(double sampleRate)
 
         switch(Pa_GetHostApiInfo( devInfo.hostApi )->type) {
             case paDirectSound :
+#ifdef win32
                 ZeroMemory( &directSoundStreamInfo, sizeof( PaWinDirectSoundStreamInfo) );
                 directSoundStreamInfo.size = sizeof( PaWinDirectSoundStreamInfo);
                 directSoundStreamInfo.hostApiType = paDirectSound;
@@ -269,8 +275,10 @@ bool AudioDevice::OpenStream(double sampleRate)
                 directSoundStreamInfo.framesPerBuffer = myHost->settings->GetSetting("api/dx_bufferSize", DIRECTX_DEFAULT_BUFFER_SIZE).toUInt();
                 inputParameters->hostApiSpecificStreamInfo = &directSoundStreamInfo;
                 myHost->SetBufferSize(directSoundStreamInfo.framesPerBuffer);
+#endif
                 break;
             case paMME :
+#ifdef win32
                 ZeroMemory( &wmmeStreamInfo, sizeof(PaWinMmeStreamInfo) );
                 wmmeStreamInfo.size = sizeof(PaWinMmeStreamInfo);
                 wmmeStreamInfo.hostApiType = paMME;
@@ -280,6 +288,7 @@ bool AudioDevice::OpenStream(double sampleRate)
                 wmmeStreamInfo.bufferCount = myHost->settings->GetSetting("api/wmme_bufferCount", MME_DEFAULT_BUFFER_COUNT).toUInt();
                 inputParameters->hostApiSpecificStreamInfo = &wmmeStreamInfo;
                 myHost->SetBufferSize(wmmeStreamInfo.framesPerBuffer);
+#endif
                 break;
             case paASIO :
                 break;
@@ -300,6 +309,7 @@ bool AudioDevice::OpenStream(double sampleRate)
             case paJACK :
                 break;
             case paWASAPI : {
+#ifdef win32
                 ZeroMemory( &wasapiStreamInfo, sizeof(PaWasapiStreamInfo) );
                 wasapiStreamInfo.size = sizeof(PaWasapiStreamInfo);
                 wasapiStreamInfo.hostApiType = paWASAPI;
@@ -310,6 +320,7 @@ bool AudioDevice::OpenStream(double sampleRate)
                 unsigned int lat = myHost->settings->GetSetting("api/wasapi_inLatency", WASAPI_DEFAULT_INLATENCY).toUInt();
                 if(lat!=0)
                     inputParameters->suggestedLatency = (PaTime)lat/1000;
+#endif
                 break;
             }
             case paAudioScienceHPI :
@@ -322,7 +333,11 @@ bool AudioDevice::OpenStream(double sampleRate)
     if(devInfo.maxOutputChannels > 0) {
 
         outputParameters = new PaStreamParameters;
+#ifdef win32
         ZeroMemory( outputParameters, sizeof( PaStreamParameters ) );
+#else
+        memset(outputParameters,0,sizeof( PaStreamParameters ) );
+#endif
         outputParameters->channelCount = devInfo.maxOutputChannels;
         outputParameters->device = objInfo.id;
         outputParameters->hostApiSpecificStreamInfo = NULL;
@@ -331,6 +346,7 @@ bool AudioDevice::OpenStream(double sampleRate)
 
         switch(Pa_GetHostApiInfo( devInfo.hostApi )->type) {
             case paDirectSound :
+#ifdef win32
                 ZeroMemory( &directSoundStreamInfo, sizeof(PaWinDirectSoundStreamInfo) );
                 directSoundStreamInfo.size = sizeof(PaWinDirectSoundStreamInfo);
                 directSoundStreamInfo.hostApiType = paDirectSound;
@@ -341,8 +357,10 @@ bool AudioDevice::OpenStream(double sampleRate)
                 directSoundStreamInfo.flags = myHost->settings->GetSetting("api/dx_flags", DIRECTX_DEFAULT_BUFFER_SIZE).toUInt();
                 directSoundStreamInfo.framesPerBuffer = myHost->settings->GetSetting("api/dx_bufferSize", DIRECTX_DEFAULT_BUFFER_SIZE).toUInt();
                 outputParameters->hostApiSpecificStreamInfo = &directSoundStreamInfo;
+#endif
                 break;
             case paMME :
+#ifdef win32
                 ZeroMemory( &wmmeStreamInfo, sizeof(PaWinMmeStreamInfo) );
                 wmmeStreamInfo.size = sizeof(PaWinMmeStreamInfo);
                 wmmeStreamInfo.hostApiType = paMME;
@@ -351,6 +369,7 @@ bool AudioDevice::OpenStream(double sampleRate)
                 wmmeStreamInfo.framesPerBuffer = myHost->settings->GetSetting("api/wmme_bufferSize", MME_DEFAULT_BUFFER_SIZE).toUInt();
                 wmmeStreamInfo.bufferCount = myHost->settings->GetSetting("api/wmme_bufferCount", MME_DEFAULT_BUFFER_COUNT).toUInt();
                 outputParameters->hostApiSpecificStreamInfo = &wmmeStreamInfo;
+#endif
                 break;
             case paASIO :
                 break;
@@ -371,6 +390,7 @@ bool AudioDevice::OpenStream(double sampleRate)
             case paJACK :
                 break;
             case paWASAPI : {
+#ifdef win32
                 ZeroMemory( &wasapiStreamInfo, sizeof(PaWasapiStreamInfo) );
                 wasapiStreamInfo.size = sizeof(PaWasapiStreamInfo);
                 wasapiStreamInfo.hostApiType = paWASAPI;
@@ -381,6 +401,7 @@ bool AudioDevice::OpenStream(double sampleRate)
                 unsigned int lat = myHost->settings->GetSetting("api/wasapi_outLatency", WASAPI_DEFAULT_OUTLATENCY).toUInt();
                 if(lat!=0)
                     outputParameters->suggestedLatency = (PaTime)lat/1000;
+#endif
                 break;
             }
             case paAudioScienceHPI :
@@ -751,7 +772,11 @@ bool AudioDevice::RingBuffersToDevice( void *outputBuffer, unsigned long framesP
                 //empty the circular buffer, in case we reopen this device
                 buf->Clear();
                 //send a blank buffer to the device
-                ZeroMemory( ((float **) outputBuffer)[cpt], sizeof(float)*framesPerBuffer );
+#ifdef win32
+        ZeroMemory( ((float **) outputBuffer)[cpt], sizeof(float)*framesPerBuffer );
+#else
+        memset(((float **) outputBuffer)[cpt],0,sizeof(float)*framesPerBuffer  );
+#endif
                 cpt++;
             }
             return true;
@@ -773,7 +798,11 @@ bool AudioDevice::RingBuffersToDevice( void *outputBuffer, unsigned long framesP
             buf->Get( ((float **) outputBuffer)[cpt], framesPerBuffer );
 
         } else {
+#ifdef win32
             ZeroMemory( ((float **) outputBuffer)[cpt], sizeof(float)*framesPerBuffer );
+#else
+            memset(((float **) outputBuffer)[cpt],0,sizeof(float)*framesPerBuffer);
+#endif
 #ifdef DEBUG_DEVICES
             LOG(QString("buffer->device %1<-%2 | not enough data")
                 .arg(framesPerBuffer)

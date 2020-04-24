@@ -11,27 +11,31 @@ PRECOMPILED_HEADER = precomp.h
 vstsdk {
     HEADERS += vst/vst3host.h \
         connectables/vst3plugin.h \
-        vst/cvsthost.h \
-        connectables/vstplugin.h \
+        views/vstshellselect.h \
+        views/vstpluginwindow.h \
+
+    SOURCES += views/vstshellselect.cpp \
+         vst/vst3host.cpp \
+        connectables/vst3plugin.cpp \
+        views/vstpluginwindow.cpp \
+
+win32 {
+    HEADERS += vst/cvsthost.h \
         vst/ceffect.h \
         vst/const.h \
         vst/vstbank.h \
         vst/vstbankbase.h \
         vst/vstprogram.h \
-        views/vstpluginwindow.h \
-        views/vstshellselect.h
+        connectables/vstplugin.h \
 
     SOURCES += vst/cvsthost.cpp \
-        connectables/vstplugin.cpp \
         vst/ceffect.cpp \
         vst/vstbank.cpp \
         vst/vstbankbase.cpp \
         vst/vstprogram.cpp \
-        views/vstpluginwindow.cpp \
-        views/vstshellselect.cpp \
+        connectables/vstplugin.cpp \
 
-    SOURCES += vst/vst3host.cpp \
-        connectables/vst3plugin.cpp
+}
 
 #    SOURCES += $$VST3SDK_PATH/base/source/fobject.cpp \
 #        $$VST3SDK_PATH/base/source/fstring.cpp \

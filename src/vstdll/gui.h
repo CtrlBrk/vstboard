@@ -27,7 +27,9 @@
 //#include "aeffeditor.h"
 #include "mainwindowvst.h"
 #include "resizehandle.h"
-#include <qwinwidget.h>
+#ifdef win32
+    #include <qwinwidget.h>
+#endif
 #include "pluginterfaces/gui/iplugview.h"
 //#include "public.sdk/source/vst/vsteditcontroller.h"
 
@@ -81,7 +83,12 @@ public:
 protected:
 //    bool hostCanSizeWindow;
     Settings *settings;
+#ifdef win32
     QWinWidget *widget;
+#else
+    QWidget *widget;
+#endif
+
     MainWindowVst *myWindow;
     ResizeHandle *resizeH;
 //    QPoint widgetOffset;

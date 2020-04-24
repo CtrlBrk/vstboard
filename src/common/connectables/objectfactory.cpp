@@ -28,9 +28,11 @@
 #include "mainhost.h"
 #include "buffer.h"
 
-#ifdef VSTSDK
+#ifdef VST24SDK
     #include "vstplugin.h"
     #include "../vst/cvsthost.h"
+#endif
+#ifdef VSTSDK
     #include "vst3plugin.h"
 #endif
 
@@ -187,9 +189,11 @@ QSharedPointer<Object> ObjectFactory::NewObject(const ObjectInfo &info, int cont
                         break;
 
             #ifdef VSTSDK
+                #ifndef __linux__
                     case ObjType::VstPlugin:
                         obj = new VstPlugin(myHost,objId, info);
                         break;
+                #endif
                     case ObjType::Vst3Plugin:
                         obj = new Vst3Plugin(myHost,objId, info);
                         break;

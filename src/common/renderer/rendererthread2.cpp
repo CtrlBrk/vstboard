@@ -18,6 +18,10 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 
+#ifdef __linux__
+    #include <ctime>
+#endif
+
 #include "rendererthread2.h"
 #include "renderer2.h"
 #include "renderernode2.h"
@@ -59,7 +63,14 @@ RendererThread2::~RendererThread2()
     Stop();
 
     while(isRunning()) {
+#ifdef __linux__
+        struct timespec r,m;
+        r.tv_sec = 0;
+        r.tv_nsec = 50000;
+        nanosleep(&r,&m);
+#else
         Sleep(50);
+#endif
     }
 
 

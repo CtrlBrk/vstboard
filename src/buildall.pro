@@ -2,8 +2,8 @@ include(config.pri)
 
 TEMPLATE    = subdirs
 SUBDIRS     = \
-    portmidi \
     portaudio \
+    portmidi \
     common \
     vstboard
 

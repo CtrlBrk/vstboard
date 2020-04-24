@@ -22,7 +22,9 @@
 
 #include "vstpluginwindow.h"
 #include "ui_vstpluginwindow.h"
-#include "connectables/vstplugin.h"
+#ifndef __linux__
+    #include "connectables/vstplugin.h"
+#endif
 #include "connectables/vst3plugin.h"
 #include "mainhost.h"
 
@@ -83,7 +85,7 @@ bool VstPluginWindow::SetPlugin(Connectables::Vst3Plugin *plug)
 
     return true;
 }
-
+#ifndef __linux__
 bool VstPluginWindow::SetPlugin(Connectables::VstPlugin *plugin)
 {
     bool windowOk = false;
@@ -122,7 +124,7 @@ bool VstPluginWindow::SetPlugin(Connectables::VstPlugin *plugin)
 
     return true;
 }
-
+#endif
 void VstPluginWindow::LoadAttribs(const ObjectContainerAttribs &attr)
 {
     if(attr.editorSize == QSize(0,0))

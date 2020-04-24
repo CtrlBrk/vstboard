@@ -27,9 +27,11 @@
 #include "connectables/object.h"
 #include "connectables/objectinfo.h"
 #include "portaudio.h"
+#ifdef win32
 #include "pa_win_wmme.h"
 #include "pa_win_ds.h"
 #include "pa_win_wasapi.h"
+#endif
 
 #ifdef CIRCULAR_BUFFER
     #include "circularbuffer.h"
@@ -130,7 +132,7 @@ namespace Connectables {
 
         /// global audio devices mutex
         static QMutex mutexCountOpenedDevicesReady;
-
+#ifdef win32
         /// windows mme stream options
         PaWinMmeStreamInfo wmmeStreamInfo;
 
@@ -139,6 +141,7 @@ namespace Connectables {
 
         /// windows wasapi stream options
         PaWasapiStreamInfo wasapiStreamInfo;
+#endif
 
 #ifdef CIRCULAR_BUFFER
         /// list of input ring buffers

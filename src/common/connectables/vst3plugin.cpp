@@ -566,6 +566,7 @@ bool Vst3Plugin::CreateEditorWindow()
         LOG("frame not set")
     }
 
+#ifdef win32
 	HWND w = (HWND)editorWnd->GetWinId();
     if(pView->attached(w, kPlatformTypeHWND) !=kResultOk) {
 		LOG("editor not attached");
@@ -574,7 +575,7 @@ bool Vst3Plugin::CreateEditorWindow()
 		editorWnd = 0;
 		return true;
     }
-
+#endif
     ViewRect size;
     if(pView->getSize(&size)!=kResultOk) {
 		LOG("can't get size");

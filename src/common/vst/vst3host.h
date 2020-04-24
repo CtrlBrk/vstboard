@@ -10,8 +10,10 @@
 #endif
 #include "public.sdk/source/vst/hosting/hostclasses.h"
 #include "pluginterfaces/vst/ivstprocesscontext.h"
-#include "pluginterfaces/vst2.x/aeffectx.h"
 #include "pluginterfaces/vst/vsttypes.h"
+#ifndef __linux__
+    #include "pluginterfaces/vst2.x/aeffectx.h"
+#endif
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif

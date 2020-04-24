@@ -153,8 +153,11 @@ tresult PLUGIN_API Gui::attached (void* parent, FIDString /*type*/)
 {
     if(!myWindow)
         return kResultFalse;
-
+#ifdef win32
     widget = new QWinWidget(static_cast<HWND>(parent));
+#else
+    widget = new QWidget();
+#endif
     widget->setAutoFillBackground(false);
     widget->setObjectName("QWinWidget");
     myWindow->setParent(widget);

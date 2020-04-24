@@ -57,7 +57,9 @@ void MainHostHost::Close()
 void MainHostHost::Render()
 {
     #ifdef VSTSDK
+#ifndef __linux__
         vstHost->UpdateTimeInfo(timeFromStart.elapsed(), bufferSize, sampleRate);
+#endif
         vst3Host->UpdateTime(bufferSize, sampleRate);
     #endif
 

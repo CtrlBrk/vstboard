@@ -26,36 +26,47 @@ CONFIG += staticlib
 DEFINES -= UNICODE
 
 INCLUDEPATH += $$PORTAUDIO_PATH/include
+INCLUDEPATH += $$PORTAUDIO_PATH/src/common
+INCLUDEPATH += $$PORTAUDIO_PATH/src/
+
+HEADERS += $$PORTAUDIO_PATH/include/portaudio.h
+SOURCES += $$PORTAUDIO_PATH/src/common/pa_allocation.c
+SOURCES += $$PORTAUDIO_PATH/src/common/pa_converters.c
+SOURCES += $$PORTAUDIO_PATH/src/common/pa_cpuload.c
+SOURCES += $$PORTAUDIO_PATH/src/common/pa_debugprint.c
+SOURCES += $$PORTAUDIO_PATH/src/common/pa_dither.c
+SOURCES += $$PORTAUDIO_PATH/src/common/pa_front.c
+SOURCES += $$PORTAUDIO_PATH/src/common/pa_process.c
+SOURCES += $$PORTAUDIO_PATH/src/common/pa_ringbuffer.c
+SOURCES += $$PORTAUDIO_PATH/src/common/pa_stream.c
+SOURCES += $$PORTAUDIO_PATH/src/common/pa_trace.c
+
 
 linux-g++ {
-    DEFINES += PA_USE_ALSA
-    DEFINES += PA_USE_ASIHPI
+#    DEFINES += PA_USE_ALSA
+#    DEFINES += PA_USE_ASIHPI
     DEFINES += PA_USE_JACK
-    DEFINES += PA_USE_OSS
+#    DEFINES += PA_USE_OSS
 
-    DEFINES += KSAUDIO_SPEAKER_DIRECTOUT=0
-    DEFINES += METHOD_NEITHER=3
-    DEFINES += FILE_ANY_ACCESS=0
+#    DEFINES += KSAUDIO_SPEAKER_DIRECTOUT=0
+#    DEFINES += METHOD_NEITHER=3
+#    DEFINES += FILE_ANY_ACCESS=0
 
     INCLUDEPATH += $$PORTAUDIO_PATH/src/os/unix
 
     HEADERS += $$PORTAUDIO_PATH/include/pa_jack.h
-    HEADERS += $$PORTAUDIO_PATH/include/pa_linux_alsa.h
+#    HEADERS += $$PORTAUDIO_PATH/include/pa_linux_alsa.h
 
-    SOURCES += $$PORTAUDIO_PATH/src/hostapi/alsa/pa_linux_alsa.c
-    SOURCES += $$PORTAUDIO_PATH/src/hostapi/asihpi/pa_linux_asihpi.c
+#    SOURCES += $$PORTAUDIO_PATH/src/hostapi/alsa/pa_linux_alsa.c
+#    SOURCES += $$PORTAUDIO_PATH/src/hostapi/asihpi/pa_linux_asihpi.c
     SOURCES += $$PORTAUDIO_PATH/src/hostapi/jack/pa_jack.c
-    #SOURCES += $$PORTAUDIO_PATH/src/hostapi/oss/pa_unix_oss.c
+#    SOURCES += $$PORTAUDIO_PATH/src/hostapi/oss/pa_unix_oss.c
     SOURCES += $$PORTAUDIO_PATH/src/os/unix/pa_unix_hostapis.c
     SOURCES += $$PORTAUDIO_PATH/src/os/unix/pa_unix_util.c
-}
 
-#LIBS += -lwinmm
-#LIBS += -luser32
-#LIBS += -ladvapi32
-#LIBS += -lole32
-#LIBS += -lsetupapi
-#LIBS += -ldsound
+    LIBS += -lasound
+    LIBS += -ljack
+}
 
 win32 {
 
@@ -126,23 +137,6 @@ win32 {
 
     }
 
-
-
-    INCLUDEPATH += $$PORTAUDIO_PATH/src/common
-    INCLUDEPATH += $$PORTAUDIO_PATH/src/
-
-    HEADERS += $$PORTAUDIO_PATH/include/portaudio.h
-
-    SOURCES += $$PORTAUDIO_PATH/src/common/pa_allocation.c
-    SOURCES += $$PORTAUDIO_PATH/src/common/pa_converters.c
-    SOURCES += $$PORTAUDIO_PATH/src/common/pa_cpuload.c
-    SOURCES += $$PORTAUDIO_PATH/src/common/pa_debugprint.c
-    SOURCES += $$PORTAUDIO_PATH/src/common/pa_dither.c
-    SOURCES += $$PORTAUDIO_PATH/src/common/pa_front.c
-    SOURCES += $$PORTAUDIO_PATH/src/common/pa_process.c
-    SOURCES += $$PORTAUDIO_PATH/src/common/pa_ringbuffer.c
-    SOURCES += $$PORTAUDIO_PATH/src/common/pa_stream.c
-    SOURCES += $$PORTAUDIO_PATH/src/common/pa_trace.c
 }
 
 mac {

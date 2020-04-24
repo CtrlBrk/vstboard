@@ -36,7 +36,7 @@ win32:SOURCES += $$PORTMIDI_PATH/pm_win/pmwinmm.c \
     $$PORTMIDI_PATH/porttime/ptwinmm.c
 
 
-unix:SOURCES += $$PORTMIDI_PATH/pm_linux/pmlinux.c \
+linux-g++:SOURCES += $$PORTMIDI_PATH/pm_linux/pmlinux.c \
     $$PORTMIDI_PATH/pm_linux/finddefault.c \
     #$$PORTMIDI_PATH/pm_linux/pmlinuxalsa.c \
     $$PORTMIDI_PATH/porttime/ptlinux.c

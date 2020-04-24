@@ -50,7 +50,11 @@
 using namespace Steinberg;
 
 class MainHostVst;
-class VstBoardProcessor : public MainHost, public Vst::AudioEffect
+class VstBoardProcessor : public MainHost
+#ifdef VST24SDK
+        , public Vst::AudioEffect
+#endif
+
 {
     Q_OBJECT
 public:
@@ -89,11 +93,11 @@ public:
 
         tresult PLUGIN_API setState (IBStream* state);
         tresult PLUGIN_API getState (IBStream* state);
-
+#ifdef VST24SDK
         VstInt32 processEvents(VstEvents* events);
         bool processOutputEvents();
         VstEvents * getEvents() {return listEvnts;}
-
+#endif
 protected:
        // QApplication *myApp;
 
@@ -104,8 +108,9 @@ protected:
         QList<Connectables::VstAutomation*>lstVstAutomation;
 
         QMutex mutexDevices;
-
+#ifdef VST24SDK
         VstEvents *listEvnts;
+#endif
         quint16 currentProg;
         quint16 currentGroup;
 

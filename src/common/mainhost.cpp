@@ -22,7 +22,7 @@
 //#include "models/programsmodel.h"
 #include "connectables/container.h"
 
-#ifdef VSTSDK
+#ifdef VST24SDK
     #include "connectables/vstplugin.h"
     int MainHost::vstUsersCounter=0;
 #endif
@@ -43,10 +43,12 @@ MainHost::MainHost(Settings *settings, QObject *parent) :
     ,programManager(0)
     ,objFactory(0)
     ,mainWindow(0)
-    #ifdef VSTSDK
+#ifdef VST24SDK
         , vstHost(0)
+#endif
+#ifdef VSTSDK
         , vst3Host(0)
-    #endif
+#endif
     ,settings(settings)
     ,solverNeedAnUpdate(false)
     ,solverUpdateEnabled(true)
@@ -113,11 +115,12 @@ void MainHost::Close()
         solver=0;
     }
 
-#ifdef VSTSDK
+#ifdef VST24SDK
     vstUsersCounter--;
     if(vstUsersCounter==0)
         delete vstHost;
-
+#endif
+#ifdef VSTSDK
     //if(vst3Host)
     //    delete vst3Host;
 #endif
@@ -147,17 +150,18 @@ void MainHost::Init()
     scriptEngine->globalObject().setProperty("MainHost", scriptObj);
 #endif
 
-#ifdef VSTSDK
+#ifdef VST24SDK
     if(!vst::CVSTHost::Get()) {
         vstHost = new vst::CVSTHost();
     } else {
         vstHost = vst::CVSTHost::Get();
     }
-
+    vstUsersCounter++;
+#endif
+#ifdef VSTSDK
     vst3Host = new Vst3Host(this);
     connect(this,SIGNAL(SampleRateChanged(float)),
             vst3Host,SLOT(SetSampleRate(float)));
-    vstUsersCounter++;
 #endif
 
     solver = new Solver();
@@ -843,8 +847,7 @@ void MainHost::OnRenderTimeout() {
     SetSolverUpdateNeeded();
 }
 
-
-#ifdef VSTSDK
+#ifdef VST24SDK
 void MainHost::SetTimeInfo(const VstTimeInfo *info)
 {
     vstHost->SetTimeInfo(info);
@@ -853,8 +856,10 @@ void MainHost::SetTimeInfo(const VstTimeInfo *info)
 
 void MainHost::SetTempo(int tempo, int sign1, int sign2)
 {
-#ifdef VSTSDK
+#ifdef VST24SDK
     vstHost->SetTempo(tempo,sign1,sign2);
+#endif
+#ifdef VSTSDK
     vst3Host->SetTempo(tempo,sign1,sign2);
 #endif
 }
@@ -881,7 +886,8 @@ void MainHost::CheckTempo()
 
 void MainHost::GetTempo(int &tempo, int &sign1, int &sign2)
 {
-#ifdef VSTSDK
+// #ifdef VSTSDK
+#ifdef VST24SDK
     vstHost->GetTempo(tempo,sign1,sign2);
 #else
     tempo=120;
