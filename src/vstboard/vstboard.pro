@@ -8,12 +8,7 @@ TARGET = "VstBoard"
 
 #LIBS += -lportaudio
 LIBS += -lportmidi
-
-CONFIG(debug, debug|release) {
-    LIBS += -lrtaudiod
-} else {
-    LIBS += -lrtaudio
-}
+LIBS += -lrtaudio
 
 INCLUDEPATH += $$RTAUDIO
 
