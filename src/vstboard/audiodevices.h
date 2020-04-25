@@ -23,8 +23,9 @@
 
 #define FAKE_RENDER_TIMER_MS 5
 
-//#include "precomp.h"
-#include "portaudio.h"
+
+#include "RtAudio.h"
+// #include "portaudio.h"
 #include "models/listaudiointerfacesmodel.h"
 #include "connectables/objectinfo.h"
 #include "connectables/audiodevice.h"
@@ -65,7 +66,7 @@ public:
     /// model index of the asio devices, used by the view to expand this branch only
     QPersistentModelIndex AsioIndex;
 
-    bool FindPortAudioDevice(ObjectInfo &objInfo, PaDeviceInfo *dInfo);
+//    bool FindPortAudioDevice(ObjectInfo &objInfo, PaDeviceInfo *dInfo);
     void ReceiveMsg(const MsgObject &msg);
 
 private:
@@ -73,6 +74,8 @@ private:
     void SleepAll();
     void OpenDevices();
     void BuildModel();
+
+
 
     bool closing;
 
@@ -97,7 +100,7 @@ private:
     QTimer timerRefreshDevices;
 
 public slots:
-    void OnToggleDeviceInUse(PaHostApiIndex apiId, PaDeviceIndex devId, bool inUse, PaTime inLatency=0, PaTime outLatency=0, double sampleRate=0);
+//    void OnToggleDeviceInUse(PaHostApiIndex apiId, PaDeviceIndex devId, bool inUse, PaTime inLatency=0, PaTime outLatency=0, double sampleRate=0);
     void ConfigDevice(const ObjectInfo &info);
 
 private slots:

@@ -16,7 +16,8 @@ UI_DIR = $${DESTDIR}/ui
 
 INCLUDEPATH += $${UI_DIR}
 
-PORTAUDIO_PATH 	= ../../libs/portaudio
+RTAUDIO = ../../libs/rtaudio
+# PORTAUDIO_PATH 	= ../../libs/portaudio
 PORTMIDI_PATH 	= ../../libs/portmidi
 
 #trying to get it to compile, disable vst2.4 on linux for now

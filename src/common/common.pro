@@ -311,6 +311,8 @@ FORMS += \
     views/modifierswidget.ui
 
 
+
+
 #TRANSLATIONS = ../resources/translations/common_fr.ts
 
 RESOURCES += \

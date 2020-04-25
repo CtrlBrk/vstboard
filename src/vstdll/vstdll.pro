@@ -16,15 +16,15 @@ PRECOMPILED_HEADER = ../common/precomp.h
 #    INCLUDEPATH += "C:/Program Files (x86)/Visual Leak Detector/include/"
 #}
 
+#    CONFIG += qtwinmigrate-uselib
+include($${_PRO_FILE_PWD_}/../../libs/qtwinmigrate/src/qtwinmigrate.pri)
+
 win32 {
     LIBS += -lwinmm
     LIBS += -ladvapi32
     LIBS += -lws2_32
     LIBS += -lole32
     LIBS += -lcomdlg32
-
-#    CONFIG += qtwinmigrate-uselib
-    include($${_PRO_FILE_PWD_}/../../libs/qtwinmigrate/src/qtwinmigrate.pri)
 }
 
 win32-g++ {
@@ -99,6 +99,7 @@ vst24sdk {
 }
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/basewrapper/basewrapper.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/vst2wrapper/vst2wrapper.cpp
+
 
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/eventlist.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/parameterchanges.cpp

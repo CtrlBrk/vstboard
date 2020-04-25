@@ -6,6 +6,12 @@ QT += core gui widgets
 TEMPLATE = app
 TARGET = "VstBoard"
 
+#LIBS += -lportaudio
+LIBS += -lportmidi
+
+LIBS += -lrtaudio
+INCLUDEPATH += $$RTAUDIO
+
 win32 {
     LIBS += -lwinmm
     LIBS += -luser32
@@ -17,11 +23,11 @@ win32 {
 linux-g++ {
     LIBS += -ldl
     LIBS += -lstdc++fs
-    LIBS += -lasound
-    LIBS += -ljack
+#    LIBS += -lasound
+#    LIBS += -ljack
 }
 
-INCLUDEPATH += $$PORTAUDIO_PATH/include
+#INCLUDEPATH += $$PORTAUDIO_PATH/include
 INCLUDEPATH += $$PORTMIDI_PATH/porttime
 INCLUDEPATH += $$PORTMIDI_PATH/pm_common
 
@@ -73,13 +79,12 @@ SOURCES += views/directxconfigdialog.cpp \
 HEADERS += views/directxconfigdialog.h \
     views/mmeconfigdialog.h \
     views/wasapiconfigdialog.h
-}
-
 
 FORMS += \
     views/directxconfigdialog.ui \
     views/mmeconfigdialog.ui \
     views/wasapiconfigdialog.ui
+}
 
 #TRANSLATIONS = ../resources/translations/vstboard_fr.ts
 
@@ -88,6 +93,7 @@ RESOURCES += ../resources/resources.qrc
 win32-msvc* {
     RC_FILE = vstboard.rc
 }
+
 
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/eventlist.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/parameterchanges.cpp
@@ -109,8 +115,7 @@ SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/connectionproxy.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/hostclasses.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/pluginterfacesupport.cpp
 
-
-LIBDEPS = common portaudio portmidi base pluginterfaces sdk
+LIBDEPS = common base pluginterfaces sdk
 for(a, LIBDEPS) {
     LIBS += -L$$DESTDIR -l$${a}
     PRE_TARGETDEPS += $$DESTDIR/$${LIBPREFIX}$${a}.$${LIBEXT}

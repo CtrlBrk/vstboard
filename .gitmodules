@@ -1,0 +1,6 @@
+[submodule "libs/rtaudio"]
+	path = libs/rtaudio
+	url = https://github.com/thestk/rtaudio.git
+[submodule "libs/rtmidi"]
+	path = libs/rtmidi
+	url = https://github.com/thestk/rtmidi.git

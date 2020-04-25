@@ -60,7 +60,8 @@ AudioDevice::AudioDevice(MainHostHost *myHost,const ObjectInfo &info,QObject *pa
     QObject(parent),
     bufferSize(4096),
     sampleRate(44100.0f),
-    stream(0),
+//    stream(0),
+//    audio(0),
     objInfo(info),
     devIn(0),
     devOut(0),
@@ -68,7 +69,7 @@ AudioDevice::AudioDevice(MainHostHost *myHost,const ObjectInfo &info,QObject *pa
     myHost(myHost),
     pause(false)
 {
-    memset(&devInfo, 0, sizeof(devInfo));
+//    memset(&devInfo, 0, sizeof(devInfo));
 
     devOutClosing=false;
     setObjectName(objInfo.name);
@@ -233,223 +234,206 @@ void AudioDevice::SetSampleRate(float /*rate*/)
   */
 bool AudioDevice::OpenStream(double sampleRate)
 {
-//    if(Pa_GetDeviceInfo(objInfo.id)==0) {
-//        errorMessage=tr("Device not found");
-#ifdef DEBUG_DEVICES
-//        LOG(errorMessage)
-#endif
-//        return false;
+    unsigned int bufferFrames = 256;
+    int nBuffers = 4;
+    RtAudio::StreamParameters oParams, iParams;
+    oParams.deviceId = objInfo.id;
+    oParams.nChannels = objInfo.outputs;
+    oParams.firstChannel = 0;
+
+    iParams.deviceId = objInfo.id;
+    iParams.nChannels = objInfo.inputs;
+    iParams.firstChannel = 0;
+
+    RtAudio::StreamOptions options;
+    options.flags = RTAUDIO_NONINTERLEAVED;
+    try {
+        audio.openStream( &oParams, &iParams, RTAUDIO_SINT32, static_cast<unsigned int >(sampleRate), &bufferFrames,
+                          &AudioDevice::callback, (void *)this, &options );
+    } catch (RtAudioError &e) {
+        e.printMessage();
+        return false;
+    }
+
+    try {
+        audio.startStream();
+    } catch(RtAudioError &e) {
+        e.printMessage();
+        return false;
+    }
+
+//    unsigned long framesPerBuffer = paFramesPerBufferUnspecified;
+
+//    PaStreamParameters *inputParameters = NULL;
+//    PaStreamParameters *outputParameters = NULL;
+//    PaStreamFlags flags = paClipOff; //paNoFlag;
+
+//    if(devInfo.maxInputChannels > 0) {
+
+//        inputParameters = new PaStreamParameters;
+//#ifdef WIN32
+//        ZeroMemory( inputParameters, sizeof( PaStreamParameters ) );
+//#else
+//        memset(inputParameters,0,sizeof( PaStreamParameters ) );
+//#endif
+
+//        inputParameters->channelCount = devInfo.maxInputChannels;
+//        inputParameters->device = objInfo.id;
+//        inputParameters->hostApiSpecificStreamInfo = NULL;
+//        inputParameters->sampleFormat = paFloat32 | paNonInterleaved;
+//        inputParameters->suggestedLatency = Pa_GetDeviceInfo(objInfo.id)->defaultLowInputLatency;
+
+//        switch(Pa_GetHostApiInfo( devInfo.hostApi )->type) {
+//            case paDirectSound :
+//#ifdef WIN32
+//                ZeroMemory( &directSoundStreamInfo, sizeof( PaWinDirectSoundStreamInfo) );
+//                directSoundStreamInfo.size = sizeof( PaWinDirectSoundStreamInfo);
+//                directSoundStreamInfo.hostApiType = paDirectSound;
+//                directSoundStreamInfo.version = 2;
+//                //directSoundStreamInfo.flags = paWinDirectSoundUseChannelMask;
+//                //directSoundStreamInfo.channelMask = PAWIN_SPEAKER_5POINT1; /* request 5.1 output format */
+//                directSoundStreamInfo.flags = paWinDirectSoundUseLowLevelLatencyParameters;
+//                directSoundStreamInfo.framesPerBuffer = myHost->settings->GetSetting("api/dx_bufferSize", DIRECTX_DEFAULT_BUFFER_SIZE).toUInt();
+//                inputParameters->hostApiSpecificStreamInfo = &directSoundStreamInfo;
+//                myHost->SetBufferSize(directSoundStreamInfo.framesPerBuffer);
+//#endif
+//                break;
+//            case paMME :
+//#ifdef WIN32
+//                ZeroMemory( &wmmeStreamInfo, sizeof(PaWinMmeStreamInfo) );
+//                wmmeStreamInfo.size = sizeof(PaWinMmeStreamInfo);
+//                wmmeStreamInfo.hostApiType = paMME;
+//                wmmeStreamInfo.version = 1;
+//                wmmeStreamInfo.flags = myHost->settings->GetSetting("api/wmme_flags", MME_DFAULT_FLAGS).toUInt();
+//                wmmeStreamInfo.framesPerBuffer = myHost->settings->GetSetting("api/wmme_bufferSize", MME_DEFAULT_BUFFER_SIZE).toUInt();
+//                wmmeStreamInfo.bufferCount = myHost->settings->GetSetting("api/wmme_bufferCount", MME_DEFAULT_BUFFER_COUNT).toUInt();
+//                inputParameters->hostApiSpecificStreamInfo = &wmmeStreamInfo;
+//                myHost->SetBufferSize(wmmeStreamInfo.framesPerBuffer);
+//#endif
+//                break;
+//            case paASIO :
+//                break;
+//            case paSoundManager :
+//                break;
+//            case paCoreAudio :
+//                break;
+//            case paOSS :
+//                break;
+//            case paALSA :
+//                break;
+//            case paAL :
+//                break;
+//            case paBeOS :
+//                break;
+//            case paWDMKS :
+//                break;
+//            case paJACK :
+//                break;
+//            case paWASAPI : {
+//#ifdef WIN32
+//                ZeroMemory( &wasapiStreamInfo, sizeof(PaWasapiStreamInfo) );
+//                wasapiStreamInfo.size = sizeof(PaWasapiStreamInfo);
+//                wasapiStreamInfo.hostApiType = paWASAPI;
+//                wasapiStreamInfo.version = 1;
+//                wasapiStreamInfo.flags = myHost->settings->GetSetting("api/wasapi_flags", WASAPI_DEFAULT_FLAGS).toUInt();
+//                inputParameters->hostApiSpecificStreamInfo = &wasapiStreamInfo;
+
+//                unsigned int lat = myHost->settings->GetSetting("api/wasapi_inLatency", WASAPI_DEFAULT_INLATENCY).toUInt();
+//                if(lat!=0)
+//                    inputParameters->suggestedLatency = (PaTime)lat/1000;
+//#endif
+//                break;
+//            }
+//            case paAudioScienceHPI :
+//                break;
+//            default:
+//                break;
+//        }
 //    }
 
-    unsigned long framesPerBuffer = paFramesPerBufferUnspecified;
+//    if(devInfo.maxOutputChannels > 0) {
 
-    PaStreamParameters *inputParameters = NULL;
-    PaStreamParameters *outputParameters = NULL;
-    PaStreamFlags flags = paClipOff; //paNoFlag;
+//        outputParameters = new PaStreamParameters;
+//#ifdef WIN32
+//        ZeroMemory( outputParameters, sizeof( PaStreamParameters ) );
+//#else
+//        memset(outputParameters,0,sizeof( PaStreamParameters ) );
+//#endif
+//        outputParameters->channelCount = devInfo.maxOutputChannels;
+//        outputParameters->device = objInfo.id;
+//        outputParameters->hostApiSpecificStreamInfo = NULL;
+//        outputParameters->sampleFormat = paFloat32 | paNonInterleaved;
+//        outputParameters->suggestedLatency = Pa_GetDeviceInfo(objInfo.id)->defaultLowOutputLatency ;
 
-    if(devInfo.maxInputChannels > 0) {
+//        switch(Pa_GetHostApiInfo( devInfo.hostApi )->type) {
+//            case paDirectSound :
+//#ifdef WIN32
+//                ZeroMemory( &directSoundStreamInfo, sizeof(PaWinDirectSoundStreamInfo) );
+//                directSoundStreamInfo.size = sizeof(PaWinDirectSoundStreamInfo);
+//                directSoundStreamInfo.hostApiType = paDirectSound;
+//                directSoundStreamInfo.version = 2;
+//                //directSoundStreamInfo.flags = paWinDirectSoundUseChannelMask;
+//                //directSoundStreamInfo.channelMask = PAWIN_SPEAKER_5POINT1; /* request 5.1 output format */
+//                //directSoundStreamInfo.flags = paWinDirectSoundUseLowLevelLatencyParameters;
+//                directSoundStreamInfo.flags = myHost->settings->GetSetting("api/dx_flags", DIRECTX_DEFAULT_BUFFER_SIZE).toUInt();
+//                directSoundStreamInfo.framesPerBuffer = myHost->settings->GetSetting("api/dx_bufferSize", DIRECTX_DEFAULT_BUFFER_SIZE).toUInt();
+//                outputParameters->hostApiSpecificStreamInfo = &directSoundStreamInfo;
+//#endif
+//                break;
+//            case paMME :
+//#ifdef WIN32
+//                ZeroMemory( &wmmeStreamInfo, sizeof(PaWinMmeStreamInfo) );
+//                wmmeStreamInfo.size = sizeof(PaWinMmeStreamInfo);
+//                wmmeStreamInfo.hostApiType = paMME;
+//                wmmeStreamInfo.version = 1;
+//                wmmeStreamInfo.flags = myHost->settings->GetSetting("api/wmme_flags", MME_DFAULT_FLAGS).toUInt();
+//                wmmeStreamInfo.framesPerBuffer = myHost->settings->GetSetting("api/wmme_bufferSize", MME_DEFAULT_BUFFER_SIZE).toUInt();
+//                wmmeStreamInfo.bufferCount = myHost->settings->GetSetting("api/wmme_bufferCount", MME_DEFAULT_BUFFER_COUNT).toUInt();
+//                outputParameters->hostApiSpecificStreamInfo = &wmmeStreamInfo;
+//#endif
+//                break;
+//            case paASIO :
+//                break;
+//            case paSoundManager :
+//                break;
+//            case paCoreAudio :
+//                break;
+//            case paOSS :
+//                break;
+//            case paALSA :
+//                break;
+//            case paAL :
+//                break;
+//            case paBeOS :
+//                break;
+//            case paWDMKS :
+//                break;
+//            case paJACK :
+//                break;
+//            case paWASAPI : {
+//#ifdef WIN32
+//                ZeroMemory( &wasapiStreamInfo, sizeof(PaWasapiStreamInfo) );
+//                wasapiStreamInfo.size = sizeof(PaWasapiStreamInfo);
+//                wasapiStreamInfo.hostApiType = paWASAPI;
+//                wasapiStreamInfo.version = 1;
+//                wasapiStreamInfo.flags = myHost->settings->GetSetting("api/wasapi_flags", WASAPI_DEFAULT_FLAGS).toUInt();
+//                outputParameters->hostApiSpecificStreamInfo = &wasapiStreamInfo;
 
-        inputParameters = new PaStreamParameters;
-#ifdef WIN32
-        ZeroMemory( inputParameters, sizeof( PaStreamParameters ) );
-#else
-        memset(inputParameters,0,sizeof( PaStreamParameters ) );
-#endif
+//                unsigned int lat = myHost->settings->GetSetting("api/wasapi_outLatency", WASAPI_DEFAULT_OUTLATENCY).toUInt();
+//                if(lat!=0)
+//                    outputParameters->suggestedLatency = (PaTime)lat/1000;
+//#endif
+//                break;
+//            }
+//            case paAudioScienceHPI :
+//                break;
+//            default :
+//                break;
+//        }
+//    }
 
-        inputParameters->channelCount = devInfo.maxInputChannels;
-        inputParameters->device = objInfo.id;
-        inputParameters->hostApiSpecificStreamInfo = NULL;
-        inputParameters->sampleFormat = paFloat32 | paNonInterleaved;
-        inputParameters->suggestedLatency = Pa_GetDeviceInfo(objInfo.id)->defaultLowInputLatency;
-
-        switch(Pa_GetHostApiInfo( devInfo.hostApi )->type) {
-            case paDirectSound :
-#ifdef WIN32
-                ZeroMemory( &directSoundStreamInfo, sizeof( PaWinDirectSoundStreamInfo) );
-                directSoundStreamInfo.size = sizeof( PaWinDirectSoundStreamInfo);
-                directSoundStreamInfo.hostApiType = paDirectSound;
-                directSoundStreamInfo.version = 2;
-                //directSoundStreamInfo.flags = paWinDirectSoundUseChannelMask;
-                //directSoundStreamInfo.channelMask = PAWIN_SPEAKER_5POINT1; /* request 5.1 output format */
-                directSoundStreamInfo.flags = paWinDirectSoundUseLowLevelLatencyParameters;
-                directSoundStreamInfo.framesPerBuffer = myHost->settings->GetSetting("api/dx_bufferSize", DIRECTX_DEFAULT_BUFFER_SIZE).toUInt();
-                inputParameters->hostApiSpecificStreamInfo = &directSoundStreamInfo;
-                myHost->SetBufferSize(directSoundStreamInfo.framesPerBuffer);
-#endif
-                break;
-            case paMME :
-#ifdef WIN32
-                ZeroMemory( &wmmeStreamInfo, sizeof(PaWinMmeStreamInfo) );
-                wmmeStreamInfo.size = sizeof(PaWinMmeStreamInfo);
-                wmmeStreamInfo.hostApiType = paMME;
-                wmmeStreamInfo.version = 1;
-                wmmeStreamInfo.flags = myHost->settings->GetSetting("api/wmme_flags", MME_DFAULT_FLAGS).toUInt();
-                wmmeStreamInfo.framesPerBuffer = myHost->settings->GetSetting("api/wmme_bufferSize", MME_DEFAULT_BUFFER_SIZE).toUInt();
-                wmmeStreamInfo.bufferCount = myHost->settings->GetSetting("api/wmme_bufferCount", MME_DEFAULT_BUFFER_COUNT).toUInt();
-                inputParameters->hostApiSpecificStreamInfo = &wmmeStreamInfo;
-                myHost->SetBufferSize(wmmeStreamInfo.framesPerBuffer);
-#endif
-                break;
-            case paASIO :
-                break;
-            case paSoundManager :
-                break;
-            case paCoreAudio :
-                break;
-            case paOSS :
-                break;
-            case paALSA :
-                break;
-            case paAL :
-                break;
-            case paBeOS :
-                break;
-            case paWDMKS :
-                break;
-            case paJACK :
-                break;
-            case paWASAPI : {
-#ifdef WIN32
-                ZeroMemory( &wasapiStreamInfo, sizeof(PaWasapiStreamInfo) );
-                wasapiStreamInfo.size = sizeof(PaWasapiStreamInfo);
-                wasapiStreamInfo.hostApiType = paWASAPI;
-                wasapiStreamInfo.version = 1;
-                wasapiStreamInfo.flags = myHost->settings->GetSetting("api/wasapi_flags", WASAPI_DEFAULT_FLAGS).toUInt();
-                inputParameters->hostApiSpecificStreamInfo = &wasapiStreamInfo;
-
-                unsigned int lat = myHost->settings->GetSetting("api/wasapi_inLatency", WASAPI_DEFAULT_INLATENCY).toUInt();
-                if(lat!=0)
-                    inputParameters->suggestedLatency = (PaTime)lat/1000;
-#endif
-                break;
-            }
-            case paAudioScienceHPI :
-                break;
-            default:
-                break;
-        }
-    }
-
-    if(devInfo.maxOutputChannels > 0) {
-
-        outputParameters = new PaStreamParameters;
-#ifdef WIN32
-        ZeroMemory( outputParameters, sizeof( PaStreamParameters ) );
-#else
-        memset(outputParameters,0,sizeof( PaStreamParameters ) );
-#endif
-        outputParameters->channelCount = devInfo.maxOutputChannels;
-        outputParameters->device = objInfo.id;
-        outputParameters->hostApiSpecificStreamInfo = NULL;
-        outputParameters->sampleFormat = paFloat32 | paNonInterleaved;
-        outputParameters->suggestedLatency = Pa_GetDeviceInfo(objInfo.id)->defaultLowOutputLatency ;
-
-        switch(Pa_GetHostApiInfo( devInfo.hostApi )->type) {
-            case paDirectSound :
-#ifdef WIN32
-                ZeroMemory( &directSoundStreamInfo, sizeof(PaWinDirectSoundStreamInfo) );
-                directSoundStreamInfo.size = sizeof(PaWinDirectSoundStreamInfo);
-                directSoundStreamInfo.hostApiType = paDirectSound;
-                directSoundStreamInfo.version = 2;
-                //directSoundStreamInfo.flags = paWinDirectSoundUseChannelMask;
-                //directSoundStreamInfo.channelMask = PAWIN_SPEAKER_5POINT1; /* request 5.1 output format */
-                //directSoundStreamInfo.flags = paWinDirectSoundUseLowLevelLatencyParameters;
-                directSoundStreamInfo.flags = myHost->settings->GetSetting("api/dx_flags", DIRECTX_DEFAULT_BUFFER_SIZE).toUInt();
-                directSoundStreamInfo.framesPerBuffer = myHost->settings->GetSetting("api/dx_bufferSize", DIRECTX_DEFAULT_BUFFER_SIZE).toUInt();
-                outputParameters->hostApiSpecificStreamInfo = &directSoundStreamInfo;
-#endif
-                break;
-            case paMME :
-#ifdef WIN32
-                ZeroMemory( &wmmeStreamInfo, sizeof(PaWinMmeStreamInfo) );
-                wmmeStreamInfo.size = sizeof(PaWinMmeStreamInfo);
-                wmmeStreamInfo.hostApiType = paMME;
-                wmmeStreamInfo.version = 1;
-                wmmeStreamInfo.flags = myHost->settings->GetSetting("api/wmme_flags", MME_DFAULT_FLAGS).toUInt();
-                wmmeStreamInfo.framesPerBuffer = myHost->settings->GetSetting("api/wmme_bufferSize", MME_DEFAULT_BUFFER_SIZE).toUInt();
-                wmmeStreamInfo.bufferCount = myHost->settings->GetSetting("api/wmme_bufferCount", MME_DEFAULT_BUFFER_COUNT).toUInt();
-                outputParameters->hostApiSpecificStreamInfo = &wmmeStreamInfo;
-#endif
-                break;
-            case paASIO :
-                break;
-            case paSoundManager :
-                break;
-            case paCoreAudio :
-                break;
-            case paOSS :
-                break;
-            case paALSA :
-                break;
-            case paAL :
-                break;
-            case paBeOS :
-                break;
-            case paWDMKS :
-                break;
-            case paJACK :
-                break;
-            case paWASAPI : {
-#ifdef WIN32
-                ZeroMemory( &wasapiStreamInfo, sizeof(PaWasapiStreamInfo) );
-                wasapiStreamInfo.size = sizeof(PaWasapiStreamInfo);
-                wasapiStreamInfo.hostApiType = paWASAPI;
-                wasapiStreamInfo.version = 1;
-                wasapiStreamInfo.flags = myHost->settings->GetSetting("api/wasapi_flags", WASAPI_DEFAULT_FLAGS).toUInt();
-                outputParameters->hostApiSpecificStreamInfo = &wasapiStreamInfo;
-
-                unsigned int lat = myHost->settings->GetSetting("api/wasapi_outLatency", WASAPI_DEFAULT_OUTLATENCY).toUInt();
-                if(lat!=0)
-                    outputParameters->suggestedLatency = (PaTime)lat/1000;
-#endif
-                break;
-            }
-            case paAudioScienceHPI :
-                break;
-            default :
-                break;
-        }
-    }
-
-    if(Pa_IsFormatSupported( inputParameters, outputParameters, sampleRate ) != paFormatIsSupported) {
-        SetErrorMsg( tr("Stream format not supported") );
-        if(inputParameters)
-            delete inputParameters;
-        if(outputParameters)
-            delete outputParameters;
-        return false;
-    }
-
-    PaError err = Pa_OpenStream(
-            &stream,
-            inputParameters,
-            outputParameters,
-            sampleRate,
-            framesPerBuffer,
-            flags,
-            paCallback,
-            (void *)this );
-
-    if( err != paNoError ) {
-        Pa_CloseStream(stream);
-        SetErrorMsg( Pa_GetErrorText( err ) );
-        if(inputParameters)
-            delete inputParameters;
-        if(outputParameters)
-            delete outputParameters;
-        return false;
-    }
-
-#ifdef DEBUG_DEVICES
-    LOG("Open"<<objectName())
-#endif
-    emit InUseChanged(objInfo.api, objInfo.id, true, inputParameters?inputParameters->suggestedLatency:0, outputParameters?outputParameters->suggestedLatency:0);
-
-//    err = Pa_SetStreamFinishedCallback( stream, &paStreamFinished );
-//    if( err != paNoError ) {
-//        Pa_CloseStream(stream);
-//        debug("AudioDevice::OpenStream Pa_SetStreamFinishedCallback %s",Pa_GetErrorText( err ))
-//        errorMessage = Pa_GetErrorText( err );
+//    if(Pa_IsFormatSupported( inputParameters, outputParameters, sampleRate ) != paFormatIsSupported) {
+//        SetErrorMsg( tr("Stream format not supported") );
 //        if(inputParameters)
 //            delete inputParameters;
 //        if(outputParameters)
@@ -457,17 +441,35 @@ bool AudioDevice::OpenStream(double sampleRate)
 //        return false;
 //    }
 
-//    const PaStreamInfo *inf = Pa_GetStreamInfo(&stream);
-//    if(inf)
-//        emit InUseChanged(objInfo.api,objInfo.id,true,inf->inputLatency,inf->outputLatency,inf->sampleRate);
-//    else
-//        emit InUseChanged(objInfo.api,objInfo.id,true);
+//    PaError err = Pa_OpenStream(
+//            &stream,
+//            inputParameters,
+//            outputParameters,
+//            sampleRate,
+//            framesPerBuffer,
+//            flags,
+//            paCallback,
+//            (void *)this );
 
+//    if( err != paNoError ) {
+//        Pa_CloseStream(stream);
+//        SetErrorMsg( Pa_GetErrorText( err ) );
+//        if(inputParameters)
+//            delete inputParameters;
+//        if(outputParameters)
+//            delete outputParameters;
+//        return false;
+//    }
 
-    if(inputParameters)
-        delete inputParameters;
-    if(outputParameters)
-        delete outputParameters;
+//#ifdef DEBUG_DEVICES
+//    LOG("Open"<<objectName())
+//#endif
+//    emit InUseChanged(objInfo.api, objInfo.id, true, inputParameters?inputParameters->suggestedLatency:0, outputParameters?outputParameters->suggestedLatency:0);
+
+//    if(inputParameters)
+//        delete inputParameters;
+//    if(outputParameters)
+//        delete outputParameters;
     return true;
 }
 
@@ -497,10 +499,10 @@ bool AudioDevice::Open()
     SetErrorMsg("");
 
     //get portaudio infos
-    if(!myHost->audioDevices->FindPortAudioDevice(objInfo, &devInfo)) {
-        SetErrorMsg( tr("Device not found") );
-        return false;
-    }
+//    if(!myHost->audioDevices->FindPortAudioDevice(objInfo, &devInfo)) {
+//        SetErrorMsg( tr("Device not found") );
+//        return false;
+//    }
 
 
 #ifdef CIRCULAR_BUFFER
@@ -508,44 +510,49 @@ bool AudioDevice::Open()
 #endif
 
     //try to open at the host rate
-    double sampleRate = myHost->GetSampleRate();
-    if(!OpenStream(sampleRate)) {
+//    double sampleRate = myHost->GetSampleRate();
+//    if(!OpenStream(sampleRate)) {
 
         //if it fails, try to open with the default rate
-        sampleRate = devInfo.defaultSampleRate;
-        if(!OpenStream(sampleRate)) {
-            SetErrorMsg( tr("Sample format not supported") );
-            return false;
-        }
-
-        //opened with the default rate, change the host rate
-        //MainHost::Get()->SetSampleRate(sampleRate);
-    }
+//        sampleRate = devInfo.defaultSampleRate;
+//        if(!OpenStream(sampleRate)) {
+//            SetErrorMsg( tr("Sample format not supported") );
+//            return false;
+//        }
+//    }
 
     //start the stream
-    PaError err = Pa_StartStream( stream );
+//    PaError err = Pa_StartStream( stream );
 
-    //failed to open the stream
-    if( err != paNoError ) {
+//    //failed to open the stream
+//    if( err != paNoError ) {
 
-        if(stream)
-        {
-            Pa_StopStream(stream);
-            Pa_CloseStream(stream);
-            stream = 0;
-        }
+//        if(stream)
+//        {
+//            Pa_StopStream(stream);
+//            Pa_CloseStream(stream);
+//            stream = 0;
+//        }
 
-        SetErrorMsg( Pa_GetErrorText( err ) );
-        return false;
-    }
-
-
+//        SetErrorMsg( Pa_GetErrorText( err ) );
+//        return false;
+//    }
 
     {
         QMutexLocker lo(&mutexOpenClose);
         opened=true;
     }
     return true;
+}
+
+int AudioDevice::GetNbInputs() const
+{
+    return objInfo.inputs;
+}
+
+int AudioDevice::GetNbOutputs() const
+{
+    return objInfo.outputs;
 }
 
 /*!
@@ -569,25 +576,32 @@ bool AudioDevice::Close()
 #ifdef DEBUG_DEVICES
     LOG("Close"<<objectName())
 #endif
-    emit InUseChanged( objInfo.api,objInfo.id,false);
+//    emit InUseChanged( objInfo.api,objInfo.id,false);
 
-    if(stream)
-    {
-        Pa_StopStream(stream);
-        int count=0;
-        while(Pa_IsStreamActive(stream) && count<200) {
-            I::msleep(10);
-            count++;
-        }
-        if(count>0) {
-#ifdef DEBUG_DEVICES
-            LOG("AudioDevice::Close"<<objectName()<<"wait:"<<count);
-#endif
-        }
+//    if(stream)
+//    {
+//        Pa_StopStream(stream);
+//        int count=0;
+//        while(Pa_IsStreamActive(stream) && count<200) {
+//            I::msleep(10);
+//            count++;
+//        }
+//        if(count>0) {
+//#ifdef DEBUG_DEVICES
+//            LOG("AudioDevice::Close"<<objectName()<<"wait:"<<count);
+//#endif
+//        }
+//        Pa_CloseStream(stream);
+//        stream = 0;
+//    }
 
-        Pa_CloseStream(stream);
-        stream = 0;
+    try {
+        audio.stopStream();
+        audio.closeStream();
+    } catch(RtAudioError &e) {
+        e.printMessage();
     }
+
 #ifdef CIRCULAR_BUFFER
     DeleteCircularBuffers();
 #endif
@@ -597,12 +611,20 @@ bool AudioDevice::Close()
 #ifdef CIRCULAR_BUFFER
 void AudioDevice::CreateCircularBuffers()
 {
-    for(int i=0; i<devInfo.maxInputChannels; i++ ) {
+//    for(int i=0; i<devInfo.maxInputChannels; i++ ) {
+//        listCircularBuffersIn << new CircularBuffer();
+//    }
+//    for(int i=0; i<devInfo.maxOutputChannels; i++ ) {
+//        listCircularBuffersOut << new CircularBuffer();
+//    }
+
+    for(int i=0; i<objInfo.inputs; i++ ) {
         listCircularBuffersIn << new CircularBuffer();
     }
-    for(int i=0; i<devInfo.maxOutputChannels; i++ ) {
+    for(int i=0; i<objInfo.outputs; i++ ) {
         listCircularBuffersOut << new CircularBuffer();
     }
+
 
 //    const ulong bsize=4000;
 //    float buff[bsize];
@@ -656,7 +678,8 @@ bool AudioDevice::SetSleep(bool sleeping)
   */
 float AudioDevice::GetCpuUsage()
 {
-   return Pa_GetStreamCpuLoad(stream);
+//   return Pa_GetStreamCpuLoad(stream);
+    return .0f;
 }
 
 #ifdef CIRCULAR_BUFFER
@@ -896,133 +919,145 @@ bool AudioDevice::PinBuffersToDevice( void *outputBuffer, unsigned long framesPe
 }
 #endif
 
+int AudioDevice::callback( void *outputBuffer, void *inputBuffer, unsigned int framesPerBuffer, double streamTime, RtAudioStreamStatus status, void *userData )
+{
+    AudioDevice* device = (AudioDevice*)userData;
+    if(!device->DeviceToRingBuffers(inputBuffer, framesPerBuffer))
+        return 0;
+    if(!device->RingBuffersToDevice(outputBuffer, framesPerBuffer))
+        return 0;
+
+    device->myHost->Render();
+    device->myHost->audioDevices->PutPinsBuffersInRingBuffers();
+}
+
 /*!
   PortAudio callback
   put the audio provided by PortAudio in ring buffers
   starts a rendering loop when we have enough data
   send the resulting buffers back to PortAudio
   */
-int AudioDevice::paCallback( const void *inputBuffer, void *outputBuffer,
-                                 unsigned long framesPerBuffer,
-                                 const PaStreamCallbackTimeInfo* /*timeInfo*/,
-                                 PaStreamCallbackFlags /*statusFlags*/,
-                                 void *userData )
-{
-    AudioDevice* device = (AudioDevice*)userData;
-#ifdef DEBUG_DEVICES
-//    LOG(QString("%1 %2")
-//        .arg( device->devInfo.name )
-//        .arg( framesPerBuffer )
-//        );
-#endif
+//int AudioDevice::paCallback( const void *inputBuffer, void *outputBuffer,
+//                                 unsigned long framesPerBuffer,
+//                                 const PaStreamCallbackTimeInfo* /*timeInfo*/,
+//                                 PaStreamCallbackFlags /*statusFlags*/,
+//                                 void *userData )
+//{
+//    AudioDevice* device = (AudioDevice*)userData;
+//#ifdef DEBUG_DEVICES
+////    LOG(QString("%1 %2")
+////        .arg( device->devInfo.name )
+////        .arg( framesPerBuffer )
+////        );
+//#endif
 
-#ifdef CIRCULAR_BUFFER
+//#ifdef CIRCULAR_BUFFER
 
-    //put input buffer in rongbuffer
-    if(!device->DeviceToRingBuffers(inputBuffer, framesPerBuffer))
-        return paComplete;
+//    //put input buffer in rongbuffer
+//    if(!device->DeviceToRingBuffers(inputBuffer, framesPerBuffer))
+//        return paComplete;
 
-    //check if pins buffers are ready
-    {
-        QMutexLocker l(&mutexCountOpenedDevicesReady);
-        if(device->inputBufferReady) {
-            countDevicesReady++;
-        } else {
-#ifdef DEBUG_DEVICES
-//            LOG(QString("%1 %2")
-//                .arg( device->devInfo.name )
-//                .arg("buffer not full")
-//                );
-#endif
-//            return paContinue;
-        }
-    }
-
-    //all devices are ready : render
-    mutexCountOpenedDevicesReady.lock();
-#ifdef DEBUG_DEVICES
-//    LOG(QString("%1 ready: %2/%3")
-//        .arg( device->devInfo.name )
-//        .arg( countDevicesReady )
-//        .arg( countOpenedDevices )
-//        );
-#endif
-    if(!device->RingBuffersToDevice(outputBuffer, framesPerBuffer))
-        return paComplete;
-
-    if(countDevicesReady>=countOpenedDevices) {
-        countDevicesReady=0;
-#ifdef DEBUG_DEVICES
-//        LOG(QString("%1 %2")
-//            .arg( device->devInfo.name )
-//            .arg("RENDER")
-//            );
-#endif
-        mutexCountOpenedDevicesReady.unlock();
-
-        device->myHost->Render();
-        device->myHost->audioDevices->PutPinsBuffersInRingBuffers();
-    } else {
-        mutexCountOpenedDevicesReady.unlock();
-        return paContinue;
-    }
-
-#else
-    QMutexLocker l(&device->mutexDevicesInOut);
-    device->mutexOpenClose.lock();
-    if(device->isClosing) {
-        device->mutexOpenClose.unlock();
-        return paComplete;
-    }
-    device->mutexOpenClose.unlock();
-
-////    if(device->devOut) {
-//        device->myHost->SetCurrentBuffers((float **)inputBuffer, (float **)outputBuffer, framesPerBuffer);
+//    //check if pins buffers are ready
+//    {
+//        QMutexLocker l(&mutexCountOpenedDevicesReady);
+//        if(device->inputBufferReady) {
+//            countDevicesReady++;
+//        } else {
+//#ifdef DEBUG_DEVICES
+////            LOG(QString("%1 %2")
+////                .arg( device->devInfo.name )
+////                .arg("buffer not full")
+////                );
+//#endif
+////            return paContinue;
+//        }
 //    }
 
-//    QMutexLocker l(&device->mutexOutReady);
+//    //all devices are ready : render
+//    mutexCountOpenedDevicesReady.lock();
+//#ifdef DEBUG_DEVICES
+////    LOG(QString("%1 ready: %2/%3")
+////        .arg( device->devInfo.name )
+////        .arg( countDevicesReady )
+////        .arg( countOpenedDevices )
+////        );
+//#endif
+//    if(!device->RingBuffersToDevice(outputBuffer, framesPerBuffer))
+//        return paComplete;
 
-//    device->currentInputBuffer=(float**)inputBuffer;
-//    device->currentOutputBuffer=(float**)outputBuffer;
-//    device->bufferSize=framesPerBuffer;
+//    if(countDevicesReady>=countOpenedDevices) {
+//        countDevicesReady=0;
+//#ifdef DEBUG_DEVICES
+////        LOG(QString("%1 %2")
+////            .arg( device->devInfo.name )
+////            .arg("RENDER")
+////            );
+//#endif
+//        mutexCountOpenedDevicesReady.unlock();
 
-
-//    if(device->devIn)
-//        device->devIn->NewRenderLoop2();
-
-
-    if(!device->DeviceToPinBuffers(inputBuffer,framesPerBuffer))
-        return paComplete;
-
-
-    device->myHost->Render();
-    if(!device->PinBuffersToDevice(outputBuffer,framesPerBuffer))
-        return paComplete;
-//    if(device->devOut)
-//        device->devOut->NewRenderLoop2();
-
-//    device->currentInputBuffer=0;
-//    device->currentOutputBuffer=0;
-//    if(device->devOut)
-//        device->condBufferOutReady.wait(l.mutex(), 100);
-
-//    if(!device->OutBufferIsReady()) {
-#ifdef DEBUG_DEVICES
-//        LOG("buffer not ready")
-#endif
+//        device->myHost->Render();
+//        device->myHost->audioDevices->PutPinsBuffersInRingBuffers();
+//    } else {
+//        mutexCountOpenedDevicesReady.unlock();
 //        return paContinue;
 //    }
-//    device->SetOutputBufferReady(false);
+
+//#else
+//    QMutexLocker l(&device->mutexDevicesInOut);
+//    device->mutexOpenClose.lock();
+//    if(device->isClosing) {
+//        device->mutexOpenClose.unlock();
+//        return paComplete;
+//    }
+//    device->mutexOpenClose.unlock();
+
+//////    if(device->devOut) {
+////        device->myHost->SetCurrentBuffers((float **)inputBuffer, (float **)outputBuffer, framesPerBuffer);
+////    }
+
+////    QMutexLocker l(&device->mutexOutReady);
+
+////    device->currentInputBuffer=(float**)inputBuffer;
+////    device->currentOutputBuffer=(float**)outputBuffer;
+////    device->bufferSize=framesPerBuffer;
 
 
-#endif
+////    if(device->devIn)
+////        device->devIn->NewRenderLoop2();
 
-//    mutexCountOpenedDevicesReady.lock();
-//    countDevicesReady++;
-//    mutexCountOpenedDevicesReady.unlock();
 
-    return paContinue;
-}
+//    if(!device->DeviceToPinBuffers(inputBuffer,framesPerBuffer))
+//        return paComplete;
+
+
+//    device->myHost->Render();
+//    if(!device->PinBuffersToDevice(outputBuffer,framesPerBuffer))
+//        return paComplete;
+////    if(device->devOut)
+////        device->devOut->NewRenderLoop2();
+
+////    device->currentInputBuffer=0;
+////    device->currentOutputBuffer=0;
+////    if(device->devOut)
+////        device->condBufferOutReady.wait(l.mutex(), 100);
+
+////    if(!device->OutBufferIsReady()) {
+//#ifdef DEBUG_DEVICES
+////        LOG("buffer not ready")
+//#endif
+////        return paContinue;
+////    }
+////    device->SetOutputBufferReady(false);
+
+
+//#endif
+
+////    mutexCountOpenedDevicesReady.lock();
+////    countDevicesReady++;
+////    mutexCountOpenedDevicesReady.unlock();
+
+//    return paContinue;
+//}
 
 bool AudioDevice::IsAnInstanceOf(const ObjectInfo &info)
 {

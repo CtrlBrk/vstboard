@@ -423,7 +423,7 @@ int ProgramManager::WaitPromptAnswer(const QString &type)
 #ifdef __linux__
         struct timespec r,m;
         r.tv_sec = 0;
-        r.tv_nsec = 50000;
+        r.tv_nsec = 50 * 1000 * 1000;
         nanosleep(&r,&m);
 #else
         Sleep(50);

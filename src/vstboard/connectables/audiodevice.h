@@ -26,12 +26,13 @@
 //#include "precomp.h"
 #include "connectables/object.h"
 #include "connectables/objectinfo.h"
-#include "portaudio.h"
-#ifdef WIN32
-#include "pa_win_wmme.h"
-#include "pa_win_ds.h"
-#include "pa_win_wasapi.h"
-#endif
+//#include "portaudio.h"
+#include "RtAudio.h"
+//#ifdef WIN32
+//#include "pa_win_wmme.h"
+//#include "pa_win_ds.h"
+//#include "pa_win_wasapi.h"
+//#endif
 
 #ifdef CIRCULAR_BUFFER
     #include "circularbuffer.h"
@@ -54,8 +55,10 @@ namespace Connectables {
         bool SetObjectOutput(AudioDeviceOut *obj);
         bool SetSleep(bool sleeping);
 
-        int GetNbInputs() const { return devInfo.maxInputChannels; }
-        int GetNbOutputs() const { return devInfo.maxOutputChannels; }
+//        int GetNbInputs() const { return devInfo.maxInputChannels; }
+//        int GetNbOutputs() const { return devInfo.maxOutputChannels; }
+        int GetNbInputs() const;
+        int GetNbOutputs() const;
 
         bool IsAnInstanceOf(const ObjectInfo &info);
 
@@ -73,12 +76,12 @@ namespace Connectables {
     private:
         bool Open();
         bool Close();
-        static int paCallback( const void *inputBuffer, void *outputBuffer,
-                               unsigned long framesPerBuffer,
-                               const PaStreamCallbackTimeInfo* timeInfo,
-                               PaStreamCallbackFlags statusFlags,
-                               void *userData );
-
+//        static int paCallback( const void *inputBuffer, void *outputBuffer,
+//                               unsigned long framesPerBuffer,
+//                               const PaStreamCallbackTimeInfo* timeInfo,
+//                               PaStreamCallbackFlags statusFlags,
+//                               void *userData );
+        static int callback( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames, double streamTime, RtAudioStreamStatus status, void *data );
         bool OpenStream(double sampleRate);
 
 #ifdef CIRCULAR_BUFFER
@@ -107,10 +110,11 @@ namespace Connectables {
         float sampleRate;
 
         /// pointer to PortAudio stream
-        PaStream *stream;
+//        PaStream *stream;
+        RtAudio audio;
 
         /// PortAudio device informations
-        PaDeviceInfo devInfo;
+//        PaDeviceInfo devInfo;
 
         /// objcet description
         ObjectInfo objInfo;
@@ -132,16 +136,17 @@ namespace Connectables {
 
         /// global audio devices mutex
         static QMutex mutexCountOpenedDevicesReady;
-#ifdef WIN32
-        /// windows mme stream options
-        PaWinMmeStreamInfo wmmeStreamInfo;
 
-        /// windows directsound stream options
-        PaWinDirectSoundStreamInfo directSoundStreamInfo;
+//#ifdef WIN32
+//        /// windows mme stream options
+//        PaWinMmeStreamInfo wmmeStreamInfo;
 
-        /// windows wasapi stream options
-        PaWasapiStreamInfo wasapiStreamInfo;
-#endif
+//        /// windows directsound stream options
+//        PaWinDirectSoundStreamInfo directSoundStreamInfo;
+
+//        /// windows wasapi stream options
+//        PaWasapiStreamInfo wasapiStreamInfo;
+//#endif
 
 #ifdef CIRCULAR_BUFFER
         /// list of input ring buffers
@@ -173,7 +178,7 @@ namespace Connectables {
           \param devId device id
           \param inUse true if the device is in use
           */
-        void InUseChanged(PaHostApiIndex apiId,PaDeviceIndex devId, bool inUse, PaTime inLatency=0, PaTime outLatency=0, double sampleRate=0);
+//        void InUseChanged(PaHostApiIndex apiId,PaDeviceIndex devId, bool inUse, PaTime inLatency=0, PaTime outLatency=0, double sampleRate=0);
         void DebugGraphUpdated(QVector<float> grph);
 
     public slots:
