@@ -15,7 +15,9 @@ qrc_*.cpp
 ui_*.h
 *.log
 *.tlog
-libs/
+libs/port*
+libs/VST*
+libs/vst*
 debug/
 release/
 .vs/
