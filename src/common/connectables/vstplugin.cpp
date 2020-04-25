@@ -18,7 +18,7 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 
-#ifdef VSTSDK
+#ifdef VST24SDK
 
 #include <cstring>
 #include "vstplugin.h"

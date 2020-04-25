@@ -211,7 +211,6 @@ unsigned long CircularBuffer::Put(CircularBuffer &buf, unsigned long size)
 
 bool CircularBuffer::Put(float *buf, unsigned long size)
 {
-
 //    if(!buffer)
 //        return false;
 /*

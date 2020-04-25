@@ -31,6 +31,10 @@
 
 #include "mainwindow.h"
 
+
+#define RTFORMAT RTAUDIO_FLOAT32
+
+
 class I : public QThread
 {
 public:
@@ -61,7 +65,7 @@ AudioDevice::AudioDevice(MainHostHost *myHost,const ObjectInfo &info,QObject *pa
     bufferSize(4096),
     sampleRate(44100.0f),
 //    stream(0),
-//    audio(0),
+    rtdevice(0),
     objInfo(info),
     devIn(0),
     devOut(0),
@@ -77,8 +81,10 @@ AudioDevice::AudioDevice(MainHostHost *myHost,const ObjectInfo &info,QObject *pa
     connect(myHost,SIGNAL(SampleRateChanged(float)),
             this,SLOT(SetSampleRate(float)));
 
-    connect(this,SIGNAL(InUseChanged(PaHostApiIndex,PaDeviceIndex,bool,PaTime,PaTime,double)),
-            myHost->audioDevices,SLOT(OnToggleDeviceInUse(PaHostApiIndex,PaDeviceIndex,bool,PaTime,PaTime,double)));
+//    connect(this,SIGNAL(InUseChanged(PaHostApiIndex,PaDeviceIndex,bool,PaTime,PaTime,double)),
+//            myHost->audioDevices,SLOT(OnToggleDeviceInUse(PaHostApiIndex,PaDeviceIndex,bool,PaTime,PaTime,double)));
+    connect(this,SIGNAL(InUseChanged(int,int,bool)),
+            myHost->audioDevices,SLOT(OnToggleDeviceInUse(int,int,bool)));
 
     connect(this,SIGNAL(DebugGraphUpdated(QVector<float>)),
             myHost->mainWindow,SLOT(UpdateDebugGraph(QVector<float>)));
@@ -226,7 +232,6 @@ void AudioDevice::SetSampleRate(float /*rate*/)
     SetSleep(false);
 }
 
-
 /*!
   Open the PortAudio stream, used by AudioDevice::Open
   \param sampleRate the desired sample rate
@@ -234,8 +239,7 @@ void AudioDevice::SetSampleRate(float /*rate*/)
   */
 bool AudioDevice::OpenStream(double sampleRate)
 {
-    unsigned int bufferFrames = 256;
-    int nBuffers = 4;
+    unsigned int bufferFrames = 1024; //TODO: user defined
     RtAudio::StreamParameters oParams, iParams;
     oParams.deviceId = objInfo.id;
     oParams.nChannels = objInfo.outputs;
@@ -247,20 +251,43 @@ bool AudioDevice::OpenStream(double sampleRate)
 
     RtAudio::StreamOptions options;
     options.flags = RTAUDIO_NONINTERLEAVED;
+    options.flags |= RTAUDIO_SCHEDULE_REALTIME;
+//    options.flags |= RTAUDIO_HOG_DEVICE;
+//    options.flags |= RTAUDIO_MINIMIZE_LATENCY;
+    options.numberOfBuffers = 4; //TODO: user defined
+    options.priority = 1;
+
     try {
-        audio.openStream( &oParams, &iParams, RTAUDIO_SINT32, static_cast<unsigned int >(sampleRate), &bufferFrames,
-                          &AudioDevice::callback, (void *)this, &options );
+        if(iParams.nChannels==0) {
+            rtdevice->openStream( &oParams, NULL, RTFORMAT, static_cast<unsigned int >(sampleRate), &bufferFrames,
+                              &AudioDevice::callback, (void *)this, &options );
+        } else {
+            if(oParams.nChannels==0) {
+                rtdevice->openStream( NULL, &iParams, RTFORMAT, static_cast<unsigned int >(sampleRate), &bufferFrames,
+                                  &AudioDevice::callback, (void *)this, &options );
+            } else {
+                rtdevice->openStream( &oParams, &iParams, RTFORMAT, static_cast<unsigned int >(sampleRate), &bufferFrames,
+                                  &AudioDevice::callback, (void *)this, &options );
+            }
+        }
+
     } catch (RtAudioError &e) {
         e.printMessage();
         return false;
     }
 
+    LOG("buffer:" << bufferFrames);
+
+    myHost->SetBufferSize(bufferFrames);
+
     try {
-        audio.startStream();
+        rtdevice->startStream();
     } catch(RtAudioError &e) {
         e.printMessage();
         return false;
     }
+
+    emit InUseChanged(objInfo.api, objInfo.id, true);
 
 //    unsigned long framesPerBuffer = paFramesPerBufferUnspecified;
 
@@ -504,22 +531,38 @@ bool AudioDevice::Open()
 //        return false;
 //    }
 
+    RtAudio::Api apiId = AudioDevices::GetApiByName( objInfo.apiName.toStdString() );
+    if(apiId == RtAudio::UNSPECIFIED) {
+        SetErrorMsg( tr("Api %1 not found").arg(objInfo.apiName) );
+        return true;
+    }
+    objInfo.api = apiId;
+
+    int devId = AudioDevices::GetDevIdByName( objInfo.api, objInfo.name.toStdString() );
+    if(devId == -1) {
+        SetErrorMsg( tr("Device %1:%2 not found").arg(objInfo.apiName).arg(objInfo.name) );
+        return true;
+    }
+    objInfo.id = devId;
+
+    rtdevice = new RtAudio( (RtAudio::Api)objInfo.api );
+
 
 #ifdef CIRCULAR_BUFFER
     CreateCircularBuffers();
 #endif
 
     //try to open at the host rate
-//    double sampleRate = myHost->GetSampleRate();
-//    if(!OpenStream(sampleRate)) {
+    double sampleRate = myHost->GetSampleRate();
+    if(!OpenStream(sampleRate)) {
 
         //if it fails, try to open with the default rate
 //        sampleRate = devInfo.defaultSampleRate;
 //        if(!OpenStream(sampleRate)) {
-//            SetErrorMsg( tr("Sample format not supported") );
-//            return false;
+            SetErrorMsg( tr("Sample format not supported") );
+            return false;
 //        }
-//    }
+    }
 
     //start the stream
 //    PaError err = Pa_StartStream( stream );
@@ -576,7 +619,20 @@ bool AudioDevice::Close()
 #ifdef DEBUG_DEVICES
     LOG("Close"<<objectName())
 #endif
-//    emit InUseChanged( objInfo.api,objInfo.id,false);
+    emit InUseChanged( objInfo.api,objInfo.id,false);
+
+    if(rtdevice)
+    {
+        try {
+            rtdevice->stopStream();
+            rtdevice->closeStream();
+        } catch(RtAudioError &e) {
+            e.printMessage();
+        }
+
+        delete rtdevice;
+        rtdevice=0;
+    }
 
 //    if(stream)
 //    {
@@ -595,12 +651,7 @@ bool AudioDevice::Close()
 //        stream = 0;
 //    }
 
-    try {
-        audio.stopStream();
-        audio.closeStream();
-    } catch(RtAudioError &e) {
-        e.printMessage();
-    }
+
 
 #ifdef CIRCULAR_BUFFER
     DeleteCircularBuffers();
@@ -721,12 +772,13 @@ bool AudioDevice::DeviceToRingBuffers( const void *inputBuffer, unsigned long fr
     inputBufferReady=true;
 
     //fill circular buffer with device audio
+    float* inData = (float *) inputBuffer;
     int cpt=0;
     foreach(CircularBuffer *buf, listCircularBuffersIn) {
         if(buf->buffSize<myHost->GetBufferSize()*2)
             buf->SetSize(myHost->GetBufferSize()*2);
 
-        buf->Put( ((float **) inputBuffer)[cpt], framesPerBuffer );
+        buf->Put( inData, framesPerBuffer );
         if(buf->filledSize < hostBuffSize ) {
             inputBufferReady=false;
         } /*else {
@@ -736,6 +788,7 @@ bool AudioDevice::DeviceToRingBuffers( const void *inputBuffer, unsigned long fr
                 .arg(buf->filledSize)
                 .arg(hostBuffSize));
         }*/
+        inData+=framesPerBuffer;
         cpt++;
     }
 
@@ -790,23 +843,27 @@ bool AudioDevice::RingBuffersToDevice( void *outputBuffer, unsigned long framesP
             //the device was removed : clear the output buffer one time
             devOutClosing=false;
 
+            float *outData = (float *) outputBuffer;
             int cpt=0;
             foreach(CircularBuffer *buf, listCircularBuffersOut) {
+
                 //empty the circular buffer, in case we reopen this device
                 buf->Clear();
                 //send a blank buffer to the device
 #ifdef WIN32
-        ZeroMemory( ((float **) outputBuffer)[cpt], sizeof(float)*framesPerBuffer );
+        ZeroMemory( outData, sizeof(float)*framesPerBuffer );
 #else
-        memset(((float **) outputBuffer)[cpt],0,sizeof(float)*framesPerBuffer  );
+        memset(outData,0,sizeof(float)*framesPerBuffer  );
 #endif
                 cpt++;
+                outData += framesPerBuffer;
             }
             return true;
         }
     }
 
     //send circular buffer to device if there's enough data
+    float *outData = (float *) outputBuffer;
     int cpt=0;
     foreach(CircularBuffer *buf, listCircularBuffersOut) {
         if(!pause && buf->filledSize>=framesPerBuffer) {
@@ -818,13 +875,13 @@ bool AudioDevice::RingBuffersToDevice( void *outputBuffer, unsigned long framesP
 //                .arg(myHost->GetBufferSize())
 //                );
 #endif
-            buf->Get( ((float **) outputBuffer)[cpt], framesPerBuffer );
+            buf->Get( outData, framesPerBuffer );
 
         } else {
 #ifdef WIN32
-            ZeroMemory( ((float **) outputBuffer)[cpt], sizeof(float)*framesPerBuffer );
+            ZeroMemory( outData, sizeof(float)*framesPerBuffer );
 #else
-            memset(((float **) outputBuffer)[cpt],0,sizeof(float)*framesPerBuffer);
+            memset(outData,0,sizeof(float)*framesPerBuffer);
 #endif
 #ifdef DEBUG_DEVICES
             LOG(QString("buffer->device %1<-%2 | not enough data")
@@ -833,15 +890,17 @@ bool AudioDevice::RingBuffersToDevice( void *outputBuffer, unsigned long framesP
 #endif
             return true;
         }
+        outData += framesPerBuffer;
         cpt++;
     }
 
     /*if(outputBuffer) {
-        QVector<float> grph;
-        grph.reserve(framesPerBuffer * sizeof(float));
-        std::copy(((float **) outputBuffer)[0], ((float **) outputBuffer)[0] + framesPerBuffer, std::back_inserter(grph));
-        emit DebugGraphUpdated(grph);
-    }*/
+           QVector<float> grph;
+           grph.reserve(framesPerBuffer * sizeof(float));
+           std::copy(((float **) outputBuffer)[0], ((float **) outputBuffer)[0] + framesPerBuffer, std::back_inserter(grph));
+           emit DebugGraphUpdated(grph);
+       }*/
+
     return true;
 }
 #else
@@ -922,13 +981,89 @@ bool AudioDevice::PinBuffersToDevice( void *outputBuffer, unsigned long framesPe
 int AudioDevice::callback( void *outputBuffer, void *inputBuffer, unsigned int framesPerBuffer, double streamTime, RtAudioStreamStatus status, void *userData )
 {
     AudioDevice* device = (AudioDevice*)userData;
+    if(!device || device->isClosing)
+        return 1;
+
     if(!device->DeviceToRingBuffers(inputBuffer, framesPerBuffer))
         return 0;
-    if(!device->RingBuffersToDevice(outputBuffer, framesPerBuffer))
-        return 0;
 
+
+
+    if(!device->RingBuffersToDevice(outputBuffer, framesPerBuffer))
+        return 1;
     device->myHost->Render();
     device->myHost->audioDevices->PutPinsBuffersInRingBuffers();
+    return 0;
+
+
+
+    //check if pins buffers are ready
+    {
+        QMutexLocker l(&mutexCountOpenedDevicesReady);
+        if(device->inputBufferReady) {
+            countDevicesReady++;
+        } else {
+#ifdef DEBUG_DEVICES
+//            LOG(QString("%1 %2")
+//                .arg( device->devInfo.name )
+//                .arg("buffer not full")
+//                );
+#endif
+        }
+    }
+
+
+
+    //all devices are ready : render
+    mutexCountOpenedDevicesReady.lock();
+#ifdef DEBUG_DEVICES
+//    LOG(QString("%1 ready: %2/%3")
+//        .arg( device->devInfo.name )
+//        .arg( countDevicesReady )
+//        .arg( countOpenedDevices )
+//        );
+#endif
+//    static float saw = .0f;
+//    static float sawinc = .05f;
+//    float* buf = (float*)outputBuffer;
+
+//    for(uint i=0;i<framesPerBuffer;i++) {
+//        *buf = saw;
+//        saw+=sawinc;
+//        if(saw>.8f) sawinc=-.05f;
+//        if(saw<-.8f) sawinc=+.05f;
+//        buf++;
+
+//    }
+//    for(int j=1;j<device->objInfo.outputs;j++) {
+//        for(uint i=0;i<framesPerBuffer;i++) {
+//            *buf=.0f;
+//            buf++;
+//        }
+//    }
+
+    if(!device->RingBuffersToDevice(outputBuffer, framesPerBuffer))
+        return 1;
+
+    if(countDevicesReady>=countOpenedDevices) {
+        countDevicesReady=0;
+#ifdef DEBUG_DEVICES
+//        LOG(QString("%1 %2")
+//            .arg( device->devInfo.name )
+//            .arg("RENDER")
+//            );
+#endif
+        mutexCountOpenedDevicesReady.unlock();
+
+        device->myHost->Render();
+        device->myHost->audioDevices->PutPinsBuffersInRingBuffers();
+
+    } else {
+        mutexCountOpenedDevicesReady.unlock();
+        return 0;
+    }
+
+    return 0;
 }
 
 /*!

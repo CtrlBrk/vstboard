@@ -659,8 +659,8 @@ Pin* Object::CreatePin(const ConnectionInfo &info)
 						
 						pinConstructArgs args(info);
 						args.parent = this;
-						args.listValues = &listEditorVisible;
-						args.defaultVariantValue = "show";
+                        args.listValues = &listEditorVisible;
+                        args.defaultVariantValue = "hide";
 						args.name = tr("Editor");
 
                         return PinFactory::MakePin(args);

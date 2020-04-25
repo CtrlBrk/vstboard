@@ -22,7 +22,7 @@
 
 #include "vstpluginwindow.h"
 #include "ui_vstpluginwindow.h"
-#ifndef __linux__
+#ifdef VST24SDK
     #include "connectables/vstplugin.h"
 #endif
 #include "connectables/vst3plugin.h"
@@ -85,7 +85,7 @@ bool VstPluginWindow::SetPlugin(Connectables::Vst3Plugin *plug)
 
     return true;
 }
-#ifndef __linux__
+#ifdef VST24SDK
 bool VstPluginWindow::SetPlugin(Connectables::VstPlugin *plugin)
 {
     bool windowOk = false;

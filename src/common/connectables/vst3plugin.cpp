@@ -1308,14 +1308,14 @@ Pin* Vst3Plugin::CreatePin(const ConnectionInfo &info)
         if(info.pinNumber==progChangeParameter) {
             args.listValues = &listValues;
             args.defaultVariantValue = 0;
-            args.name = tr("prog");
+            args.name = tr("Prog");
             return PinFactory::MakePin(args);
         }
 
         if(info.pinNumber==FixedPinNumber::bypass) {
             args.listValues = &listBypass;
             args.defaultVariantValue = "On";
-            args.name = tr("prog");
+            args.name = tr("Bypass");
             return PinFactory::MakePin(args);
         }
 

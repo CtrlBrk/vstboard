@@ -59,10 +59,10 @@ ParameterPin::ParameterPin(const pinConstructArgs &conf) :
 	}
 	else 
 	{
-		value = defaultValue;
+        defaultValue = value;
 		OnValueChanged(defaultValue);
 	}
-		
+
 	loading = false;
 }
 

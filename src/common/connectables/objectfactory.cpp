@@ -189,7 +189,7 @@ QSharedPointer<Object> ObjectFactory::NewObject(const ObjectInfo &info, int cont
                         break;
 
             #ifdef VSTSDK
-                #ifndef __linux__
+                #ifdef VST24SDK
                     case ObjType::VstPlugin:
                         obj = new VstPlugin(myHost,objId, info);
                         break;

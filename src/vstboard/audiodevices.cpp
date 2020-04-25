@@ -23,9 +23,9 @@
 #include "connectables/objectinfo.h"
 #include "mainhosthost.h"
 // #include "pa_asio.h"
-#include "views/mmeconfigdialog.h"
-#include "views/wasapiconfigdialog.h"
-#include "views/directxconfigdialog.h"
+//#include "views/mmeconfigdialog.h"
+//#include "views/wasapiconfigdialog.h"
+//#include "views/directxconfigdialog.h"
 #include "connectables/audiodevicein.h"
 #include "connectables/audiodeviceout.h"
 #include "mainwindow.h"
@@ -76,7 +76,7 @@ AudioDevices::AudioDevices(MainHostHost *myHost, MsgController *msgCtrl, int obj
 //    countActiveDevices(0),
     fakeRenderTimer(0),
     closing(false),
-    paOpened(false),
+//    paOpened(false),
     myHost(myHost)
 {
     fakeRenderTimer = new FakeTimer(myHost);
@@ -151,15 +151,15 @@ void AudioDevices::OpenDevices()
 
 
 
-    paOpened=true;
-    std::vector<RtAudio::Api> apis;
-    RtAudio::getCompiledApi( apis );
-    int numDevices = apis.size();
+//    paOpened=true;
+//    std::vector<RtAudio::Api> apis;
+//    RtAudio::getCompiledApi( apis );
+//    int numDevices = apis.size();
 //    numDevices = Pa_GetDeviceCount();
-    if( numDevices < 0 )
-    {
-        printf( "ERROR: Pa_CountDevices returned 0x%x\n", numDevices );
-    }
+//    if( numDevices < 0 )
+//    {
+//        printf( "ERROR: Pa_CountDevices returned 0x%x\n", numDevices );
+//    }
 
 	{
 		QMutexLocker l(&mutexClosing);
@@ -248,26 +248,23 @@ void AudioDevices::BuildModel()
 //    for (int i = 0; i < Pa_GetHostApiCount(); ++i) {
     for (size_t i = 0; i < apis.size() ; ++i) {
 //        const PaHostApiInfo *apiInfo = Pa_GetHostApiInfo(i);
-        const std::string name = RtAudio::getApiName(apis[i]);
-        if (name.empty()) {
-
-        }
 //        _MSGOBJ(msgApi,(int)apiInfo->type);
 //        msgApi.prop[MsgObject::Name]=apiInfo->name;
-        _MSGOBJ(msgApi,i);
-        msgApi.prop[MsgObject::Name]=QString::fromStdString(name);
+        _MSGOBJ(msgApi,apis[i]);
+        QString apiName = QString::fromStdString( RtAudio::getApiName(apis[i]) );
+        msgApi.prop[MsgObject::Name] = apiName;
 
-        RtAudio audio;
+        RtAudio audio(apis[i]);
         RtAudio::DeviceInfo info;
         unsigned int devices = audio.getDeviceCount();
 
         //an api can contain multiple devices with the same name
-        QString lastName;
-        int cptDuplicateNames=0;
+//        QString lastName;
+//        int cptDuplicateNames=0;
 
 //        for (int j=0; j<apiInfo->deviceCount; j++) {
         for (unsigned int j=0; j<devices; j++) {
-            info = audio.getDeviceInfo(i);
+            info = audio.getDeviceInfo(j);
 
 //            PaDeviceIndex devIndex = Pa_HostApiDeviceIndexToDeviceIndex(i, j);
 //            const PaDeviceInfo *devInfo = Pa_GetDeviceInfo( devIndex );
@@ -300,7 +297,8 @@ void AudioDevices::BuildModel()
             obj.objType = ObjType::AudioInterface;
             obj.id = j;
             obj.name = QString::fromStdString(info.name);
-            obj.api = i;
+            obj.api = apis[i];
+            obj.apiName = apiName;
 //            obj.duplicateNamesCounter = cptDuplicateNames;
             obj.inputs = info.inputChannels;
             obj.outputs = info.outputChannels;
@@ -323,43 +321,44 @@ void AudioDevices::BuildModel()
   \param opened true if opened, false if closed
   */
 //void AudioDevices::OnToggleDeviceInUse(PaHostApiIndex apiId, PaDeviceIndex devId, bool inUse, PaTime /*inLatency*/, PaTime /*outLatency*/, double /*sampleRate*/)
-//{
-//    bool oldState = listOpenedDevices.contains(apiId*1000+devId);
-//    if(oldState == inUse)
-//        return;
+void AudioDevices::OnToggleDeviceInUse(int apiId, int devId, bool inUse)
+{
+    bool oldState = listOpenedDevices.contains(apiId*1000+devId);
+    if(oldState == inUse)
+        return;
 
-//    if(inUse) {
-//        listOpenedDevices << apiId*1000+devId;
-//    } else {
-//        listOpenedDevices.removeAll(apiId*1000+devId);
-//    }
+    if(inUse) {
+        listOpenedDevices << apiId*1000+devId;
+    } else {
+        listOpenedDevices.removeAll(apiId*1000+devId);
+    }
 
-//    //the renderer is normally launched when all the audio devices are ready,
-//    //if there is no audio device we have to run a timer
-//    if(!listOpenedDevices.isEmpty()) {
-//       // myHost->SetBufferSize(1);
-//        if(fakeRenderTimer) {
-//            delete fakeRenderTimer;
-//            fakeRenderTimer=0;
-//        }
-//    } else {
-//        myHost->SetBufferSizeMs(FAKE_RENDER_TIMER_MS);
-//        if(!fakeRenderTimer && !closing) {
-//            fakeRenderTimer = new FakeTimer(myHost);
+    //the renderer is normally launched when all the audio devices are ready,
+    //if there is no audio device we have to run a timer
+    if(!listOpenedDevices.isEmpty()) {
+       // myHost->SetBufferSize(1);
+        if(fakeRenderTimer) {
+            delete fakeRenderTimer;
+            fakeRenderTimer=0;
+        }
+    } else {
+        myHost->SetBufferSizeMs(FAKE_RENDER_TIMER_MS);
+        if(!fakeRenderTimer && !closing) {
+            fakeRenderTimer = new FakeTimer(myHost);
 
-//            if(!listAudioDevices.isEmpty() && !timerRefreshDevices.isActive()) {
-//                //we need some devices but none can be initilized : try again
-//                timerRefreshDevices.start();
-//            }
-//        }
-//    }
+            if(!listAudioDevices.isEmpty() && !timerRefreshDevices.isActive()) {
+                //we need some devices but none can be initilized : try again
+                timerRefreshDevices.start();
+            }
+        }
+    }
 
-//    MSGOBJ();
-//    msg.prop[MsgObject::State]=inUse;
-//    msg.prop[MsgObject::Group]=apiId;
-//    msg.prop[MsgObject::Id]=devId;
-//    msgCtrl->SendMsg(msg);
-//}
+    MSGOBJ();
+    msg.prop[MsgObject::State]=inUse;
+    msg.prop[MsgObject::Group]=apiId;
+    msg.prop[MsgObject::Id]=devId;
+    msgCtrl->SendMsg(msg);
+}
 
 Connectables::AudioDevice * AudioDevices::AddDevice(ObjectInfo &objInfo)
 {
@@ -413,6 +412,32 @@ void AudioDevices::PutPinsBuffersInRingBuffers()
 
 }
 #endif
+
+RtAudio::Api AudioDevices::GetApiByName(const std::string &apiName)
+{
+    std::vector<RtAudio::Api> apis;
+    RtAudio::getCompiledApi( apis );
+
+    for (size_t i = 0; i < apis.size() ; ++i) {
+        if(apiName == RtAudio::getApiName(apis[i]))
+            return apis[i];
+    }
+
+    return RtAudio::UNSPECIFIED;
+}
+
+int AudioDevices::GetDevIdByName(quint8 apiId, const std::string &devName)
+{
+    RtAudio ra( (RtAudio::Api)apiId );
+    for(uint i=0; i<ra.getDeviceCount(); i++) {
+        RtAudio::DeviceInfo info = ra.getDeviceInfo(i);
+        if(info.name == devName)
+            return i;
+    }
+
+    return -1;
+}
+
 /*!
   Try to find a device in the list returned by PortAudio
   \param[in] objInfo the ObjectInfo we're looking for

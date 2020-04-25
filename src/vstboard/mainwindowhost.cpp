@@ -55,6 +55,8 @@ void MainWindowHost::Init()
     ui->treeAudioInterfaces->header()->resizeSection(2,30);
     ui->treeAudioInterfaces->header()->resizeSection(3,40);
 
+    connect(ui->treeAudioInterfaces, SIGNAL(UpdateList()),
+            this, SLOT(UpdateAudioDevices()));
     listAudioDevModel->Update();
 
     //midi devices

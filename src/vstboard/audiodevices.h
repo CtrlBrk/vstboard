@@ -68,6 +68,8 @@ public:
 
 //    bool FindPortAudioDevice(ObjectInfo &objInfo, PaDeviceInfo *dInfo);
     void ReceiveMsg(const MsgObject &msg);
+    static RtAudio::Api GetApiByName(const std::string &apiName);
+    static int GetDevIdByName(quint8 apiId, const std::string &devName);
 
 private:
     void CloseDevices(bool close=false);
@@ -84,7 +86,7 @@ private:
 
     /// model pointer
 //    ListAudioInterfacesModel *model;
-    bool paOpened;
+//    bool paOpened;
 
     /// number of opened devices
 //    int countActiveDevices;
@@ -101,6 +103,7 @@ private:
 
 public slots:
 //    void OnToggleDeviceInUse(PaHostApiIndex apiId, PaDeviceIndex devId, bool inUse, PaTime inLatency=0, PaTime outLatency=0, double sampleRate=0);
+    void OnToggleDeviceInUse(int apiId, int devId, bool inUse);
     void ConfigDevice(const ObjectInfo &info);
 
 private slots:

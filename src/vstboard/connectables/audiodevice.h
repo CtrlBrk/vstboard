@@ -111,7 +111,7 @@ namespace Connectables {
 
         /// pointer to PortAudio stream
 //        PaStream *stream;
-        RtAudio audio;
+        RtAudio *rtdevice;
 
         /// PortAudio device informations
 //        PaDeviceInfo devInfo;
@@ -179,6 +179,7 @@ namespace Connectables {
           \param inUse true if the device is in use
           */
 //        void InUseChanged(PaHostApiIndex apiId,PaDeviceIndex devId, bool inUse, PaTime inLatency=0, PaTime outLatency=0, double sampleRate=0);
+        void InUseChanged(int api,int devId,bool inUse);
         void DebugGraphUpdated(QVector<float> grph);
 
     public slots:

@@ -148,6 +148,7 @@ void AudioDeviceOut::SetRingBufferFromPins(QList<CircularBuffer*>listCircularBuf
 //            .arg(buf->buffSize)
 //            );
 
+
         if(pinBuf->GetDoublePrecision())
             buf->Put( (double*)pinBuf->ConsumeStack(), pinBuf->GetSize() );
         else

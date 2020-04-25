@@ -61,7 +61,7 @@ public:
     void Open();
 
 #ifdef VSTSDK
-    #ifndef __linux__
+    #ifdef VST24SDK
         void SetTimeInfo(const VstTimeInfo *info);
     #endif
 #endif
@@ -99,7 +99,7 @@ public:
     MainWindow *mainWindow;
 
 #ifdef VSTSDK
-    #ifndef __linux__
+    #ifdef VST24SDK
         vst::CVSTHost *vstHost;
     #endif
     static int vstUsersCounter;

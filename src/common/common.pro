@@ -37,48 +37,9 @@ win32 {
 
 }
 
-#    SOURCES += $$VST3SDK_PATH/base/source/fobject.cpp \
-#        $$VST3SDK_PATH/base/source/fstring.cpp \
-##        $$VST3SDK_PATH/base/source/fatomic.cpp \
-#        $$VST3SDK_PATH/base/source/updatehandler.cpp \
-#        $$VST3SDK_PATH/base/source/fdebug.cpp \
-#        $$VST3SDK_PATH/base/source/baseiids.cpp \
-#        $$VST3SDK_PATH/base/thread/source/flock.cpp \
-#        $$VST3SDK_PATH/pluginterfaces/base/ustring.cpp \
-#        $$VST3SDK_PATH/pluginterfaces/base/funknown.cpp \
-#        $$VST3SDK_PATH/pluginterfaces/base/coreiids.cpp \
-#        $$VST3SDK_PATH/pluginterfaces/base/conststringtable.cpp \
-#        $$VST3SDK_PATH/public.sdk/source/vst/vstinitiids.cpp \
-##        $$VST3SDK_PATH/public.sdk/source/main/pluginfactoryvst3.cpp \
-#        $$VST3SDK_PATH/public.sdk/source/common/pluginview.cpp \
-#        $$VST3SDK_PATH/public.sdk/source/common/memorystream.cpp \
-#        $$VST3SDK_PATH/public.sdk/source/vst/vstaudioeffect.cpp \
-#        $$VST3SDK_PATH/public.sdk/source/vst/vstcomponent.cpp \
-#        $$VST3SDK_PATH/public.sdk/source/vst/vstcomponentbase.cpp \
-##        $$VST3SDK_PATH/public.sdk/source/vst/vstguieditor.cpp \
-#        $$VST3SDK_PATH/public.sdk/source/vst/vstparameters.cpp \
-#        $$VST3SDK_PATH/public.sdk/source/vst/vstbus.cpp \
-#        $$VST3SDK_PATH/public.sdk/source/vst/vsteditcontroller.cpp \
-#        $$VST3SDK_PATH/public.sdk/source/vst/vstinitiids.cpp \
-#        $$VST3SDK_PATH/public.sdk/source/vst/hosting/hostclasses.cpp \
-#        $$VST3SDK_PATH/public.sdk/source/vst/hosting/processdata.cpp \
-#        $$VST3SDK_PATH/public.sdk/source/vst/hosting/pluginterfacesupport.cpp \
-#        $$VST3SDK_PATH/public.sdk/source/vst/hosting/parameterchanges.cpp
-
-
     FORMS += views/vstpluginwindow.ui \
         views/vstshellselect.ui
 }
-
-#scriptengine {
-#    SOURCES += connectables/script.cpp \
-#        views/scripteditor.cpp \
-
-#    HEADERS += connectables/script.h \
-#        views/scripteditor.h \
-
-#    FORMS += views/scripteditor.ui
-#}
 
 SOURCES += \
     connectables/objectcontainerattribs.cpp \

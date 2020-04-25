@@ -11,7 +11,7 @@
 #include "public.sdk/source/vst/hosting/hostclasses.h"
 #include "pluginterfaces/vst/ivstprocesscontext.h"
 #include "pluginterfaces/vst/vsttypes.h"
-#ifndef __linux__
+#ifdef VST24SDK
     #include "pluginterfaces/vst2.x/aeffectx.h"
 #endif
 #ifdef _MSC_VER

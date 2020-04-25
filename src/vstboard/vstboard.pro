@@ -9,7 +9,12 @@ TARGET = "VstBoard"
 #LIBS += -lportaudio
 LIBS += -lportmidi
 
-LIBS += -lrtaudio
+CONFIG(debug, debug|release) {
+    LIBS += -lrtaudiod
+} else {
+    LIBS += -lrtaudio
+}
+
 INCLUDEPATH += $$RTAUDIO
 
 win32 {
@@ -71,20 +76,20 @@ HEADERS += \
     views/configdialoghost.h \
 
 
-win32 {
-SOURCES += views/directxconfigdialog.cpp \
-    views/mmeconfigdialog.cpp \
-    views/wasapiconfigdialog.cpp
+#win32 {
+#SOURCES += views/directxconfigdialog.cpp \
+#    views/mmeconfigdialog.cpp \
+#    views/wasapiconfigdialog.cpp
 
-HEADERS += views/directxconfigdialog.h \
-    views/mmeconfigdialog.h \
-    views/wasapiconfigdialog.h
+#HEADERS += views/directxconfigdialog.h \
+#    views/mmeconfigdialog.h \
+#    views/wasapiconfigdialog.h
 
-FORMS += \
-    views/directxconfigdialog.ui \
-    views/mmeconfigdialog.ui \
-    views/wasapiconfigdialog.ui
-}
+#FORMS += \
+#    views/directxconfigdialog.ui \
+#    views/mmeconfigdialog.ui \
+#    views/wasapiconfigdialog.ui
+#}
 
 #TRANSLATIONS = ../resources/translations/vstboard_fr.ts
 
