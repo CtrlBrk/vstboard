@@ -525,12 +525,6 @@ bool AudioDevice::Open()
 
     SetErrorMsg("");
 
-    //get portaudio infos
-//    if(!myHost->audioDevices->FindPortAudioDevice(objInfo, &devInfo)) {
-//        SetErrorMsg( tr("Device not found") );
-//        return false;
-//    }
-
     RtAudio::Api apiId = AudioDevices::GetApiByName( objInfo.apiName.toStdString() );
     if(apiId == RtAudio::UNSPECIFIED) {
         SetErrorMsg( tr("Api %1 not found").arg(objInfo.apiName) );

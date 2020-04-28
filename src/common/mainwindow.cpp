@@ -116,8 +116,7 @@ void MainWindow::Init()
     ui->Programs->SetModel(progModel);
     progModel->Update();
 
-//    SetupBrowsersModels( ConfigDialog::defaultVstPath(settings), ConfigDialog::defaultBankPath(settings));
-    SetupBrowsersModels( QDir::homePath() + "/Library/Audio/Plug-Ins", QDir::homePath());
+    SetupBrowsersModels( ConfigDialog::defaultVstPath(settings), ConfigDialog::defaultBankPath(settings));
 
     mySceneView = new View::SceneView(this, this, FixedObjId::mainContainer, ui->hostView, ui->projectView, ui->programView, ui->groupView, this);
     mySceneView->SetParkings(ui->programParkList, ui->groupParkList);

@@ -26,9 +26,8 @@ using namespace Connectables;
 
 MidiDevice::MidiDevice(MainHost *myHost,int index, const ObjectInfo &info) :
         Object(myHost,index, info),
-//        stream(0),
-//        queue(0),
-//        devInfo(0),
+        deviceIn(0),
+        deviceOut(0),
         deviceOpened(false)
 {
 }
@@ -43,23 +42,31 @@ void MidiDevice::Render()
     if(!deviceOpened)
         return;
 
-//    if(devInfo->input) {
-//        PmEvent buffer;
-//		QMutexLocker objlock(&objMutex);
+    if(deviceIn) {
+        std::vector<unsigned char> message;
+        double stamp = deviceIn->getMessage( &message );
+        int nBytes = message.size();
 
-//        while (Pm_Dequeue(queue, &buffer) == 1) {
-//            foreach(Pin *pin,listMidiPinOut->listPins) {
-//                pin->SendMsg(PinMessage::MidiMsg,(void*)&buffer.message);
-//            }
+        for ( int i=0; i<nBytes; i++ ) {
+          std::cout << "Byte " << i << " = " << (int)message[i] << ", ";
+          foreach(Pin *pin,listMidiPinOut->listPins) {
+              pin->SendMsg(PinMessage::MidiMsg,(void*)&message[i]);
+          }
+        }
+
+//        if ( nBytes > 0 ) {
+//          std::cout << "stamp = " << stamp << std::endl;
 //        }
-//    }
+
+    }
 }
 
 void MidiDevice::MidiMsgFromInput(long msg) {
-//    if(devInfo->output) {
-//		QMutexLocker objlock(&objMutex);
-//        Pm_Enqueue(queue,(void*)&msg);
-//    }
+    if(deviceOut) {
+        QMutexLocker objlock(&objMutex);
+        unsigned char* c = (unsigned char*)&msg;
+        deviceOut->sendMessage( c, 3);
+    }
 }
 
 bool MidiDevice::OpenStream()
@@ -67,101 +74,24 @@ bool MidiDevice::OpenStream()
     if(deviceOpened)
         return true;
 
-//	QMutexLocker objlock(&objMutex);
+    QMutexLocker objlock(&objMutex);
 
-//    if(!FindDeviceByName()){
-//        SetErrorMessage( tr("Device not found") );
-//        return false;
-//    }
+    if(deviceOut) {
+        deviceOut->openPort(objInfo.id);
+    }
 
-//    queue = Pm_QueueCreate(QUEUE_SIZE, sizeof(PmEvent));
-//    if(!queue) {
-//        LOG("can't create queue");
-//        return false;
-//    }
+    if(deviceIn) {
+        deviceIn->openPort(objInfo.id);
+        deviceIn->ignoreTypes( false, false, false );
+    }
 
-//    if(objInfo.inputs>0) {
-//        PmError err = Pm_OpenInput(&stream, (PmDeviceID)objInfo.id, 0, 512, 0, 0);
-//        if (err!=pmNoError) {
-//            QString msgTxt;
-//            if(err==pmHostError) {
-//                char msg[255];
-//                Pm_GetHostErrorText(msg,255);
-//                LOG("openInput host error"<<msg);
-//                msgTxt=msg;
-//            } else {
-//                LOG("openInput error"<<Pm_GetErrorText(err));
-//                msgTxt=Pm_GetErrorText(err);
-//            }
-//            SetErrorMessage( tr("Error while opening midi device %1 %2").arg(objInfo.name).arg(msgTxt) );
-//            return false;
-//        }
-
-//        err = Pm_SetFilter(stream, PM_FILT_ACTIVE | PM_FILT_SYSEX | PM_FILT_CLOCK);
-//        if (err!=pmNoError) {
-//            QString msgTxt;
-//            if(err==pmHostError) {
-//                char msg[20];
-//                unsigned int len=20;
-//                Pm_GetHostErrorText(msg,len);
-//                LOG("setFilter host error"<<msg);
-//                msgTxt=msg;
-//            } else {
-//                msgTxt=Pm_GetErrorText(err);
-//                LOG("setFilter error"<<Pm_GetErrorText(err));
-//            }
-//            SetErrorMessage( tr("Error while opening midi device %1 %2").arg(objInfo.name).arg(msgTxt) );
-//            return false;
-//        }
-//    }
-
-//    if(objInfo.outputs>0) {
-//        PmError err = Pm_OpenOutput(&stream, (PmDeviceID)objInfo.id, 0, 512, 0, 0, 0);
-//        if (err!=pmNoError) {
-//            QString msgTxt;
-//            if(err==pmHostError) {
-//                char msg[20];
-//                unsigned int len=20;
-//                Pm_GetHostErrorText(msg,len);
-//                LOG("openInput host error"<<msg);
-//                msgTxt=msg;
-//            } else {
-//                LOG("openInput error"<<Pm_GetErrorText(err));
-//                msgTxt=Pm_GetErrorText(err);
-//            }
-//            SetErrorMessage( tr("Error while opening midi device %1 %2").arg(objInfo.name).arg(msgTxt) );
-//            return false;
-//        }
-//    }
-
-//    deviceOpened=true;
+    deviceOpened=true;
     return true;
 }
 
 bool MidiDevice::CloseStream()
 {
-//    QMutexLocker l(&objMutex);
-
-//    PmError err = pmNoError;
-
-//    if(stream) {
-//        err = Pm_Close(stream);
-//        if(err!=pmNoError) {
-//            LOG("error closing midi port");
-//        }
-//        stream=0;
-//    }
-
-//    if(queue) {
-//        err = Pm_QueueDestroy(queue);
-//        if(err!=pmNoError) {
-//            LOG("error closing midi queue");
-//        }
-//        queue=0;
-//    }
-
     deviceOpened=false;
-
     return true;
 }
 
@@ -173,49 +103,14 @@ bool MidiDevice::Close()
         devCtrl->CloseDevice(this);
 
     CloseStream();
-    return true;
-}
-
-
-bool MidiDevice::FindDeviceByName()
-{
-//    int cptDuplicateNames=0;
-//    int canBe=-1;
-//    int deviceNumber=-1;
-
-//    for(int i=0;i<Pm_CountDevices();i++) {
-//        const PmDeviceInfo *info = Pm_GetDeviceInfo(i);
-//        if(objInfo.apiName == info->interf
-//            && objInfo.name == info->name
-//            && info->input == objInfo.inputs
-//            && info->output == objInfo.outputs) {
-//            //can be this one, but the interface number can change form a comp to another
-//            if(cptDuplicateNames==0)
-//                canBe=i;
-
-//            //we found the same number and the same name
-//            if(objInfo.duplicateNamesCounter == cptDuplicateNames) {
-//                devInfo = info;
-//                deviceNumber = i;
-//                break;
-//            }
-//            cptDuplicateNames++;
-//        }
-//    }
-
-//    //didn't found an exact match
-//    if(deviceNumber==-1) {
-//        //but we found a device with the same name
-//        if(canBe!=-1) {
-//            deviceNumber=canBe;
-//            devInfo = Pm_GetDeviceInfo(deviceNumber);
-//        } else {
-//            SetErrorMessage( tr("Error : device was deleted") );
-//            return false;
-//        }
-//    }
-
-//    objInfo.id = deviceNumber;
+    if(deviceIn) {
+        delete deviceIn;
+        deviceIn=0;
+    }
+    if(deviceOut) {
+        delete deviceOut;
+        deviceOut=0;
+    }
     return true;
 }
 
@@ -224,18 +119,33 @@ bool MidiDevice::Open()
     SetErrorMessage("");
     closed=false;
 
-    //device not found, create a dummy object
-    if(!FindDeviceByName()){
-        SetErrorMessage( tr("Device not found") );
+    RtMidi::Api apiId = MidiDevices::GetApiByName( objInfo.apiName.toStdString() );
+    if(apiId == RtMidi::UNSPECIFIED) {
+        SetErrorMessage( tr("Api %1 not found").arg(objInfo.apiName) );
         return true;
+    }
+    objInfo.api = apiId;
+
+    int devId = MidiDevices::GetDevIdByName( objInfo );
+    if(devId == -1) {
+        SetErrorMessage( tr("Device %1:%2 not found").arg(objInfo.apiName).arg(objInfo.name) );
+        return true;
+    }
+    objInfo.id = devId;
+
+    if(objInfo.inputs>0) {
+        deviceIn = new RtMidiIn( (RtMidi::Api)objInfo.api);
+        listMidiPinOut->ChangeNumberOfPins(1);
+    }
+    if(objInfo.outputs>0) {
+        deviceOut = new RtMidiOut( (RtMidi::Api)objInfo.api);
+        listMidiPinIn->ChangeNumberOfPins(1);
     }
 
     //error while opening device, delete it now
     if(!OpenStream()) {
         return true;
     }
-//    listMidiPinOut->ChangeNumberOfPins(devInfo->input);
-//    listMidiPinIn->ChangeNumberOfPins(devInfo->output);
 
     Object::Open();
 

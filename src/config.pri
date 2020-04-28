@@ -18,6 +18,8 @@ INCLUDEPATH += $${UI_DIR}
 
 RTAUDIO = ../../libs/rtaudio
 RTAUDIO_LIB = ../../build-rtaudio-64bit-Debug
+RTMIDI = ../../libs/rtmidi
+RTMIDI_LIB = ../../build-rtmidi-64bit-Debug
 # PORTAUDIO_PATH 	= ../../libs/portaudio
 # PORTMIDI_PATH 	= ../../libs/portmidi
 

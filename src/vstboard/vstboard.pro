@@ -6,11 +6,13 @@ QT += core gui widgets
 TEMPLATE = app
 TARGET = "VstBoard"
 
+LIBS += -L$$RTMIDI_LIB -lrtmidi
 LIBS += -L$$RTAUDIO_LIB -lrtaudio
 LIBS += -L$$VST3SDK_LIB -lbase
 LIBS += -L$$VST3SDK_LIB -lpluginterfaces
 LIBS += -L$$VST3SDK_LIB -lsdk
 
+INCLUDEPATH += $$RTMIDI
 INCLUDEPATH += $$RTAUDIO
 
 win32 {
@@ -112,7 +114,7 @@ SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/connectionproxy.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/hostclasses.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/pluginterfacesupport.cpp
 
-LIBDEPS = common #portmidi
+LIBDEPS = common
 for(a, LIBDEPS) {
     LIBS += -L$$DESTDIR -l$${a}
     PRE_TARGETDEPS += $$DESTDIR/$${LIBPREFIX}$${a}.$${LIBEXT}

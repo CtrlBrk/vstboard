@@ -21,6 +21,8 @@
 #include "connectables/objectinfo.h"
 #include "mainhosthost.h"
 
+#include "RtMidi.h"
+
 //QList< QSharedPointer<Connectables::MidiDevice> >MidiDevices::listOpenedMidiDevices;
 //QMutex MidiDevices::mutexListMidi;
 
@@ -134,37 +136,158 @@ void MidiDevices::BuildModel()
     MSGOBJ();
     msg.prop[MsgObject::Update]=1;
 
-    QString lastName;
-    int cptDuplicateNames=0;
+//    QString lastName;
+//    int cptDuplicateNames=0;
 
-//    for(int i=0;i<Pm_CountDevices();i++) {
-//        const PmDeviceInfo *devInfo = Pm_GetDeviceInfo(i);
 
-//        QString devName= QString::fromLocal8Bit(devInfo->name);
-//        if(lastName == devName) {
-//            cptDuplicateNames++;
-//        } else {
-//            cptDuplicateNames=0;
-//        }
-//        lastName = devName;
+    std::vector<RtMidi::Api> apis;
+    RtMidi::getCompiledApi( apis );
 
-//        ObjectInfo obj;
-//        obj.nodeType = NodeType::object;
-//        obj.objType = ObjType::MidiInterface;
-//        obj.id = i;
-//        obj.name = devName;
-//        obj.apiName = QString::fromLocal8Bit(devInfo->interf );
-//        obj.duplicateNamesCounter = cptDuplicateNames;
-//        obj.inputs = devInfo->input;
-//        obj.outputs = devInfo->output;
+    for (size_t i = 0; i < apis.size() ; ++i) {
+        _MSGOBJ(msgApi,apis[i]);
+        QString apiName = QString::fromStdString( RtMidi::getApiName(apis[i]) );
+        msgApi.prop[MsgObject::Name] = apiName;
 
-//        MsgObject msgDevice;
-//        msgDevice.prop[MsgObject::Name]=devName;
-//        msgDevice.prop[MsgObject::ObjInfo]=QVariant::fromValue(obj);
-//        msgDevice.prop[MsgObject::State]=(bool)listOpenedDevices.contains(obj.id);
-//        msg.children << msgDevice;
-//    }
-//    msgCtrl->SendMsg(msg);
+        //midi IN
+        RtMidiIn  *midiin = 0;
+        try {
+          midiin = new RtMidiIn(apis[i]);
+        }
+        catch ( RtMidiError &error ) {
+          error.printMessage();
+          return;
+        }
+
+        unsigned int nPorts = midiin->getPortCount();
+        std::string portName;
+        for ( unsigned int j=0; j<nPorts; j++ ) {
+          try {
+            portName = midiin->getPortName(j);
+          }
+          catch ( RtMidiError &error ) {
+            error.printMessage();
+            delete midiin;
+            return;
+          }
+            QString devName= QString::fromStdString(portName);
+//            if(lastName == devName) {
+//                cptDuplicateNames++;
+//            } else {
+//                cptDuplicateNames=0;
+//            }
+//            lastName = devName;
+
+            ObjectInfo obj;
+            obj.nodeType = NodeType::object;
+            obj.objType = ObjType::MidiInterface;
+            obj.id = j;
+            obj.name = devName;
+            obj.api = apis[i];
+            obj.apiName = apiName;
+//            obj.duplicateNamesCounter = cptDuplicateNames;
+            obj.inputs = 1;
+            obj.outputs = 0;
+
+            MsgObject msgDevice;
+            msgDevice.prop[MsgObject::Name]=devName;
+            msgDevice.prop[MsgObject::ObjInfo]=QVariant::fromValue(obj);
+            msgDevice.prop[MsgObject::State]=(bool)listOpenedDevices.contains(obj.id);
+            msg.children << msgDevice;
+        }
+
+        //midi OUT
+        RtMidiOut *midiout = 0;
+        try {
+          midiout = new RtMidiOut(apis[i]);
+        }
+        catch ( RtMidiError &error ) {
+          error.printMessage();
+          return;
+        }
+
+        nPorts = midiout->getPortCount();
+        for ( unsigned int j=0; j<nPorts; j++ ) {
+          try {
+            portName = midiout->getPortName(j);
+          }
+          catch ( RtMidiError &error ) {
+            error.printMessage();
+            delete midiout;
+            return;
+          }
+            QString devName= QString::fromStdString(portName);
+//            if(lastName == devName) {
+//                cptDuplicateNames++;
+//            } else {
+//                cptDuplicateNames=0;
+//            }
+//            lastName = devName;
+
+            ObjectInfo obj;
+            obj.nodeType = NodeType::object;
+            obj.objType = ObjType::MidiInterface;
+            obj.id = j;
+            obj.name = devName;
+            obj.api = apis[i];
+            obj.apiName = apiName;
+//            obj.duplicateNamesCounter = cptDuplicateNames;
+            obj.inputs = 0;
+            obj.outputs = 1;
+
+            MsgObject msgDevice;
+            msgDevice.prop[MsgObject::Name]=devName;
+            msgDevice.prop[MsgObject::ObjInfo]=QVariant::fromValue(obj);
+            msgDevice.prop[MsgObject::State]=(bool)listOpenedDevices.contains(obj.id);
+            msg.children << msgDevice;
+        }
+
+        if(midiin) {
+            delete midiin;
+            midiin = 0;
+        }
+        if(midiout) {
+            delete midiout;
+            midiout = 0;
+        }
+    }
+
+    msgCtrl->SendMsg(msg);
+}
+
+
+RtMidi::Api MidiDevices::GetApiByName(const std::string &apiName)
+{
+    std::vector<RtMidi::Api> apis;
+    RtMidi::getCompiledApi( apis );
+
+    for (size_t i = 0; i < apis.size() ; ++i) {
+        if(apiName == RtMidi::getApiName(apis[i]))
+            return apis[i];
+    }
+
+    return RtMidi::UNSPECIFIED;
+}
+
+int MidiDevices::GetDevIdByName(const ObjectInfo &objInfo)
+{
+    if(objInfo.inputs>0) {
+        RtMidiIn rm( (RtMidi::Api)objInfo.api);
+        for(uint i=0; i<rm.getPortCount(); i++) {
+            if(objInfo.name.toStdString() == rm.getPortName(i)) {
+                return i;
+            }
+        }
+    }
+    if(objInfo.outputs>0) {
+        RtMidiOut rm( (RtMidi::Api)objInfo.api);
+        for(uint i=0; i<rm.getPortCount(); i++) {
+            if(objInfo.name.toStdString() == rm.getPortName(i)) {
+                return i;
+            }
+        }
+    }
+
+    return -1;
 }
 
 void MidiDevices::ReceiveMsg(const MsgObject &msg)

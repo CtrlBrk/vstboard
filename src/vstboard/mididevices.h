@@ -40,6 +40,9 @@ public:
     void OpenDevice(Connectables::MidiDevice* objPtr);
     void CloseDevice(Connectables::MidiDevice* objPtr);
 
+    static RtMidi::Api GetApiByName(const std::string &apiName);
+    static int GetDevIdByName(const ObjectInfo &objInfo);
+
     void ReceiveMsg(const MsgObject &msg);
 private:
     void OpenDevices();

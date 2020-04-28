@@ -243,9 +243,13 @@ const QString ConfigDialog::defaultVstPath(Settings *settings)
 {
     QString vstPathType = settings->GetSetting("defaultVstPath","fromLastSession").toString();
 
+#ifdef __APPLE__
+    QString defaultPath =  QDir::homePath() + "/Library/Audio/Plug-Ins";
+#else
     QSettings vstSettings("HKEY_LOCAL_MACHINE\\Software\\VST", QSettings::NativeFormat);
     QString defaultPath = vstSettings.value("VSTPluginsPath", "").toString();
     defaultPath.replace("\\","/");
+#endif
 
     QString lastPath = settings->GetSetting("lastVstPath", "").toString();
 
