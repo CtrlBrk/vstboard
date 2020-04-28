@@ -126,7 +126,7 @@ bool MidiDevice::Open()
     }
     objInfo.api = apiId;
 
-    int devId = MidiDevices::GetDevIdByName( objInfo );
+    int devId = MidiDevices::GetDevIdByName( apiId, objInfo.name.toStdString(), objInfo.inputs);
     if(devId == -1) {
         SetErrorMessage( tr("Device %1:%2 not found").arg(objInfo.apiName).arg(objInfo.name) );
         return true;

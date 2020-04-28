@@ -203,7 +203,7 @@ namespace FixedPinNumber {
     };
 }
 
-#define MidiMessage(status, data1, data2) \
+#define MidiMsg(status, data1, data2) \
          ((((data2) << 16) & 0xFF0000) | \
           (((data1) << 8) & 0xFF00) | \
           ((status) & 0xFF))

@@ -41,7 +41,7 @@ public:
     quint16 inputs;
     quint16 outputs;
     quint16 duplicateNamesCounter;
-    quint8 api;
+    quint16 api;
     QString apiName;
     qint32 forcedObjId;
     long initDelay;

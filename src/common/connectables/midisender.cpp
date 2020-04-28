@@ -85,7 +85,7 @@ void MidiSender::Render()
 
     status |= channel;
 
-    midiMsg = MidiMessage(status, value1, value2);
+    midiMsg = MidiMsg(status, value1, value2);
 
     listMidiPinOut->GetPin(0)->SendMsg(PinMessage::MidiMsg, (void*)&midiMsg);
 }

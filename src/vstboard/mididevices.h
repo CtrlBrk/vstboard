@@ -41,7 +41,7 @@ public:
     void CloseDevice(Connectables::MidiDevice* objPtr);
 
     static RtMidi::Api GetApiByName(const std::string &apiName);
-    static int GetDevIdByName(const ObjectInfo &objInfo);
+    static int GetDevIdByName(RtMidi::Api apiId, const std::string &devName, bool input);
 
     void ReceiveMsg(const MsgObject &msg);
 private:
@@ -49,7 +49,7 @@ private:
     void BuildModel();
 //    static void MidiReceive_poll(PtTimestamp timestamp, void *userData);
     QList< Connectables::MidiDevice* >listOpenedMidiDevices;
-
+    bool GetDeviceInfo(ObjectInfo &obj,MsgObject &msg);
 //    ListMidiInterfacesModel *model;
     bool pmOpened;
 

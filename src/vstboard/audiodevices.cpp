@@ -413,25 +413,25 @@ void AudioDevices::PutPinsBuffersInRingBuffers()
 }
 #endif
 
-RtAudio::Api AudioDevices::GetApiByName(const std::string &apiName)
+int AudioDevices::GetApiByName(const std::string &apiName)
 {
     std::vector<RtAudio::Api> apis;
     RtAudio::getCompiledApi( apis );
 
     for (size_t i = 0; i < apis.size() ; ++i) {
         if(apiName == RtAudio::getApiName(apis[i]))
-            return apis[i];
+            return i;
     }
 
-    return RtAudio::UNSPECIFIED;
+    return -1;
 }
 
-int AudioDevices::GetDevIdByName(quint8 apiId, const std::string &devName)
+int AudioDevices::GetDevIdByName(int apiId, const std::string &devName)
 {
     RtAudio ra( (RtAudio::Api)apiId );
     for(uint i=0; i<ra.getDeviceCount(); i++) {
         RtAudio::DeviceInfo info = ra.getDeviceInfo(i);
-        if(info.name == devName)
+        if(info.name == devName )
             return i;
     }
 

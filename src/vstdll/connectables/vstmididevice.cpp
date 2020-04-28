@@ -83,28 +83,28 @@ void VstMidiDevice::EventFromInput(const Vst::Event &event) {
 			channel = event.noteOn.channel;
 			midiData0 = event.noteOn.pitch;
 			midiData1 = event.noteOn.velocity * 127.f;
-			midiQueue << MidiMessage(channel | status, midiData0, midiData1);
+            midiQueue << MidiMsg(channel | status, midiData0, midiData1);
 			break;
 		case Vst::Event::kNoteOffEvent:
 			status = MidiConst::noteOff;
 			channel = event.noteOff.channel;
 			midiData0 = event.noteOff.pitch;
 			midiData1 = event.noteOff.velocity * 127.f;
-			midiQueue << MidiMessage(channel | status, midiData0, midiData1);
+            midiQueue << MidiMsg(channel | status, midiData0, midiData1);
 			break;
 		case Vst::Event::kPolyPressureEvent:
 			status = MidiConst::aftertouch;
 			channel = event.polyPressure.channel;
 			midiData0 = event.polyPressure.pitch;
 			midiData1 = event.polyPressure.pressure * 127.f;
-			midiQueue << MidiMessage(channel | status, midiData0, midiData1);
+            midiQueue << MidiMsg(channel | status, midiData0, midiData1);
 			break;
 		case Vst::Event::kLegacyMIDICCOutEvent:
 			status = MidiConst::ctrl;
 			channel = event.midiCCOut.channel;
 			midiData0 = event.midiCCOut.value;
 			midiData1 = event.midiCCOut.value2;
-			midiQueue << MidiMessage(channel | status, midiData0, midiData1);
+            midiQueue << MidiMsg(channel | status, midiData0, midiData1);
 			break;
 		case Vst::Event::kDataEvent:
 			//a normal midi msg maybe ?

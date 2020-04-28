@@ -525,8 +525,8 @@ bool AudioDevice::Open()
 
     SetErrorMsg("");
 
-    RtAudio::Api apiId = AudioDevices::GetApiByName( objInfo.apiName.toStdString() );
-    if(apiId == RtAudio::UNSPECIFIED) {
+    int apiId = AudioDevices::GetApiByName( objInfo.apiName.toStdString() );
+    if(apiId == -1) {
         SetErrorMsg( tr("Api %1 not found").arg(objInfo.apiName) );
         return true;
     }

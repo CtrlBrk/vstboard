@@ -131,14 +131,48 @@ void MidiDevices::CloseDevice(Connectables::MidiDevice* objPtr)
     mutexListMidi.unlock();
 }
 
+bool MidiDevices::GetDeviceInfo(ObjectInfo &obj,MsgObject &msg)
+{
+    try {
+        RtMidiIn midiIn( (RtMidi::Api)obj.api);
+        RtMidiIn midiOut( (RtMidi::Api)obj.api);
+
+        RtMidi *dev = 0;
+        if(obj.inputs) {
+
+            dev = &midiIn;
+        } else {
+
+            dev = &midiOut;
+        }
+        unsigned int nPorts = dev->getPortCount();
+        std::string portName;
+        for ( unsigned int j=0; j<nPorts; j++ ) {
+            obj.nodeType = NodeType::object;
+            obj.objType = ObjType::MidiInterface;
+            obj.id = j;
+            obj.name = QString::fromStdString( dev->getPortName(j) );
+
+            MsgObject msgDevice;
+            msgDevice.prop[MsgObject::Name]=obj.name;
+            msgDevice.prop[MsgObject::ObjInfo]=QVariant::fromValue(obj);
+            msgDevice.prop[MsgObject::State]=(bool)listOpenedDevices.contains(obj.id);
+            msg.children << msgDevice;
+        }
+
+    }
+    catch ( RtMidiError &error ) {
+      error.printMessage();
+      return false;
+    }
+
+    return true;
+}
+
 void MidiDevices::BuildModel()
 {
     MSGOBJ();
     msg.prop[MsgObject::Update]=1;
-
-//    QString lastName;
-//    int cptDuplicateNames=0;
-
 
     std::vector<RtMidi::Api> apis;
     RtMidi::getCompiledApi( apis );
@@ -148,109 +182,18 @@ void MidiDevices::BuildModel()
         QString apiName = QString::fromStdString( RtMidi::getApiName(apis[i]) );
         msgApi.prop[MsgObject::Name] = apiName;
 
-        //midi IN
-        RtMidiIn  *midiin = 0;
-        try {
-          midiin = new RtMidiIn(apis[i]);
-        }
-        catch ( RtMidiError &error ) {
-          error.printMessage();
-          return;
-        }
+        ObjectInfo obj;
+        obj.api = apis[i];
+        obj.apiName = apiName;
 
-        unsigned int nPorts = midiin->getPortCount();
-        std::string portName;
-        for ( unsigned int j=0; j<nPorts; j++ ) {
-          try {
-            portName = midiin->getPortName(j);
-          }
-          catch ( RtMidiError &error ) {
-            error.printMessage();
-            delete midiin;
-            return;
-          }
-            QString devName= QString::fromStdString(portName);
-//            if(lastName == devName) {
-//                cptDuplicateNames++;
-//            } else {
-//                cptDuplicateNames=0;
-//            }
-//            lastName = devName;
+        obj.inputs = 1;
+        obj.outputs = 0;
+        GetDeviceInfo( obj, msg );
 
-            ObjectInfo obj;
-            obj.nodeType = NodeType::object;
-            obj.objType = ObjType::MidiInterface;
-            obj.id = j;
-            obj.name = devName;
-            obj.api = apis[i];
-            obj.apiName = apiName;
-//            obj.duplicateNamesCounter = cptDuplicateNames;
-            obj.inputs = 1;
-            obj.outputs = 0;
-
-            MsgObject msgDevice;
-            msgDevice.prop[MsgObject::Name]=devName;
-            msgDevice.prop[MsgObject::ObjInfo]=QVariant::fromValue(obj);
-            msgDevice.prop[MsgObject::State]=(bool)listOpenedDevices.contains(obj.id);
-            msg.children << msgDevice;
-        }
-
-        //midi OUT
-        RtMidiOut *midiout = 0;
-        try {
-          midiout = new RtMidiOut(apis[i]);
-        }
-        catch ( RtMidiError &error ) {
-          error.printMessage();
-          return;
-        }
-
-        nPorts = midiout->getPortCount();
-        for ( unsigned int j=0; j<nPorts; j++ ) {
-          try {
-            portName = midiout->getPortName(j);
-          }
-          catch ( RtMidiError &error ) {
-            error.printMessage();
-            delete midiout;
-            return;
-          }
-            QString devName= QString::fromStdString(portName);
-//            if(lastName == devName) {
-//                cptDuplicateNames++;
-//            } else {
-//                cptDuplicateNames=0;
-//            }
-//            lastName = devName;
-
-            ObjectInfo obj;
-            obj.nodeType = NodeType::object;
-            obj.objType = ObjType::MidiInterface;
-            obj.id = j;
-            obj.name = devName;
-            obj.api = apis[i];
-            obj.apiName = apiName;
-//            obj.duplicateNamesCounter = cptDuplicateNames;
-            obj.inputs = 0;
-            obj.outputs = 1;
-
-            MsgObject msgDevice;
-            msgDevice.prop[MsgObject::Name]=devName;
-            msgDevice.prop[MsgObject::ObjInfo]=QVariant::fromValue(obj);
-            msgDevice.prop[MsgObject::State]=(bool)listOpenedDevices.contains(obj.id);
-            msg.children << msgDevice;
-        }
-
-        if(midiin) {
-            delete midiin;
-            midiin = 0;
-        }
-        if(midiout) {
-            delete midiout;
-            midiout = 0;
-        }
+        obj.inputs = 0;
+        obj.outputs = 1;
+        GetDeviceInfo( obj, msg );
     }
-
     msgCtrl->SendMsg(msg);
 }
 
@@ -268,20 +211,28 @@ RtMidi::Api MidiDevices::GetApiByName(const std::string &apiName)
     return RtMidi::UNSPECIFIED;
 }
 
-int MidiDevices::GetDevIdByName(const ObjectInfo &objInfo)
+int MidiDevices::GetDevIdByName(RtMidi::Api apiId, const std::string &devName, bool input)
 {
-    if(objInfo.inputs>0) {
-        RtMidiIn rm( (RtMidi::Api)objInfo.api);
-        for(uint i=0; i<rm.getPortCount(); i++) {
-            if(objInfo.name.toStdString() == rm.getPortName(i)) {
+    if(input) {
+        RtMidiIn  *rm = 0;
+        try {
+          rm = new RtMidiIn(apiId);
+        }
+        catch ( RtMidiError &error ) {
+          error.printMessage();
+          delete rm;
+          return -1;
+        }
+        //RtMidiIn rm( apiId );
+        for(uint i=0; i<rm->getPortCount(); i++) {
+            if(devName == rm->getPortName(i)) {
                 return i;
             }
         }
-    }
-    if(objInfo.outputs>0) {
-        RtMidiOut rm( (RtMidi::Api)objInfo.api);
+    } else {
+        RtMidiOut rm( apiId );
         for(uint i=0; i<rm.getPortCount(); i++) {
-            if(objInfo.name.toStdString() == rm.getPortName(i)) {
+            if(devName == rm.getPortName(i)) {
                 return i;
             }
         }
