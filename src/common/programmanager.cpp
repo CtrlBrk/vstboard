@@ -420,13 +420,13 @@ int ProgramManager::WaitPromptAnswer(const QString &type)
 
     //wait for answer
     while(promptAnswer==-1) {
-#ifdef __linux__
+#ifdef WIN32
+        Sleep(50);
+#else
         struct timespec r,m;
         r.tv_sec = 0;
         r.tv_nsec = 50 * 1000 * 1000;
         nanosleep(&r,&m);
-#else
-        Sleep(50);
 #endif
         qApp->processEvents();
     }

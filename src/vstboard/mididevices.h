@@ -21,9 +21,9 @@
 #ifndef MIDIDEVICES_H
 #define MIDIDEVICES_H
 
-//#include "precomp.h"
-#include "porttime.h"
-#include "portmidi.h"
+//#include "portmidi.h"
+//#include "porttime.h"
+
 #include "models/listmidiinterfacesmodel.h"
 #include "connectables/mididevice.h"
 
@@ -44,7 +44,7 @@ public:
 private:
     void OpenDevices();
     void BuildModel();
-    static void MidiReceive_poll(PtTimestamp timestamp, void *userData);
+//    static void MidiReceive_poll(PtTimestamp timestamp, void *userData);
     QList< Connectables::MidiDevice* >listOpenedMidiDevices;
 
 //    ListMidiInterfacesModel *model;

@@ -24,6 +24,7 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+
 #include "models/listaudiointerfacesmodel.h"
 #include "models/listmidiinterfacesmodel.h"
 

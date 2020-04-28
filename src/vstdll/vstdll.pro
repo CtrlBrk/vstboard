@@ -2,22 +2,29 @@ include(../config.pri)
 #include(../vstsdk.pri)
 
 QT += core gui widgets
-
+win32 {
 QMAKE_LFLAGS+="/DEF:$${_PRO_FILE_PWD_}/vstboard.def"
-
+OTHER_FILES += vstboard.def
+}
 TARGET = "VstBoardPlugin"
 TEMPLATE = lib
 
 CONFIG += precompile_header
 PRECOMPILED_HEADER = ../common/precomp.h
 
+LIBS += -L$$VST3SDK_LIB -lbase
+LIBS += -L$$VST3SDK_LIB -lpluginterfaces
+LIBS += -L$$VST3SDK_LIB -lsdk
+
 #CONFIG(debug, debug|release) {
 #    LIBS += -L"C:/Program Files (x86)/Visual Leak Detector/lib/" -lvld
 #    INCLUDEPATH += "C:/Program Files (x86)/Visual Leak Detector/include/"
 #}
 
+win32 {
 #    CONFIG += qtwinmigrate-uselib
 include($${_PRO_FILE_PWD_}/../../libs/qtwinmigrate/src/qtwinmigrate.pri)
+}
 
 win32 {
     LIBS += -lwinmm
@@ -81,11 +88,8 @@ RESOURCES += ../resources/resources.qrc
 
 #TRANSLATIONS = ../resources/translations/vstdll_fr.ts
 
-OTHER_FILES += vstboard.def
 
-
-
-LIBDEPS = common base pluginterfaces sdk
+LIBDEPS = common
 for(a, LIBDEPS) {
     LIBS += -L$$DESTDIR -l$${a}
     PRE_TARGETDEPS += $$DESTDIR/$${LIBPREFIX}$${a}.$${LIBEXT}
@@ -93,13 +97,13 @@ for(a, LIBDEPS) {
     DEPENDPATH += $$DESTDIR/$${a}
 }
 
-vst24sdk {
+
     SOURCES += $$VST3SDK_PATH/public.sdk/source/vst2.x/audioeffect.cpp
     SOURCES += $$VST3SDK_PATH/public.sdk/source/vst2.x/audioeffectx.cpp
-}
+
+
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/basewrapper/basewrapper.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/vst2wrapper/vst2wrapper.cpp
-
 
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/eventlist.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/parameterchanges.cpp
@@ -113,7 +117,7 @@ linux-g++{
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module_linux.cpp
 }
 macx{
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module_mac.cpp
+SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module_mac.mm
 }
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/plugprovider.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/common/memorystream.cpp

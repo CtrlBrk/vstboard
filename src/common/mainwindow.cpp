@@ -116,7 +116,8 @@ void MainWindow::Init()
     ui->Programs->SetModel(progModel);
     progModel->Update();
 
-    SetupBrowsersModels( ConfigDialog::defaultVstPath(settings), ConfigDialog::defaultBankPath(settings));
+//    SetupBrowsersModels( ConfigDialog::defaultVstPath(settings), ConfigDialog::defaultBankPath(settings));
+    SetupBrowsersModels( QDir::homePath() + "/Library/Audio/Plug-Ins", QDir::homePath());
 
     mySceneView = new View::SceneView(this, this, FixedObjId::mainContainer, ui->hostView, ui->projectView, ui->programView, ui->groupView, this);
     mySceneView->SetParkings(ui->programParkList, ui->groupParkList);
@@ -300,14 +301,13 @@ void MainWindow::hideEvent(QHideEvent *event)
 
 void MainWindow::SetupBrowsersModels(const QString &vstPath, const QString &browserPath)
 {
-#if !defined(__GNUC__)
+//#if !defined(__GNUC__)
     //vst plugins browser
-    //sse2 crash with gcc ?
 
     listVstPluginsModel = new QFileSystemModel(this);
     listVstPluginsModel->setReadOnly(true);
     listVstPluginsModel->setResolveSymlinks(true);
-    listVstPluginsModel->setNameFilters(QStringList()<< "*.dll" << "*.vst3");
+    listVstPluginsModel->setNameFilters(QStringList()<< "*.dll" << ".vst" << "*.vst3" << "*.fxb" << "*.fxp");
     listVstPluginsModel->setNameFilterDisables(false);
     listVstPluginsModel->setRootPath(vstPath);
     ui->VstBrowser->setModel(listVstPluginsModel);
@@ -320,7 +320,7 @@ void MainWindow::SetupBrowsersModels(const QString &vstPath, const QString &brow
     //    listVstBanksModel->setNameFilterDisables(false);
     listVstBanksModel->setRootPath(browserPath);
     ui->BankBrowser->setModel(listVstBanksModel);
-#endif
+//#endif
 }
 
 MainWindow::~MainWindow()

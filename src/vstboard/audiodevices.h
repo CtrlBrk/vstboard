@@ -23,7 +23,6 @@
 
 #define FAKE_RENDER_TIMER_MS 5
 
-
 #include "RtAudio.h"
 // #include "portaudio.h"
 #include "models/listaudiointerfacesmodel.h"

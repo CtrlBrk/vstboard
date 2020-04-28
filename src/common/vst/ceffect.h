@@ -109,8 +109,8 @@ namespace vst
         virtual void EffEditClose() { if(!bEditOpen) return; EffDispatch(effEditClose); bEditOpen = false; }
         virtual void EffEditIdle() { if (!bEditOpen || bInEditIdle) return; bInEditIdle = true; EffDispatch(effEditIdle); bInEditIdle = false; }
     #if MAC
-        virtual void EffEditDraw(void *ptr) { EffDispatch(nEffect, effEditDraw, 0, 0, ptr); }
-        virtual long EffEditMouse(long index, long value) { return EffDispatch(nEffect, effEditMouse, index, value); }
+        virtual void EffEditDraw(void *ptr) { EffDispatch( effEditDraw, 0, 0, ptr); }
+        virtual long EffEditMouse(long index, long value) { return EffDispatch( effEditMouse, index, value); }
         virtual long EffEditKey(long value) { return EffDispatch(effEditKey, 0, value); }
         virtual void EffEditTop() { EffDispatch(effEditTop); }
         virtual void EffEditSleep() { EffDispatch(effEditSleep); }

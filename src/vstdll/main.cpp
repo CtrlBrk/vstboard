@@ -26,10 +26,10 @@
 
 #pragma warning ( push, 1 )
 #include "pluginterfaces/base/ftypes.h"
-#ifdef VST24SDK
+//#ifdef VST24SDK
     #include "public.sdk/source/vst/vst2wrapper/vst2wrapper.h"
-    #include "vst2shell.h"
-#endif
+//    #include "vst2shell.h"
+//#endif
 #pragma warning ( pop )
 
 #include "ids.h"
@@ -40,7 +40,7 @@ using namespace Steinberg;
 extern bool InitModule();
 extern bool DeinitModule();
 
-#ifdef VST24SDK
+//#ifdef VST24SDK
     //the vst2.4 factory creates kFx & kInstrument classes, vst3 creates kFxInstrument
     extern IPluginFactory* PLUGIN_API GetPluginFactoryVst24();
 
@@ -61,7 +61,7 @@ extern bool DeinitModule();
         }
     }
 
-#endif
+//#endif
 
 
 //#if defined (_MSC_VER) && defined (DEVELOPMENT)

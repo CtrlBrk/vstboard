@@ -35,11 +35,11 @@ MidiDevices::MidiDevices(MainHostHost *myHost, MsgController *msgCtrl, int objId
 
 MidiDevices::~MidiDevices()
 {
-    if(Pt_Started())
-        Pt_Stop();
+//    if(Pt_Started())
+//        Pt_Stop();
 
-    if(pmOpened)
-        Pm_Terminate();
+//    if(pmOpened)
+//        Pm_Terminate();
 
 }
 
@@ -52,32 +52,31 @@ void MidiDevices::OpenDevices()
     }
     mutexListMidi.unlock();
 
-    if(Pt_Started())
-        Pt_Stop();
+//    if(Pt_Started())
+//        Pt_Stop();
 
-    if(pmOpened) {
-        Pm_Terminate();
-//        model->deleteLater();
-        pmOpened=false;
-    }
+//    if(pmOpened) {
+//        Pm_Terminate();
+//        pmOpened=false;
+//    }
 
-    PmError pmRet = Pm_Initialize();
-    if(pmRet!=pmNoError) {
-        QMessageBox msgBox;
-        msgBox.setText(tr("Unable to initialize midi engine : %1").arg( Pm_GetErrorText(pmRet) ));
-        msgBox.setIcon(QMessageBox::Critical);
-        msgBox.exec();
-        return;
-    }
+//    PmError pmRet = Pm_Initialize();
+//    if(pmRet!=pmNoError) {
+//        QMessageBox msgBox;
+//        msgBox.setText(tr("Unable to initialize midi engine : %1").arg( Pm_GetErrorText(pmRet) ));
+//        msgBox.setIcon(QMessageBox::Critical);
+//        msgBox.exec();
+//        return;
+//    }
 
-    PtError ptRet = Pt_Start(1, MidiDevices::MidiReceive_poll,this);
-    if(ptRet!=ptNoError) {
-        QMessageBox msgBox;
-        msgBox.setText(tr("Unable to start midi engine"));
-        msgBox.setIcon(QMessageBox::Critical);
-        msgBox.exec();
-        return;
-    }
+//    PtError ptRet = Pt_Start(1, MidiDevices::MidiReceive_poll,this);
+//    if(ptRet!=ptNoError) {
+//        QMessageBox msgBox;
+//        msgBox.setText(tr("Unable to start midi engine"));
+//        msgBox.setIcon(QMessageBox::Critical);
+//        msgBox.exec();
+//        return;
+//    }
     pmOpened=true;
 
     if(MsgEnabled())
@@ -138,34 +137,34 @@ void MidiDevices::BuildModel()
     QString lastName;
     int cptDuplicateNames=0;
 
-    for(int i=0;i<Pm_CountDevices();i++) {
-        const PmDeviceInfo *devInfo = Pm_GetDeviceInfo(i);
+//    for(int i=0;i<Pm_CountDevices();i++) {
+//        const PmDeviceInfo *devInfo = Pm_GetDeviceInfo(i);
 
-        QString devName= QString::fromLocal8Bit(devInfo->name);
-        if(lastName == devName) {
-            cptDuplicateNames++;
-        } else {
-            cptDuplicateNames=0;
-        }
-        lastName = devName;
+//        QString devName= QString::fromLocal8Bit(devInfo->name);
+//        if(lastName == devName) {
+//            cptDuplicateNames++;
+//        } else {
+//            cptDuplicateNames=0;
+//        }
+//        lastName = devName;
 
-        ObjectInfo obj;
-        obj.nodeType = NodeType::object;
-        obj.objType = ObjType::MidiInterface;
-        obj.id = i;
-        obj.name = devName;
-        obj.apiName = QString::fromLocal8Bit(devInfo->interf );
-        obj.duplicateNamesCounter = cptDuplicateNames;
-        obj.inputs = devInfo->input;
-        obj.outputs = devInfo->output;
+//        ObjectInfo obj;
+//        obj.nodeType = NodeType::object;
+//        obj.objType = ObjType::MidiInterface;
+//        obj.id = i;
+//        obj.name = devName;
+//        obj.apiName = QString::fromLocal8Bit(devInfo->interf );
+//        obj.duplicateNamesCounter = cptDuplicateNames;
+//        obj.inputs = devInfo->input;
+//        obj.outputs = devInfo->output;
 
-        MsgObject msgDevice;
-        msgDevice.prop[MsgObject::Name]=devName;
-        msgDevice.prop[MsgObject::ObjInfo]=QVariant::fromValue(obj);
-        msgDevice.prop[MsgObject::State]=(bool)listOpenedDevices.contains(obj.id);
-        msg.children << msgDevice;
-    }
-    msgCtrl->SendMsg(msg);
+//        MsgObject msgDevice;
+//        msgDevice.prop[MsgObject::Name]=devName;
+//        msgDevice.prop[MsgObject::ObjInfo]=QVariant::fromValue(obj);
+//        msgDevice.prop[MsgObject::State]=(bool)listOpenedDevices.contains(obj.id);
+//        msg.children << msgDevice;
+//    }
+//    msgCtrl->SendMsg(msg);
 }
 
 void MidiDevices::ReceiveMsg(const MsgObject &msg)
@@ -182,52 +181,52 @@ void MidiDevices::ReceiveMsg(const MsgObject &msg)
     }
 }
 
-void MidiDevices::MidiReceive_poll(PtTimestamp timestamp, void *userData)
-{
-    PmEvent buffer;
-    PmError result = pmNoError;
+//void MidiDevices::MidiReceive_poll(PtTimestamp timestamp, void *userData)
+//{
+//    PmEvent buffer;
+//    PmError result = pmNoError;
 
-    MidiDevices *devices = static_cast<MidiDevices*>(userData);
+//    MidiDevices *devices = static_cast<MidiDevices*>(userData);
 
-    QMutexLocker l(&devices->mutexListMidi);
+//    QMutexLocker l(&devices->mutexListMidi);
 
-    foreach(Connectables::MidiDevice* device, devices->listOpenedMidiDevices) {
-        if(device->GetSleep())
-            continue;
+//    foreach(Connectables::MidiDevice* device, devices->listOpenedMidiDevices) {
+//        if(device->GetSleep())
+//            continue;
 
-        if(!device->stream || !device->queue)
-           continue;
+//        if(!device->stream || !device->queue)
+//           continue;
 
-        device->Lock();
+//        device->Lock();
 
-        //it's a midi input
-        if(device->devInfo->input) {
-            do {
-                result = Pm_Poll(device->stream);
-                if (result) {
-                    PmError rslt = (PmError)Pm_Read(device->stream, &buffer, 1);
-                    if (rslt == pmBufferOverflow) {
-                        LOG("midi buffer overflow on"<<device->GetIndex()<<device->objectName());
-                        continue;
-                    }
-                    if(rslt == 1 ) {
-                        Pm_Enqueue(device->queue, &buffer);
-                    } else {
-                        LOG("midi in error on %1 %2"<<device->GetIndex()<<device->objectName());
-                        continue;
-                    }
-                }
-            } while (result);
-        }
+//        //it's a midi input
+//        if(device->devInfo->input) {
+//            do {
+//                result = Pm_Poll(device->stream);
+//                if (result) {
+//                    PmError rslt = (PmError)Pm_Read(device->stream, &buffer, 1);
+//                    if (rslt == pmBufferOverflow) {
+//                        LOG("midi buffer overflow on"<<device->GetIndex()<<device->objectName());
+//                        continue;
+//                    }
+//                    if(rslt == 1 ) {
+//                        Pm_Enqueue(device->queue, &buffer);
+//                    } else {
+//                        LOG("midi in error on %1 %2"<<device->GetIndex()<<device->objectName());
+//                        continue;
+//                    }
+//                }
+//            } while (result);
+//        }
 
-        //it's a midi output
-        if(device->devInfo->output) {
-            while (!Pm_QueueEmpty(device->queue)) {
-                result = Pm_Dequeue(device->queue, &buffer);
-                Pm_Write(device->stream, &buffer, 1);
-            }
-        }
+//        //it's a midi output
+//        if(device->devInfo->output) {
+//            while (!Pm_QueueEmpty(device->queue)) {
+//                result = Pm_Dequeue(device->queue, &buffer);
+//                Pm_Write(device->stream, &buffer, 1);
+//            }
+//        }
 
-        device->Unlock();
-    }
-}
+//        device->Unlock();
+//    }
+//}

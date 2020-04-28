@@ -63,13 +63,13 @@ RendererThread2::~RendererThread2()
     Stop();
 
     while(isRunning()) {
-#ifdef __linux__
+#ifdef WIN32
+        Sleep(50);
+#else
         struct timespec r,m;
         r.tv_sec = 0;
         r.tv_nsec = 50 * 1000 * 1000;
         nanosleep(&r,&m);
-#else
-        Sleep(50);
 #endif
     }
 

@@ -50,11 +50,7 @@
 using namespace Steinberg;
 
 class MainHostVst;
-class VstBoardProcessor : public MainHost
-#ifdef VST24SDK
-        , public Vst::AudioEffect
-#endif
-
+class VstBoardProcessor : public MainHost, public Vst::AudioEffect
 {
     Q_OBJECT
 public:

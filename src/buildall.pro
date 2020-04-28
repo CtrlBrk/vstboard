@@ -2,13 +2,13 @@ include(config.pri)
 
 TEMPLATE    = subdirs
 SUBDIRS     = \
-    portmidi \
+ #   portmidi \
     common \
     vstboard \
 
 vstsdk {
     SUBDIRS += \
- #   vstdll \
+    vstdll \
  #   dllLoader
 }
 

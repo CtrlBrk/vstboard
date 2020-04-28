@@ -48,13 +48,15 @@ void ObjectDropZone::dragEnterEvent( QGraphicsSceneDragDropEvent *event)
             fName = url.toLocalFile();
             info.setFile( fName );
 
-            if ( info.isFile() && info.isReadable() ) {
+            if ( info.isReadable() ) {
                 QString fileType(info.suffix().toLower());
 
                 QStringList acceptedFiles;
                 acceptedFiles << SETUP_FILE_EXTENSION << PROJECT_FILE_EXTENSION;
-#ifdef VSTSDK
-                acceptedFiles << "dll" << "vst3" << "fxb" << "fxp";
+                acceptedFiles << SETUP_JSON_FILE_EXTENSION << SETUP_JSON_BINARY_FILE_EXTENSION;
+                acceptedFiles << PROJECT_JSON_FILE_EXTENSION << PROJECT_JSON_BINARY_FILE_EXTENSION;
+ #ifdef VSTSDK
+                acceptedFiles << "dll" << "vst" << "vst3" << "fxb" << "fxp";
 #endif
                 if( acceptedFiles.contains( info.suffix(), Qt::CaseInsensitive) ) {
                     event->setDropAction(Qt::CopyAction);
@@ -140,7 +142,7 @@ bool ObjectDropZone::TranslateMimeData( const QMimeData * data, MsgObject &msg )
 
 #ifdef VSTSDK
             //vst plugin
-            if ( fileType=="dll" ) {
+            if ( fileType=="dll" || fileType=="vst") {
                 ObjectInfo infoVst;
                 infoVst.nodeType = NodeType::object;
                 infoVst.objType = ObjType::VstPlugin;

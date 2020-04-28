@@ -21,9 +21,9 @@
 #ifndef MIDIDEVICE_H
 #define MIDIDEVICE_H
 
-//#include "precomp.h"
-#include "portmidi.h"
-#include "pmutil.h"
+//#include "portmidi.h"
+//#include "pmutil.h"
+
 #include "connectables/object.h"
 
 #define QUEUE_SIZE 1024
@@ -42,10 +42,10 @@ namespace Connectables {
         void Render();
         void MidiMsgFromInput(long msg);
 
-        PmStream *stream;
-        PmQueue *queue;
+//        PmStream *stream;
+//        PmQueue *queue;
+//        const PmDeviceInfo *devInfo;
 
-        const PmDeviceInfo *devInfo;
         bool OpenStream();
         bool CloseStream();
 

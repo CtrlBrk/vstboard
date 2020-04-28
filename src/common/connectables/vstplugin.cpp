@@ -18,7 +18,7 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 
-#ifdef VST24SDK
+//#ifdef VST24SDK
 
 #include <cstring>
 #include "vstplugin.h"
@@ -1222,4 +1222,4 @@ void VstPlugin::GetInfos(MsgObject &msg)
     msg.prop[MsgObject::Load] = currentBankFile;
 }
 
-#endif
+//#endif

@@ -251,9 +251,9 @@ bool AudioDevice::OpenStream(double sampleRate)
 
     RtAudio::StreamOptions options;
     options.flags = RTAUDIO_NONINTERLEAVED;
-    options.flags |= RTAUDIO_SCHEDULE_REALTIME;
-    options.flags |= RTAUDIO_HOG_DEVICE;
-    options.flags |= RTAUDIO_MINIMIZE_LATENCY;
+//    options.flags |= RTAUDIO_SCHEDULE_REALTIME;
+//    options.flags |= RTAUDIO_HOG_DEVICE;
+//    options.flags |= RTAUDIO_MINIMIZE_LATENCY;
     options.numberOfBuffers = 4; //TODO: user defined
     options.priority = 1;
 
@@ -953,7 +953,8 @@ bool AudioDevice::PinBuffersToDevice( void *outputBuffer, unsigned long framesPe
 	if (devOutClosing || !devOut) {
 		devOutClosing = false;
 
-		for (int i = 0; i < devInfo.maxOutputChannels; i++) {
+        //for (int i = 0; i < devInfo.maxOutputChannels; i++) {
+        for (int i = 0; i < objInfo.outputs; i++) {
             for (unsigned long j = 0; j < framesPerBuffer; j++) {
 				((float **)outputBuffer)[i][j] = .0f;
 			}

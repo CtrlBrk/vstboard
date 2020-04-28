@@ -42,7 +42,9 @@
 VstBoardProcessor::VstBoardProcessor () :
     MainHost(0,0),
     Vst::AudioEffect(),
+#ifdef VST24SDK
     listEvnts(0),
+#endif
     currentProg(0),
     currentGroup(0)
 {
@@ -60,11 +62,12 @@ VstBoardProcessor::VstBoardProcessor () :
 VstBoardProcessor::~VstBoardProcessor()
 {
     //Close();
-
+#ifdef VST24SDK
     if(listEvnts) {
         free(listEvnts);
         listEvnts = 0;
     }
+#endif
 }
 
 void VstBoardProcessor::Init()
@@ -476,6 +479,7 @@ void VstBoardProcessor::removeVstAutomation(Connectables::VstAutomation *dev)
     lstVstAutomation.removeAll(dev);
 }
 
+#ifdef VST24SDK
 VstInt32 VstBoardProcessor::processEvents(VstEvents* events)
 {
     if(!events)
@@ -540,3 +544,4 @@ bool VstBoardProcessor::processOutputEvents()
     }
     return false;
 }
+#endif

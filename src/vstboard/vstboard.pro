@@ -6,9 +6,10 @@ QT += core gui widgets
 TEMPLATE = app
 TARGET = "VstBoard"
 
-#LIBS += -lportaudio
-LIBS += -lportmidi
-LIBS += -lrtaudio
+LIBS += -L$$RTAUDIO_LIB -lrtaudio
+LIBS += -L$$VST3SDK_LIB -lbase
+LIBS += -L$$VST3SDK_LIB -lpluginterfaces
+LIBS += -L$$VST3SDK_LIB -lsdk
 
 INCLUDEPATH += $$RTAUDIO
 
@@ -26,10 +27,6 @@ linux-g++ {
 #    LIBS += -lasound
 #    LIBS += -ljack
 }
-
-#INCLUDEPATH += $$PORTAUDIO_PATH/include
-INCLUDEPATH += $$PORTMIDI_PATH/porttime
-INCLUDEPATH += $$PORTMIDI_PATH/pm_common
 
 INCLUDEPATH += ../common
 
@@ -107,7 +104,7 @@ linux-g++{
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module_linux.cpp
 }
 macx{
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module_mac.cpp
+SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module_mac.mm
 }
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/plugprovider.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/common/memorystream.cpp
@@ -115,10 +112,11 @@ SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/connectionproxy.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/hostclasses.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/pluginterfacesupport.cpp
 
-LIBDEPS = common base pluginterfaces sdk
+LIBDEPS = common #portmidi
 for(a, LIBDEPS) {
     LIBS += -L$$DESTDIR -l$${a}
     PRE_TARGETDEPS += $$DESTDIR/$${LIBPREFIX}$${a}.$${LIBEXT}
     INCLUDEPATH += $$DESTDIR/$${a}
     DEPENDPATH += $$DESTDIR/$${a}
 }
+

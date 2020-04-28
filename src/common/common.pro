@@ -19,7 +19,11 @@ vstsdk {
         connectables/vst3plugin.cpp \
         views/vstpluginwindow.cpp \
 
-win32 {
+    FORMS += views/vstpluginwindow.ui \
+        views/vstshellselect.ui
+}
+
+vst24sdk {
     HEADERS += vst/cvsthost.h \
         vst/ceffect.h \
         vst/const.h \
@@ -34,11 +38,6 @@ win32 {
         vst/vstbankbase.cpp \
         vst/vstprogram.cpp \
         connectables/vstplugin.cpp \
-
-}
-
-    FORMS += views/vstpluginwindow.ui \
-        views/vstshellselect.ui
 }
 
 SOURCES += \

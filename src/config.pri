@@ -17,11 +17,12 @@ UI_DIR = $${DESTDIR}/ui
 INCLUDEPATH += $${UI_DIR}
 
 RTAUDIO = ../../libs/rtaudio
+RTAUDIO_LIB = ../../build-rtaudio-64bit-Debug
 # PORTAUDIO_PATH 	= ../../libs/portaudio
-PORTMIDI_PATH 	= ../../libs/portmidi
+# PORTMIDI_PATH 	= ../../libs/portmidi
 
 #trying to get it to compile, disable vst2.4 on linux for now
-win32|macx {
+win32 |macx{
     CONFIG += vst24sdk
     DEFINES += VST24SDK
 }
@@ -29,8 +30,15 @@ win32|macx {
 CONFIG += vstsdk
 DEFINES += VSTSDK
 
-VST3SDK_PATH = "../../libs/VST_SDK/VST3_SDK"
+VST3SDK_PATH = ../../libs/VST_SDK/VST3_SDK
+VST3SDK_LIB = ../../build-VST3_SDK-64bit-Debug/lib/Debug/
 INCLUDEPATH += $$VST3SDK_PATH
+
+
+macx {
+#vst3 module_mac use std::make_unique
+ CONFIG += c++1z
+}
 
 #deprecated
 #CONFIG += scriptengine
@@ -98,7 +106,7 @@ win32-msvc* {
 }
 
 
-linux-g++ {
+linux-g++|macx {
 #LIBS += -L$${OUT_PWD}
     LIBPREFIX = lib
     LIBEXT = a
