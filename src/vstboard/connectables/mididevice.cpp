@@ -76,21 +76,47 @@ bool MidiDevice::OpenStream()
 
     QMutexLocker objlock(&objMutex);
 
-    if(deviceOut) {
-        deviceOut->openPort(objInfo.id);
+    if(objInfo.inputs>0) {
+        deviceIn = new RtMidiIn( (RtMidi::Api)objInfo.api);
+        listMidiPinOut->ChangeNumberOfPins(1);
+    }
+    if(objInfo.outputs>0) {
+        deviceOut = new RtMidiOut( (RtMidi::Api)objInfo.api);
+        listMidiPinIn->ChangeNumberOfPins(1);
     }
 
-    if(deviceIn) {
-        deviceIn->openPort(objInfo.id);
-        deviceIn->ignoreTypes( false, false, false );
+
+
+    try {
+        if(deviceOut) {
+            deviceOut->openPort(objInfo.id);
+        }
+
+        if(deviceIn) {
+            deviceIn->openPort(objInfo.id);
+            deviceIn->ignoreTypes( false, false, false );
+        }
+
+        deviceOpened=true;
+    } catch (RtMidiError &error ) {
+        error.printMessage();
+        SetErrorMessage( tr("Cannot open device") );
+        return false;
     }
 
-    deviceOpened=true;
     return true;
 }
 
 bool MidiDevice::CloseStream()
 {
+    if(deviceIn) {
+        delete deviceIn;
+        deviceIn=0;
+    }
+    if(deviceOut) {
+        delete deviceOut;
+        deviceOut=0;
+    }
     deviceOpened=false;
     return true;
 }
@@ -103,14 +129,7 @@ bool MidiDevice::Close()
         devCtrl->CloseDevice(this);
 
     CloseStream();
-    if(deviceIn) {
-        delete deviceIn;
-        deviceIn=0;
-    }
-    if(deviceOut) {
-        delete deviceOut;
-        deviceOut=0;
-    }
+
     return true;
 }
 
@@ -119,7 +138,15 @@ bool MidiDevice::Open()
     SetErrorMessage("");
     closed=false;
 
-    RtMidi::Api apiId = MidiDevices::GetApiByName( objInfo.apiName.toStdString() );
+    MidiDevices *devCtrl = static_cast<MainHostHost*>(myHost)->midiDevices;
+//    if(devCtrl) {
+//        if(devCtrl->IsInUse(objInfo)) {
+//            SetErrorMessage( tr("Already in use").arg(objInfo.apiName) );
+//            return true;
+//        }
+//    }
+
+    RtMidi::Api apiId = RtMidi::getCompiledApiByName( objInfo.apiName.toStdString() );
     if(apiId == RtMidi::UNSPECIFIED) {
         SetErrorMessage( tr("Api %1 not found").arg(objInfo.apiName) );
         return true;
@@ -133,14 +160,7 @@ bool MidiDevice::Open()
     }
     objInfo.id = devId;
 
-    if(objInfo.inputs>0) {
-        deviceIn = new RtMidiIn( (RtMidi::Api)objInfo.api);
-        listMidiPinOut->ChangeNumberOfPins(1);
-    }
-    if(objInfo.outputs>0) {
-        deviceOut = new RtMidiOut( (RtMidi::Api)objInfo.api);
-        listMidiPinIn->ChangeNumberOfPins(1);
-    }
+
 
     //error while opening device, delete it now
     if(!OpenStream()) {
@@ -149,7 +169,6 @@ bool MidiDevice::Open()
 
     Object::Open();
 
-    MidiDevices *devCtrl = static_cast<MainHostHost*>(myHost)->midiDevices;
     if(devCtrl)
         devCtrl->OpenDevice(this);
     return true;

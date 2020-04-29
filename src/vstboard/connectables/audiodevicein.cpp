@@ -42,7 +42,7 @@ AudioDeviceIn::AudioDeviceIn(MainHost *myHost,int index, const ObjectInfo &info)
     parentDevice(0)
 {
     doublePrecision=false;
-    listParameterPinOut->AddPin(0);
+//    listParameterPinOut->AddPin(0);
 }
 
 AudioDeviceIn::~AudioDeviceIn()
@@ -73,9 +73,9 @@ void AudioDeviceIn::Render()
 
 
 
-    ParameterPinOut* pin=static_cast<ParameterPinOut*>(listParameterPinOut->listPins.value(0));
-    if(pin)
-        pin->ChangeValue(parentDevice->GetCpuUsage());
+//    ParameterPinOut* pin=static_cast<ParameterPinOut*>(listParameterPinOut->listPins.value(0));
+//    if(pin)
+//        pin->ChangeValue(parentDevice->GetCpuUsage());
 
 }
 
@@ -148,20 +148,20 @@ Pin* AudioDeviceIn::CreatePin(const ConnectionInfo &info)
         return newPin;
     }
 
-    switch(info.direction) {
-        case PinDirection::Output :
-            if(info.pinNumber==0) {
-                ParameterPinOut *pin = new ParameterPinOut(this,0,0,"cpu%");
-                pin->SetLimitsEnabled(false);
-                return pin;
-            }
-            break;
+//    switch(info.direction) {
+//        case PinDirection::Output :
+//            if(info.pinNumber==0) {
+//                ParameterPinOut *pin = new ParameterPinOut(this,0,0,"cpu%");
+//                pin->SetLimitsEnabled(false);
+//                return pin;
+//            }
+//            break;
 
-        default :
-            LOG("wrong PinDirection");
-            return 0;
-            break;
-    }
+//        default :
+//            LOG("wrong PinDirection");
+//            return 0;
+//            break;
+//    }
 
     return 0;
 }

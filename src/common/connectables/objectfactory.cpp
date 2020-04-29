@@ -242,7 +242,9 @@ QSharedPointer<Object> ObjectFactory::NewObject(const ObjectInfo &info, int cont
 //        LOG("objId overflow " << objId << maxId)
 //        return sharedObj;
 //    }
+#ifdef DEBUG_OBJECTS
     LOG("add obj " << objId << obj->objectName())
+#endif
     listObjects.insert(objId,sharedObj.toWeakRef());
     obj->SetSleep(false);
 

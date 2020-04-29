@@ -67,8 +67,7 @@ public:
 
 //    bool FindPortAudioDevice(ObjectInfo &objInfo, PaDeviceInfo *dInfo);
     void ReceiveMsg(const MsgObject &msg);
-    static int GetApiByName(const std::string &apiName);
-    static int GetDevIdByName(int apiId, const std::string &devName);
+    static int GetDevIdByName(RtAudio::Api apiId, const std::string &devName);
 
 private:
     void CloseDevices(bool close=false);

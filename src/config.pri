@@ -14,14 +14,6 @@ RCC_DIR = $${OUT_PWD}
 MOC_DIR = $${OUT_PWD}
 UI_DIR = $${DESTDIR}/ui
 
-INCLUDEPATH += $${UI_DIR}
-
-RTAUDIO = ../../libs/rtaudio
-RTAUDIO_LIB = ../../build-rtaudio-64bit-Debug
-RTMIDI = ../../libs/rtmidi
-RTMIDI_LIB = ../../build-rtmidi-64bit-Debug
-# PORTAUDIO_PATH 	= ../../libs/portaudio
-# PORTMIDI_PATH 	= ../../libs/portmidi
 
 #trying to get it to compile, disable vst2.4 on linux for now
 win32 |macx{
@@ -33,7 +25,20 @@ CONFIG += vstsdk
 DEFINES += VSTSDK
 
 VST3SDK_PATH = ../../libs/VST_SDK/VST3_SDK
-VST3SDK_LIB = ../../build-VST3_SDK-64bit-Debug/lib/Debug/
+RTAUDIO = ../../libs/rtaudio
+RTMIDI = ../../libs/rtmidi
+
+CONFIG(debug, debug|release) {
+    RTAUDIO_LIB = ../../build-rtaudio-64bit-Debug
+    RTMIDI_LIB = ../../build-rtmidi-64bit-Debug
+    VST3SDK_LIB = ../../build-VST3_SDK-64bit/lib/Debug
+} else {
+    RTAUDIO_LIB = ../../build-rtaudio-64bit-Release
+    RTMIDI_LIB = ../../build-rtmidi-64bit-Release
+    VST3SDK_LIB = ../../build-VST3_SDK-64bit/lib/Release
+}
+
+INCLUDEPATH += $${UI_DIR}
 INCLUDEPATH += $$VST3SDK_PATH
 
 
@@ -56,7 +61,7 @@ DEFINES += CIRCULAR_BUFFER
 
 #DEFINES += DEBUG_RENDERER
 #DEFINES += DEBUG_BUFFERS
-DEFINES += DEBUG_OBJECTS
+#DEFINES += DEBUG_OBJECTS
 #DEFINES += DEBUG_DEVICES
 #DEFINES += DEBUG_MESSAGES
 

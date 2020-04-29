@@ -69,7 +69,7 @@ bool AudioDeviceOut::Close()
 
 bool AudioDeviceOut::Open()
 {
-    QMutexLocker l(&objMutex);
+//    QMutexLocker l(&objMutex);
 
     closed=false;
     SetErrorMessage("");

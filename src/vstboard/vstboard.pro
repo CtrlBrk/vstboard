@@ -12,6 +12,15 @@ LIBS += -L$$VST3SDK_LIB -lbase
 LIBS += -L$$VST3SDK_LIB -lpluginterfaces
 LIBS += -L$$VST3SDK_LIB -lsdk
 
+
+LIBDEPS = common
+for(a, LIBDEPS) {
+    LIBS += -L$$DESTDIR -l$${a}
+    PRE_TARGETDEPS += $$DESTDIR/$${LIBPREFIX}$${a}.$${LIBEXT}
+    INCLUDEPATH += $$DESTDIR/$${a}
+    DEPENDPATH += $$DESTDIR/$${a}
+}
+
 INCLUDEPATH += $$RTMIDI
 INCLUDEPATH += $$RTAUDIO
 
@@ -114,11 +123,4 @@ SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/connectionproxy.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/hostclasses.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/pluginterfacesupport.cpp
 
-LIBDEPS = common
-for(a, LIBDEPS) {
-    LIBS += -L$$DESTDIR -l$${a}
-    PRE_TARGETDEPS += $$DESTDIR/$${LIBPREFIX}$${a}.$${LIBEXT}
-    INCLUDEPATH += $$DESTDIR/$${a}
-    DEPENDPATH += $$DESTDIR/$${a}
-}
 

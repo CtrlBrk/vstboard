@@ -51,7 +51,7 @@ namespace Connectables {
         AudioDevice(MainHostHost *myHost,const ObjectInfo &info, QObject *parent=0);
         ~AudioDevice();
 
-        float GetCpuUsage();
+//        float GetCpuUsage();
         bool SetObjectInput(AudioDeviceIn *obj);
         bool SetObjectOutput(AudioDeviceOut *obj);
         bool SetSleep(bool sleeping);
@@ -73,17 +73,20 @@ namespace Connectables {
         float **currentOutputBuffer;
 
         void GetErrMessage(QString &msg) {msg = errorMessage; }
-
+bool Open();
+bool Close();
     private:
-        bool Open();
-        bool Close();
+
+
 //        static int paCallback( const void *inputBuffer, void *outputBuffer,
 //                               unsigned long framesPerBuffer,
 //                               const PaStreamCallbackTimeInfo* timeInfo,
 //                               PaStreamCallbackFlags statusFlags,
 //                               void *userData );
         static int callback( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames, double streamTime, RtAudioStreamStatus status, void *data );
+        static void errorCallback(RtAudioError::Type type, const std::string &errorText);
         bool OpenStream(double sampleRate);
+        bool CloseStream();
 
 #ifdef CIRCULAR_BUFFER
         void CreateCircularBuffers();

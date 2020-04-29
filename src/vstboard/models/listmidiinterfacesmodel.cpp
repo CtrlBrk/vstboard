@@ -19,6 +19,7 @@
 **************************************************************************/
 #include "listmidiinterfacesmodel.h"
 #include "connectables/objectinfo.h"
+#include "../mididevices.h"
 
 ListMidiInterfacesModel::ListMidiInterfacesModel(MsgController *msgCtrl, int objId, QObject *parent):
     QStandardItemModel(parent),
@@ -63,8 +64,11 @@ QMimeData  * ListMidiInterfacesModel::mimeData ( const QModelIndexList  & indexe
 void ListMidiInterfacesModel::ReceiveMsg(const MsgObject &msg)
 {
     if(msg.prop.contains(MsgObject::State)) {
+        ObjectInfo objInfo = msg.prop[MsgObject::ObjInfo].value<ObjectInfo>();
         for(int i=0; i<rowCount(); i++) {
-            if(index(i,0).data(UserRoles::value).toInt() == msg.prop[MsgObject::Id].toInt()) {
+            ObjectInfo rowInfo = index(i,0).data(UserRoles::objInfo).value<ObjectInfo>();
+            if(MidiDevices::GetUid(rowInfo) == msg.prop[MsgObject::Id].toInt()) {
+//            if(index(i,0).data(UserRoles::value).toInt() == msg.prop[MsgObject::Id].toInt()) {
                 if(msg.prop[MsgObject::State].toBool())
                     item(i,3)->setCheckState(Qt::Checked);
                 else

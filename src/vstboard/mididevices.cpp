@@ -54,31 +54,6 @@ void MidiDevices::OpenDevices()
     }
     mutexListMidi.unlock();
 
-//    if(Pt_Started())
-//        Pt_Stop();
-
-//    if(pmOpened) {
-//        Pm_Terminate();
-//        pmOpened=false;
-//    }
-
-//    PmError pmRet = Pm_Initialize();
-//    if(pmRet!=pmNoError) {
-//        QMessageBox msgBox;
-//        msgBox.setText(tr("Unable to initialize midi engine : %1").arg( Pm_GetErrorText(pmRet) ));
-//        msgBox.setIcon(QMessageBox::Critical);
-//        msgBox.exec();
-//        return;
-//    }
-
-//    PtError ptRet = Pt_Start(1, MidiDevices::MidiReceive_poll,this);
-//    if(ptRet!=ptNoError) {
-//        QMessageBox msgBox;
-//        msgBox.setText(tr("Unable to start midi engine"));
-//        msgBox.setIcon(QMessageBox::Critical);
-//        msgBox.exec();
-//        return;
-//    }
     pmOpened=true;
 
     if(MsgEnabled())
@@ -109,21 +84,22 @@ void MidiDevices::OpenDevice(Connectables::MidiDevice* objPtr)
     listOpenedMidiDevices << objPtr;
     mutexListMidi.unlock();
 
-    listOpenedDevices << objPtr->info().id;
+    //distinguish in & out by building a uid :
+    listOpenedDevices << GetUid( objPtr->info() );
 
     MSGOBJ();
     msg.prop[MsgObject::State]=true;
-    msg.prop[MsgObject::Id]=objPtr->info().id;
+    msg.prop[MsgObject::Id]=GetUid(objPtr->info());
     msgCtrl->SendMsg(msg);
 }
 
 void MidiDevices::CloseDevice(Connectables::MidiDevice* objPtr)
 {
-    listOpenedDevices.removeAll(objPtr->info().id);
+    listOpenedDevices.removeAll( GetUid(objPtr->info()) );
 
     MSGOBJ();
     msg.prop[MsgObject::State]=false;
-    msg.prop[MsgObject::Id]=objPtr->info().id;
+    msg.prop[MsgObject::Id]=GetUid(objPtr->info());
     msgCtrl->SendMsg(msg);
 
     mutexListMidi.lock();
@@ -135,7 +111,7 @@ bool MidiDevices::GetDeviceInfo(ObjectInfo &obj,MsgObject &msg)
 {
     try {
         RtMidiIn midiIn( (RtMidi::Api)obj.api);
-        RtMidiIn midiOut( (RtMidi::Api)obj.api);
+        RtMidiOut midiOut( (RtMidi::Api)obj.api);
 
         RtMidi *dev = 0;
         if(obj.inputs) {
@@ -156,7 +132,7 @@ bool MidiDevices::GetDeviceInfo(ObjectInfo &obj,MsgObject &msg)
             MsgObject msgDevice;
             msgDevice.prop[MsgObject::Name]=obj.name;
             msgDevice.prop[MsgObject::ObjInfo]=QVariant::fromValue(obj);
-            msgDevice.prop[MsgObject::State]=(bool)listOpenedDevices.contains(obj.id);
+            msgDevice.prop[MsgObject::State]=(bool)listOpenedDevices.contains( GetUid(obj) );
             msg.children << msgDevice;
         }
 
@@ -197,47 +173,29 @@ void MidiDevices::BuildModel()
     msgCtrl->SendMsg(msg);
 }
 
-
-RtMidi::Api MidiDevices::GetApiByName(const std::string &apiName)
-{
-    std::vector<RtMidi::Api> apis;
-    RtMidi::getCompiledApi( apis );
-
-    for (size_t i = 0; i < apis.size() ; ++i) {
-        if(apiName == RtMidi::getApiName(apis[i]))
-            return apis[i];
-    }
-
-    return RtMidi::UNSPECIFIED;
-}
-
 int MidiDevices::GetDevIdByName(RtMidi::Api apiId, const std::string &devName, bool input)
 {
-    if(input) {
-        RtMidiIn  *rm = 0;
-        try {
-          rm = new RtMidiIn(apiId);
-        }
-        catch ( RtMidiError &error ) {
-          error.printMessage();
-          delete rm;
-          return -1;
-        }
-        //RtMidiIn rm( apiId );
-        for(uint i=0; i<rm->getPortCount(); i++) {
-            if(devName == rm->getPortName(i)) {
-                return i;
+    try {
+        if(input) {
+            RtMidiIn rm( apiId );
+            for(uint i=0; i<rm.getPortCount(); i++) {
+                if(devName == rm.getPortName(i)) {
+                    return i;
+                }
             }
-        }
-    } else {
-        RtMidiOut rm( apiId );
-        for(uint i=0; i<rm.getPortCount(); i++) {
-            if(devName == rm.getPortName(i)) {
-                return i;
+        } else {
+            RtMidiOut rm( apiId );
+            for(uint i=0; i<rm.getPortCount(); i++) {
+                std::string name = rm.getPortName(i);
+                if(devName == name) {
+                    return i;
+                }
             }
         }
     }
-
+    catch ( RtMidiError &error ) {
+      error.printMessage();
+    }
     return -1;
 }
 

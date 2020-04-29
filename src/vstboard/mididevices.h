@@ -40,10 +40,13 @@ public:
     void OpenDevice(Connectables::MidiDevice* objPtr);
     void CloseDevice(Connectables::MidiDevice* objPtr);
 
-    static RtMidi::Api GetApiByName(const std::string &apiName);
     static int GetDevIdByName(RtMidi::Api apiId, const std::string &devName, bool input);
 
     void ReceiveMsg(const MsgObject &msg);
+
+    //distinguish in/out by building a uid
+    static qint32 GetUid(const ObjectInfo &i) {return i.inputs*1000 + i.id;}
+
 private:
     void OpenDevices();
     void BuildModel();
@@ -55,6 +58,7 @@ private:
 
     QMutex mutexListMidi;
     MainHostHost *myHost;
+
     QList<qint32>listOpenedDevices;
 };
 
