@@ -251,9 +251,9 @@ bool AudioDevice::OpenStream(double sampleRate)
 
     RtAudio::StreamOptions options;
     options.flags = RTAUDIO_NONINTERLEAVED;
-//    options.flags |= RTAUDIO_SCHEDULE_REALTIME;
-//    options.flags |= RTAUDIO_HOG_DEVICE;
-//    options.flags |= RTAUDIO_MINIMIZE_LATENCY;
+    options.flags |= RTAUDIO_SCHEDULE_REALTIME;
+    options.flags |= RTAUDIO_HOG_DEVICE;
+//    options.flags |= RTAUDIO_MINIMIZE_LATENCY; //makes a mess on the mac vm
     options.numberOfBuffers = 4; //TODO: user defined
     options.priority = 1;
 
@@ -381,9 +381,7 @@ bool AudioDevice::Close()
         QMutexLocker l(&mutexCountOpenedDevicesReady);
         countOpenedDevices--;
     }
-#ifdef DEBUG_DEVICES
-    LOG("Close"<<objectName())
-#endif
+
     emit InUseChanged( objInfo.api,objInfo.id,false);
 
     if(rtdevice)
@@ -402,6 +400,9 @@ bool AudioDevice::Close()
         rtdevice=0;
     }
 
+#ifdef DEBUG_DEVICES
+    LOG("Close"<<objectName())
+#endif
 
 #ifdef CIRCULAR_BUFFER
     DeleteCircularBuffers();

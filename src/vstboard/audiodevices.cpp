@@ -115,15 +115,19 @@ void AudioDevices::CloseDevices(bool close)
 		}
 	}
 
-}
-
-void AudioDevices::SleepAll()
-{
-	QMutexLocker d(&mutexDevices);
+    QMutexLocker d(&mutexDevices);
     foreach(Connectables::AudioDevice *ad, listAudioDevices) {
         ad->SetSleep(true);
     }
 }
+
+//void AudioDevices::SleepAll()
+//{
+//	QMutexLocker d(&mutexDevices);
+//    foreach(Connectables::AudioDevice *ad, listAudioDevices) {
+//        ad->SetSleep(true);
+//    }
+//}
 
 void AudioDevices::OpenDevices()
 {
@@ -161,13 +165,13 @@ void AudioDevices::OpenDevices()
             if(disabledApis.contains(info.api)) {
 //                OnToggleDeviceInUse(info.api,info.id,false);
                 obj->SetErrorMessage(tr("Api disabled"));
-//                obj->SetSleep(true);
-                obj->Close();
+                obj->SetSleep(true);
+//                obj->Close();
             } else {
 //                OnToggleDeviceInUse(info.api,info.id,true);
                 obj->SetErrorMessage(tr(""));
-                obj->Open();
-//                obj->SetSleep(false);
+//                obj->Open();
+                obj->SetSleep(false);
             }
         }
     }

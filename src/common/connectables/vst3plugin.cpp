@@ -82,6 +82,10 @@ Vst3Plugin::Vst3Plugin(MainHost *host, int index, const ObjectInfo &info) :
 
 Vst3Plugin::~Vst3Plugin()
 {
+
+#ifdef DEBUG_OBJECTS
+    LOG("Close"<<objectName())
+#endif
     Close();
 }		
 
