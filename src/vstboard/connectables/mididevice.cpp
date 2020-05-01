@@ -44,20 +44,11 @@ void MidiDevice::Render()
 
     if(deviceIn) {
         std::vector<unsigned char> message;
-        double stamp = deviceIn->getMessage( &message );
-        int nBytes = message.size();
-
-        for ( int i=0; i<nBytes; i++ ) {
-          std::cout << "Byte " << i << " = " << (int)message[i] << ", ";
-          foreach(Pin *pin,listMidiPinOut->listPins) {
-              pin->SendMsg(PinMessage::MidiMsg,(void*)&message[i]);
-          }
+        while( double stamp = deviceIn->getMessage( &message )) {
+            foreach(Pin *pin,listMidiPinOut->listPins) {
+                pin->SendMsg(PinMessage::MidiMsg,(void*)&message[0]);
+            }
         }
-
-//        if ( nBytes > 0 ) {
-//          std::cout << "stamp = " << stamp << std::endl;
-//        }
-
     }
 }
 
