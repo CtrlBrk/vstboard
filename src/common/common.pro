@@ -43,6 +43,7 @@ vst24sdk {
 SOURCES += \
     connectables/objectcontainerattribs.cpp \
     connectables/pinfactory.cpp \
+    connectables/script.cpp \
     msghandler.cpp \
     mainhost.cpp \
     audiobuffer.cpp \
@@ -110,6 +111,7 @@ SOURCES += \
     renderer/pathsolver.cpp \
     views/filebrowsertree.cpp \
     views/keypressedwidget.cpp \
+    views/scripteditor.cpp \
     views/vst3contextmenu.cpp
 
 SOURCES += \
@@ -151,6 +153,7 @@ SOURCES += \
 HEADERS += \
     connectables/objectcontainerattribs.h \
     connectables/pinfactory.h \
+    connectables/script.h \
     globals.h \
     mainhost.h \
     audiobuffer.h \
@@ -220,6 +223,7 @@ HEADERS += \
     renderer/pathsolver.h \
     views/filebrowsertree.h \
     views/keypressedwidget.h \
+    views/scripteditor.h \
     views/vst3contextmenu.h
 
 HEADERS += \
@@ -264,6 +268,7 @@ FORMS += \
     views/filebrowser.ui \
     views/programlist.ui \
     views/aboutdialog.ui \
+    views/scripteditor.ui \
     views/splash.ui \
     views/viewconfigdialog.ui \
     views/keybindingdialog.ui \

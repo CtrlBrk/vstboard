@@ -21,7 +21,6 @@
 #ifndef MAINHOST_H
 #define MAINHOST_H
 
-#include <QUndoStack>
 #include "connectables/objectfactory.h"
 #include "connectables/object.h"
 #include "connectables/container.h"
@@ -110,7 +109,7 @@ public:
     bool doublePrecision;
 
 #ifdef SCRIPTENGINE
-    QScriptEngine *scriptEngine;
+    QJSEngine scriptEngine;
 #endif
 
     QString currentProjectFile;

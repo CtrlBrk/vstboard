@@ -48,6 +48,9 @@ namespace View {
         void Execute(const QString &str);
         void Hide();
 
+    public slots:
+        void AddToLog(const QString &txt);
+
     private slots:
         void on_btExecute_clicked();
 

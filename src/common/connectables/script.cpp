@@ -25,21 +25,15 @@
 
 using namespace Connectables;
 
-//QMutex Script::mutexScript;
+//scripts cannot be multithreaded ?
+QMutex Script::mutexScript;
 
 Script::Script(MainHost *host, int index, const ObjectInfo &info) :
     Object(host,index,info),
     editorWnd(0)
 {
     setObjectName( QString("objScript%1").arg(index) );
-    objScriptName = objectName();
-    objScriptName.append("sc");
 
-    scriptThisObj = myHost->scriptEngine->newQObject(this);
-    //myHost->scriptEngine->globalObject().setProperty(objScriptName, scriptThisObj);
-
-    listEditorVisible << "hide";
-    listEditorVisible << "show";
     listParameterPinIn->AddPin(FixedPinNumber::editorVisible);
 
     connect(this, SIGNAL(_dspMsg(QString,QString)),
@@ -57,87 +51,80 @@ Script::Script(MainHost *host, int index, const ObjectInfo &info) :
             this, SLOT(OnEditorClosed()));
     connect(editorWnd, SIGNAL(destroyed()),
             this, SLOT(EditorDestroyed()));
+    connect(this,SIGNAL(_addLog(QString)),
+            editorWnd, SLOT(AddToLog(QString)));
+
+    defaultScript = "({\n"
+            "open: function(){\n"
+            "   // programContainer.AddObject('C:\\\\Program Files\\\\Common Files\\\\VST3\\\\randomPlugin.vst3');\n"
+            "   this.listParameterPinIn.nbPins=1;\n"
+            "   this.listParameterPinOut.nbPins=1;\n"
+            "   this.listAudioPinIn.nbPins=1;\n"
+            "   this.listAudioPinOut.nbPins=1;\n"
+            "   this.listMidiPinIn.nbPins=1;\n"
+            "   this.listMidiPinOut.nbPins=2;\n"
+            "   //this.alert('ok');\n"
+            "},\n"
+            "render: function(){\n"
+            "   this.ParamOut0.value=this.ParamIn0.value;\n"
+            "   this.AudioOut0.buffer=this.AudioIn0.buffer;\n"
+            "},\n"
+            "midi_in: function(channel,command,val1,val2,commandname,raw){\n"
+            "   //this.log(commandname + ' chan:' + channel + ' 1:' + val1 + ' 2:' + val2);\n"
+            "   if(commandname=='noteon') {\n"
+            "       this.SendMidiMsg(channel,command,val1,val2);\n"
+            "   } else {\n"
+            "       this.SendMidiMsg(raw,1);\n"
+            "   }\n"
+            "}\n"
+            "})";
+
+//    defaultScript = "({\n"
+//            "open: function(){\n"
+//            "},\n"
+//            "render: function(){\n"
+//            "},\n"
+//            "midi_in: function(channel,command,val1,val2,commandname,raw){\n"
+//            "}\n"
+//            "})";
 }
 
 bool Script::Open()
 {
-    if(scriptText.isEmpty()) {
-        scriptText = "\
-({\n\
-open: function(obj) {\n\
-    obj.listParameterPinIn.nbPins=1;\n\
-    obj.listParameterPinOut.nbPins=1;\n\
-    obj.listAudioPinIn.nbPins=1;\n\
-    obj.listAudioPinOut.nbPins=1;\n\
-},\n\
-\n\
-render: function(obj) {\n\
-    obj.ParamOut0.value=obj.ParamIn0.value;\n\
-    obj.AudioOut0.buffer=obj.AudioIn0.buffer;\n\
-}\n\
-})";
+    CompileScrtipt();
+    return true;
+}
+
+bool Script::CompileScrtipt()
+{
+    scriptThisObj = myHost->scriptEngine.newQObject(this);
+    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
+
+    {
+        QMutexLocker ms(&mutexScript);
+
+        if(scriptText=="")
+            scriptText=defaultScript;
+
+        objScript = myHost->scriptEngine.evaluate(scriptText);
+        if(myHost->scriptEngine.hasUncaughtException()) {
+            int line = myHost->scriptEngine.uncaughtExceptionLineNumber();
+            log( tr("compile exception, line %1\n%2").arg(line).arg(objScript.toString()) );
+            return false;
+        }
+
+        openScript = objScript.property("open");
+        renderScript = objScript.property("render");
+        midiinScript = objScript.property("midi_in");
+
+        QScriptValue result = openScript.call(scriptThisObj);
+        if(myHost->scriptEngine.hasUncaughtException()) {
+
+            int line = myHost->scriptEngine.uncaughtExceptionLineNumber();
+            log( tr("open exception, line %1\n%2").arg(line).arg(result.toString()) );
+            return false;
+        }
     }
-    if(editorWnd)
-        editorWnd->SetScript(scriptText);
-
-    mutexScript.lock();
-
-    QScriptSyntaxCheckResult chk = myHost->scriptEngine->checkSyntax(scriptText);
-    if(chk.state()!=QScriptSyntaxCheckResult::Valid) {
-        comiledScript="";
-        mutexScript.unlock();
-
-        QMessageBox msg(
-            QMessageBox::Critical,
-            tr("Script syntax error"),
-            tr("line %1\n%2").arg(chk.errorLineNumber()).arg(chk.errorMessage())
-        );
-        msg.exec();
-        return false;
-    }
-
-//    comiledScript = QString( "function %1class(t) { obj=t; %2 }  %1m = new %1class(%1);" ).arg(objScriptName).arg(scriptText);
-//    QScriptValue result = myHost->scriptEngine->evaluate(comiledScript);
-
-//    myHost->scriptEngine->evaluate( objScriptName+"m.open();" );
-
-    objScript = myHost->scriptEngine->evaluate(scriptText);
-    if(myHost->scriptEngine->hasUncaughtException()) {
-        comiledScript="";
-        mutexScript.unlock();
-
-        int line = myHost->scriptEngine->uncaughtExceptionLineNumber();
-        QMessageBox msg(
-            QMessageBox::Critical,
-            tr("Script exception"),
-            tr("line %1\n%2").arg(line).arg(objScript.toString())
-        );
-        msg.exec();
-
-        return false;
-    }
-
-    openScript = objScript.property("open");
-    renderScript = objScript.property("render");
-
-    QScriptValue result = openScript.call(objScript, QScriptValueList() << scriptThisObj);
-    if(myHost->scriptEngine->hasUncaughtException()) {
-        comiledScript="";
-        mutexScript.unlock();
-
-        int line = myHost->scriptEngine->uncaughtExceptionLineNumber();
-        QMessageBox msg(
-            QMessageBox::Critical,
-            tr("Script exception"),
-            tr("line %1\n%2").arg(line).arg(result.toString())
-        );
-        msg.exec();
-
-        return false;
-    }
-
-    mutexScript.unlock();
-
     return true;
 }
 
@@ -160,9 +147,80 @@ bool Script::Close()
     return true;
 }
 
+void Script::SendMidiMsg(long raw, int pin)
+{
+    if(pin!=-1) {
+        listMidiPinOut->GetPin(pin)->SendMsg(PinMessage::MidiMsg,(void*)&raw);
+    } else {
+
+        foreach(Pin *pin,listMidiPinOut->listPins) {
+            pin->SendMsg(PinMessage::MidiMsg,(void*)&raw);
+        }
+    }
+}
+
+void Script::SendMidiMsg(int chan, int command, int m1, int m2, int pin)
+{
+    SendMidiMsg( MidiMsg(command | chan, m1, m2), pin );
+}
+
+void Script::MidiMsgFromInput(long msg)
+{
+    if(!midiinScript.isError()) {
+        QScriptValueList args;
+
+        quint8 command = MidiStatus(msg) & MidiConst::codeMask;
+        qint8 chan = MidiStatus(msg) & MidiConst::channelMask;
+        quint8 m1 = MidiData1(msg);
+        quint8 m2 = MidiData2(msg);
+
+        QString cmdType;
+        switch(command) {
+        case MidiConst::noteOff:
+            cmdType="noteoff";
+            break;
+        case MidiConst::noteOn:
+        cmdType="noteon";
+        break;
+        case MidiConst::aftertouch:
+            cmdType="aftertouch";
+            break;
+        case MidiConst::ctrl:
+            cmdType="control";
+            break;
+        case MidiConst::prog:
+            cmdType="program";
+            break;
+        case MidiConst::chanpressure:
+            cmdType="chanpressure";
+            break;
+        case MidiConst::pitchbend:
+            cmdType="pitchbend";
+            break;
+        default:
+            cmdType="other";
+            break;
+        }
+
+        args << chan;
+        args << command;
+        args << m1;
+        args << m2;
+        args << cmdType;
+
+        QScriptValue result = midiinScript.call(scriptThisObj,args);
+        if(myHost->scriptEngine.hasUncaughtException()) {
+            midiinScript = result;
+
+            int line = myHost->scriptEngine.uncaughtExceptionLineNumber();
+            log( tr("midi_in exception, line %1\n%2").arg(line).arg(result.toString()) );
+        }
+    }
+}
+
 void Script::Render()
 {
-    mutexScript.lock();
+    QMutexLocker ms(&mutexScript);
 
     foreach(Pin *pin, listAudioPinIn->listPins) {
         static_cast<AudioPin*>(pin)->GetBuffer()->ConsumeStack();
@@ -172,18 +230,13 @@ void Script::Render()
         static_cast<AudioPin*>(pin)->NewRenderLoop();
     }
 
-    QScriptValue result = renderScript.call(objScript, QScriptValueList() << scriptThisObj);
+    if(renderScript.isValid() && !renderScript.isError()) {
+        QScriptValue result = renderScript.call(scriptThisObj);
+        if(myHost->scriptEngine.hasUncaughtException()) {
+            renderScript = result;
 
-    if(!comiledScript.isEmpty()) {
-        QScriptValue result = myHost->scriptEngine->evaluate( objScriptName+"m.render();" );
-        if(myHost->scriptEngine->hasUncaughtException()) {
-            comiledScript="";
-
-            int line = myHost->scriptEngine->uncaughtExceptionLineNumber();
-            emit _dspMsg(
-                tr("Script exception"),
-                tr("line %1\n%2").arg(line).arg(result.toString())
-            );
+            int line = myHost->scriptEngine.uncaughtExceptionLineNumber();
+            log( tr("render exception, line %1\n%2").arg(line).arg(result.toString()) );
         }
     }
 
@@ -192,11 +245,22 @@ void Script::Render()
         static_cast<AudioPin*>(pin)->SendAudioBuffer();
     }
 
-    mutexScript.unlock();
+}
+
+void Script::log(const QString &str)
+{
+    emit _addLog(str);
 }
 
 void Script::alert(const QString &str)
 {
+    QThread *t = QThread::currentThread();
+    QThread *maint = QApplication::instance()->thread();
+    if(t != maint) {
+        emit _addLog(str);
+        return;
+    }
+
     emit _dspMsg(objectName(),str);
 }
 
@@ -216,32 +280,48 @@ void Script::ReplaceScript(const QString &str)
     if(editorWnd)
         editorWnd->SetScript(scriptText);
     OnProgramDirty();
-    Open();
+    CompileScrtipt();
 }
 
 Pin* Script::CreatePin(const ConnectionInfo &info)
 {
-    Pin *newPin = Object::CreatePin(info);
-    if(newPin)
-        return newPin;
+    pinConstructArgs args(info);
+    args.parent = this;
 
     if(info.type == PinType::Parameter) {
-        switch(info.direction) {
-            case PinDirection::Input :
-                if(info.pinNumber == FixedPinNumber::editorVisible) {
-                    ParameterPin *newPin = new ParameterPinIn(this,FixedPinNumber::editorVisible,"hide",&listEditorVisible,tr("Editor"));
-                    newPin->SetLimitsEnabled(false);
-                    return newPin;
-                }
-                return new ParameterPinIn(this,info.pinNumber,0,QString("ParamIn%1").arg(info.pinNumber));
-
-            case PinDirection::Output :
-                return new ParameterPinOut(this,info.pinNumber,0,QString("ParamOut%1").arg(info.pinNumber));
-
+        if(info.direction == PinDirection::Input) {
+            args.name += "ParamIn";
+        } else {
+            args.name += "ParamOut";
         }
+
+
+        args.name = QString("%1%2").arg(args.name).arg(info.pinNumber);
+        args.visible = true;
     }
 
-    return 0;
+    return Object::CreatePin(args);
+
+//    Pin *newPin = Object::CreatePin(args);
+//    if(newPin)
+//        return newPin;
+
+//    PinFactory::MakePin(args);
+
+//    if(info.type == PinType::Parameter) {
+//        switch(info.direction) {
+//            case PinDirection::Input :
+//                args.name = QString("ParamIn%1").arg(info.pinNumber);
+//                return PinFactory::MakePin(args);
+//            case PinDirection::Output :
+//                args.name = QString("ParamOut%1").arg(info.pinNumber);
+//                return PinFactory::MakePin(args);
+//            default:
+//                return 0;
+//        }
+//    }
+
+//    return 0;
 }
 
 void Script::OnShowEditor()
@@ -288,9 +368,8 @@ void Script::LoadProgram(int prog)
         return;
 
     scriptText = currentProgram->listOtherValues.value(0,"").toString();
-//    if(editorWnd)
-//        editorWnd->SetScript(scriptText);
-    Open();
+
+    CompileScrtipt();
 
     if(editorWnd && editorWnd->isVisible())
         editorWnd->SetScript(scriptText);

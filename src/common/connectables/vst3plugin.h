@@ -144,6 +144,9 @@ private:
     bool initController();
     bool initAudioBuffers(Vst::BusDirection dir, bool unassign=false);
     void initProcessData();
+    Vst::PlugProvider* GetProviderFromUID(const std::string &uid);
+    Vst::PlugProvider* GetProviderFromName(const std::string &name);
+    Vst::PlugProvider* GetDefaultProvider();
 
     MidiCCMapping midiCCMapping;
 

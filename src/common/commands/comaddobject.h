@@ -40,6 +40,8 @@ public:
 
     void ReloadObject(const ObjectInfo &info);
 
+    ObjectInfo GetInfo() {return objectInfo;}
+
 private:
     MainHost *myHost;
 

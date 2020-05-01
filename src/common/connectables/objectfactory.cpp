@@ -36,6 +36,10 @@
     #include "vst3plugin.h"
 #endif
 
+#ifdef SCRIPTENGINE
+    #include "script.h"
+#endif
+
 /*!
   \namespace Connectables
   \brief classes used by the engine
@@ -49,8 +53,8 @@ ObjectFactory::ObjectFactory(MainHost *myHost) :
     setObjectName("ObjectFactory");
 
 #ifdef SCRIPTENGINE
-    QScriptValue scriptObj = myHost->scriptEngine->newQObject(this);
-    myHost->scriptEngine->globalObject().setProperty("ObjectFactory", scriptObj);
+    QJSValue scriptObj = myHost->scriptEngine.newQObject(this);
+    myHost->scriptEngine.globalObject().setProperty("ObjectFactory", scriptObj);
 #endif
 }
 

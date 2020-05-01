@@ -157,7 +157,7 @@ void Vst3Plugin::ReceiveMsg(const MsgObject &msg)
             myHost->undoStack.undo();
         } else {
 			VST3::UID id;
-			id.fromString(objInfo.apiName.toStdString());
+            id.fromString(objInfo.apiName.toStdString());
             initPlugin();
             SetSleep(false);
 			myHost->SetSolverUpdateNeeded();
@@ -168,41 +168,86 @@ void Vst3Plugin::ReceiveMsg(const MsgObject &msg)
     Object::ReceiveMsg(msg);
 }
 
+Vst::PlugProvider* Vst3Plugin::GetProviderFromUID(const std::string &uid)
+{
+    VST3::Optional<VST3::UID> effectID = VST3::UID::fromString(uid);
+
+    if (!effectID)
+        return 0;
+
+    auto factory = module->getFactory();
+    for (auto& classInfo : factory.classInfos())
+    {
+        if (classInfo.category() == kVstAudioEffectClass)
+        {
+            if (*effectID == classInfo.ID()) {
+                setObjectName(QString::fromStdString(classInfo.name()));
+                UpdateView();
+                return new Vst::PlugProvider(factory, classInfo, true);
+            }
+        }
+    }
+
+    return 0;
+}
+
+Vst::PlugProvider* Vst3Plugin::GetProviderFromName(const std::string &name)
+{
+    auto factory = module->getFactory();
+    for (auto& classInfo : factory.classInfos())
+    {
+        if(classInfo.name() == name) {
+            setObjectName(QString::fromStdString(classInfo.name()));
+            UpdateView();
+            return new Vst::PlugProvider(factory, classInfo, true);
+        }
+    }
+
+    return 0;
+}
+
+Vst::PlugProvider* Vst3Plugin::GetDefaultProvider()
+{
+    auto factory = module->getFactory();
+    for (auto& classInfo : factory.classInfos())
+    {
+        if (classInfo.category() == kVstAudioEffectClass)
+        {
+            setObjectName(QString::fromStdString(classInfo.name()));
+            UpdateView();
+            return new Vst::PlugProvider(factory, classInfo, true);
+        }
+    }
+
+    return 0;
+}
+
 bool Vst3Plugin::initPlugin()
 {
 	VST3::Optional<VST3::UID> effectID;
-	if (objInfo.apiName != "")
+    if (objInfo.apiName != "")
 	{
-		std::string str;
-		str = objInfo.apiName.toStdString();
-		effectID = VST3::UID::fromString(str);
-    }
+        std::string str = objInfo.apiName.toStdString();
 
-    //find the selected effectID
-    auto factory = module->getFactory();
-    for (auto& classInfo : factory.classInfos())
-	{
-		if (classInfo.category() == kVstAudioEffectClass)
-		{
-			if (effectID)
-			{
-				if (*effectID != classInfo.ID())
-					continue;
-			}
-//            plugProvider = owned(new Vst::PlugProvider(factory, classInfo, true));
-			plugProvider = new Vst::PlugProvider(factory, classInfo, true);
-			break;
-		}
-	}
+        //find selected plugin from shell
+        plugProvider = GetProviderFromUID( str );
+        if(!plugProvider ) {
+
+            //find by name
+            plugProvider = GetProviderFromName( str );
+            if(!plugProvider ) {
+                SetErrorMessage( tr("no module %1").arg(objInfo.apiName) );
+                return true;
+            }
+        }
+    } else {
+
+        plugProvider = GetDefaultProvider();
+    }
 
 	if (!plugProvider)
 	{
-		if (effectID) {
-			SetErrorMessage( tr("no module with id %1").arg(QString::fromStdString(effectID->toString())) );
-		}
-		else {
-			SetErrorMessage(tr("no audio module"));
-		}
+        SetErrorMessage(tr("no audio module"));
 		return true;
 	}
 

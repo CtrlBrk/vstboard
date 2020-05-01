@@ -67,3 +67,8 @@ void ScriptEditor::on_btExecute_clicked()
 {
     emit Execute( ui->plainTextEdit->toPlainText() );
 }
+
+void ScriptEditor::AddToLog(const QString &txt)
+{
+    ui->textLog->append(txt);
+}

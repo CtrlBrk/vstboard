@@ -22,6 +22,7 @@
 #include "mainhost.h"
 #include "projectfile/projectfile.h"
 #include "commands/comaddobject.h"
+#include "commands/comremoveobject.h"
 #include "commands/comaddcable.h"
 #include "commands/comdisconnectpin.h"
 
@@ -684,10 +685,10 @@ void Container::AddChildObject(QSharedPointer<Object> objPtr)
   Called by ContainerProgram, remove an object from the panel
   \param objPtr shared pointer to the object
   */
-void Container::ParkChildObject(QSharedPointer<Object> objPtr)
+bool Container::ParkChildObject(QSharedPointer<Object> objPtr)
 {
     if(!objPtr)
-        return;
+        return false;
 
     myHost->objFactory->listDelayObj.removeAll(objPtr->GetIndex());
 
@@ -709,6 +710,8 @@ void Container::ParkChildObject(QSharedPointer<Object> objPtr)
     objPtr->parkingId=containersParkingId;
 
 //    myHost->SetSolverUpdateNeeded();
+
+    return true;
 }
 
 /*!
@@ -1207,6 +1210,80 @@ void Container::GetInfos(MsgObject &msg)
         currentContainerProgram->GetInfos(msg);
 }
 
+qint32 Container::AddObject(const ObjectInfo &newInfo, InsertionType::Enum insertType)
+{
+    QSharedPointer<Object> targetObj = myHost->objFactory->GetObjectFromId( GetIndex() );
+    ComAddObject *com = new ComAddObject(myHost, newInfo, targetObj.staticCast<Container>(), targetObj, insertType );
+    myHost->undoStack.push( com );
+
+    return com->GetInfo().forcedObjId;
+}
+
+qint32 Container::AddObject(QString type, QString name/*=""*/, QString id/*=""*/) {
+    ObjectInfo i;
+    i.nodeType = NodeType::object;
+
+    QFileInfo fInfo;
+    fInfo.setFile( type );
+    QString fileType(fInfo.suffix().toLower());
+    if ( fileType=="dll" || fileType=="vst") {
+        i.objType = ObjType::VstPlugin;
+        i.filename = type;
+        i.id = name.toInt();
+    }
+    if ( fileType=="vst3" ) {
+        i.objType = ObjType::Vst3Plugin;
+        i.filename = type;
+        i.apiName = name;
+    }
+    if(type == "AudioInterface") {
+        i.objType = ObjType::AudioInterface;
+        i.apiName = name;
+        i.id = id.toInt();
+    }
+    if(type == "MidiInterface") {
+        i.objType = ObjType::MidiInterface;
+        i.apiName = name;
+        i.id = id.toInt();
+    }
+    if(type == "MidiToAutomation") {
+        i.objType = ObjType::MidiToAutomation;
+    }
+    if(type == "MidiSender") {
+        i.objType = ObjType::MidiSender;
+    }
+    if(type == "HostController") {
+        i.objType = ObjType::HostController;
+    }
+    if(type == "VstAutomation") {
+        i.objType = ObjType::VstAutomation;
+    }
+    if(type == "Script") {
+        i.objType = ObjType::Script;
+    }
+    if(type == "Buffer") {
+        i.objType = ObjType::Buffer;
+    }
+
+    return AddObject(static_cast<ObjectInfo>(i));
+}
+
+bool Container::RemoveObject(qint32 id)
+{
+//    MSGOBJ();
+    MsgObject msg(id);
+//    msg.prop[MsgObject::Remove]=RemoveType::BridgeCables;
+    msg.prop[MsgObject::Remove]=id;
+    myHost->SendMsg(msg);
+
+//    QSharedPointer<Object> obj = myHost->objFactory->GetObjectFromId( id );
+//    if(!obj)
+//        return false;
+//    ComRemoveObject *com = new ComRemoveObject(myHost, obj, RemoveType::RemoveWithCables);
+//    myHost->undoStack.push( com );
+    return true;
+}
+
 void Container::ReceiveMsg(const MsgObject &msg)
 {
 
@@ -1228,16 +1305,14 @@ void Container::ReceiveMsg(const MsgObject &msg)
 
     if(msg.prop.contains(MsgObject::ObjectsToLoad)) {
 
-        int insertType = msg.prop[MsgObject::Type].toInt();
-        QSharedPointer<Object> targetObj = myHost->objFactory->GetObjectFromId( GetIndex() );
+        InsertionType::Enum insertType = static_cast<InsertionType::Enum>( msg.prop[MsgObject::Type].toInt() );
 
         QByteArray ba = msg.prop[MsgObject::ObjectsToLoad].toByteArray();
         QDataStream streamObj(&ba, QIODevice::ReadOnly);
         while(!streamObj.atEnd()) {
             ObjectInfo newInfo;
             newInfo.fromStream(streamObj);
-            ComAddObject *com = new ComAddObject(myHost, newInfo, targetObj.staticCast<Container>(), targetObj, static_cast<InsertionType::Enum>(insertType) );
-            myHost->undoStack.push( com );
+            AddObject(newInfo, insertType);
         }
 
         return;
@@ -1256,7 +1331,7 @@ void Container::ReceiveMsg(const MsgObject &msg)
         QStringList lstFiles = msg.prop[MsgObject::FilesToLoad].toStringList();
         foreach(const QString filename, lstFiles) {
             if(filename.endsWith("fxb", Qt::CaseInsensitive) || filename.endsWith("fxp", Qt::CaseInsensitive)) {
-                int insertType = msg.prop[MsgObject::Type].toInt();
+                InsertionType::Enum insertType = static_cast<InsertionType::Enum>( msg.prop[MsgObject::Type].toInt() );
                 QSharedPointer<Object> targetObj = myHost->objFactory->GetObjectFromId( GetIndex() );
 
                 ObjectInfo infoVst;
@@ -1264,8 +1339,8 @@ void Container::ReceiveMsg(const MsgObject &msg)
                 infoVst.objType = ObjType::VstPlugin;
                 infoVst.filename = filename;
                 infoVst.name = filename;
-                ComAddObject *com = new ComAddObject(myHost, infoVst, targetObj.staticCast<Container>(), targetObj, static_cast<InsertionType::Enum>(insertType) );
-                myHost->undoStack.push( com );
+
+                AddObject(infoVst, insertType);
                 continue;
             }
         }

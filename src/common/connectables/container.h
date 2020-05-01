@@ -121,7 +121,7 @@ namespace Connectables {
 
     protected:
         void AddChildObject(QSharedPointer<Object> objPtr);
-        void ParkChildObject(QSharedPointer<Object> objPtr);
+        bool ParkChildObject(QSharedPointer<Object> objPtr);
         bool LoadProgram(ContainerProgram *newProg);
 
         /// true if this container saves the solver status
@@ -159,6 +159,10 @@ namespace Connectables {
         QList<int> listProgToRemove;
 
     public slots:
+        qint32 AddObject(const ObjectInfo &newInfo, InsertionType::Enum insertType = InsertionType::NoInsertion);
+        qint32 AddObject(QString type, QString name="", QString id="");
+        bool RemoveObject(qint32 id);
+
         void UserAddObject(const QSharedPointer<Object> &objPtr,
                            InsertionType::Enum insertType = InsertionType::NoInsertion,
                            QList< QPair<ConnectionInfo,ConnectionInfo> > *listOfAddedCables=0,

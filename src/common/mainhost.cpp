@@ -145,9 +145,9 @@ void MainHost::Init()
     setObjectName("MainHost");
 
 #ifdef SCRIPTENGINE
-    scriptEngine = new QScriptEngine(this);
-    QScriptValue scriptObj = scriptEngine->newQObject(this);
-    scriptEngine->globalObject().setProperty("MainHost", scriptObj);
+    QJSValue scriptObj = scriptEngine.newQObject(this);
+    scriptEngine.globalObject().setProperty("MainHost", scriptObj);
+    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
 #endif
 
 #ifdef VST24SDK
@@ -330,6 +330,12 @@ void MainHost::SetupHostContainer()
         hostContainer->SetMsgEnabled(true);
         hostContainer->UpdateView();
     }
+
+#ifdef SCRIPTENGINE
+    QJSValue scriptObj = scriptEngine.newQObject(hostContainer.get());
+    scriptEngine.globalObject().setProperty("hostContainer", scriptObj);
+    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
+#endif
 }
 
 void MainHost::SetupProjectContainer()
@@ -447,6 +453,12 @@ void MainHost::SetupProjectContainer()
         projectContainer->SetMsgEnabled(true);
         projectContainer->UpdateView();
     }
+
+#ifdef SCRIPTENGINE
+    QJSValue scriptObj = scriptEngine.newQObject(projectContainer.get());
+    scriptEngine.globalObject().setProperty("projectContainer", scriptObj);
+    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
+#endif
 }
 
 void MainHost::SetupProgramContainer()
@@ -563,6 +575,12 @@ void MainHost::SetupProgramContainer()
         programContainer->SetMsgEnabled(true);
         programContainer->UpdateView();
     }
+
+#ifdef SCRIPTENGINE
+    QJSValue scriptObj = scriptEngine.newQObject( programContainer.get() );
+    scriptEngine.globalObject().setProperty("programContainer", scriptObj);
+    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
+#endif
 }
 
 void MainHost::SetupGroupContainer()
@@ -681,6 +699,12 @@ void MainHost::SetupGroupContainer()
         groupContainer->SetMsgEnabled(true);
         groupContainer->UpdateView();
     }
+
+#ifdef SCRIPTENGINE
+    QJSValue scriptObj = scriptEngine.newQObject(groupContainer.get());
+    scriptEngine.globalObject().setProperty("groupContainer", scriptObj);
+    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
+#endif
 }
 
 void MainHost::EnableSolverUpdate(bool enable)

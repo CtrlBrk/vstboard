@@ -47,8 +47,8 @@ macx {
  CONFIG += c++1z
 }
 
-#deprecated
-#CONFIG += scriptengine
+CONFIG += scriptengine
+CONFIG += oldscriptengine
 
 #use ring buffers to sync multiple audio inputs
 DEFINES += CIRCULAR_BUFFER
@@ -65,10 +65,15 @@ DEFINES += DEBUG_OBJECTS
 DEFINES += DEBUG_DEVICES
 #DEFINES += DEBUG_MESSAGES
 
-#scriptengine {
-#    DEFINES += SCRIPTENGINE
-#    QT += script
-#}
+scriptengine {
+    DEFINES += SCRIPTENGINE
+    oldscriptengine {
+        DEFINES += OLDSCRIPTENGINE
+        QT += script
+    } else {
+        QT += qml
+    }
+}
 
 CONFIG(debug, debug|release) {
     POST =

@@ -274,4 +274,12 @@ namespace Connectables {
 //typedef QHash<int, QWeakPointer<Connectables::Object> > hashObjects;
 typedef QMap<int, QWeakPointer<Connectables::Object> > hashObjects;
 
+
+#ifdef OLDSCRIPTENGINE
+namespace QQmlEngine {
+    static int CppOwnership=0;
+    static void setObjectOwnership(QObject *, int ) {}
+}
+#endif
+
 #endif // GLOBALS_H

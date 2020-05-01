@@ -39,34 +39,39 @@ namespace Connectables {
         bool Close();
         void Render();
         Pin* CreatePin(const ConnectionInfo &info);
+        void MidiMsgFromInput(long msg);
+
+        static QMutex mutexScript;
 
     protected:
-        /// list of values used by the editor pin (0 and 1)
-        QList<QVariant>listEditorVisible;
-
-        QString objScriptName;
+        bool CompileScrtipt();
         QString scriptText;
-        QString comiledScript;
         View::ScriptEditor *editorWnd;
-        QMutex mutexScript;
 
-        QScriptValue scriptThisObj;
-        QScriptValue objScript;
-        QScriptValue openScript;
-        QScriptValue renderScript;
+        QString defaultScript;
+
+        QJSValue scriptThisObj;
+        QJSValue objScript;
+        QJSValue openScript;
+        QJSValue renderScript;
+        QJSValue midiinScript;
 
     signals :
         void _dspMsg(const QString &title, const QString &str);
+        void _addLog(const QString &txt);
 
     public slots:
         void SaveProgram();
         void LoadProgram(int prog);
         void ReplaceScript(const QString &str);
+        void log(const QString &str);
         void alert(const QString &str);
         void OnShowEditor();
         void OnHideEditor();
         void OnEditorClosed();
         void EditorDestroyed();
+        void SendMidiMsg(int chan, int command, int m1, int m2,int pin = -1);
+        void SendMidiMsg(long raw,int pin = -1);
 
     private slots:
         void DspMsg(const QString &title, const QString &str);
