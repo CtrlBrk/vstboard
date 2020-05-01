@@ -90,8 +90,10 @@ Object::Object(MainHost *host, qint32 index, const ObjectInfo &info) :
 #endif
 
 #ifdef SCRIPTENGINE
-    QScriptValue scriptObj = myHost->scriptEngine->newQObject(this);
-    myHost->scriptEngine->globalObject().setProperty(QString("Obj%1").arg(index), scriptObj);
+    //all objects are accessible via script, with a generic name "Obj__"
+    QJSValue scriptObj = myHost->scriptEngine.newQObject(this);
+    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
+    myHost->scriptEngine.globalObject().setProperty(QString("Obj%1").arg(index), scriptObj);
 #endif
 
     //init pins lists
@@ -627,6 +629,22 @@ void Object::UserAddPin(const ConnectionInfo &info)
             LOG("no input or output ?")
             break;
     }
+}
+
+Pin* Object::CreatePin(pinConstructArgs &args)
+{
+    if(args.direction == PinDirection::Input
+            && args.type == PinType::Parameter
+            && args.pinNumber == FixedPinNumber::editorVisible) {
+        listEditorVisible << "hide";
+        listEditorVisible << "show";
+        args.parent = this;
+        args.listValues = &listEditorVisible;
+        args.defaultVariantValue = "hide";
+        args.name = tr("Editor");
+
+    }
+    return PinFactory::MakePin(args);
 }
 
 /*!

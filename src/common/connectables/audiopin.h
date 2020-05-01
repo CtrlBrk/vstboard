@@ -37,6 +37,7 @@ namespace Connectables {
         Q_PROPERTY(AudioBuffer * buffer READ GetBuffer WRITE SetBuffer)
 
     public:
+        AudioPin(const pinConstructArgs &conf);
         AudioPin(Object *parent, PinDirection::Enum direction, int number, unsigned long bufferSize, bool doublePrecision=false, bool externalAllocation=false);
         virtual ~AudioPin();
 

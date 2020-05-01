@@ -24,6 +24,13 @@
 #include "mainhost.h"
 using namespace Connectables;
 
+BridgePinOut::BridgePinOut(const pinConstructArgs &conf) :
+    Pin(conf),
+    valueType(PinType::ND)
+{
+    setObjectName(QString("BOut%1").arg(conf.pinNumber));
+}
+
 BridgePinOut::BridgePinOut(Object *parent, int number, bool bridge)
     :Pin(parent,PinType::Bridge,PinDirection::Output,number,bridge),
     valueType(PinType::ND)

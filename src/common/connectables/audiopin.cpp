@@ -32,6 +32,20 @@ using namespace Connectables;
   \brief base class for audio pins
   */
 
+AudioPin::AudioPin(const pinConstructArgs &conf) :
+    Pin(conf),
+    doublePrecision(conf.doublePrecision),
+    buffer(0)
+{
+    buffer = new AudioBuffer(doublePrecision,conf.externalAllocation);
+    SetBufferSize(conf.bufferSize);
+
+    if(conf.direction==PinDirection::Input)
+        setObjectName(QString("AudioIn%1").arg(conf.pinNumber));
+    else
+        setObjectName(QString("AudioOut%1").arg(conf.pinNumber));
+}
+
 /*!
   Constructor, used by PinsList with the help of Object::CreatePin
   \param parent pointer to the parent Object

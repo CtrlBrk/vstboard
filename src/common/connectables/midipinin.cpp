@@ -26,6 +26,12 @@
 
 using namespace Connectables;
 
+MidiPinIn::MidiPinIn(const pinConstructArgs &conf) :
+    Pin(conf)
+{
+    setObjectName(QString("MidiIn%1").arg(conf.pinNumber));
+}
+
 MidiPinIn::MidiPinIn(Object *parent, int number, bool bridge)
     :Pin(parent,PinType::Midi,PinDirection::Input,number,bridge)
 {

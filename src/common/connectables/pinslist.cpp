@@ -181,8 +181,10 @@ void PinsList::SetNbPins(int nb, QList<quint16> *listAdded,QList<quint16> *listR
                 *listRemoved << i.key();
                 ++i;
             } else {
-                RemovePin(i.key());
+//                RemovePin(i.key());
+                delete i.value();
                 i=listPins.erase(i);
+                parent->OnProgramDirty();
             }
         } else {
             ++i;

@@ -19,20 +19,35 @@
 **************************************************************************/
 #include "pinfactory.h"
 
-
-
 using namespace Connectables;
 
 Pin* PinFactory::MakePin(const pinConstructArgs &conf)
 {
     switch(conf.type) {
         case PinType::Midi :
+            switch(conf.direction) {
+            case PinDirection::Input :
+                return new MidiPinIn(conf);
+            case PinDirection::Output :
+                return new MidiPinOut(conf);
+            default:
+                return 0;
+            }
         break;
 
         case PinType::Audio :
+            return new AudioPin(conf);
         break;
 
         case PinType::Bridge :
+            switch(conf.direction) {
+            case PinDirection::Input :
+                return new BridgePinIn(conf);
+            case PinDirection::Output :
+                return new BridgePinOut(conf);
+            default:
+                return 0;
+            }
         break;
 
         case PinType::Parameter :

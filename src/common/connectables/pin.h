@@ -55,6 +55,9 @@ namespace Connectables {
 //			defaultValue = .0f;
 			nameCanChange = false;
 			name = "";
+            doublePrecision = false;
+            externalAllocation = false;
+            bufferSize = 0;
 		};
 
 		Object *parent = 0;
@@ -67,6 +70,9 @@ namespace Connectables {
 //		float defaultValue = .0f;
 		bool nameCanChange = false;
 		QString name = "";
+        bool doublePrecision;
+        bool externalAllocation;
+        unsigned long bufferSize;
 	};
 
     

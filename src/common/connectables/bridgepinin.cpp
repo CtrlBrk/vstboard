@@ -26,6 +26,15 @@
 
 using namespace Connectables;
 
+BridgePinIn::BridgePinIn(const pinConstructArgs &conf) :
+    Pin(conf),
+    valueType(PinType::ND),
+    messagesType{ PinMessage::ND },
+    msgCount(0)
+{
+    setObjectName(QString("BIn%1").arg(conf.pinNumber));
+}
+
 BridgePinIn::BridgePinIn(Object *parent, int number, bool bridge) :
     Pin(parent,PinType::Bridge,PinDirection::Input,number,bridge),
     valueType(PinType::ND),
