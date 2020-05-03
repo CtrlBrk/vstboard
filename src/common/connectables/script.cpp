@@ -55,25 +55,46 @@ Script::Script(MainHost *host, int index, const ObjectInfo &info) :
             editorWnd, SLOT(AddToLog(QString)));
 
     defaultScript = "({\n"
+            "//called when the script is added to a panel, on program change\n"
             "open: function(){\n"
-            "   // programContainer.AddObject('C:\\\\Program Files\\\\Common Files\\\\VST3\\\\randomPlugin.vst3');\n"
             "   this.listParameterPinIn.nbPins=1;\n"
             "   this.listParameterPinOut.nbPins=1;\n"
             "   this.listAudioPinIn.nbPins=1;\n"
             "   this.listAudioPinOut.nbPins=1;\n"
             "   this.listMidiPinIn.nbPins=1;\n"
             "   this.listMidiPinOut.nbPins=2;\n"
-            "   //this.alert('ok');\n"
+            "/*\n"
+            "//load two plugins :\n"
+            "   id1 = programContainer.AddObject('C:\\\\Program Files\\\\Common Files\\\\VST3\\\\mda-vst3.vst3','mda TestTone');\n"
+            "   id2 = programContainer.AddObject('C:\\\\Program Files\\\\Common Files\\\\VST3\\\\adelay.vst3');\n"
+            "//connect them together :\n"
+            "   programContainer.ConnectObjects(id1,id2);\n"
+            "//show some message :\n"
+            "   this.alert(id1);\n"
+            "//connect two pins :\n"
+            "   programContainer.AddCable(this.ParamOut0, id1.Mode)\n"
+            "*/\n"
             "},\n"
+            "\n"
+            "\n"
+            "//called on every render loop\n"
             "render: function(){\n"
+            "//copy values from input parameter to output :\n"
             "   this.ParamOut0.value=this.ParamIn0.value;\n"
+            "//copy buffer content from in to out :\n"
             "   this.AudioOut0.buffer=this.AudioIn0.buffer;\n"
             "},\n"
+            "\n"
+            "\n"
+            "//called on midi event\n"
             "midi_in: function(channel,command,val1,val2,commandname,raw){\n"
+            "//add some information to the log :\n"
             "   //this.log(commandname + ' chan:' + channel + ' 1:' + val1 + ' 2:' + val2);\n"
+            "//relay 'note on' to all outputs :\n"
             "   if(commandname=='noteon') {\n"
             "       this.SendMidiMsg(channel,command,val1,val2);\n"
             "   } else {\n"
+            "//else, send the raw message to the first pin :\n"
             "       this.SendMidiMsg(raw,1);\n"
             "   }\n"
             "}\n"
@@ -91,14 +112,14 @@ Script::Script(MainHost *host, int index, const ObjectInfo &info) :
 
 bool Script::Open()
 {
-    CompileScrtipt();
+//    CompileScrtipt();
     return true;
 }
 
 bool Script::CompileScrtipt()
 {
     scriptThisObj = myHost->scriptEngine.newQObject(this);
-    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
+//    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
 
     {
         QMutexLocker ms(&mutexScript);
@@ -119,7 +140,6 @@ bool Script::CompileScrtipt()
 
         QScriptValue result = openScript.call(scriptThisObj);
         if(myHost->scriptEngine.hasUncaughtException()) {
-
             int line = myHost->scriptEngine.uncaughtExceptionLineNumber();
             log( tr("open exception, line %1\n%2").arg(line).arg(result.toString()) );
             return false;
@@ -167,7 +187,6 @@ void Script::SendMidiMsg(int chan, int command, int m1, int m2, int pin)
 void Script::MidiMsgFromInput(long msg)
 {
     if(!midiinScript.isError()) {
-        QScriptValueList args;
 
         quint8 command = MidiStatus(msg) & MidiConst::codeMask;
         qint8 chan = MidiStatus(msg) & MidiConst::channelMask;
@@ -202,6 +221,7 @@ void Script::MidiMsgFromInput(long msg)
             break;
         }
 
+        QScriptValueList args;
         args << chan;
         args << command;
         args << m1;
@@ -210,9 +230,8 @@ void Script::MidiMsgFromInput(long msg)
 
         QScriptValue result = midiinScript.call(scriptThisObj,args);
         if(myHost->scriptEngine.hasUncaughtException()) {
-            midiinScript = result;
-
             int line = myHost->scriptEngine.uncaughtExceptionLineNumber();
+            midiinScript = result;
             log( tr("midi_in exception, line %1\n%2").arg(line).arg(result.toString()) );
         }
     }
@@ -368,11 +387,15 @@ void Script::LoadProgram(int prog)
         return;
 
     scriptText = currentProgram->listOtherValues.value(0,"").toString();
-
     CompileScrtipt();
 
     if(editorWnd && editorWnd->isVisible())
         editorWnd->SetScript(scriptText);
+
+    //enable view update for the pins created by the script
+    foreach(PinsList *lst, pinLists) {
+        lst->EnableVuUpdates(true);
+    }
 }
 
 #endif

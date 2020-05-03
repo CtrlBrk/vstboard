@@ -53,7 +53,7 @@ ObjectFactory::ObjectFactory(MainHost *myHost) :
     setObjectName("ObjectFactory");
 
 #ifdef SCRIPTENGINE
-    QJSValue scriptObj = myHost->scriptEngine.newQObject(this);
+    QScriptValue scriptObj = myHost->scriptEngine.newQObject(this);
     myHost->scriptEngine.globalObject().setProperty("ObjectFactory", scriptObj);
 #endif
 }
@@ -87,6 +87,25 @@ void ObjectFactory::ResetAllSavedId()
             ++i;
         }
     }
+}
+
+QSharedPointer<Object> ObjectFactory::GetObjectFromId(int id) {
+    if(id==0) {
+#ifdef DEBUG_OBJECTS
+LOG(QString("obj %1 not defined").arg(id));
+#endif
+        return QSharedPointer<Object>();
+    }
+
+    if(!listObjects.contains(id)) {
+#ifdef DEBUG_OBJECTS
+LOG(QString("obj %1 not defined").arg(id));
+#endif
+        return QSharedPointer<Object>();
+    }
+
+    QSharedPointer<Object> o = listObjects.value(id);
+    return listObjects.value(id);
 }
 
 int ObjectFactory::IdFromSavedId(int savedId)

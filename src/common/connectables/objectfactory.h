@@ -44,25 +44,7 @@ namespace Connectables {
             listObjects.remove(id);
         }
 
-        inline QSharedPointer<Object> GetObjectFromId(int id) {
-            if(id==0) {
-#ifdef DEBUG_OBJECTS
-        LOG(QString("obj %1 not defined").arg(id));
-#endif
-                return QSharedPointer<Object>();
-            }
-
-            if(!listObjects.contains(id)) {
-#ifdef DEBUG_OBJECTS
-        LOG(QString("obj %1 not defined").arg(id));
-#endif
-                return QSharedPointer<Object>();
-            }
-
-            QSharedPointer<Object> o = listObjects.value(id);
-            return listObjects.value(id);
-        }
-
+        QSharedPointer<Object> GetObjectFromId(int id);
         int IdFromSavedId(int savedId);
         void ResetAllSavedId();
         Pin *GetPin(const ConnectionInfo &pinInfo);
@@ -79,6 +61,7 @@ namespace Connectables {
 
         hashObjects listObjects;
         MainHost *myHost;
+
     };
 
 }

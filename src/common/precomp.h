@@ -124,9 +124,6 @@
 
 #ifdef OLDSCRIPTENGINE
     #include <QScriptEngine>
-    #define QJSValue QScriptValue
-    #define QJSEngine QScriptEngine
-
 #else
     #include <QQmlEngine>
     #include <QJSEngine>

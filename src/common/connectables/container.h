@@ -58,6 +58,7 @@ namespace Connectables {
         virtual void AddObject(QSharedPointer<Object> objPtr);
         virtual void ParkObject(QSharedPointer<Object> objPtr);
 
+        qint32 AddObject(const ObjectInfo &newInfo, InsertionType::Enum insertType = InsertionType::NoInsertion);
         void AddParkedObject(QSharedPointer<Object> objPtr);
         void CopyCablesFromObj(QSharedPointer<Object> newObjPtr, QSharedPointer<Object> ObjPtr);
         void MoveOutputCablesFromObj(QSharedPointer<Object> newObjPtr, QSharedPointer<Object> ObjPtr);
@@ -159,9 +160,11 @@ namespace Connectables {
         QList<int> listProgToRemove;
 
     public slots:
-        qint32 AddObject(const ObjectInfo &newInfo, InsertionType::Enum insertType = InsertionType::NoInsertion);
-        qint32 AddObject(QString type, QString name="", QString id="");
-        bool RemoveObject(qint32 id);
+        void ConnectObjects(QScriptValue from, QScriptValue to);
+        QScriptValue AddObject(QString type, QString name="", QString id="");
+        bool RemoveObject(QScriptValue obj);
+        void AddCable(QScriptValue pinFrom, QScriptValue pinTo);
+        void RemoveCable(QScriptValue pinFrom, QScriptValue pinTo);
 
         void UserAddObject(const QSharedPointer<Object> &objPtr,
                            InsertionType::Enum insertType = InsertionType::NoInsertion,

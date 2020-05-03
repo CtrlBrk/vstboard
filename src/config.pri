@@ -61,18 +61,18 @@ DEFINES += CIRCULAR_BUFFER
 
 #DEFINES += DEBUG_RENDERER
 #DEFINES += DEBUG_BUFFERS
-DEFINES += DEBUG_OBJECTS
-DEFINES += DEBUG_DEVICES
+#DEFINES += DEBUG_OBJECTS
+#DEFINES += DEBUG_DEVICES
 #DEFINES += DEBUG_MESSAGES
 
 scriptengine {
     DEFINES += SCRIPTENGINE
-    oldscriptengine {
+#    oldscriptengine {
         DEFINES += OLDSCRIPTENGINE
         QT += script
-    } else {
-        QT += qml
-    }
+#    } else {
+#        QT += qml
+#    }
 }
 
 CONFIG(debug, debug|release) {

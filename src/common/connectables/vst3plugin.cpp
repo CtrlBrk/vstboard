@@ -1345,12 +1345,14 @@ void Vst3Plugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
 
 Pin* Vst3Plugin::CreatePin(const ConnectionInfo &info)
 {
-    Pin *newPin = Object::CreatePin(info);
-    if(newPin)
-        return newPin;
-
     pinConstructArgs args(info);
     args.parent = this;
+    args.bufferSize = myHost->GetBufferSize();
+    args.doublePrecision = doublePrecision;
+
+//    Pin *newPin = Object::CreatePin(args);
+//    if(newPin)
+//        return newPin;
 
     if(info.type == PinType::Parameter) {
 
@@ -1388,6 +1390,7 @@ Pin* Vst3Plugin::CreatePin(const ConnectionInfo &info)
 
         args.value = (float)paramInfo.defaultNormalizedValue;
         args.name = QString::fromUtf16((char16_t*)paramInfo.title);
+        args.name += args.pinNumber;
         args.isRemoveable = hasEditor;
         args.nameCanChange = hasEditor;
         args.visible = !hasEditor;
@@ -1397,10 +1400,11 @@ Pin* Vst3Plugin::CreatePin(const ConnectionInfo &info)
             args.visible = true;
         }
 
-        return PinFactory::MakePin(args);
+//        return PinFactory::MakePin(args);
     }
 
-    return 0;
+    return PinFactory::MakePin(args);
+//    return 0;
 }
 
 

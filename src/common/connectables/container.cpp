@@ -117,6 +117,51 @@ void Container::SetContainerId(qint32 id)
     }
 }
 
+void Container::ConnectObjects(QScriptValue from, QScriptValue to)
+{
+    Object *objFrom  = static_cast<Object*>(from.toQObject() );
+    Object *objTo  = static_cast<Object*>(to.toQObject() );
+
+    if(!objFrom || !objTo)
+        return;
+
+    QSharedPointer<Object>pFrom = myHost->objFactory->GetObjectFromId(objFrom->GetIndex());
+    QSharedPointer<Object>pTo = myHost->objFactory->GetObjectFromId(objTo->GetIndex());
+
+    QList< QSharedPointer<Cable> >addedCables;
+    QList<int>removedCables;
+    currentContainerProgram->CollectCableUpdatesIds( &addedCables, &removedCables );
+
+    ConnectObjects(pFrom,pTo,false);
+
+//    ConnectObjects(
+//        myHost->objFactory->GetObjectFromId(from),
+//        myHost->objFactory->GetObjectFromId(to),
+//        false
+//    );
+
+    currentContainerProgram->CollectCableUpdates();
+    currentContainerProgram->CollectCableUpdatesIds();
+
+    if(MsgEnabled()) {
+        foreach(int id, removedCables) {
+            MSGOBJ();
+            msg.prop[MsgObject::Remove]=id;
+            msgCtrl->SendMsg(msg);
+        }
+
+
+        foreach(QSharedPointer<Cable> cab, addedCables) {
+            MSGOBJ();
+            cab->GetInfos(msg);
+            msgCtrl->SendMsg(msg);
+        }
+    }
+
+    myHost->SetSolverUpdateNeeded();
+    UpdateModificationTime();
+}
+
 /*!
   Connect the output pins of fromObjOutputs to the inputs of toObjInputs
   \param fromObjOutputs
@@ -734,6 +779,29 @@ void Container::OnChildDeleted(QSharedPointer<Object>obj)
 //    }
 }
 
+void Container::RemoveCable(QScriptValue pinFrom, QScriptValue pinTo)
+{
+    Pin* opinFrom = static_cast<Pin*>(pinFrom.toQObject());
+    Pin* opinTo = static_cast<Pin*>(pinTo.toQObject());
+
+    if(!opinFrom || !opinTo)
+        return;
+
+    UserRemoveCable(opinFrom->GetConnectionInfo(), opinTo->GetConnectionInfo());
+    UserRemoveCable(opinTo->GetConnectionInfo(), opinFrom->GetConnectionInfo());
+}
+
+void Container::AddCable(QScriptValue pinFrom, QScriptValue pinTo)
+{
+    Pin* opinFrom = static_cast<Pin*>(pinFrom.toQObject());
+    Pin* opinTo = static_cast<Pin*>(pinTo.toQObject());
+
+    if(!opinFrom || !opinTo)
+        return;
+
+    UserAddCable( opinFrom->GetConnectionInfo(), opinTo->GetConnectionInfo());
+}
+
 void Container::UserAddCable(const ConnectionInfo &outputPin, const ConnectionInfo &inputPin)
 {
     QList< QSharedPointer<Cable> >addedCables;
@@ -1219,7 +1287,8 @@ qint32 Container::AddObject(const ObjectInfo &newInfo, InsertionType::Enum inser
     return com->GetInfo().forcedObjId;
 }
 
-qint32 Container::AddObject(QString type, QString name/*=""*/, QString id/*=""*/) {
+QScriptValue Container::AddObject(QString type, QString name/*=""*/, QString id/*=""*/)
+{
     ObjectInfo i;
     i.nodeType = NodeType::object;
 
@@ -1265,15 +1334,20 @@ qint32 Container::AddObject(QString type, QString name/*=""*/, QString id/*=""*/
         i.objType = ObjType::Buffer;
     }
 
-    return AddObject(static_cast<ObjectInfo>(i));
+    qint32 objid = AddObject(static_cast<ObjectInfo>(i));
+    return myHost->scriptEngine.evaluate(QString("Obj%1").arg(objid));
 }
 
-bool Container::RemoveObject(qint32 id)
+bool Container::RemoveObject(QScriptValue obj)
 {
+    Object* pobj = static_cast<Object*>(obj.toQObject());
+    if(!pobj)
+        return false;
+
 //    MSGOBJ();
-    MsgObject msg(id);
+    MsgObject msg(pobj->GetIndex());
 //    msg.prop[MsgObject::Remove]=RemoveType::BridgeCables;
-    msg.prop[MsgObject::Remove]=id;
+    msg.prop[MsgObject::Remove]=pobj->GetIndex();
     myHost->SendMsg(msg);
 
 //    QSharedPointer<Object> obj = myHost->objFactory->GetObjectFromId( id );

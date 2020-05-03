@@ -91,8 +91,8 @@ Object::Object(MainHost *host, qint32 index, const ObjectInfo &info) :
 
 #ifdef SCRIPTENGINE
     //all objects are accessible via script, with a generic name "Obj__"
-    QJSValue scriptObj = myHost->scriptEngine.newQObject(this);
-    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
+    QScriptValue scriptObj = myHost->scriptEngine.newQObject(this);
+//    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
     myHost->scriptEngine.globalObject().setProperty(QString("Obj%1").arg(index), scriptObj);
 #endif
 
@@ -644,6 +644,9 @@ Pin* Object::CreatePin(pinConstructArgs &args)
         args.name = tr("Editor");
 
     }
+
+    args.bufferSize = myHost->GetBufferSize();
+    args.doublePrecision = doublePrecision;
     return PinFactory::MakePin(args);
 }
 
