@@ -20,11 +20,16 @@
 #ifndef LISTOBJECTSMODEL_H
 #define LISTOBJECTSMODEL_H
 
+#include "msghandler.h"
 
-class ListObjectsModel : public QStandardItemModel
+class ListObjectsModel : public QStandardItemModel, public MsgHandler
 {
 public:
-    ListObjectsModel();
+    ListObjectsModel(MsgController *msgCtrl, int objId, QObject *parent);
+    void ReceiveMsg(const MsgObject &msg);
+private:
+    QStandardItem* AddItem(const MsgObject &msg, QStandardItem *parent);
+    QMap<int, QStandardItem*>listItems;
 };
 
 #endif // LISTOBJECTSMODEL_H

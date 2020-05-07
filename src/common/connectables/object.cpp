@@ -90,10 +90,11 @@ Object::Object(MainHost *host, qint32 index, const ObjectInfo &info) :
 #endif
 
 #ifdef SCRIPTENGINE
+    scriptName = QString("Obj%1").arg(index);
     //all objects are accessible via script, with a generic name "Obj__"
     QScriptValue scriptObj = myHost->scriptEngine.newQObject(this);
 //    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
-    myHost->scriptEngine.globalObject().setProperty(QString("Obj%1").arg(index), scriptObj);
+    myHost->scriptEngine.globalObject().setProperty(scriptName, scriptObj);
 #endif
 
     //init pins lists
@@ -1032,4 +1033,21 @@ void Object::SetErrorMessage(const QString &msg)
     _MSGOBJ(m,GetIndex());
     m.prop[MsgObject::Message] = errorMessage;
     msgCtrl->SendMsg(m);
+}
+
+QStandardItem * Object::GetModel()
+{
+    QStandardItem *i = new QStandardItem( QString("%1 (%2)").arg(objectName()).arg(scriptName) );
+    foreach(QObject *o, children()) {
+        QString className(o->metaObject()->className());
+//        if(className != "Connectables::PinsList") {
+        QStandardItem *lst = new QStandardItem( QString("%1 (%2)")
+                                                .arg( o->objectName() )
+                                                .arg( className )
+                                                );
+//        }
+        i->appendRow(lst);
+    }
+
+    return i;
 }

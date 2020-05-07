@@ -21,7 +21,6 @@
 #ifndef LISTTOOLSMODEL_H
 #define LISTTOOLSMODEL_H
 
-//#include "precomp.h"
 #include "msghandler.h"
 
 class ListToolsModel : public QStandardItemModel, public MsgHandler

@@ -24,6 +24,7 @@
 //#include "precomp.h"
 #include "mainhost.h"
 #include "models/listtoolsmodel.h"
+#include "models/listobjectsmodel.h"
 #include "sceneview/sceneview.h"
 #include "views/viewconfig.h"
 #include "views/keybind.h"
@@ -71,6 +72,7 @@ protected:
     void UpdateSolverMap(const MsgObject &msg);
 
     ListToolsModel *listToolsModel;
+    ListObjectsModel *objectsTreeModel;
 
     QFileSystemModel *listVstPluginsModel;
     QFileSystemModel *listVstBanksModel;
@@ -112,6 +114,7 @@ public slots:
     void SetProgramsFont(const QFont &f);
     void LoadProgramsFont();
     void UpdateDebugGraph(QVector<float> grph);
+    virtual void BuildObjectsTree();
 
 private slots:
     void on_actionLoad_Setup_triggered();

@@ -1445,3 +1445,42 @@ void Container::SetMsgEnabled(bool enab)
 
     Object::SetMsgEnabled(enab);
 }
+
+QStandardItem * Container::GetModel()
+{
+    QStandardItem *i = new QStandardItem(objectName());
+
+    foreach( QSharedPointer< Object >obj, listStaticObjects) {
+        if(obj) {
+            i->appendRow( obj->GetModel() );
+        }
+    }
+
+    foreach( QSharedPointer< Object >obj, listLoadedObjects) {
+        if(obj) {
+            i->appendRow( obj->GetModel() );
+        }
+    }
+    QStandardItem *cables = new QStandardItem("Cables");
+    if(currentContainerProgram) {
+        foreach(QSharedPointer<Cable>cab, currentContainerProgram->listCables) {
+            Connectables::Pin *pinO = myHost->objFactory->GetPin(cab->GetInfoOut());
+            Connectables::Pin *pinI = myHost->objFactory->GetPin(cab->GetInfoIn());
+            QSharedPointer<Object> On = myHost->objFactory->GetObjectFromId(cab->GetInfoOut().objId);
+            QSharedPointer<Object> In = myHost->objFactory->GetObjectFromId(cab->GetInfoIn().objId);
+
+            QString n = QString("%1.%2->%3.%4 (%5->%6)")
+                    .arg(On->scriptName)
+                    .arg(pinO->objectName())
+                    .arg(In->scriptName)
+                    .arg(pinI->objectName())
+                    .arg(On->objectName())
+                    .arg(In->objectName());
+            QStandardItem *c = new QStandardItem(n);
+            cables->appendRow(c);
+        }
+    }
+    if(cables->rowCount()!=0)
+        i->appendRow(cables);
+    return i;
+}

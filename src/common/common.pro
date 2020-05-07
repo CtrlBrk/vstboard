@@ -44,6 +44,7 @@ SOURCES += \
     connectables/objectcontainerattribs.cpp \
     connectables/pinfactory.cpp \
     connectables/script.cpp \
+    models/listobjectsmodel.cpp \
     msghandler.cpp \
     mainhost.cpp \
     audiobuffer.cpp \
@@ -159,6 +160,7 @@ HEADERS += \
     audiobuffer.h \
     mainwindow.h \
     circularbuffer.h \
+    models/listobjectsmodel.h \
     projectfile/jsonreader.h \
     projectfile/jsonwriter.h \
     settings.h \

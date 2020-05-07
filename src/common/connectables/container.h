@@ -36,16 +36,16 @@ namespace Connectables {
 
 //        void Hide();
         void ConnectObjects(QSharedPointer<Object> fromObjOutputs, QSharedPointer<Object> toObjInputs, bool hiddenCables);
-        void SetContainerId(qint32 id);
+        void SetContainerId(qint32 id) override;
 //        const QModelIndex &GetCablesIndex();
 
-        void fromJson(QJsonObject &json);
-        void toJson(QJsonObject &json) const;
-        QDataStream & toStream (QDataStream &) const;
-        bool fromStream (QDataStream &);
+        void fromJson(QJsonObject &json) override;
+        void toJson(QJsonObject &json) const override;
+        QDataStream & toStream (QDataStream &) const override;
+        bool fromStream (QDataStream &) override;
 
-        void ProgramToStream (int progId, QDataStream &out);
-        void ProgramFromStream (int progId, QDataStream &in);
+        void ProgramToStream (int progId, QDataStream &out) override;
+        void ProgramFromStream (int progId, QDataStream &in) override;
 
         void OnChildDeleted(QSharedPointer<Object>obj);
 
@@ -54,7 +54,7 @@ namespace Connectables {
           */
         void SetOptimizerFlag(bool opt) { optimizerFlag=opt; }
 
-        virtual bool Close();
+        virtual bool Close() override;
         virtual void AddObject(QSharedPointer<Object> objPtr);
         virtual void ParkObject(QSharedPointer<Object> objPtr);
 
@@ -65,13 +65,13 @@ namespace Connectables {
         void MoveInputCablesFromObj(QSharedPointer<Object> newObjPtr, QSharedPointer<Object> ObjPtr);
         void GetListOfConnectedPinsTo(const ConnectionInfo &pin, QList<ConnectionInfo> &list);
 //        void SendMsg(const ConnectionInfo &senderPin,const PinMessage::Enum msgType,void *data);
-        bool IsDirty() {
+        bool IsDirty() override {
             return currentContainerProgram->IsDirty();
         }
         inline void SetDirty(bool d=true) {
             currentContainerProgram->SetDirty(d);
         }
-        void SetSleep(bool sleeping);
+        void SetSleep(bool sleeping) override;
 
         /// shared pointer to the bridge in object
         QSharedPointer<Object> bridgeIn;
@@ -111,14 +111,16 @@ namespace Connectables {
 
         inline ContainerProgram * GetCurrentProgram() {return currentContainerProgram;}
 
-        void NewRenderLoop();
+        void NewRenderLoop() override;
 
-        void GetInfos(MsgObject &msg);
+        void GetInfos(MsgObject &msg) override;
 
         qint32 containersParkingId;
 
-        void ReceiveMsg(const MsgObject &msg);
-        void SetMsgEnabled(bool enab);
+        void ReceiveMsg(const MsgObject &msg) override;
+        void SetMsgEnabled(bool enab) override;
+
+        QStandardItem * GetModel() override;
 
     protected:
         void AddChildObject(QSharedPointer<Object> objPtr);
@@ -185,16 +187,16 @@ namespace Connectables {
         void RemoveCableFromPin(const ConnectionInfo &pin);
         void RemoveCable(const ConnectionInfo &outputPin, const ConnectionInfo &inputPin);
 
-        void SaveProgram();
-        void UnloadProgram();
-        void LoadProgram(int prog);
+        void SaveProgram() override;
+        void UnloadProgram() override;
+        void LoadProgram(int prog) override;
 
         void SetProgram(quint32 progId);
         void RemoveProgram(quint32 progId=0);
         void PostRender();
 
-        void SetBufferSize(unsigned long size);
-        void SetSampleRate(float rate=44100.0);
+        void SetBufferSize(unsigned long size) override;
+        void SetSampleRate(float rate=44100.0) override;
 
         friend class ContainerProgram;
     };

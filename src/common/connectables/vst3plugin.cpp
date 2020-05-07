@@ -287,7 +287,8 @@ bool Vst3Plugin::initPlugin()
         if(component->getBusInfo(Vst::kEvent, Vst::kInput, i, busInfo) == kResultTrue) {
             for(qint32 j=0; j<busInfo.channelCount; j++) {
                 Pin *p = listMidiPinIn->AddPin(cpt++);
-                p->setObjectName( QString::fromUtf16((char16_t*)busInfo.name) );
+//                p->setObjectName( QString::fromUtf16((char16_t*)busInfo.name) );
+                p->setObjectName( QString("%1%2%3").arg(busInfo.name).arg(i).arg(j) );
             }
         }
     }
@@ -300,7 +301,8 @@ bool Vst3Plugin::initPlugin()
         if(component->getBusInfo(Vst::kEvent, Vst::kOutput, i, busInfo) == kResultTrue) {
             for(qint32 j=0; j<busInfo.channelCount; j++) {
                 Pin *p = listMidiPinOut->AddPin(cpt++);
-                p->setObjectName( QString::fromUtf16((char16_t*)busInfo.name) );
+//                p->setObjectName( QString::fromUtf16((char16_t*)busInfo.name) );
+                p->setObjectName( QString("%1%2%3").arg(busInfo.name).arg(i).arg(j) );
             }
         }
     }
@@ -404,7 +406,8 @@ bool Vst3Plugin::initAudioBuffers(Vst::BusDirection dir, bool unassign)
 //                    p = listAudioPinOut->AddPin(cpt++);
                 }
 
-                p->setObjectName( QString::fromUtf16((char16_t*)busInfo.name) );
+//                p->setObjectName( QString("%1%2").arg(QString::fromUtf16((char16_t*)busInfo.name)).arg(j) );
+                p->setObjectName( QString("%1%2%3").arg(busInfo.name).arg(i).arg(j) );
                 AudioBuffer* buff = static_cast<AudioPin*>(p)->GetBuffer();
 
 				if(doublePrecision) {
@@ -1382,24 +1385,25 @@ Pin* Vst3Plugin::CreatePin(const ConnectionInfo &info)
 
         Vst::ParameterInfo paramInfo = {0};
 
-        if(editController) {
-            tresult result = editController->getParameterInfo (info.pinNumber, paramInfo);
-            if(result != kResultOk)
-                return 0;
+        if(info.pinNumber < FIXED_PIN_STARTINDEX) {
+            if(editController) {
+                tresult result = editController->getParameterInfo (info.pinNumber, paramInfo);
+                if(result != kResultOk)
+                    return 0;
+            }
+
+            args.value = (float)paramInfo.defaultNormalizedValue;
+            args.name = QString::fromUtf16((char16_t*)paramInfo.title);
+            args.name += args.pinNumber;
+            args.isRemoveable = hasEditor;
+            args.nameCanChange = hasEditor;
+            args.visible = !hasEditor;
+
+            if(info.direction==PinDirection::Output) {
+                //TODO: readonly parameters are not updated
+                args.visible = true;
+            }
         }
-
-        args.value = (float)paramInfo.defaultNormalizedValue;
-        args.name = QString::fromUtf16((char16_t*)paramInfo.title);
-        args.name += args.pinNumber;
-        args.isRemoveable = hasEditor;
-        args.nameCanChange = hasEditor;
-        args.visible = !hasEditor;
-
-        if(info.direction==PinDirection::Output) {
-            //TODO: readonly parameters are not updated
-            args.visible = true;
-        }
-
 //        return PinFactory::MakePin(args);
     }
 
@@ -1489,8 +1493,8 @@ tresult PLUGIN_API Vst3Plugin::performEdit (Vst::ParamID id, Vst::ParamValue val
 //	Vst::ParameterInfo paramInfo;
 //	if (editController->para getParameter InfoByTag(id, paramInfo) == kResultOk) {
 
-    Vst::String128 str;
-    editController->getParamStringByValue(id,0,str);
+//    Vst::String128 str;
+//    editController->getParamStringByValue(id,0,str);
 	
     //find what pin represents that parameter
     //TODO: should save that paramId=pinNb in a list
@@ -1498,6 +1502,7 @@ tresult PLUGIN_API Vst3Plugin::performEdit (Vst::ParamID id, Vst::ParamValue val
     for (qint32 i = 0; i < numParameters; i++) {
         Vst::ParameterInfo paramInfo = {0};
         tresult result = editController->getParameterInfo (i, paramInfo);
+
         if (result == kResultOk) {
 //LOG(QString("%1 %2").arg(paramInfo.id).arg(QString::fromStdWString( paramInfo.title)));
 if(paramInfo.id == id) {

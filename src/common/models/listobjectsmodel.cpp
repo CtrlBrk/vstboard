@@ -19,7 +19,43 @@
 **************************************************************************/
 #include "listobjectsmodel.h"
 
-ListObjectsModel::ListObjectsModel()
+ListObjectsModel::ListObjectsModel(MsgController *msgCtrl, int objId, QObject *parent) :
+    QStandardItemModel(parent),
+    MsgHandler(msgCtrl, objId)
 {
 
+}
+
+QStandardItem* ListObjectsModel::AddItem(const MsgObject &msg, QStandardItem *parent)
+{
+    int newId = msg.prop[MsgObject::Id].toInt();
+
+    if(listItems.contains(newId)) {
+        return listItems[ newId ];
+    }
+    QStandardItem *i = new QStandardItem( msg.prop[MsgObject::Name].toString() );
+    listItems[ newId ] = i;
+    parent->appendRow(i);
+    return i;
+}
+
+void ListObjectsModel::ReceiveMsg(const MsgObject &msg)
+{
+    if(msg.prop.contains(MsgObject::Add)) {
+        QStandardItem *parent = invisibleRootItem();
+        if(listItems.contains(msg.objIndex)) {
+            parent = listItems[msg.objIndex];
+        }
+        QStandardItem *newObj = AddItem(msg, parent);
+
+        foreach(const MsgObject &cMsg, msg.children) {
+            AddItem(cMsg, newObj);
+        }
+    }
+    if(msg.prop.contains(MsgObject::Remove)) {
+
+    }
+    if(msg.prop.contains(MsgObject::Clear)) {
+        clear();
+    }
 }

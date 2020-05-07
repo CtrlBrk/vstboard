@@ -38,6 +38,7 @@ MainWindow::MainWindow(Settings *settings, MainHost * myHost, QWidget *parent) :
     viewConfig( new View::ViewConfig(settings,this)),
     settings(settings),
     listToolsModel(0),
+    objectsTreeModel(0),
     listVstPluginsModel(0),
     listVstBanksModel(0),
     ui(new Ui::MainWindow),
@@ -141,6 +142,19 @@ void MainWindow::Init()
     shellSelect = new View::VstShellSelect(this, FixedObjId::shellselect, this);
     shellSelect->hide();
 
+
+
+    //obejcts tree
+    objectsTreeModel = new ListObjectsModel(this,32,this);
+    ui->treeObjects->setModel(objectsTreeModel);
+
+    QAction *updateObjTree = new QAction( QIcon::fromTheme("view-refresh") , tr("Refresh list"), ui->treeObjects);
+    updateObjTree->setShortcut(Qt::Key_F5);
+    updateObjTree->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    ui->treeObjects->addAction( updateObjTree );
+
+    connect( updateObjTree, SIGNAL(triggered()),
+             this, SLOT(BuildObjectsTree()));
 }
 
 #ifdef DEBUG_MESSAGES
@@ -189,10 +203,15 @@ void MainWindow::ReceiveMsg(const MsgObject &msg)
         return;
     }
 
+//    if(objectsTreeModel)
+//        objectsTreeModel->ReceiveMsg(msg);
+
     if(!listObj.contains(msg.objIndex)) {
         LOG("obj not found id:"<<msg.objIndex<<" prop:"<<msg.prop<<" from:"<<msg.sender)
         return;
     }
+
+
 
     //some objects remove the objects themselves
     if(msg.prop.contains(MsgObject::Remove) &&
@@ -388,6 +407,38 @@ void MainWindow::changeEvent(QEvent *e)
     default:
         break;
     }
+}
+
+void MainWindow::BuildObjectsTree()
+{
+//    objectsTreeModel = new ListObjectsModel(this,32,this);
+//    ui->treeObjects->setModel(objectsTreeModel);
+
+    objectsTreeModel->clear();
+    objectsTreeModel->invisibleRootItem()->appendRow(
+        myHost->mainContainer->GetModel()
+    );
+//    ui->treeObjects->expandAll();
+
+//    QStandardItem *parentItem=0;
+//    QStandardItem *item=0;
+
+
+//    parentItem = objectsTreeModel->invisibleRootItem();
+
+//    QStandardItem *mainc = new QStandardItem("MainContainer");
+//    parentItem->appendRow(mainc);
+
+//    item = new QStandardItem("HostContainer");
+//    mainc->appendRow(item);
+//    item = new QStandardItem("SetupContainer");
+//    mainc->appendRow(item);
+//    item = new QStandardItem("GroupContainer");
+//    mainc->appendRow(item);
+//    item = new QStandardItem("ProgramContainer");
+//    mainc->appendRow(item);
+
+
 }
 
 void MainWindow::BuildListTools()

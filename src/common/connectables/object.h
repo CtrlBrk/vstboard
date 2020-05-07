@@ -189,6 +189,11 @@ namespace Connectables {
 
         virtual void ReceiveMsg(const MsgObject &msg);
         virtual void SetMsgEnabled(bool enab);
+
+        virtual QStandardItem * GetModel();
+#ifdef SCRIPTENGINE
+        QString scriptName;
+#endif
     protected:
 
         void SetInitDelay(long d) {initialDelay=d;}
