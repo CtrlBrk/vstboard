@@ -37,9 +37,6 @@ namespace Connectables {
 
     public:
 		ParameterPin(const pinConstructArgs &conf);
-        ParameterPin(Object *parent, PinDirection::Enum direction, int number, float defaultValue, const QString &name="", bool nameCanChange=false, bool isRemoveable=false, bool bridge=false);
-        ParameterPin(Object *parent, PinDirection::Enum direction, int number, const QVariant &defaultVariantValue, QList<QVariant> *listValues, const QString &name="", bool nameCanChange=false, bool isRemoveable=false, bool bridge=false);
-
         virtual ~ParameterPin();
 
         void ChangeOutputValue(float val, bool fromObj=false);

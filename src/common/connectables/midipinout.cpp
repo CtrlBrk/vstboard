@@ -31,13 +31,6 @@ MidiPinOut::MidiPinOut(const pinConstructArgs &conf) :
     setObjectName(QString("MidiOut%1").arg(conf.pinNumber));
 }
 
-MidiPinOut::MidiPinOut(Object *parent, int number, bool bridge)
-    :Pin(parent,PinType::Midi,PinDirection::Output,number,bridge)
-{
-    setObjectName(QString("MidiOut%1").arg(number));
-    visible=true;
-}
-
 void MidiPinOut::SendMsg(const PinMessage::Enum msgType,void *data) {
     Pin::SendMsg(msgType,data);
     valueChanged=true;

@@ -30,29 +30,76 @@ MidiSender::MidiSender(MainHost *myHost,int index) :
     msgChanged(false)
 {
 
-        listMsgType << "Note off";
-        listMsgType << "Note on";
-        listMsgType << "Ctrl";
-        listMsgType << "ProgChang";
+    listMsgType << "Note off";
+    listMsgType << "Note on";
+    listMsgType << "Ctrl";
+    listMsgType << "ProgChang";
 
-        for(int i=0;i<128;i++) {
-            listValues << i;
-        }
+    for(int i=0;i<128;i++) {
+        listValues << i;
+    }
 
-        for(int i=0;i<16;i++) {
-            listChannels << (i+1);
-        }
+    for(int i=0;i<16;i++) {
+        listChannels << (i+1);
+    }
 
     listMidiPinOut->ChangeNumberOfPins(1);
 
-    listParameterPinIn->listPins.insert(Param_MsgType, new ParameterPinIn(this,Param_MsgType,"Ctrl",&listMsgType,"MsgType"));
-    listParameterPinIn->listPins.insert(Param_Value1, new ParameterPinIn(this,Param_Value1,0,&listValues,"Value1"));
-    listParameterPinIn->listPins.insert(Param_Value2, new ParameterPinIn(this,Param_Value2,0,&listValues,"Value2"));
-    listParameterPinIn->listPins.insert(Param_Channel, new ParameterPinIn(this,Param_Channel,1,&listChannels,"Channel"));
-
-
+    listParameterPinIn->AddPin(Param_MsgType);
+    listParameterPinIn->AddPin(Param_Value1);
+    listParameterPinIn->AddPin(Param_Value2);
+    listParameterPinIn->AddPin(Param_Channel);
 }
 
+Pin* MidiSender::CreatePin(const ConnectionInfo &info)
+{
+    Pin *newPin = Object::CreatePin(info);
+    if(newPin)
+        return newPin;
+
+    if(info.type!=PinType::Parameter) {
+        LOG("wrong PinType"<<info.type);
+        return 0;
+    }
+
+    pinConstructArgs args(info);
+    args.parent = this;
+
+    if(info.type == PinType::Parameter) {
+        switch(info.pinNumber) {
+            case Param_MsgType:
+                args.name = "MsgType";
+                args.listValues = &listMsgType;
+                args.defaultVariantValue = "Ctrl";
+                break;
+
+            case Param_Value1:
+                args.name = "Value1";
+                args.listValues = &listValues;
+                args.defaultVariantValue = 0;
+                break;
+
+            case Param_Value2:
+                args.name = "Value2";
+                args.listValues = &listValues;
+                args.defaultVariantValue = 0;
+                break;
+
+             case Param_Channel:
+                args.name = "Channel";
+                args.listValues = &listChannels;
+                args.defaultVariantValue = 1;
+                break;
+
+            default:
+                return 0;
+        }
+
+        return PinFactory::MakePin(args);
+    }
+
+    return 0;
+}
 
 void MidiSender::Render()
 {

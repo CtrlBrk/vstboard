@@ -31,14 +31,6 @@ BridgePinOut::BridgePinOut(const pinConstructArgs &conf) :
     setObjectName(QString("BOut%1").arg(conf.pinNumber));
 }
 
-BridgePinOut::BridgePinOut(Object *parent, int number, bool bridge)
-    :Pin(parent,PinType::Bridge,PinDirection::Output,number,bridge),
-    valueType(PinType::ND)
-{
-    setObjectName(QString("BOut%1").arg(number));
-    visible=true;
-}
-
 void BridgePinOut::SendMsg(const PinMessage::Enum msgType,void *data)
 {
     Pin::SendMsg(msgType,data);

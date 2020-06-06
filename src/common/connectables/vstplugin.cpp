@@ -822,7 +822,7 @@ void VstPlugin::UserAddPin(const ConnectionInfo &info)
     OnProgramDirty();
 }
 
-VstIntPtr VstPlugin::OnMasterCallback(long opcode, long index, long value, void *ptr, float opt, long currentReturnCode)
+VstIntPtr VstPlugin::OnMasterCallback(long opcode, long index, long value, void *ptr, float opt, long /*currentReturnCode*/)
 {
     switch(opcode) {
         case audioMasterAutomate : //0
@@ -1102,30 +1102,47 @@ Pin* VstPlugin::CreatePin(const ConnectionInfo &info)
     if(newPin)
         return newPin;
 
+    pinConstructArgs args(info);
+
     if(info.type == PinType::Parameter && info.direction == PinDirection::Input) {
 
         ParameterPin *pin=0;
 
         switch(info.pinNumber) {
             case FixedPinNumber::vstProgNumber :
-                return new ParameterPinIn(this,info.pinNumber,0,&listValues,"prog");
-//            case FixedPinNumber::editorVisible :
-//                if(!hasEditor && !IsInError())
-//                    return 0;
-//                return new ParameterPinIn(this,info.pinNumber,"show",&listEditorVisible,tr("Editor"));
+                args.name = tr("prog");
+                args.listValues = &listValues;
+                args.defaultVariantValue = 0;
+                return PinFactory::MakePin(args);
+//                return new ParameterPinIn(this,info.pinNumber,0,&listValues,"prog");
             case FixedPinNumber::learningMode :
                 if(!hasEditor && !IsInError())
                     return 0;
-                return new ParameterPinIn(this,info.pinNumber,"off",&listIsLearning,tr("Learn"));
+                args.name = tr("Learn");
+                args.listValues = &listIsLearning;
+                args.defaultVariantValue = "off";
+                return PinFactory::MakePin(args);
+//                return new ParameterPinIn(this,info.pinNumber,"off",&listIsLearning,tr("Learn"));
             case FixedPinNumber::bypass :
-                return new ParameterPinIn(this,info.pinNumber,"On",&listBypass);
+                args.name = tr("Bypass");
+                args.listValues = &listBypass;
+                args.defaultVariantValue = "On";
+                return PinFactory::MakePin(args);
+//                return new ParameterPinIn(this,info.pinNumber,"On",&listBypass);
             default :
-                if(closed) {
-                    pin = new ParameterPinIn(this,info.pinNumber,0,"",true,hasEditor);
-                } else {
-                    pin = new ParameterPinIn(this,info.pinNumber,EffGetParameter(info.pinNumber),EffGetParamName(info.pinNumber),hasEditor,hasEditor);
+                if(!closed) {
+                    args.name = EffGetParamName(info.pinNumber);
+                    args.value = EffGetParameter(info.pinNumber);
                 }
-                pin->SetDefaultVisible(!hasEditor);
+                args.visible = !hasEditor;
+                return PinFactory::MakePin(args);
+
+//                if(closed) {
+//                    pin = new ParameterPinIn(this,info.pinNumber,0,"",true,hasEditor);
+//                } else {
+//                    pin = new ParameterPinIn(this,info.pinNumber,EffGetParameter(info.pinNumber),EffGetParamName(info.pinNumber),hasEditor,hasEditor);
+//                }
+//                pin->SetDefaultVisible(!hasEditor);
                 return pin;
         }
     }

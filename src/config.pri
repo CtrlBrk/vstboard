@@ -68,7 +68,7 @@ DEFINES += CIRCULAR_BUFFER
 scriptengine {
     DEFINES += SCRIPTENGINE
 #    oldscriptengine {
-        DEFINES += OLDSCRIPTENGINE
+#        DEFINES += OLDSCRIPTENGINE
         QT += script
 #    } else {
 #        QT += qml

@@ -31,18 +31,6 @@ ParameterPinOut::ParameterPinOut(const pinConstructArgs &conf) :
 
 }
 
-//parameter is a float
-ParameterPinOut::ParameterPinOut(Object *parent, int number, float defaultValue, const QString &name, bool nameCanChange, bool isRemoveable) :
-        ParameterPin(parent, PinDirection::Output, number, defaultValue, name, nameCanChange, isRemoveable)
-{
-}
-
-//parameter is a int, index in a list of values
-ParameterPinOut::ParameterPinOut(Object *parent, int number, const QVariant &defaultVariantValue, QList<QVariant> *listValues, const QString &name, bool nameCanChange, bool isRemoveable) :
-        ParameterPin(parent, PinDirection::Output, number, defaultVariantValue, listValues, name, nameCanChange, isRemoveable)
-{
-}
-
 //value changed, send msg to connected pins
 void ParameterPinOut::OnValueChanged(float val)
 {

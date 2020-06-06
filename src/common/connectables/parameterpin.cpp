@@ -66,68 +66,6 @@ ParameterPin::ParameterPin(const pinConstructArgs &conf) :
 	loading = false;
 }
 
-//parameter is a float
-ParameterPin::ParameterPin(Object *parent, PinDirection::Enum direction, int number, float defaultValue, const QString &name, bool nameCanChange, bool isRemoveable, bool bridge) :
-        Pin(parent,PinType::Parameter,direction,number,bridge),
-        listValues(0),
-        stepIndex(0),
-        defaultVisible(true),
-        defaultValue(defaultValue),
-        defaultIndex(0),
-        loading(false),
-        nameCanChange(nameCanChange),
-        dirty(false),
-        limitInMin(0),
-        limitInMax(0),
-        limitOutMin(0),
-        limitOutMax(0),
-        outStepIndex(0),
-        outValue(.0f),
-        limitsEnabled(true)
-{
-    InitCursors();
-
-//    SetVisible(true);
-    connectInfo.isRemoveable=isRemoveable;
-    value = defaultValue;
-    setObjectName(name);
-    loading=true;
-    OnValueChanged( defaultValue );
-    loading=false;
-
-
-}
-
-//parameter is a int with a list of possible values
-ParameterPin::ParameterPin(Object *parent, PinDirection::Enum direction, int number, const QVariant &defaultVariantValue, QList<QVariant> *listValues, const QString &name, bool nameCanChange, bool isRemoveable, bool bridge) :
-        Pin(parent,PinType::Parameter,direction,number,bridge),
-        listValues(listValues),
-        defaultVisible(true),
-        defaultValue( .0f ),
-        loading(false),
-        nameCanChange(nameCanChange),
-        dirty(false),
-        limitInMin(0),
-        limitInMax(0),
-        limitOutMin(0),
-        limitOutMax(0),
-        outStepIndex(0),
-        outValue(.0f),
-        limitsEnabled(true)
-{
-    InitCursors();
-
-    SetVisible(true);
-    connectInfo.isRemoveable=isRemoveable;
-    setObjectName(name);
-    stepSize=1.0f/(listValues->size()-1);
-    stepIndex=listValues->indexOf(defaultVariantValue);
-    defaultIndex=stepIndex;
-    OnValueChanged( .0f);
-    UpdateView();
-    loading=false;
-}
-
 ParameterPin::~ParameterPin()
 {
     delete limitInMin;

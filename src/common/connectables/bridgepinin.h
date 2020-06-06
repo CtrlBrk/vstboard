@@ -29,7 +29,6 @@ namespace Connectables {
     {
     public:
         BridgePinIn(const pinConstructArgs &conf);
-        BridgePinIn(Object *parent, int number, bool bridge=false);
         void ReceivePinMsg(const PinMessage::Enum msgType,void *data=0);
         float GetValue();
         void NewRenderLoop();

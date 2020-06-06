@@ -45,30 +45,6 @@ Pin::Pin(const pinConstructArgs &conf) :
 }
 
 /*!
-  Constructor, used by PinsList with the help of Object::CreatePin
-  \param parent pointer to the parent Object
-  \param type PinType
-  \param direction PinDirection
-  \param number pin number in the list
-  \param bridge true if this pin is a bridge
-  */
-Pin::Pin(Object *parent,PinType::Enum type, PinDirection::Enum direction, int number, bool bridge) :
-    QObject(parent),
-    MsgHandler(parent->getHost(), parent->getHost()->GetNewObjId()),
-    connectInfo(parent->getHost(),parent->GetIndex(),type,direction,number,bridge),
-    value(.0f),
-    stepSize(.1f),
-    parent(parent),
-    visible(false),
-    closed(false),
-    valueChanged(false),
-    pinList(0)
-{
-    connectInfo.container = parent->GetContainerId();
-//    setObjectName(QString("pin:%1:%2:%3:%4").arg(connectInfo.objId).arg(connectInfo.type).arg(connectInfo.direction).arg(connectInfo.pinNumber));
-}
-
-/*!
   Destructor
   Hide and close
   */

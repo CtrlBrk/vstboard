@@ -43,7 +43,7 @@ namespace Connectables {
         explicit HostController(MainHost *myHost,int index);
         void Render();
         void SetContainerId(qint32 id);
-
+        Pin* CreatePin(const ConnectionInfo &info);
     protected:
         QList<QVariant> listTempo;
         QList<QVariant> listSign1;
@@ -56,7 +56,7 @@ namespace Connectables {
         bool grpChanged;
         bool tapTempoChanged;
 
-        QTime tapTempoTimer;
+        QElapsedTimer tapTempoTimer;
         QList<int>taps;
         bool tapTrigger;
 

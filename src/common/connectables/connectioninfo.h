@@ -42,28 +42,28 @@ public:
     void GetInfos(MsgObject &msg);
 
     /// the Connectables::Container id (can connect to other pins in the same container)
-    qint32 container;
+    qint32 container = -1;
 
     /// the parent Connectables::Object id
-    qint32 objId;
+    qint32 objId = -1;
 
     /// pin type
-    PinType::Enum type;
+    PinType::Enum type = PinType::ND;
 
     /// pin direction
-    PinDirection::Enum direction;
+    PinDirection::Enum direction = PinDirection::ND;
 
     /// pin number in a list
-    quint16 pinNumber;
+    quint16 pinNumber = 0;
 
     /// true if it's a bridge
-    bool bridge;
+    bool bridge = false;
 
     /// true if the user can remove the pin
-    bool isRemoveable;
+    bool isRemoveable = false;
 
     /// pointer to the MainHost
-    MainHost *myHost;
+    MainHost *myHost = 0;
 };
 
 Q_DECLARE_METATYPE(ConnectionInfo);

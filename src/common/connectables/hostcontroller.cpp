@@ -30,46 +30,41 @@ HostController::HostController(MainHost *myHost,int index):
     tempoChanged(false),
     progChanged(false),
     grpChanged(false),
-	tapTempoChanged(false),
+    tapTempoChanged(false),
     tapTrigger(false)
 {
 
-        for(int i=1;i<300;i++) {
-            listTempo << i;
-        }
+    for(int i=1;i<300;i++) {
+        listTempo << i;
+    }
 
-        for(int i=2;i<30;i++) {
-            listSign1 << i;
-        }
+    for(int i=2;i<30;i++) {
+        listSign1 << i;
+    }
 
-        for(int i=0;i<9;i++) {
-            listSign2 << (1<<i);
-        }
-        for(int i=0;i<128;i++) {
-            listPrg << i;
-        }
-        for(int i=0;i<128;i++) {
-            listGrp << i;
-        }
+    for(int i=0;i<9;i++) {
+        listSign2 << (1<<i);
+    }
+    for(int i=0;i<128;i++) {
+        listPrg << i;
+    }
+    for(int i=0;i<128;i++) {
+        listGrp << i;
+    }
 
-    int tempo=120;
-    int sign1=4;
-    int sign2=4;
-    myHost->GetTempo(tempo,sign1,sign2);
+    listParameterPinIn->AddPin(Param_Tempo);
+    listParameterPinIn->AddPin(Param_Sign1);
+    listParameterPinIn->AddPin(Param_Sign2);
+    listParameterPinIn->AddPin(Param_Group);
+    listParameterPinIn->AddPin(Param_Prog);
+    listParameterPinIn->AddPin(Param_TapTempo);
 
-    listParameterPinIn->listPins.insert(Param_Tempo, new ParameterPinIn(this,Param_Tempo,tempo,&listTempo,"bpm"));
-    listParameterPinIn->listPins.insert(Param_Sign1, new ParameterPinIn(this,Param_Sign1,sign1,&listSign1,"sign1"));
-    listParameterPinIn->listPins.insert(Param_Sign2, new ParameterPinIn(this,Param_Sign2,sign2,&listSign2,"sign2"));
-    listParameterPinIn->listPins.insert(Param_Group, new ParameterPinIn(this,Param_Group, myHost->programManager->GetCurrentMidiGroup(),&listGrp,"Group"));
-    listParameterPinIn->listPins.insert(Param_Prog, new ParameterPinIn(this,Param_Prog, myHost->programManager->GetCurrentMidiProg(),&listPrg,"Prog"));
-    listParameterPinIn->listPins.insert(Param_TapTempo, new ParameterPinIn(this,Param_TapTempo,.0f,"tapTempo"));
-
-    listParameterPinOut->listPins.insert(Param_Tempo, new ParameterPinOut(this,Param_Tempo,tempo,&listTempo,"bpm"));
-    listParameterPinOut->listPins.insert(Param_Sign1, new ParameterPinOut(this,Param_Sign1,sign1,&listSign1,"sign1"));
-    listParameterPinOut->listPins.insert(Param_Sign2, new ParameterPinOut(this,Param_Sign2,sign2,&listSign2,"sign2"));
-    listParameterPinOut->listPins.insert(Param_Group, new ParameterPinOut(this,Param_Group, myHost->programManager->GetCurrentMidiGroup(),&listGrp,"Group"));
-    listParameterPinOut->listPins.insert(Param_Prog, new ParameterPinOut(this,Param_Prog, myHost->programManager->GetCurrentMidiProg(),&listPrg,"Prog"));
-    listParameterPinOut->listPins.insert(Param_Bar, new ParameterPinOut(this,Param_Bar, 0,"Bar"));
+    listParameterPinOut->AddPin(Param_Tempo);
+    listParameterPinOut->AddPin(Param_Sign1);
+    listParameterPinOut->AddPin(Param_Sign2);
+    listParameterPinOut->AddPin(Param_Group);
+    listParameterPinOut->AddPin(Param_Prog);
+    listParameterPinOut->AddPin(Param_Bar);
 
     connect(this, SIGNAL(progChange(quint16)),
             myHost->programManager,SLOT(UserChangeProg(quint16)),
@@ -87,6 +82,81 @@ HostController::HostController(MainHost *myHost,int index):
            this,SLOT(OnHostMidiGroupChanged(quint16)));
     connect(myHost,SIGNAL(TempoChanged(int,int,int)),
             this,SLOT(OnHostTempoChange(int,int,int)));
+}
+
+Pin* HostController::CreatePin(const ConnectionInfo &info)
+{
+    Pin *newPin = Object::CreatePin(info);
+    if(newPin)
+        return newPin;
+
+    if(info.type!=PinType::Parameter) {
+        LOG("wrong PinType"<<info.type);
+        return 0;
+    }
+
+    pinConstructArgs args(info);
+    args.parent = this;
+
+    if(info.type == PinType::Parameter) {
+        int tempo=120;
+        int sign1=4;
+        int sign2=4;
+        myHost->GetTempo(tempo,sign1,sign2);
+
+        switch(info.pinNumber) {
+
+            case Param_Tempo:
+                args.name = tr("bpm");
+                args.listValues = &listTempo;
+                args.defaultVariantValue = tempo;
+                break;
+
+            case Param_Sign1:
+                args.name = tr("sign1");
+                args.listValues = &listSign1;
+                args.defaultVariantValue = sign1;
+                break;
+
+            case Param_Sign2:
+                args.name = tr("sign2");
+                args.listValues = &listSign2;
+                args.defaultVariantValue = sign2;
+                break;
+
+            case Param_Group:
+                args.name = tr("Group");
+                args.listValues = &listGrp;
+                args.defaultVariantValue = myHost->programManager->GetCurrentMidiGroup();
+                break;
+
+            case Param_Prog:
+                args.name = tr("Prog");
+                args.listValues = &listPrg;
+                args.defaultVariantValue = myHost->programManager->GetCurrentMidiProg();
+                break;
+
+            case Param_TapTempo:
+                args.name = tr("tapTempo");
+                args.value = .0f;
+                args.listValues = 0;
+                args.defaultVariantValue = 0;
+                break;
+
+            case Param_Bar:
+                args.name = tr("Bar");
+                args.listValues = &listPrg;
+                args.defaultVariantValue = myHost->programManager->GetCurrentMidiProg();
+                break;
+
+            default:
+                return 0;
+        }
+
+        return PinFactory::MakePin(args);
+    }
+
+    return 0;
 }
 
 void HostController::Render()

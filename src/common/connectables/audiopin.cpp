@@ -47,30 +47,6 @@ AudioPin::AudioPin(const pinConstructArgs &conf) :
 }
 
 /*!
-  Constructor, used by PinsList with the help of Object::CreatePin
-  \param parent pointer to the parent Object
-  \param direction the PinDirection
-  \param number pin number in the list
-  \param bufferSize size of the buffer
-  \param doublePrecision true if the buffer should be a double precision buffer
-  \param externalAllocation true if the audio buffer is not owned by the pin and shouldn't be deleted
-  */
-AudioPin::AudioPin(Object *parent, PinDirection::Enum direction, int number, unsigned long bufferSize, bool doublePrecision, bool externalAllocation) :
-    Pin(parent,PinType::Audio,direction,number),
-    doublePrecision(doublePrecision),
-    buffer(0)
-{
-    buffer = new AudioBuffer(doublePrecision,externalAllocation);
-    SetBufferSize(bufferSize);
-    visible=true;
-
-    if(connectInfo.direction==PinDirection::Input)
-        setObjectName(QString("AudioIn%1").arg(number));
-    else
-        setObjectName(QString("AudioOut%1").arg(number));
-}
-
-/*!
   Destructor
   */
 AudioPin::~AudioPin()

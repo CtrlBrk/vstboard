@@ -39,7 +39,7 @@ namespace Connectables {
     public:
         MidiSender(MainHost *myHost,int index);
         void Render();
-
+        Pin* CreatePin(const ConnectionInfo &info);
     protected:
         long midiMsg;
         bool msgChanged;

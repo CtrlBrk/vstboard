@@ -40,7 +40,9 @@ MidiToAutomation::MidiToAutomation(MainHost *myHost,int index) :
     listIsLearning << "off";
     listIsLearning << "learn";
     listIsLearning << "unlearn";
+
     listParameterPinIn->AddPin(FixedPinNumber::learningMode);
+
     listParameterPinOut->AddPin(para_prog);
     listParameterPinOut->AddPin(para_velocity);
     listParameterPinOut->AddPin(para_notepitch);
@@ -145,40 +147,51 @@ Pin* MidiToAutomation::CreatePin(const ConnectionInfo &info)
         return 0;
     }
 
+    pinConstructArgs args(info);
+    args.parent = this;
+
     switch(info.direction) {
         case PinDirection::Input : {
             if(info.pinNumber == FixedPinNumber::learningMode) {
-                ParameterPin *newPin = new ParameterPinIn(this,FixedPinNumber::learningMode,"off",&listIsLearning,tr("Learn"));
-                newPin->SetLimitsEnabled(false);
-                return newPin;
+                args.name = tr("Learn");
+                args.listValues = &listIsLearning;
+                args.defaultVariantValue = "off";
+                return PinFactory::MakePin(args);
             }
             break;
         }
         case PinDirection::Output : {
-            ParameterPin *pin = 0;
+            args.listValues = &listValues;
+            args.defaultVariantValue = 0;
 
-            if(info.pinNumber<128)
-                return new ParameterPinOut(this,info.pinNumber,0,&listValues,QString("CC%1").arg(info.pinNumber),false,true);
-            if(info.pinNumber>=para_notes)
-                return new ParameterPinOut(this,info.pinNumber,0,&listValues,QString("note%1").arg(info.pinNumber),false,true);
-            if(info.pinNumber==para_prog)
-                return new ParameterPinOut(this,info.pinNumber,0,&listValues,"prog");
-            if(info.pinNumber==para_velocity)
-                pin = new ParameterPinOut(this,info.pinNumber,0,&listValues,"vel");
-            if(info.pinNumber==para_notepitch)
-                pin = new ParameterPinOut(this,info.pinNumber,0,&listValues,"note");
-            if(info.pinNumber==para_pitchbend)
-                pin = new ParameterPinOut(this,info.pinNumber,0,&listValues,"p.bend");
-            if(info.pinNumber==para_chanpress)
-                pin = new ParameterPinOut(this,info.pinNumber,0,&listValues,"pressr");
-            if(info.pinNumber==para_aftertouch)
-                pin = new ParameterPinOut(this,info.pinNumber,0,&listValues,"aftr.t");
-            if(pin) {
-                return pin;
+            if(info.pinNumber<128) {
+                args.name = QString("CC%1").arg(info.pinNumber);
             }
-
-            break;
+            if(info.pinNumber>=para_notes) {
+                args.name = QString("note%1").arg(info.pinNumber);
+            }
+            if(info.pinNumber==para_prog) {
+                args.name = tr("prog");
+            }
+            if(info.pinNumber==para_velocity) {
+                args.name = tr("vel");
+            }
+            if(info.pinNumber==para_notepitch) {
+                args.name = tr("note");
+            }
+            if(info.pinNumber==para_pitchbend) {
+                args.name = tr("p.bend");
+            }
+            if(info.pinNumber==para_chanpress) {
+                args.name = tr("pressr");
+            }
+            if(info.pinNumber==para_aftertouch) {
+                args.name = tr("aftr.t");
+            }
+            return PinFactory::MakePin(args);
         }
+        default:
+            return 0;
     }
-    return newPin;
+    return 0;
 }

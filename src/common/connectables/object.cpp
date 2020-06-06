@@ -658,66 +658,44 @@ Pin* Object::CreatePin(pinConstructArgs &args)
   */
 Pin* Object::CreatePin(const ConnectionInfo &info)
 {
-    switch(info.direction) {
-        case PinDirection::Input :
-            switch(info.type) {
-                case PinType::Audio : {
-                //TODO: the input pin could be double if the host is double, to sum in doubles. but we would have to convert to float when rendering a float plugin
-                    return new AudioPin(this,info.direction,info.pinNumber,myHost->GetBufferSize(),doublePrecision);
-                }
+    pinConstructArgs args(info);
+    args.parent = this;
 
-                case PinType::Midi : {
-                    return new MidiPinIn(this,info.pinNumber);
-                }
+    switch(info.type) {
+        case PinType::Parameter:
+            if(info.direction == PinDirection::Output &&
+                info.pinNumber == FixedPinNumber::editorVisible ) {
 
-                case PinType::Bridge : {
-                    return new BridgePinIn(this,info.pinNumber,info.bridge);
-                }
+                listEditorVisible << "hide";
+                listEditorVisible << "show";
+                args.listValues = &listEditorVisible;
 
-                case PinType::Parameter : {
-                    if(info.pinNumber == FixedPinNumber::editorVisible ) {
-						listEditorVisible << "hide";
-						listEditorVisible << "show";
-						
-						pinConstructArgs args(info);
-						args.parent = this;
-                        args.listValues = &listEditorVisible;
-                        args.defaultVariantValue = "hide";
-						args.name = tr("Editor");
+                args.defaultVariantValue = "hide";
+                args.name = tr("Editor");
 
-                        return PinFactory::MakePin(args);
-                    }
-                }
-
-                default :
-                    return 0;
+                return PinFactory::MakePin(args);
             }
+
+            //only create editor pin, other parameters are created by the derived class
             break;
 
-        case PinDirection::Output :
-            switch(info.type) {
-                case PinType::Audio : {
-                    return new AudioPin(this,info.direction,info.pinNumber,myHost->GetBufferSize(),doublePrecision);
-                }
+        case PinType::Audio:
+            args.bufferSize = myHost->GetBufferSize();
+            args.doublePrecision = doublePrecision;
+            return PinFactory::MakePin(args);
 
-                case PinType::Midi : {
-                    return new MidiPinOut(this,info.pinNumber);
-                }
+        case PinType::Bridge:
+            args.bridge = true;
+            return PinFactory::MakePin(args);
 
-                case PinType::Bridge : {
-                    return new BridgePinOut(this,info.pinNumber,info.bridge);
-                }
+        case PinType::Midi:
+            return PinFactory::MakePin(args);
 
-                default :
-                    return 0;
-            }
-            break;
-
-        default :
+        default:
             return 0;
     }
 
-    return 0;
+   return 0;
 }
 
 void Object::fromJson(QJsonObject &json)

@@ -36,7 +36,7 @@ namespace Connectables
         void Render();
         void SetDelay(long d);
         QString GetParameterName(ConnectionInfo /*pinInfo*/) {return QString::number(desiredSize);}
-
+        Pin* CreatePin(const ConnectionInfo &info);
     private:
         CircularBuffer buffer;
         CircularBuffer resizeBuffer;

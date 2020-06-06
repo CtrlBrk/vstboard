@@ -31,18 +31,6 @@ ParameterPinIn::ParameterPinIn(const pinConstructArgs &conf) :
 
 }
 
-//parameter is a float
-ParameterPinIn::ParameterPinIn(Object *parent, int number, float defaultValue, QString name, bool nameCanChange, bool isRemoveable) :
-        ParameterPin(parent, PinDirection::Input, number, defaultValue, name, nameCanChange, isRemoveable)
-{
-}
-
-//parameter is a int, index in a list of values
-ParameterPinIn::ParameterPinIn(Object *parent, int number, const QVariant &defaultVariantValue, QList<QVariant> *listValues, QString name, bool nameCanChange, bool isRemoveable) :
-        ParameterPin(parent, PinDirection::Input, number, defaultVariantValue, listValues, name, nameCanChange, isRemoveable)
-{
-}
-
 void ParameterPinIn::ReceivePinMsg(const PinMessage::Enum msgType,void *data)
 {
     if(msgType == PinMessage::ParameterValue) {

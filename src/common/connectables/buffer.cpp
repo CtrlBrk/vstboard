@@ -38,8 +38,33 @@ Buffer::Buffer(MainHost *host, int index, const ObjectInfo &info) :
     buffer.SetSize(myHost->GetBufferSize() + delaySize);
     listAudioPinIn->SetNbPins(1);
     listAudioPinOut->SetNbPins(1);
-    listParameterPinIn->listPins.insert(0, new ParameterPinIn(this,0,(float)delaySize/50000,"Delay",true));
+
+    listParameterPinIn->AddPin(0);
+
     resizeBuffer.SetSize(4000);
+}
+
+Pin* Buffer::CreatePin(const ConnectionInfo &info)
+{
+    Pin *newPin = Object::CreatePin(info);
+    if(newPin)
+        return newPin;
+
+    if(info.type!=PinType::Parameter) {
+        LOG("wrong PinType"<<info.type);
+        return 0;
+    }
+
+    pinConstructArgs args(info);
+    args.parent = this;
+
+    if(info.type == PinType::Parameter) {
+        args.name = "Delay";
+        args.value = (float)delaySize/50000;
+        return PinFactory::MakePin(args);
+    }
+
+    return 0;
 }
 
 Buffer::~Buffer()

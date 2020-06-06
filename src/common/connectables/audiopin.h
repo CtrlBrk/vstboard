@@ -38,7 +38,6 @@ namespace Connectables {
 
     public:
         AudioPin(const pinConstructArgs &conf);
-        AudioPin(Object *parent, PinDirection::Enum direction, int number, unsigned long bufferSize, bool doublePrecision=false, bool externalAllocation=false);
         virtual ~AudioPin();
 
 //        float GetVal() { return buffer->GetCurrentVu(); }

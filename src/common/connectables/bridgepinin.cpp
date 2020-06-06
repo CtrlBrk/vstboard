@@ -35,16 +35,6 @@ BridgePinIn::BridgePinIn(const pinConstructArgs &conf) :
     setObjectName(QString("BIn%1").arg(conf.pinNumber));
 }
 
-BridgePinIn::BridgePinIn(Object *parent, int number, bool bridge) :
-    Pin(parent,PinType::Bridge,PinDirection::Input,number,bridge),
-    valueType(PinType::ND),
-	messagesType{ PinMessage::ND },
-    msgCount(0)
-{
-    setObjectName(QString("BIn%1").arg(number));
-    visible=true;
-}
-
 void BridgePinIn::ReceivePinMsg(const PinMessage::Enum msgType,void *data)
 {
     if(msgCount>=50) {

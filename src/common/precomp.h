@@ -122,12 +122,12 @@
     #include <QWaitCondition>
     #include <QWidget>
 
-#ifdef OLDSCRIPTENGINE
+//#ifdef OLDSCRIPTENGINE
     #include <QScriptEngine>
-#else
-    #include <QQmlEngine>
-    #include <QJSEngine>
-#endif
+//#else
+//    #include <QQmlEngine>
+//    #include <QJSEngine>
+//#endif
 
     #include <QJsonDocument>
     #include <QJsonArray>

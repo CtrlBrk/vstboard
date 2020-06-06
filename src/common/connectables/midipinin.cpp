@@ -32,14 +32,6 @@ MidiPinIn::MidiPinIn(const pinConstructArgs &conf) :
     setObjectName(QString("MidiIn%1").arg(conf.pinNumber));
 }
 
-MidiPinIn::MidiPinIn(Object *parent, int number, bool bridge)
-    :Pin(parent,PinType::Midi,PinDirection::Input,number,bridge)
-{
-    setObjectName(QString("MidiIn%1").arg(number));
-    visible=true;
-}
-
-
 void MidiPinIn::ReceivePinMsg(const PinMessage::Enum msgType,void* data)
 {
     if(msgType == PinMessage::MidiMsg) {

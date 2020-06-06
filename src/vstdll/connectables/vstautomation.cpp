@@ -132,7 +132,7 @@ void VstAutomation::OnParameterChanged(ConnectionInfo pinInfo, float value)
         QList<quint16>listRemoved;
 
         listParameterPinOut->SetNbPins(nbPins,&listAdded,&listRemoved);
-        qSort(listRemoved.begin(),listRemoved.end(),qGreater<quint16>());
+        std::sort(listRemoved.begin(),listRemoved.end(),std::greater<quint16>());
         foreach(quint16 i, listRemoved)
             new ComRemovePin(myHost,listParameterPinOut->listPins.value(i)->GetConnectionInfo(),com);
         foreach(quint16 i, listAdded) {
@@ -146,7 +146,7 @@ void VstAutomation::OnParameterChanged(ConnectionInfo pinInfo, float value)
         listRemoved.clear();
 
         listParameterPinIn->SetNbPins(nbPins,&listAdded,&listRemoved);
-        qSort(listRemoved.begin(),listRemoved.end(),qGreater<quint16>());
+        std::sort(listRemoved.begin(),listRemoved.end(),std::greater<quint16>());
         foreach(quint16 i, listRemoved)
             new ComRemovePin(myHost,listParameterPinIn->listPins.value(i)->GetConnectionInfo(),com);
         foreach(quint16 i, listAdded) {
@@ -190,6 +190,9 @@ Pin* VstAutomation::CreatePin(const ConnectionInfo &info)
         return 0;
     }
 
+    pinConstructArgs args(info);
+    args.parent = this;
+
     switch(info.direction) {
         case PinDirection::Output :
 //            if(info.pinNumber == FixedPinNumber::vstProgNumber) {
@@ -199,21 +202,37 @@ Pin* VstAutomation::CreatePin(const ConnectionInfo &info)
 //                return newPin;
 //            }
 
-            return new ParameterPinOut(this,info.pinNumber,0,QString("autom%1").arg(info.pinNumber),false,true);
+            args.name = QString("autom%1").arg(info.pinNumber);
+            args.value = 0;
+            return PinFactory::MakePin(args);
+
+//            return new ParameterPinOut(this,info.pinNumber,0,QString("autom%1").arg(info.pinNumber),false,true);
 
         case PinDirection::Input :
             if(info.pinNumber == FixedPinNumber::numberOfPins) {
-                ParameterPinIn *newPin = new ParameterPinIn(this,FixedPinNumber::numberOfPins,VST_AUTOMATION_DEFAULT_NB_PINS,&listValues,tr("NbPins"));
-                newPin->SetLimitsEnabled(false);
-                return newPin;
+                args.name = tr("NbPins");
+                args.listValues = &listValues;
+                args.defaultVariantValue = VST_AUTOMATION_DEFAULT_NB_PINS;
+                return PinFactory::MakePin(args);
+
+//                ParameterPinIn *newPin = new ParameterPinIn(this,FixedPinNumber::numberOfPins,VST_AUTOMATION_DEFAULT_NB_PINS,&listValues,tr("NbPins"));
+//                newPin->SetLimitsEnabled(false);
+//                return newPin;
             }
             if(info.pinNumber == FixedPinNumber::learningMode) {
-                ParameterPin *newPin = new ParameterPinIn(this,FixedPinNumber::learningMode,"off",&listIsLearning,tr("Learn"));
-                newPin->SetLimitsEnabled(false);
-                return newPin;
+                args.name = tr("Learn");
+                args.listValues = &listIsLearning;
+                args.defaultVariantValue = "off";
+                return PinFactory::MakePin(args);
+//                ParameterPin *newPin = new ParameterPinIn(this,FixedPinNumber::learningMode,"off",&listIsLearning,tr("Learn"));
+//                newPin->SetLimitsEnabled(false);
+//                return newPin;
             }
 
-            return new ParameterPinIn(this,info.pinNumber,0,QString("autom%1").arg(info.pinNumber),false,true);
+            args.name = QString("autom%1").arg(info.pinNumber);
+            args.value = 0;
+            return PinFactory::MakePin(args);
+//            return new ParameterPinIn(this,info.pinNumber,0,QString("autom%1").arg(info.pinNumber),false,true);
 
         default :
             LOG("wrong PinDirection"<<info.direction);

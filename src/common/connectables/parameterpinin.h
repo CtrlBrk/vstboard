@@ -30,9 +30,6 @@ namespace Connectables {
     {
     public:
 		ParameterPinIn(const pinConstructArgs &conf);
-        ParameterPinIn(Object *parent, int number, float defaultValue, QString name="", bool nameCanChange=false, bool isRemoveable=false);
-        ParameterPinIn(Object *parent, int number, const QVariant &defaultVariantValue, QList<QVariant> *listValues, QString name="", bool nameCanChange=false, bool isRemoveable=false);
-
         virtual void ReceivePinMsg(const PinMessage::Enum msgType,void *data=0);
     };
 }
