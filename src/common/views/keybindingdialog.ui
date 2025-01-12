@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>KeyBindingDialog</class>
  <widget class="QDialog" name="KeyBindingDialog">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -20,7 +23,7 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <property name="margin">
+   <property name="margin" stdset="0">
     <number>0</number>
    </property>
    <item>
@@ -30,7 +33,7 @@
      </property>
      <widget class="QWidget" name="keys_tab">
       <attribute name="icon">
-       <iconset resource="../../resources/resources.qrc">
+       <iconset>
         <normaloff>:/img16x16/key_bindings.png</normaloff>:/img16x16/key_bindings.png</iconset>
       </attribute>
       <attribute name="title">
@@ -40,22 +43,22 @@
        <property name="spacing">
         <number>0</number>
        </property>
-       <property name="margin">
+       <property name="margin" stdset="0">
         <number>0</number>
        </property>
        <item>
         <widget class="QTableView" name="tableMain">
          <property name="contextMenuPolicy">
-          <enum>Qt::NoContextMenu</enum>
+          <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
          </property>
          <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
+          <enum>QFrame::Shape::NoFrame</enum>
          </property>
          <property name="editTriggers">
-          <set>QAbstractItemView::AllEditTriggers</set>
+          <set>QAbstractItemView::EditTrigger::AllEditTriggers</set>
          </property>
          <property name="selectionMode">
-          <enum>QAbstractItemView::NoSelection</enum>
+          <enum>QAbstractItemView::SelectionMode::NoSelection</enum>
          </property>
          <attribute name="horizontalHeaderVisible">
           <bool>false</bool>
@@ -69,7 +72,7 @@
      </widget>
      <widget class="QWidget" name="modes_tab">
       <attribute name="icon">
-       <iconset resource="../../resources/resources.qrc">
+       <iconset>
         <normaloff>:/img16x16/move.png</normaloff>:/img16x16/move.png</iconset>
       </attribute>
       <attribute name="title">
@@ -79,7 +82,7 @@
        <property name="spacing">
         <number>0</number>
        </property>
-       <property name="margin">
+       <property name="margin" stdset="0">
         <number>0</number>
        </property>
        <item>
@@ -97,26 +100,26 @@
           </size>
          </property>
          <property name="contextMenuPolicy">
-          <enum>Qt::NoContextMenu</enum>
+          <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
          </property>
          <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
+          <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QTableView" name="tableMode">
          <property name="contextMenuPolicy">
-          <enum>Qt::NoContextMenu</enum>
+          <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
          </property>
          <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
+          <enum>QFrame::Shape::NoFrame</enum>
          </property>
          <property name="editTriggers">
-          <set>QAbstractItemView::AllEditTriggers</set>
+          <set>QAbstractItemView::EditTrigger::AllEditTriggers</set>
          </property>
          <property name="selectionMode">
-          <enum>QAbstractItemView::NoSelection</enum>
+          <enum>QAbstractItemView::SelectionMode::NoSelection</enum>
          </property>
          <attribute name="verticalHeaderVisible">
           <bool>false</bool>
@@ -132,10 +135,10 @@
      <item>
       <widget class="QDialogButtonBox" name="buttonBox">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="standardButtons">
-        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::RestoreDefaults</set>
+        <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok|QDialogButtonBox::StandardButton::RestoreDefaults</set>
        </property>
       </widget>
      </item>
@@ -143,11 +146,7 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../../resources/resources.qrc"/>
-  <include location="../../resources/resources.qrc"/>
-  <include location="../../resources/resources.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>

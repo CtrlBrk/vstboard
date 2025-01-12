@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>ProgramList</class>
  <widget class="QWidget" name="ProgramList">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -41,7 +44,7 @@
    <item>
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="handleWidth">
       <number>1</number>
@@ -125,7 +128,7 @@
          <item>
           <spacer name="horizontalSpacer">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -156,19 +159,19 @@
           </size>
          </property>
          <property name="contextMenuPolicy">
-          <enum>Qt::CustomContextMenu</enum>
+          <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
          </property>
          <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
+          <enum>QFrame::Shape::NoFrame</enum>
          </property>
          <property name="dragDropMode">
-          <enum>QAbstractItemView::DragDrop</enum>
+          <enum>QAbstractItemView::DragDropMode::DragDrop</enum>
          </property>
          <property name="defaultDropAction">
-          <enum>Qt::MoveAction</enum>
+          <enum>Qt::DropAction::MoveAction</enum>
          </property>
          <property name="selectionMode">
-          <enum>QAbstractItemView::ExtendedSelection</enum>
+          <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
          </property>
          <property name="uniformItemSizes">
           <bool>true</bool>
@@ -241,7 +244,7 @@
          <item>
           <spacer name="horizontalSpacer_2">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -275,19 +278,19 @@
           </size>
          </property>
          <property name="contextMenuPolicy">
-          <enum>Qt::CustomContextMenu</enum>
+          <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
          </property>
          <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
+          <enum>QFrame::Shape::NoFrame</enum>
          </property>
          <property name="dragDropMode">
-          <enum>QAbstractItemView::DragDrop</enum>
+          <enum>QAbstractItemView::DragDropMode::DragDrop</enum>
          </property>
          <property name="defaultDropAction">
-          <enum>Qt::MoveAction</enum>
+          <enum>Qt::DropAction::MoveAction</enum>
          </property>
          <property name="selectionMode">
-          <enum>QAbstractItemView::ExtendedSelection</enum>
+          <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
          </property>
          <property name="uniformItemSizes">
           <bool>true</bool>

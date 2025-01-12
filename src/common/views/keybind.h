@@ -118,7 +118,7 @@ public:
     void SetModesModel(QStandardItemModel *model);
 
     void SaveInRegistry();
-    void LoadFromRegistry();
+    bool LoadFromRegistry();
     void SetDefaults();
     void SetCurrentMode(const QString mode) {currentMode=mode;}
 

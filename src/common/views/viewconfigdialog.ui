@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>ViewConfigDialog</class>
  <widget class="QDialog" name="ViewConfigDialog">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -59,7 +62,7 @@
          </sizepolicy>
         </property>
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Orientation::Horizontal</enum>
         </property>
         <property name="childrenCollapsible">
          <bool>false</bool>
@@ -82,7 +85,7 @@
           <item row="1" column="0" colspan="5">
            <widget class="QListWidget" name="listPresets">
             <property name="editTriggers">
-             <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
+             <set>QAbstractItemView::EditTrigger::DoubleClicked|QAbstractItemView::EditTrigger::EditKeyPressed|QAbstractItemView::EditTrigger::SelectedClicked</set>
             </property>
             <property name="uniformItemSizes">
              <bool>true</bool>
@@ -105,8 +108,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset theme="plus">
-              <normaloff>.</normaloff>.</iconset>
+             <iconset theme="plus"/>
             </property>
             <property name="shortcut">
              <string>Ins</string>
@@ -122,8 +124,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset theme="dash">
-              <normaloff>.</normaloff>.</iconset>
+             <iconset theme="dash"/>
             </property>
             <property name="shortcut">
              <string>Del</string>
@@ -235,7 +236,7 @@
                 <number>255</number>
                </property>
                <property name="orientation">
-                <enum>Qt::Horizontal</enum>
+                <enum>Qt::Orientation::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -285,7 +286,7 @@
                 <number>255</number>
                </property>
                <property name="orientation">
-                <enum>Qt::Horizontal</enum>
+                <enum>Qt::Orientation::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -329,7 +330,7 @@
                 <number>255</number>
                </property>
                <property name="orientation">
-                <enum>Qt::Horizontal</enum>
+                <enum>Qt::Orientation::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -345,7 +346,7 @@
                 <number>255</number>
                </property>
                <property name="orientation">
-                <enum>Qt::Horizontal</enum>
+                <enum>Qt::Orientation::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -422,7 +423,7 @@
       <item row="2" column="9">
        <spacer name="horizontalSpacer">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Orientation::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -564,10 +565,10 @@
       </sizepolicy>
      </property>
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
      </property>
     </widget>
    </item>

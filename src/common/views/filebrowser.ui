@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>FileBrowser</class>
  <widget class="QWidget" name="FileBrowser">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -83,19 +86,19 @@
    <item row="1" column="0" colspan="5">
     <widget class="FileBrowserTree" name="treeFiles">
      <property name="contextMenuPolicy">
-      <enum>Qt::CustomContextMenu</enum>
+      <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
      </property>
      <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
+      <enum>QFrame::Shape::NoFrame</enum>
      </property>
      <property name="editTriggers">
-      <set>QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
+      <set>QAbstractItemView::EditTrigger::EditKeyPressed|QAbstractItemView::EditTrigger::SelectedClicked</set>
      </property>
      <property name="dragDropMode">
-      <enum>QAbstractItemView::DragDrop</enum>
+      <enum>QAbstractItemView::DragDropMode::DragDrop</enum>
      </property>
      <property name="selectionMode">
-      <enum>QAbstractItemView::ExtendedSelection</enum>
+      <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
      </property>
      <property name="uniformRowHeights">
       <bool>true</bool>

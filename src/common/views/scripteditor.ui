@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>ScriptEditor</class>
  <widget class="QWidget" name="ScriptEditor">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -32,7 +35,7 @@
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -50,12 +53,12 @@
       <string notr="true"/>
      </property>
      <property name="lineWrapMode">
-      <enum>QPlainTextEdit::NoWrap</enum>
+      <enum>QPlainTextEdit::LineWrapMode::NoWrap</enum>
      </property>
      <property name="plainText">
       <string notr="true"/>
      </property>
-     <property name="tabStopWidth">
+     <property name="tabStopWidth" stdset="0">
       <number>30</number>
      </property>
     </widget>

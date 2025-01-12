@@ -2,11 +2,14 @@
 <ui version="4.0">
  <class>ModifiersWidget</class>
  <widget class="QWidget" name="ModifiersWidget">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>45</width>
+    <width>49</width>
     <height>54</height>
    </rect>
   </property>

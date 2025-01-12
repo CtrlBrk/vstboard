@@ -26,7 +26,9 @@ KeyBind::KeyBind(Settings *settings) :
     settings(settings),
     currentMode("Cable")
 {
-    LoadFromRegistry();
+    if(!LoadFromRegistry()) {
+        SetDefaults();
+    }
 }
 
 QStandardItemModel * KeyBind::GetMainBindingModel()
@@ -139,20 +141,18 @@ void KeyBind::SaveInRegistry()
 {
     QByteArray ba;
     QDataStream stream(&ba, QIODevice::WriteOnly);
-
-    stream << mapMainShortcuts.size();
+    stream << static_cast<quint16>(mapMainShortcuts.size());
     QMap<MainShortcuts, QString>::const_iterator i = mapMainShortcuts.constBegin();
     while(i!=mapMainShortcuts.constEnd()) {
         stream << static_cast<quint16>(i.key());
         stream << i.value();
         ++i;
     }
-
-    stream << mapModes.size();
+    stream << static_cast<quint16>(mapModes.size());
     QMap<QString, QMap<MovesBindings, MoveBind> >::const_iterator j = mapModes.constBegin();
     while(j!=mapModes.constEnd()) {
         stream << j.key();
-        stream << j.value().size();
+        stream << static_cast<quint16>(j.value().size());
         QMap<MovesBindings, MoveBind>::const_iterator k = j.value().constBegin();
         while(k!=j.value().constEnd()) {
             stream << static_cast<quint16>(k.key());
@@ -164,25 +164,26 @@ void KeyBind::SaveInRegistry()
         ++j;
     }
 
+    //for a simple integrity check
+    stream << (quint16)99;
+
     settings->SetSetting("keyBinding",ba);
 }
 
-void KeyBind::LoadFromRegistry()
+bool KeyBind::LoadFromRegistry()
 {
     QByteArray ba = settings->GetSetting("keyBinding","").toByteArray();
-    if(ba.isEmpty()) {
-        SetDefaults();
-        SaveInRegistry();
-        return;
-    }
+    if(ba.isEmpty()) return false;
 
     mapMainShortcuts.clear();
     mapModes.clear();
 
     QDataStream stream(&ba, QIODevice::ReadOnly);
-    int nb=0;
+    quint16 nb=0;
     stream >> nb;
-    for(int i=0; i<nb; ++i) {
+    if(nb==0) return false;
+
+    for(quint16 i=0; i<nb; ++i) {
         quint16 id;
         stream >> id;
         QString sc;
@@ -191,15 +192,16 @@ void KeyBind::LoadFromRegistry()
     }
 
     stream >> nb;
-    for(int i=0; i<nb; ++i) {
+    if(nb==0) return false;
+    for(quint16 i=0; i<nb; ++i) {
         QString mode;
         stream >> mode;
 
         QMap<MovesBindings, MoveBind> bindList;
 
-        int nbs;
+        quint16 nbs;
         stream >> nbs;
-        for(int j=0; j<nbs; ++j) {
+        for(quint16 j=0; j<nbs; ++j) {
             quint16 id;
             stream >> id;
             MoveBind b;
@@ -217,11 +219,19 @@ void KeyBind::LoadFromRegistry()
         mapModes.insert(mode, bindList);
     }
 
+    quint16 valid;
+    stream >> valid;
+    if(valid!=99) return false;
+
     emit BindingChanged();
+    return true;
 }
 
 void KeyBind::SetDefaults()
 {
+    mapMainShortcuts.clear();
+    mapModes.clear();
+
     mapMainShortcuts.insert(openProject,         "Ctrl+O");
     mapMainShortcuts.insert(saveProject,         "Ctrl+S");
     mapMainShortcuts.insert(saveProjectAs,       "Ctrl+Shift+S");
@@ -350,6 +360,8 @@ void KeyBind::SetDefaults()
         }
         mapModes.insert("Value",mapMv);
     }
+
+    SaveInRegistry();
 }
 
 const QString KeyBind::GetMainShortcut(const MainShortcuts id) const
