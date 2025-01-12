@@ -242,15 +242,14 @@ bool AudioDevice::OpenStream(double sampleRate)
     unsigned int bufferFrames = 1024; //TODO: user defined
     RtAudio::StreamParameters oParams, iParams;
 
-    RtAudio dac( RtAudio::UNSPECIFIED);
+    RtAudio dac( (RtAudio::Api)objInfo.api );
     std::vector<unsigned int> deviceIds = dac.getDeviceIds();
-    oParams.deviceId = deviceIds[objInfo.id];
 
-    // oParams.deviceId = objInfo.id;
+    oParams.deviceId = deviceIds[objInfo.id];
     oParams.nChannels = objInfo.outputs;
     oParams.firstChannel = 0;
 
-    iParams.deviceId = objInfo.id;
+    iParams.deviceId = deviceIds[objInfo.id];
     iParams.nChannels = objInfo.inputs;
     iParams.firstChannel = 0;
 
