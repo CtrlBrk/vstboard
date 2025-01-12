@@ -11,6 +11,7 @@ desktop.ini
 *~
 build*
 moc_*.cpp
+moc_*.h
 qrc_*.cpp
 ui_*.h
 *.log
@@ -18,6 +19,13 @@ ui_*.h
 libs/port*
 libs/VST*
 libs/vst*
+libs/qtwinmigrate/examples/
+libs/qtwinmigrate/lib/
 debug/
 release/
 .vs/
+.qtc_clangd/
+*.moc
+*.cbt
+*.obj
+.vcxproj.filters
