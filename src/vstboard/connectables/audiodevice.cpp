@@ -241,7 +241,12 @@ bool AudioDevice::OpenStream(double sampleRate)
 {
     unsigned int bufferFrames = 1024; //TODO: user defined
     RtAudio::StreamParameters oParams, iParams;
-    oParams.deviceId = objInfo.id;
+
+    RtAudio dac( RtAudio::UNSPECIFIED);
+    std::vector<unsigned int> deviceIds = dac.getDeviceIds();
+    oParams.deviceId = deviceIds[objInfo.id];
+
+    // oParams.deviceId = objInfo.id;
     oParams.nChannels = objInfo.outputs;
     oParams.firstChannel = 0;
 
@@ -257,22 +262,22 @@ bool AudioDevice::OpenStream(double sampleRate)
     options.numberOfBuffers = 4; //TODO: user defined
     options.priority = 1;
 
-    try {
-        if(iParams.nChannels==0) {
-            rtdevice->openStream( &oParams, NULL, RTFORMAT, static_cast<unsigned int >(sampleRate), &bufferFrames,
-                              &AudioDevice::callback, (void *)this, &options, AudioDevice::errorCallback );
+    RtAudioErrorType err;
+    if(iParams.nChannels==0) {
+        err = rtdevice->openStream( &oParams, NULL, RTFORMAT, static_cast<unsigned int >(sampleRate), &bufferFrames,
+                          &AudioDevice::callback, (void *)this, &options );
+    } else {
+        if(oParams.nChannels==0) {
+            err = rtdevice->openStream( NULL, &iParams, RTFORMAT, static_cast<unsigned int >(sampleRate), &bufferFrames,
+                              &AudioDevice::callback, (void *)this, &options );
         } else {
-            if(oParams.nChannels==0) {
-                rtdevice->openStream( NULL, &iParams, RTFORMAT, static_cast<unsigned int >(sampleRate), &bufferFrames,
-                                  &AudioDevice::callback, (void *)this, &options, AudioDevice::errorCallback );
-            } else {
-                rtdevice->openStream( &oParams, &iParams, RTFORMAT, static_cast<unsigned int >(sampleRate), &bufferFrames,
-                                  &AudioDevice::callback, (void *)this, &options, AudioDevice::errorCallback );
-            }
+            err = rtdevice->openStream( &oParams, &iParams, RTFORMAT, static_cast<unsigned int >(sampleRate), &bufferFrames,
+                              &AudioDevice::callback, (void *)this, &options );
         }
+    }
 
-    } catch (RtAudioError &e) {
-        SetErrorMsg( tr("openStream error %1").arg( QString::fromStdString(e.getMessage()) ));
+    if(err) {
+        SetErrorMsg( tr("openStream error %1").arg( QString::fromStdString(rtdevice->getErrorText()) ));
         return false;
     }
 
@@ -281,10 +286,8 @@ bool AudioDevice::OpenStream(double sampleRate)
 
     myHost->SetBufferSize(bufferFrames);
 
-    try {
-        rtdevice->startStream();
-    } catch(RtAudioError &e) {
-        SetErrorMsg( tr("startStream error %1").arg( QString::fromStdString(e.getMessage()) ));
+    if(rtdevice->startStream()) {
+        SetErrorMsg( tr("startStream error %1").arg( QString::fromStdString(rtdevice->getErrorText()) ));
         return false;
     }
 
@@ -386,14 +389,13 @@ bool AudioDevice::Close()
 
     if(rtdevice)
     {
-        try {
-            if(rtdevice->isStreamOpen()) {
-                rtdevice->abortStream();
-//                rtdevice->stopStream();
-                rtdevice->closeStream();
-            }
-        } catch(RtAudioError &e) {
-            e.printMessage();
+        if(rtdevice->isStreamRunning()) {
+            rtdevice->stopStream();
+        }
+
+        if(rtdevice->isStreamOpen()) {
+            // rtdevice->abortStream();
+            rtdevice->closeStream();
         }
 
         delete rtdevice;
@@ -730,7 +732,7 @@ bool AudioDevice::PinBuffersToDevice( void *outputBuffer, unsigned long framesPe
 }
 #endif
 
-void AudioDevice::errorCallback(RtAudioError::Type type, const std::string &errorText)
+void AudioDevice::errorCallback(RtAudioErrorType type, const std::string &errorText)
 {
     LOG(QString::fromStdString(errorText) );
 }

@@ -84,7 +84,7 @@ bool Close();
 //                               PaStreamCallbackFlags statusFlags,
 //                               void *userData );
         static int callback( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames, double streamTime, RtAudioStreamStatus status, void *data );
-        static void errorCallback(RtAudioError::Type type, const std::string &errorText);
+        static void errorCallback(RtAudioErrorType type, const std::string &errorText);
         bool OpenStream(double sampleRate);
         bool CloseStream();
 

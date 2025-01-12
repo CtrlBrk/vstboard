@@ -16,9 +16,16 @@ copy /y ".\tools\nsis.nsi" "%BUILD_PATH%/installer"
 
 pushd "libs\qtwinmigrate\buildlib"
 
+rem 	some moc files are not generated for some reasons :
 rem 		moc -o qwinhost.moc qwinhost.h 
 rem			moc -o qwinwidget.moc qwinwidget.h
 rem 		and copy in release dir
+
+rem build rtaudio & rtmidi :
+rem 	cmake -DRTAUDIO_API_ASIO=ON .
+rem 	cmake --build . --config release
+rem build rtaudio tests: 
+rem cmake . -DLIB_TARGETS=../Debug/rtaudiod
 
 %QTDIR%\bin\qmake -r buildlib.pro
 %JOM_PATH% clean

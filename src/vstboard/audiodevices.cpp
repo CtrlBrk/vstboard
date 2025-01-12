@@ -246,10 +246,10 @@ void AudioDevices::BuildModel()
 
         RtAudio audio(apis[i]);
         RtAudio::DeviceInfo info;
-        unsigned int devices = audio.getDeviceCount();
+        std::vector<unsigned int> devices = audio.getDeviceIds();
 
-        for (unsigned int j=0; j<devices; j++) {
-            info = audio.getDeviceInfo(j);
+        for (unsigned int j=0; j<devices.size(); j++) {
+            info = audio.getDeviceInfo(devices[j]);
 
             ObjectInfo obj;
             obj.nodeType = NodeType::object;
@@ -374,8 +374,9 @@ void AudioDevices::PutPinsBuffersInRingBuffers()
 int AudioDevices::GetDevIdByName(RtAudio::Api apiId, const std::string &devName)
 {
     RtAudio ra( apiId );
+    std::vector<unsigned int> devices = ra.getDeviceIds();
     for(uint i=0; i<ra.getDeviceCount(); i++) {
-        RtAudio::DeviceInfo info = ra.getDeviceInfo(i);
+        RtAudio::DeviceInfo info = ra.getDeviceInfo(devices[i]);
         if(info.name == devName )
             return i;
     }
