@@ -109,7 +109,9 @@ public:
     bool doublePrecision;
 
 #ifdef SCRIPTENGINE
+#ifdef OLDSCRIPTENGINE
     QScriptEngine scriptEngine;
+#endif
 #endif
 
     QString currentProjectFile;

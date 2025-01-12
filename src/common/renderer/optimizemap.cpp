@@ -32,7 +32,7 @@ OptimizeMap::OptimizeMap(const QList<OptimizerNode *> &nodes, int th) :
             n->cpuTime=LOW_CPU_USAGE;
     }
 
-    qSort(this->nodes.begin(), this->nodes.end(), OptimizerNode::CompareCpuUsage);
+    std::sort(this->nodes.begin(), this->nodes.end(), OptimizerNode::CompareCpuUsage);
 }
 
 OptimizeMap::~OptimizeMap()
@@ -92,7 +92,7 @@ bool OptimizeMap::MapNodes(QList<OptimizerNode*> &nodes, OptMap &map, int nbUsed
     } else {
         int maxTh = std::min(nbUsedThreads+1,nbThreads);
         QList<long>times = threadTimes.values();
-        qSort(times);
+        std::sort(times.begin(),times.end());
         int cpt=0;
         while(!times.empty() && cpt<maxTh) {
             cpt++;

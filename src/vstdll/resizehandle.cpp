@@ -41,7 +41,7 @@ void ResizeHandle::paintEvent(QPaintEvent *event)
     Q_UNUSED(event);
     QPainter painter(this);
     QStyleOptionSizeGrip opt;
-    opt.init(this);
+    // opt.init(this);
     opt.corner = Qt::BottomRightCorner;
     style()->drawControl(QStyle::CE_SizeGrip, &opt, &painter, this);
 }

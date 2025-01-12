@@ -122,16 +122,20 @@
     #include <QWaitCondition>
     #include <QWidget>
 
-//#ifdef OLDSCRIPTENGINE
+#ifdef SCRIPTENGINE
+#ifdef OLDSCRIPTENGINE
     #include <QScriptEngine>
-//#else
+#else
 //    #include <QQmlEngine>
-//    #include <QJSEngine>
-//#endif
+    #include <QJSEngine>
+#endif
+#endif
 
     #include <QJsonDocument>
     #include <QJsonArray>
     #include <QJsonObject>
+
+
 
     #ifdef QT_NO_DEBUG
         #define LOG(...)

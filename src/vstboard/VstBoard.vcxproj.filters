@@ -1,16 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Form Files">
-      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
-      <Extensions>ui</Extensions>
-      <ParseFiles>false</ParseFiles>
-    </Filter>
-    <Filter Include="Form Files">
-      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
-      <Extensions>ui</Extensions>
-      <ParseFiles>false</ParseFiles>
-    </Filter>
     <Filter Include="Generated Files">
       <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;moc;h;def;odl;idl;res;</Extensions>
@@ -62,7 +52,13 @@
     <ClCompile Include="views\configdialoghost.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="views\directxconfigdialog.cpp">
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\connectionproxy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\eventlist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\hostclasses.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="models\listaudiointerfacesmodel.cpp">
@@ -80,22 +76,37 @@
     <ClCompile Include="mainwindowhost.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\common\memorystream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="connectables\mididevice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mididevices.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="views\mmeconfigdialog.cpp">
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\module.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\module_win32.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="connectables\objectfactoryhost.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="views\wasapiconfigdialog.cpp">
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\parameterchanges.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\eventlist.cpp">
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\pluginterfacesupport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\plugprovider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\processdata.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\stringconvert.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -115,9 +126,6 @@
     <ClInclude Include="views\configdialoghost.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="views\directxconfigdialog.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="models\listaudiointerfacesmodel.h">
       <Filter>Header Files</Filter>
     </QtMoc>
@@ -136,35 +144,18 @@
     <QtMoc Include="mididevices.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="views\mmeconfigdialog.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <ClInclude Include="connectables\objectfactoryhost.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <CustomBuild Include="..\common\precomp.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <QtMoc Include="views\wasapiconfigdialog.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\precomp.h.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <CustomBuild Include="$(intdir)\moc_predefs.h.cbt" />
-  </ItemGroup>
-  <ItemGroup>
-    <QtUic Include="views\directxconfigdialog.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="views\mmeconfigdialog.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="views\wasapiconfigdialog.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
+    <CustomBuild Include=".\moc_predefs.h.cbt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resources\dark\actions\24\arrow-down.svg">
@@ -317,9 +308,6 @@
     <None Include="..\resources\lgplv3-88x31.png">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="logo2.png">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="..\resources\dark\actions\24\object-locked.svg">
       <Filter>Resource Files</Filter>
     </None>
@@ -374,7 +362,7 @@
     <None Include="..\resources\vst3.png">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\resources\vstboard">
+    <None Include="..\resources\vstboard logo2.png">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\resources\vstboard16_8.png">

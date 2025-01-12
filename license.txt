@@ -17,3 +17,4 @@ APPLICABLE LICENSES
 * VST Plug-In Technology by Steinberg.
 * ASIO Interface Technology by Steinberg Media Technologies GmbH.
 * VST and ASIO are trademarks of Steinberg Media Technologies GmbH.
+https://github.com/StrataSource/QtWinMigrate-Qt6

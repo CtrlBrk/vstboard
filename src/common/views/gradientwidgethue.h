@@ -47,7 +47,7 @@ namespace View {
         void resizeEvent(QResizeEvent *event);
 
     private:
-        qreal hue,saturation,value,alpha;
+        float hue,saturation,value,alpha;
         QColor m_selected_color;    // Couleur sélectionné dans le dégradé
         QImage m_gradient_image;    // Image contenant le degradé à afficher
         QPoint m_cursor_position;   // Position du point de sélection

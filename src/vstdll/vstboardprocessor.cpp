@@ -154,8 +154,8 @@ tresult PLUGIN_API VstBoardProcessor::setState (IBStream* state)
 	
 	QByteArray bArray(QByteArray::fromRawData(buf, size));
 	
-	QJsonDocument loadDoc(QJsonDocument::fromBinaryData(qUncompress(bArray)));
-	//QJsonDocument loadDoc(QJsonDocument::fromJson(bArray));
+    // QJsonDocument loadDoc(QJsonDocument::fromBinaryData(qUncompress(bArray)));
+    QJsonDocument loadDoc(QJsonDocument::fromJson(bArray));
 	QJsonObject json = loadDoc.object();
 	if (json.contains("proc")) {
 		JsonReader::readProjectProcess(json["proc"].toObject(), this);
@@ -169,8 +169,8 @@ tresult PLUGIN_API VstBoardProcessor::getState (IBStream* state)
 	QJsonObject jsonObj;
 	jsonObj["proc"] = JsonWriter::writeProjectProcess(this, true, true);
 	QJsonDocument saveDoc(jsonObj);
-	QByteArray bArray = qCompress(saveDoc.toBinaryData());
-	//QByteArray bArray = saveDoc.toJson(QJsonDocument::Indented);
+    // QByteArray bArray = qCompress(saveDoc.toBinaryData());
+    QByteArray bArray = saveDoc.toJson(QJsonDocument::Indented);
 	int size = bArray.size();
 	state->write(&size, sizeof(int));
     state->write(bArray.data(), bArray.size());

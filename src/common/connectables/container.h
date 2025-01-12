@@ -162,11 +162,11 @@ namespace Connectables {
         QList<int> listProgToRemove;
 
     public slots:
-        void ConnectObjects(QScriptValue from, QScriptValue to);
-        QScriptValue AddObject(QString type, QString name="", QString id="");
-        bool RemoveObject(QScriptValue obj);
-        void AddCable(QScriptValue pinFrom, QScriptValue pinTo);
-        void RemoveCable(QScriptValue pinFrom, QScriptValue pinTo);
+        void ConnectObjects(QVariant from, QVariant to);
+        QVariant AddObject(QString type, QString name="", QString id="");
+        bool RemoveObject(QVariant obj);
+        void AddCable(QVariant pinFrom, QVariant pinTo);
+        void RemoveCable(QVariant pinFrom, QVariant pinTo);
 
         void UserAddObject(const QSharedPointer<Object> &objPtr,
                            InsertionType::Enum insertType = InsertionType::NoInsertion,

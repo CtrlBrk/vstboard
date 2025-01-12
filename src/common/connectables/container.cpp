@@ -117,10 +117,10 @@ void Container::SetContainerId(qint32 id)
     }
 }
 
-void Container::ConnectObjects(QScriptValue from, QScriptValue to)
+void Container::ConnectObjects(QVariant from, QVariant to)
 {
-    Object *objFrom  = static_cast<Object*>(from.toQObject() );
-    Object *objTo  = static_cast<Object*>(to.toQObject() );
+    Object *objFrom  = from.value<Object*>();
+    Object *objTo  = to.value<Object*>();
 
     if(!objFrom || !objTo)
         return;
@@ -779,10 +779,10 @@ void Container::OnChildDeleted(QSharedPointer<Object>obj)
 //    }
 }
 
-void Container::RemoveCable(QScriptValue pinFrom, QScriptValue pinTo)
+void Container::RemoveCable(QVariant pinFrom, QVariant pinTo)
 {
-    Pin* opinFrom = static_cast<Pin*>(pinFrom.toQObject());
-    Pin* opinTo = static_cast<Pin*>(pinTo.toQObject());
+    Pin* opinFrom = static_cast<Pin*>(qvariant_cast<QObject *>(pinFrom));
+    Pin* opinTo = static_cast<Pin*>(qvariant_cast<QObject *>(pinTo));
 
     if(!opinFrom || !opinTo)
         return;
@@ -791,10 +791,10 @@ void Container::RemoveCable(QScriptValue pinFrom, QScriptValue pinTo)
     UserRemoveCable(opinTo->GetConnectionInfo(), opinFrom->GetConnectionInfo());
 }
 
-void Container::AddCable(QScriptValue pinFrom, QScriptValue pinTo)
+void Container::AddCable(QVariant pinFrom, QVariant pinTo)
 {
-    Pin* opinFrom = static_cast<Pin*>(pinFrom.toQObject());
-    Pin* opinTo = static_cast<Pin*>(pinTo.toQObject());
+    Pin* opinFrom = static_cast<Pin*>(qvariant_cast<QObject *>(pinFrom));
+    Pin* opinTo = static_cast<Pin*>(qvariant_cast<QObject *>(pinTo));
 
     if(!opinFrom || !opinTo)
         return;
@@ -1287,7 +1287,7 @@ qint32 Container::AddObject(const ObjectInfo &newInfo, InsertionType::Enum inser
     return com->GetInfo().forcedObjId;
 }
 
-QScriptValue Container::AddObject(QString type, QString name/*=""*/, QString id/*=""*/)
+QVariant Container::AddObject(QString type, QString name/*=""*/, QString id/*=""*/)
 {
     ObjectInfo i;
     i.nodeType = NodeType::object;
@@ -1335,12 +1335,14 @@ QScriptValue Container::AddObject(QString type, QString name/*=""*/, QString id/
     }
 
     qint32 objid = AddObject(static_cast<ObjectInfo>(i));
-    return myHost->scriptEngine.evaluate(QString("Obj%1").arg(objid));
+    //return myHost->scriptEngine.evaluate(QString("Obj%1").arg(objid));
+    return QString("Obj%1").arg(objid);
 }
 
-bool Container::RemoveObject(QScriptValue obj)
+bool Container::RemoveObject(QVariant obj)
 {
-    Object* pobj = static_cast<Object*>(obj.toQObject());
+    // Object* pobj = static_cast<Object*>(obj.toQObject());
+    Object* pobj = obj.value<Object*>();
     if(!pobj)
         return false;
 

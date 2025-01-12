@@ -115,7 +115,7 @@ void KeyBind::SetModesModel(QStandardItemModel *model)
             int in = modeItem->child(move,1)->data().toInt();
             bind.input = static_cast<MoveInputs>(in);
 
-            bind.buttons=0;
+            bind.buttons=Qt::NoButton;
             int bt = modeItem->child(move,2)->data(Qt::EditRole).toInt();
             if(bt & Qt::LeftButton) bind.buttons |= Qt::LeftButton;
             if(bt & Qt::MiddleButton) bind.buttons |= Qt::MiddleButton;
@@ -123,7 +123,7 @@ void KeyBind::SetModesModel(QStandardItemModel *model)
             if(bt & Qt::XButton1) bind.buttons |= Qt::XButton1;
             if(bt & Qt::XButton2) bind.buttons |= Qt::XButton2;
 
-            bind.modifier=0;
+            bind.modifier=Qt::NoModifier;
             int mod = modeItem->child(move,3)->data(Qt::EditRole).toInt();
             if(mod & Qt::ShiftModifier) bind.modifier |= Qt::ShiftModifier;
             if(mod & Qt::ControlModifier) bind.modifier |= Qt::ControlModifier;

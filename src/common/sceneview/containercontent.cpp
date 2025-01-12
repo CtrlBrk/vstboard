@@ -153,6 +153,7 @@ void ContainerContent::HighlightStart()
 void ContainerContent::HighlightStop()
 {
     QColor color = config->GetColor(ColorGroups::Panel,Colors::Background);
+    //QColor color = QColor(100,100,100,100);
     if(color.alpha()==0) {
         setAutoFillBackground( false );
     } else {

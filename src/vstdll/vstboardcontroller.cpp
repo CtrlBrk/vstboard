@@ -134,8 +134,8 @@ tresult PLUGIN_API VstBoardController::setState (IBStream* state)
 	
 	QByteArray bArray(QByteArray::fromRawData(buf, size));
 
-	QJsonDocument loadDoc(QJsonDocument::fromBinaryData(qUncompress(bArray)));
-	//QJsonDocument loadDoc(QJsonDocument::fromJson(bArray));
+    // QJsonDocument loadDoc(QJsonDocument::fromBinaryData(qUncompress(bArray)));
+    QJsonDocument loadDoc(QJsonDocument::fromJson(bArray));
 	QJsonObject json = loadDoc.object();
 	if (json.contains("ctrl")) {
 		QJsonArray jLstCtrl = json["ctrl"].toArray();
@@ -162,8 +162,8 @@ tresult PLUGIN_API VstBoardController::getState (IBStream* state)
 
 	jsonObj["ctrl"] = jLst;
 	QJsonDocument saveDoc(jsonObj);
-	QByteArray bArray = qCompress(saveDoc.toBinaryData());
-	//QByteArray bArray = saveDoc.toJson(QJsonDocument::Indented);
+    // QByteArray bArray = qCompress(saveDoc.toBinaryData());
+    QByteArray bArray = saveDoc.toJson(QJsonDocument::Indented);
 	int size = bArray.size();
 	state->write(&size, sizeof(int));
 	state->write(bArray.data(), bArray.size());

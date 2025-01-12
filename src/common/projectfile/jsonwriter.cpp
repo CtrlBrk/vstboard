@@ -12,11 +12,11 @@ bool JsonWriter::writeProjectFile(QIODevice *device, MainHost *host, MainWindow 
 
 	QJsonDocument saveDoc(jsonObj);
 
-	device->write(binary
-		? qCompress(saveDoc.toBinaryData())
-		: saveDoc.toJson(QJsonDocument::Indented)
-	);
-
+    // device->write(binary
+    // 	? qCompress(saveDoc.toBinaryData())
+    // 	: saveDoc.toJson(QJsonDocument::Indented)
+    // );
+    device->write(saveDoc.toJson(QJsonDocument::Indented));
 	return no_error;
 }
 

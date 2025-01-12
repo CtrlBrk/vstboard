@@ -165,10 +165,10 @@ void MinMaxPinView::CursorValueChanged()
 
 void MinMaxPinView::UpdateLimitModelIndex(const QModelIndex &index)
 {
-    inMin->SetValue( index.child(0,0).data(UserRoles::value).toFloat() );
-    inMax->SetValue( index.child(1,0).data(UserRoles::value).toFloat() );
-    outMin->SetValue( index.child(2,0).data(UserRoles::value).toFloat() );
-    outMax->SetValue( index.child(3,0).data(UserRoles::value).toFloat() );
+    inMin->SetValue( index.model()->index(0, 0, index).data(UserRoles::value).toFloat() );
+    inMax->SetValue( index.model()->index(1,0, index).data(UserRoles::value).toFloat() );
+    outMin->SetValue( index.model()->index(2,0, index).data(UserRoles::value).toFloat() );
+    outMax->SetValue( index.model()->index(3,0, index).data(UserRoles::value).toFloat() );
     UpdateScaleView();
 }
 

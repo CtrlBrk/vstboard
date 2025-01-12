@@ -364,32 +364,16 @@ void MainWindow::UpdateStylesheet()
 
 void MainWindow::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &/*color*/)
 {
-    if(groupId==ColorGroups::Theme) {
+    // if(groupId==ColorGroups::Theme) {
 
-        QString thName = QString("%1").arg(colorId == Colors::Dark ? "dark" : "light");
-        QIcon::setThemeName(thName);
-        QIcon::setThemeSearchPaths(QStringList(":/" + thName));
+    //     QString thName = QString("%1").arg(colorId == Colors::Dark ? "dark" : "light");
+    //     QIcon::setThemeName(thName);
+    //     QIcon::setThemeSearchPaths(QStringList(":/" + thName));
 
-        return;
-    }
+    //     return;
+    // }
 
 
-//    if(groupId!=ColorGroups::Window)
-//        return;
-
-//    setStyleSheet(viewConfig->GetSyleSheet());
-
-//    QPalette::ColorRole role = viewConfig->GetPaletteRoleFromColor(colorId);
-
-//    QPalette pal=palette();
-//    pal.setColor(role, color);
-//    setPalette(pal);
-
-//    //apply to undocked widgets and menus
-//    QList<QWidget *> dockWidgets = findChildren<QWidget *>();
-//    foreach(auto w, dockWidgets) {
-//        w->setPalette(pal);
-//    }
 
 }
 

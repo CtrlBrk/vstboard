@@ -220,7 +220,8 @@ bool FileBrowser::DeleteFile(const QModelIndex &index, int &deleteConfirmed,bool
         int nbChildren = model->rowCount(index);
         QList<QPersistentModelIndex>listIdx;
         for(int i=0;i<nbChildren; i++) {
-            listIdx << index.child(i,0);
+            const QModelIndex &child = model->index(i, 0, index);
+            listIdx << child;
         }
         foreach(QPersistentModelIndex idx, listIdx) {
             if(!DeleteFile(idx,deleteConfirmed,skipErrors))

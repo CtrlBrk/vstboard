@@ -366,7 +366,8 @@ bool VstPlugin::Open()
             ids << id;
 //            MsgObject plug;
             _MSGOBJ(plug,FixedObjId::ND);
-            plug.prop[MsgObject::Name] = szName;
+            plug.prop[MsgObject::Name].toString() = szName;
+            ///plug.prop[MsgObject::Name] = szName;
             plug.prop[MsgObject::Id] = id;
             msg.children << plug;
         }

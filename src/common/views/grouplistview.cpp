@@ -129,7 +129,7 @@ void GroupListView::dragMoveEvent ( QDragMoveEvent * event )
     }
 
     //accept if we drag a program over a group +switch to the group hovered
-    QModelIndex i = indexAt(event->pos());
+    QModelIndex i = indexAt(event->position().toPoint());
     if(i.isValid() && event->mimeData()->formats().contains(MIMETYPE_PROGRAM)) {
 
         //show the group content
@@ -149,7 +149,7 @@ void GroupListView::dropEvent(QDropEvent *event)
 {
     //allow program drop on a group
     if(event->source() != this && event->mimeData()->formats().contains(MIMETYPE_PROGRAM)) {
-        QModelIndex i = indexAt(event->pos());
+        QModelIndex i = indexAt(event->position().toPoint());
         if(i.isValid()) {
             event->accept();
             model()->dropMimeData( event->mimeData(), event->dropAction(), -1, 0, i );
@@ -189,7 +189,7 @@ void GroupListView::DeleteItem()
 {
     QModelIndexList indexes = selectionModel()->selectedIndexes();
     if(!indexes.isEmpty()) {
-        qSort(indexes.begin(), indexes.end());
+        std::sort(indexes.begin(), indexes.end());
         while(!indexes.isEmpty()) {
             model()->removeRow( indexes.takeLast().row(), rootIndex() );
         }

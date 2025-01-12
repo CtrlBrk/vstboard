@@ -1015,7 +1015,7 @@ void Object::SetErrorMessage(const QString &msg)
 
 QStandardItem * Object::GetModel()
 {
-    QStandardItem *i = new QStandardItem( QString("%1 (%2)").arg(objectName()).arg(scriptName) );
+    QStandardItem *i = new QStandardItem( QString("%1").arg(objectName()) );
     foreach(QObject *o, children()) {
         QString className(o->metaObject()->className());
 //        if(className != "Connectables::PinsList") {

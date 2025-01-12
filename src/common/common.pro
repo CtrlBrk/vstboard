@@ -2,6 +2,7 @@ include(../config.pri)
 
 QT += core gui widgets
 #QT += widgets-private
+
 TEMPLATE = lib
 CONFIG += staticlib
 

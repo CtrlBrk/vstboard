@@ -79,12 +79,12 @@ void MainGraphicsView::wheelEvent(QWheelEvent * event)
 
     QGraphicsSceneWheelEvent wheelEvent(QEvent::GraphicsSceneWheel);
     wheelEvent.setWidget(viewport());
-    wheelEvent.setScenePos(mapToScene(event->pos()));
-    wheelEvent.setScreenPos(event->globalPos());
+    wheelEvent.setScenePos(mapToScene(event->position().toPoint()));
+    wheelEvent.setScreenPos(event->globalPosition().toPoint());
     wheelEvent.setButtons(event->buttons());
     wheelEvent.setModifiers(event->modifiers());
-    wheelEvent.setDelta(event->delta());
-    wheelEvent.setOrientation(event->orientation());
+    wheelEvent.setDelta(event->angleDelta().y());
+    // wheelEvent.setOrientation();
     wheelEvent.setAccepted(false);
     QApplication::sendEvent(scene(), &wheelEvent);
     event->setAccepted(wheelEvent.isAccepted());
@@ -94,7 +94,7 @@ void MainGraphicsView::wheelEvent(QWheelEvent * event)
     const KeyBind::MoveBind b = config->keyBinding->GetMoveSortcuts(KeyBind::zoom);
     if(b.input == KeyBind::mouseWheel && b.modifier == event->modifiers()) {
         event->accept();
-        if(event->delta()>0)
+        if(event->angleDelta().y()>0)
             zoomIn();
         else
             zoomOut();

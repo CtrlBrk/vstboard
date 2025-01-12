@@ -6,10 +6,11 @@ bool JsonReader::readProjectFile(QIODevice *device, MainHost *host, MainWindow *
 {
 	QByteArray saveData = device->readAll();
 
-	QJsonDocument loadDoc(binary
-		? QJsonDocument::fromBinaryData(qUncompress(saveData))
-		: QJsonDocument::fromJson(saveData)
-	);
+ //    QJsonDocument loadDoc(binary
+ //        ? QJsonDocument::fromBinaryData(qUncompress(saveData))
+ //        : QJsonDocument::fromJson(saveData)
+    // );
+    QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
 
 	QJsonObject json = loadDoc.object();
 	

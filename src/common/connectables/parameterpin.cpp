@@ -175,7 +175,8 @@ void ParameterPin::ChangeValue(float val, bool fromObj)
 void ParameterPin::ChangeValue(int index, bool fromObj)
 {
 	if (listValues != 0) {
-		index = std::min(index, listValues->size() - 1);
+        int i = listValues->size() - 1;
+        index = std::min(index, i);
 	}
 	else {
 		LOG("listValues not defined");
@@ -198,7 +199,7 @@ void ParameterPin::ChangeValue(int index, bool fromObj)
 void ParameterPin::ChangeValue(const QVariant &variant, bool fromObj)
 {
     if(listValues)
-        ChangeValue(listValues->indexOf(variant),fromObj);
+        ChangeValue((int)listValues->indexOf(variant),fromObj);
     else
         ChangeValue(variant.toFloat(),fromObj);
 }

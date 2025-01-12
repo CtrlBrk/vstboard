@@ -29,13 +29,13 @@ RTAUDIO = ../../libs/rtaudio
 RTMIDI = ../../libs/rtmidi
 
 CONFIG(debug, debug|release) {
-    RTAUDIO_LIB = ../../build-rtaudio-64bit-Debug
-    RTMIDI_LIB = ../../build-rtmidi-64bit-Debug
-    VST3SDK_LIB = ../../build-VST3_SDK-64bit/lib/Debug
+    RTAUDIO_LIB = ../../../../build-rtaudio-64bit-Debug
+    RTMIDI_LIB = ../../../../build-rtmidi-64bit-Debug
+    VST3SDK_LIB = ../../../../build-VST3_SDK-64bit/lib/Debug
 } else {
-    RTAUDIO_LIB = ../../build-rtaudio-64bit-Release
-    RTMIDI_LIB = ../../build-rtmidi-64bit-Release
-    VST3SDK_LIB = ../../build-VST3_SDK-64bit/lib/Release
+    RTAUDIO_LIB = ../../../../build-rtaudio-64bit-Release
+    RTMIDI_LIB = ../../../../build-rtmidi-64bit-Release
+    VST3SDK_LIB = ../../../../build-VST3_SDK-64bit/lib/Release
 }
 
 INCLUDEPATH += $${UI_DIR}
@@ -47,8 +47,8 @@ macx {
  CONFIG += c++1z
 }
 
-CONFIG += scriptengine
-CONFIG += oldscriptengine
+#CONFIG += scriptengine
+#CONFIG += oldscriptengine
 
 #use ring buffers to sync multiple audio inputs
 DEFINES += CIRCULAR_BUFFER
@@ -67,12 +67,12 @@ DEFINES += CIRCULAR_BUFFER
 
 scriptengine {
     DEFINES += SCRIPTENGINE
-#    oldscriptengine {
-#        DEFINES += OLDSCRIPTENGINE
+    oldscriptengine {
+        DEFINES += OLDSCRIPTENGINE
         QT += script
-#    } else {
-#        QT += qml
-#    }
+    } else {
+        QT += qml
+    }
 }
 
 CONFIG(debug, debug|release) {

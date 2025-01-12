@@ -65,8 +65,8 @@ MainHost::MainHost(Settings *settings, QObject *parent) :
     qRegisterMetaType<AudioBuffer*>("AudioBuffer*");
     qRegisterMetaType<QVector<int> >("QVector<int>");
     qRegisterMetaType<QVector<float> >("QVector<float>");
-    qRegisterMetaTypeStreamOperators<ObjectInfo>("ObjectInfo");
-    qRegisterMetaTypeStreamOperators<ObjectContainerAttribs>("ObjectContainerAttribs");
+    //qRegisterMetaTypeStreamOperators<ObjectInfo>("ObjectInfo");
+    //qRegisterMetaTypeStreamOperators<ObjectContainerAttribs>("ObjectContainerAttribs");
 }
 
 MainHost::~MainHost()

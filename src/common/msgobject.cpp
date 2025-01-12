@@ -29,7 +29,7 @@ QDataStream & MsgObject::toStream (QDataStream &out) const
     out << (qint32)prop.count();
     QMap<Props,QVariant>::const_iterator i = prop.constBegin();
     while(i!=prop.constEnd()) {
-        QString s(i.key());
+//        QString s(i.key());
         out << static_cast<int>(i.key());
         out << i.value();
         ++i;

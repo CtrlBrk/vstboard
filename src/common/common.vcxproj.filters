@@ -158,6 +158,9 @@
     <ClCompile Include="views\filebrowser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="views\filebrowsertree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="views\gradientwidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -173,6 +176,12 @@
     <ClCompile Include="connectables\hostcontroller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="projectfile\jsonreader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="projectfile\jsonwriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="views\keybind.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -183,6 +192,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="views\listaudiodevicesview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="models\listobjectsmodel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sceneview\listpinsview.cpp">
@@ -236,6 +248,9 @@
     <ClCompile Include="connectables\object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="connectables\objectcontainerattribs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="sceneview\objectdropzone.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -278,6 +293,9 @@
     <ClCompile Include="connectables\pin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="connectables\pinfactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="connectables\pinslist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -311,6 +329,12 @@
     <ClCompile Include="sceneview\sceneview.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="connectables\script.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\scripteditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="renderer\semaphoreinverted.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -333,6 +357,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="views\viewconfigdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="views\vst3contextmenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="vst\vst3host.cpp">
@@ -363,54 +390,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="renderer\waitall.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="projectfile\jsonreader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="projectfile\jsonwriter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\connectionproxy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\hostclasses.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\module.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\module_win32.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\parameterchanges.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\pluginterfacesupport.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\plugprovider.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\processdata.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\stringconvert.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\common\memorystream.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="connectables\objectcontainerattribs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="views\filebrowsertree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\eventlist.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="connectables\pinfactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -529,6 +508,9 @@
     <QtMoc Include="views\filebrowser.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="views\filebrowsertree.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
     <ClInclude Include="projectfile\fileversion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -550,6 +532,12 @@
     <QtMoc Include="connectables\hostcontroller.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <ClInclude Include="projectfile\jsonreader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="projectfile\jsonwriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <QtMoc Include="views\keybind.h">
       <Filter>Header Files</Filter>
     </QtMoc>
@@ -562,6 +550,9 @@
     <QtMoc Include="views\listaudiodevicesview.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <ClInclude Include="models\listobjectsmodel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="sceneview\listpinsview.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -613,6 +604,9 @@
     <QtMoc Include="connectables\object.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <ClInclude Include="connectables\objectcontainerattribs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <QtMoc Include="sceneview\objectdropzone.h">
       <Filter>Header Files</Filter>
     </QtMoc>
@@ -655,6 +649,9 @@
     <QtMoc Include="connectables\pin.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <ClInclude Include="connectables\pinfactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <QtMoc Include="connectables\pinslist.h">
       <Filter>Header Files</Filter>
     </QtMoc>
@@ -691,6 +688,12 @@
     <QtMoc Include="sceneview\sceneview.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="connectables\script.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="views\scripteditor.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
     <ClInclude Include="renderer\semaphoreinverted.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -713,6 +716,12 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="views\viewconfigdialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="views\vst3contextmenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="vst\vst3host.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="connectables\vst3plugin.h">
@@ -742,17 +751,12 @@
     <ClInclude Include="renderer\waitall.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="views\filebrowsertree.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="vst\vst3host.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="precomp.h.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <CustomBuild Include=".\moc_predefs.h.cbt" />
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="views\aboutdialog.ui">
@@ -777,6 +781,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="views\programlist.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="views\scripteditor.ui">
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="views\splash.ui">
@@ -943,9 +950,6 @@
     <None Include="..\resources\lgplv3-88x31.png">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="logo2.png">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="..\resources\dark\actions\24\object-locked.svg">
       <Filter>Resource Files</Filter>
     </None>
@@ -1000,7 +1004,7 @@
     <None Include="..\resources\vst3.png">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\resources\vstboard">
+    <None Include="..\resources\vstboard logo2.png">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\resources\vstboard16_8.png">
@@ -1030,19 +1034,5 @@
     <None Include="..\resources\translations\vstdll_fr.ts">
       <Filter>Resource Files</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="projectfile\jsonreader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="projectfile\jsonwriter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="connectables\objectcontainerattribs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="connectables\pinfactory.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

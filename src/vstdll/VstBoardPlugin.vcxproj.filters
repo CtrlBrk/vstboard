@@ -37,7 +37,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst2.x\audioeffect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst2.x\audioeffectx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\basewrapper\basewrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="views\configdialogvst.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\connectionproxy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\eventlist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="factory.cpp">
@@ -46,10 +61,22 @@
     <ClCompile Include="gui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\hostclasses.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mainwindowvst.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\common\memorystream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\module.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\module_win32.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="myvst2wrapper.cpp">
@@ -58,13 +85,40 @@
     <ClCompile Include="connectables\objectfactoryvst.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\parameterchanges.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\pluginterfacesupport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\plugprovider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\processdata.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\qtwinmigrate\src\qmfcapp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\qtwinmigrate\src\qwinhost.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\qtwinmigrate\src\qwinwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="resizehandle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\hosting\stringconvert.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="vst.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="vst2shell.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\vst2wrapper\vst2wrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="connectables\vstaudiodevicein.cpp">
@@ -88,21 +142,6 @@
     <ClCompile Include="vsttest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst2.x\audioeffectx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst2.x\audioeffect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\qtwinmigrate\src\qwinwidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\basewrapper\basewrapper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\VST_SDK\VST3_SDK\public.sdk\source\vst\vst2wrapper\vst2wrapper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="views\configdialogvst.h">
@@ -112,6 +151,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <ClInclude Include="ids.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="loaderhelpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <QtMoc Include="mainwindowvst.h">
@@ -126,6 +168,12 @@
     <CustomBuild Include="..\common\precomp.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <ClInclude Include="..\..\libs\qtwinmigrate\src\qmfcapp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="..\..\libs\qtwinmigrate\src\qwinhost.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
     <QtMoc Include="..\..\libs\qtwinmigrate\src\qwinwidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
@@ -159,15 +207,12 @@
     <ClInclude Include="vsttest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="loaderhelpers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\precomp.h.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <CustomBuild Include="$(intdir)\moc_predefs.h.cbt" />
+    <CustomBuild Include=".\moc_predefs.h.cbt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resources\dark\actions\24\arrow-down.svg">
@@ -320,9 +365,6 @@
     <None Include="..\resources\lgplv3-88x31.png">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="logo2.png">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="..\resources\dark\actions\24\object-locked.svg">
       <Filter>Resource Files</Filter>
     </None>
@@ -377,7 +419,7 @@
     <None Include="..\resources\vst3.png">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\resources\vstboard">
+    <None Include="..\resources\vstboard logo2.png">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\resources\vstboard16_8.png">

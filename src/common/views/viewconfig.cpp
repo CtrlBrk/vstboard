@@ -260,7 +260,11 @@ QPalette::ColorRole ViewConfig::GetPaletteRoleFromColor(Colors::Enum colorId)
   */
 void ViewConfig::AddColor(const QString &preset, ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color)
 {
-    (*GetListOfPresets())[preset][groupId][colorId]=color;
+    //viewConfigPresetList * l = GetListOfPresets();
+    //l->value(preset)[groupId][colorId]=color;
+    //(*GetListOfPresets())[preset][groupId][colorId]=color;
+
+    listPresets[preset][groupId][colorId]=color;
     emit ColorChanged(groupId,colorId,color);
 }
 
@@ -302,6 +306,7 @@ QColor ViewConfig::GetColor(ColorGroups::Enum groupId, Colors::Enum colorId)
         return QColor();
 
     return GetCurrentPreset()->value(groupId).value(colorId,QColor());
+
 }
 
 //QPalette ViewConfig::GetPalette(ColorGroups::Enum groupId) {
@@ -474,8 +479,8 @@ void ViewConfig::SaveInRegistry()
 void ViewConfig::LoadFromRegistry()
 {
     SetSavedInSetup(false);
-    QVariant lVar = settings->GetSetting("Colors", QVariant::Invalid);
-    if( !lVar.isValid() ) {
+    QVariant lVar = settings->GetSetting("Colors", 0);
+    if( lVar==0 ) {
         SaveInRegistry();
         lVar = settings->GetSetting("Colors");
     }

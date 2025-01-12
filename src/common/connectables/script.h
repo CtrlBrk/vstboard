@@ -50,11 +50,11 @@ namespace Connectables {
 
         QString defaultScript;
 
-        QScriptValue scriptThisObj;
-        QScriptValue objScript;
-        QScriptValue openScript;
-        QScriptValue renderScript;
-        QScriptValue midiinScript;
+        QVariant scriptThisObj;
+        QVariant objScript;
+        QVariant openScript;
+        QVariant renderScript;
+        QVariant midiinScript;
 
     signals :
         void _dspMsg(const QString &title, const QString &str);
