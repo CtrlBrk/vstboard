@@ -96,7 +96,7 @@ void RegSetString(HKEY hKey, const std::wstring& subKey, std::wstring& value, co
         throw RegistryError{ L"Cannot open registry key", retCode };
     }
 
-    DWORD dataSize = data.length() * sizeof(WCHAR);
+    DWORD dataSize = (DWORD)data.length() * sizeof(WCHAR);
 
     retCode = ::RegSetValueEx(
         handle,

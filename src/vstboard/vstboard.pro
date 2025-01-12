@@ -7,11 +7,16 @@ TEMPLATE = app
 TARGET = "VstBoard"
 
 LIBS += -L$$RTMIDI_LIB -lrtmidi
-LIBS += -L$$RTAUDIO_LIB -lrtaudio
+
 LIBS += -L$$VST3SDK_LIB -lbase
 LIBS += -L$$VST3SDK_LIB -lpluginterfaces
 LIBS += -L$$VST3SDK_LIB -lsdk
 
+CONFIG(debug, debug|release) {
+    LIBS += -L$$RTAUDIO_LIB -lrtaudiod
+} else {
+    LIBS += -L$$RTAUDIO_LIB -lrtaudio
+}
 
 LIBDEPS = common
 for(a, LIBDEPS) {

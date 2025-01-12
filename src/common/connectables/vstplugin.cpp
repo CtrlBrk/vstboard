@@ -1104,6 +1104,10 @@ Pin* VstPlugin::CreatePin(const ConnectionInfo &info)
         return newPin;
 
     pinConstructArgs args(info);
+    args.parent = this;
+    args.bufferSize = myHost->GetBufferSize();
+    args.doublePrecision = doublePrecision;
+
 
     if(info.type == PinType::Parameter && info.direction == PinDirection::Input) {
 

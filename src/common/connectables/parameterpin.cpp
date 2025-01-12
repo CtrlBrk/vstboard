@@ -22,7 +22,7 @@
 #include "parameterpin.h"
 #include "object.h"
 #include "../globals.h"
-#include "mainhost.h"
+// #include "mainhost.h"
 
 using namespace Connectables;
 

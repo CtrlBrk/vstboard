@@ -58,7 +58,7 @@ namespace Connectables {
 			pinNumber = i.pinNumber;
 			bridge = i.bridge;
 			isRemoveable = i.isRemoveable;
-			myHost = i.myHost;
+            myHost = i.myHost;
 		};
 
 	};

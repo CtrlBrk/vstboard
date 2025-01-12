@@ -88,12 +88,10 @@ bool ConnectionInfo::CanConnectTo(const ConnectionInfo &c) const
     int cntA = container;
     int cntB = c.container;
 
-    //if it's a bridge : get the container's container id
-    if(bridge)
-        cntA = myHost->objFactory->GetObjectFromId( container )->GetContainerId();
-
-    if(c.bridge)
-        cntB = myHost->objFactory->GetObjectFromId( c.container )->GetContainerId();
+    //bridges can connect to other containers
+    if(bridge && c.bridge) {
+        return true;
+    }
 
     //must be in the same container
     if(cntA == cntB)
@@ -106,7 +104,6 @@ ConnectionInfo::ConnectionInfo(MainHost *host,const QJsonObject &json ) :
 	ConnectionInfo()
 {
 	myHost = host;
-
     bridge = json["bridge"].toBool();
     int savedContainerId = json["container"].toInt();
     int cId = myHost->objFactory->IdFromSavedId(savedContainerId);
