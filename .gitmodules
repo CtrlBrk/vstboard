@@ -4,3 +4,9 @@
 [submodule "libs/rtmidi"]
 	path = libs/rtmidi
 	url = https://github.com/thestk/rtmidi.git
+[submodule "libs/portaudio"]
+	path = libs/portaudio
+	url = https://github.com/PortAudio/portaudio
+[submodule "libs/portmidi"]
+	path = libs/portmidi
+	url = https://github.com/PortMidi/PortMidi

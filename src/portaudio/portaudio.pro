@@ -80,6 +80,7 @@ win32 {
     SOURCES += $$PORTAUDIO_PATH/src/hostapi/wmme/pa_win_wmme.c
     SOURCES += $$PORTAUDIO_PATH/src/os/win/pa_win_waveformat.c
     SOURCES += $$PORTAUDIO_PATH/src/os/win/pa_win_util.c
+    SOURCES += $$PORTAUDIO_PATH/src/os/win/pa_win_version.c
     SOURCES += $$PORTAUDIO_PATH/src/os/win/pa_win_hostapis.c
     SOURCES += $$PORTAUDIO_PATH/src/hostapi/asio/pa_asio.cpp
     SOURCES += $$PORTAUDIO_PATH/src/hostapi/asio/ASIOSDK/common/asio.cpp

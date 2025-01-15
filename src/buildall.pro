@@ -1,9 +1,15 @@
 include(config.pri)
 
 TEMPLATE    = subdirs
-SUBDIRS     = \
-    common \
-    vstboard \
+
+SUBDIRS     = common
+
+portaudio {
+    SUBDIRS += portaudio
+    SUBDIRS += portmidi
+}
+
+SUBDIRS += vstboard
 
 vstsdk {
     SUBDIRS += vstdll

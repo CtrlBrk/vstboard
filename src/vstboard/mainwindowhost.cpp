@@ -21,8 +21,14 @@
 #include "mainhosthost.h"
 #include "views/configdialoghost.h"
 #include "views/splash.h"
-#include "audiodevices.h"
-#include "mididevices.h"
+#ifdef RTAUDIO
+#include "mididevices_rm.h"
+#include "audiodevices_rt.h"
+#endif
+#ifdef PORTAUDIO
+#include "mididevices_pm.h"
+#include "audiodevices_pa.h"
+#endif
 #include "programmanager.h"
 
 MainWindowHost::MainWindowHost(Settings *settings, MainHostHost * myHost, QWidget *parent) :

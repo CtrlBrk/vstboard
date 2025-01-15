@@ -16,9 +16,10 @@ vstsdk {
         views/vstpluginwindow.h \
 
     SOURCES += views/vstshellselect.cpp \
-         vst/vst3host.cpp \
+        vst/vst3host.cpp \
         connectables/vst3plugin.cpp \
         views/vstpluginwindow.cpp \
+        $$VST3SDK_PATH/public.sdk/source/common/commoniids.cpp \
 
     FORMS += views/vstpluginwindow.ui \
         views/vstshellselect.ui

@@ -22,8 +22,12 @@
 
 #include "connectables/audiodevicein.h"
 #include "connectables/audiodeviceout.h"
-#include "connectables/mididevice.h"
-
+#ifdef RTAUDIO
+#include "connectables/mididevice_rm.h"
+#endif
+#ifdef PORTAUDIO
+#include "connectables/mididevice_pm.h"
+#endif
 using namespace Connectables;
 
 ObjectFactoryHost::ObjectFactoryHost(MainHost *myHost) :

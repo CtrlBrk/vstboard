@@ -19,7 +19,13 @@
 **************************************************************************/
 #include "listmidiinterfacesmodel.h"
 #include "connectables/objectinfo.h"
-#include "../mididevices.h"
+#ifdef RTAUDIO
+#include "../mididevices_rm.h"
+#endif
+#ifdef PORTAUDIO
+#include "../mididevices_pm.h"
+#endif
+
 
 ListMidiInterfacesModel::ListMidiInterfacesModel(MsgController *msgCtrl, int objId, QObject *parent):
     QStandardItemModel(parent),

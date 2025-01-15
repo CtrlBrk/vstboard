@@ -22,9 +22,14 @@
 #define MAINHOSTHOST_H
 
 #include "mainhost.h"
-#include "audiodevices.h"
-#include "mididevices.h"
-
+#ifdef RTAUDIO
+#include "mididevices_rm.h"
+#include "audiodevices_rt.h"
+#endif
+#ifdef PORTAUDIO
+#include "mididevices_pm.h"
+#include "audiodevices_pa.h"
+#endif
 class AudioDevices;
 class MidiDevices;
 class MainHostHost : public MainHost

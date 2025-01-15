@@ -19,11 +19,17 @@
 **************************************************************************/
 
 #include "connectables/audiodeviceout.h"
-#include "connectables/audiodevice.h"
+#ifdef RTAUDIO
+#include "connectables/audiodevice_rt.h"
+#include "audiodevices_rt.h"
+#endif
+#ifdef PORTAUDIO
+#include "connectables/audiodevice_pa.h"
+#include "audiodevices_pa.h"
+#endif
 #include "globals.h"
 #include "audiobuffer.h"
 #include "mainhosthost.h"
-#include "audiodevices.h"
 
 using namespace Connectables;
 

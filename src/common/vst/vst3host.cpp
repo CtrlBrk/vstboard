@@ -1,5 +1,4 @@
 #include "vst3host.h"
-
 using namespace Steinberg;
 
 Vst3Host::Vst3Host(QObject *parent) : 
@@ -39,10 +38,8 @@ Vst3Host::Vst3Host(QObject *parent) :
 
 tresult PLUGIN_API Vst3Host::getName (Vst::String128 name)
 {
-#ifndef __linux__
-    String str ("VstBoard");
-    str.copyTo (name, 0, 127);
-#endif
+    std::u16string ucs2 = u"VstBoard";
+    ucs2.copy (reinterpret_cast<char16_t*> (name), ucs2.length ());
     return kResultTrue;
 }
 

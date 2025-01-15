@@ -15,6 +15,8 @@ PRECOMPILED_HEADER = ../common/precomp.h
 LIBS += -L$$VST3SDK_LIB -lbase
 LIBS += -L$$VST3SDK_LIB -lpluginterfaces
 LIBS += -L$$VST3SDK_LIB -lsdk
+LIBS += -L$$VST3SDK_LIB -lsdk_common
+LIBS += -L$$VST3SDK_LIB -lsdk_hosting
 
 #CONFIG(debug, debug|release) {
 #    LIBS += -L"C:/Program Files (x86)/Visual Leak Detector/lib/" -lvld
@@ -102,25 +104,30 @@ for(a, LIBDEPS) {
     SOURCES += $$VST3SDK_PATH/public.sdk/source/vst2.x/audioeffectx.cpp
 
 
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/basewrapper/basewrapper.cpp
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/vst2wrapper/vst2wrapper.cpp
+#SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/basewrapper/basewrapper.cpp
+#SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/vst2wrapper/vst2wrapper.cpp
 
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/eventlist.cpp
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/parameterchanges.cpp
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/processdata.cpp
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module.cpp
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/stringconvert.cpp
+# SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/eventlist.cpp
+# SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/parameterchanges.cpp
+# SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/processdata.cpp
+# SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module.cpp
+# SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/utility/stringconvert.cpp
 win32 {
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module_win32.cpp
+# SOURCES += $$VST3SDK_PATH/public.sdk/source/common/threadchecker_win32.cpp
 }
 linux-g++{
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module_linux.cpp
+# SOURCES += $$VST3SDK_PATH/public.sdk/source/common/threadchecker_linux.cpp
 }
 macx{
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/module_mac.mm
+# SOURCES += $$VST3SDK_PATH/public.sdk/source/common/threadchecker_mac.cpp
 }
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/plugprovider.cpp
+# SOURCES += $$VST3SDK_PATH/public.sdk/source/common/commoniids.cpp
 SOURCES += $$VST3SDK_PATH/public.sdk/source/common/memorystream.cpp
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/connectionproxy.cpp
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/hostclasses.cpp
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/pluginterfacesupport.cpp
+
+# SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/connectionproxy.cpp
+# SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/hostclasses.cpp
+# SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/pluginterfacesupport.cpp

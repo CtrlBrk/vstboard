@@ -86,9 +86,9 @@ namespace View {
         REFCOUNT_METHODS(FObject)
 
     protected:
-        void resizeEvent ( QResizeEvent * event );
-        void showEvent ( QShowEvent * event );
-        void closeEvent ( QCloseEvent * event );
+        void resizeEvent ( QResizeEvent * event ) override;
+        void showEvent ( QShowEvent * event ) override;
+        void closeEvent ( QCloseEvent * event ) override;
         Connectables::Object *plugin;
 
         QModelIndex modelIndex;

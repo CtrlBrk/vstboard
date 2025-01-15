@@ -21,21 +21,32 @@ win32 |macx{
     DEFINES += VST24SDK
 }
 
+#CONFIG += rtaudio
+#DEFINES += RTAUDIO
+
+CONFIG += portaudio
+DEFINES += PORTAUDIO
+
 CONFIG += vstsdk
 DEFINES += VSTSDK
 
-VST3SDK_PATH = ../../libs/VST_SDK/VST3_SDK
+VST3SDK_PATH = ../../libs/vst3sdk
+
 RTAUDIO = ../../libs/rtaudio
 RTMIDI = ../../libs/rtmidi
 
+PORTAUDIO_PATH = ../../libs/portaudio
+PORTMIDI_PATH = ../../libs/portmidi
+
+
 CONFIG(debug, debug|release) {
-    RTAUDIO_LIB = ../../../../build-rtaudio-64bit-Debug
-    RTMIDI_LIB = ../../../../build-rtmidi-64bit-Debug
-    VST3SDK_LIB = ../../../../build-VST3_SDK-64bit/lib/Debug
+    RTAUDIO_LIB = ../../../../libs/rtaudio/Debug
+    RTMIDI_LIB = ../../../../libs/rtmidi/Debug
+    VST3SDK_LIB = ../../../../libs/build/lib/Debug
 } else {
-    RTAUDIO_LIB = ../../../../build-rtaudio-64bit-Release
-    RTMIDI_LIB = ../../../../build-rtmidi-64bit-Release
-    VST3SDK_LIB = ../../../../build-VST3_SDK-64bit/lib/Release
+    RTAUDIO_LIB = ../../../../libs/rtaudio/Release
+    RTMIDI_LIB = ../../../../libs/rtmidi/Release
+    VST3SDK_LIB = ../../../../libs/build/lib/Release
 }
 
 INCLUDEPATH += $${UI_DIR}
