@@ -66,6 +66,7 @@ namespace Connectables {
         void GetListOfConnectedPinsTo(const ConnectionInfo &pin, QList<ConnectionInfo> &list);
 //        void SendMsg(const ConnectionInfo &senderPin,const PinMessage::Enum msgType,void *data);
         bool IsDirty() override {
+            if(!currentContainerProgram) return false;
             return currentContainerProgram->IsDirty();
         }
         inline void SetDirty(bool d=true) {

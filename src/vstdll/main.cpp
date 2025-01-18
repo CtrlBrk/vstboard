@@ -21,7 +21,7 @@
 #ifdef WIN32
     #include <windows.h>
     //#include <QMfcApp>
-    #include "loaderhelpers.h"
+    // #include "loaderhelpers.h"
 #endif
 
 #pragma warning ( push, 1 )
@@ -76,6 +76,7 @@ extern bool DeinitModule();
 //#define tstrrchr strrchr
 //#endif
 
+
 QApplication* createQapp() {
     if (qApp)
         return 0;
@@ -85,35 +86,20 @@ QApplication* createQapp() {
 }
 
 #ifdef WIN32
-const std::wstring GetCurrentDllPath(HINSTANCE hInst)
-{
-	WCHAR buffer[MAX_PATH];
-	
-	if (GetModuleFileName(hInst, buffer, sizeof(buffer)) == 0)
-		return L"";
-
-	std::wstring path(buffer);
-	const size_t last_slash_idx = path.rfind('\\');
-	if (std::wstring::npos != last_slash_idx)
-		path = path.substr(0, last_slash_idx);
-
-	return path;
-}
-
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-    bool DllExport InitDll ()
-    {
-            return InitModule ();
-    }
-    bool DllExport ExitDll ()
-    {
-            return DeinitModule ();
-    }
+bool DllExport InitDll ()
+{
+    return InitModule ();
+}
+bool DllExport ExitDll ()
+{
+    return DeinitModule ();
+}
 #ifdef __cplusplus
 } // extern "C"
 #endif
@@ -123,17 +109,8 @@ BOOL WINAPI DllMain (HINSTANCE hInst, DWORD dwReason, LPVOID /*lpvReserved*/)
 {
     if ( dwReason == DLL_PROCESS_ATTACH)
     {
-		//custom Qt plugin path : Qt will not find the "platforms" directory in the host's dir
-		std::wstring libPath = TestInstallPath(GetCurrentDllPath(hInst));
-		if (libPath == L"") {
-			MessageBox(NULL, L"Qt dll not found", L"VstBoard", MB_OK | MB_ICONERROR);
-			return FALSE;
-		}
-
-		QString p = QString("%1").arg(libPath);
-		QCoreApplication::addLibraryPath(p);
-
-		createQapp();
+        // AddDllPath(hInst);
+        createQapp();
 
 	//	QtAppCreated = QMfcApp::pluginInstance( 0 );
 

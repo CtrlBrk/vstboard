@@ -21,7 +21,8 @@ SOURCES += \
     main.cpp \
 #    ../../libs/VST3SDK/pluginterfaces/base/conststringtable.cpp
 
-HEADERS +=
+HEADERS += \
+    loaderhelpers.h
 
 win32-msvc* {
     RC_FILE = dllLoader.rc

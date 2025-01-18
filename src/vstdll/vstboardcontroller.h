@@ -49,6 +49,7 @@ public:
     static FUnknown* createInstance (void*) { return (IEditController*)new VstBoardController (); }
     ~VstBoardController();
     tresult PLUGIN_API initialize (FUnknown* context) SMTG_OVERRIDE;
+    tresult PLUGIN_API setComponentState (IBStream* state) SMTG_OVERRIDE;
     IPlugView* PLUGIN_API createView (const char* name) SMTG_OVERRIDE;
     void editorAttached (Vst::EditorView* editor) SMTG_OVERRIDE;
     void editorRemoved (Vst::EditorView* editor) SMTG_OVERRIDE;

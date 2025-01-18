@@ -85,6 +85,8 @@ public:
         void addVstAutomation(Connectables::VstAutomation *dev);
         void removeVstAutomation(Connectables::VstAutomation *dev);
 
+        tresult PLUGIN_API getControllerClassId (TUID classID) SMTG_OVERRIDE;
+        tresult PLUGIN_API setIoMode (Vst::IoMode mode) SMTG_OVERRIDE;
         tresult PLUGIN_API setupProcessing (Vst::ProcessSetup& setup);
 
         tresult PLUGIN_API setState (IBStream* state);
@@ -96,6 +98,7 @@ public:
 #endif
 protected:
        // QApplication *myApp;
+        void Close();
 
         QList<Connectables::VstAudioDeviceIn*>lstAudioIn;
         QList<Connectables::VstAudioDeviceOut*>lstAudioOut;
@@ -109,6 +112,7 @@ protected:
 #endif
         quint16 currentProg;
         quint16 currentGroup;
+        bool currentBypass;
 
 //        ParamValue delay;
 //        float** buffer;
@@ -116,6 +120,7 @@ protected:
 signals:
         void ChangeProg(quint16 prog);
         void ChangeGroup(quint16 group);
+        void SetBypass(bool bypass);
 
 public slots:
         void Init();

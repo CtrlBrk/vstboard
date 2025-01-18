@@ -28,7 +28,7 @@
 #include "msgobject.h"
 
 #ifndef QT_NO_DEBUG
-
+/*
     void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
     {
         QByteArray localMsg = msg.toLocal8Bit();
@@ -52,6 +52,7 @@
             break;
         }
     }
+*/
 #endif
 
 int main(int argc, char *argv[])

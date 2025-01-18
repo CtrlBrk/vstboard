@@ -45,6 +45,7 @@ ProgramManager::ProgramManager(MainHost *myHost) :
 	currentMidiProg(0),
 	currentGroupId(0),
 	currentProgId(0),
+    currentBypassState(false),
     promptAnswer(-1)
 {
     updateTimer.setInterval(20);
@@ -463,6 +464,13 @@ void ProgramManager::UserChangeProg(quint16 prog)
     UserChangeProg(prog,currentMidiGroup);
 }
 
+//only user when loaded as a vst3 plugin
+void ProgramManager::UserSetBypass(bool bypass)
+{
+    currentBypassState = bypass;
+    emit BypassChanged(currentBypassState);
+}
+
 bool ProgramManager::ChangeProgNow(int midiGroupNum, int midiProgNum)
 {
     //if the program has not been changed, just return
@@ -590,6 +598,8 @@ void ProgramManager::fromJson(QJsonObject &json)
     groupAutosaveState = static_cast<Qt::CheckState>(json["groupAutosave"].toInt());
     progAutosaveState = static_cast<Qt::CheckState>(json["progAutosave"].toInt());
 
+    currentBypassState = static_cast<Qt::CheckState>(json["bypass"].toBool());
+
     SetDirty(false);
 
     orderChanged=true;
@@ -620,6 +630,7 @@ void ProgramManager::toJson(QJsonObject &json) const
     json["midiProg"] = currentMidiProg;
     json["groupAutosave"] = groupAutosaveState;
     json["progAutosave"] = progAutosaveState;
+    json["bypass"] = currentBypassState;
 
     SetDirty(false);
 }
@@ -643,6 +654,7 @@ QDataStream & ProgramManager::toStream (QDataStream &out) const
     out << (quint16)currentMidiProg;
     out << (quint8)groupAutosaveState;
     out << (quint8)progAutosaveState;
+    out << (quint8)currentBypassState;
 
     SetDirty(false);
     return out;
@@ -692,6 +704,7 @@ QDataStream & ProgramManager::fromStream (QDataStream &in)
 
     in >> (quint8&)groupAutosaveState;
     in >> (quint8&)progAutosaveState;
+    in >> (quint8&)currentBypassState;
 
     SetDirty(false);
 

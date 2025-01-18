@@ -85,6 +85,7 @@ public:
 
     inline quint16 GetCurrentMidiGroup() const { return currentMidiGroup; }
     inline quint16 GetCurrentMidiProg() const { return currentMidiProg; }
+    inline bool GetCurrentBypassState() const { return currentBypassState; }
 
     bool ChangeProgNow(int midiGroupNum, int midiProgNum);
     bool ValidateProgChange(int midiGroupNum, int midiProgNum);
@@ -131,6 +132,8 @@ private:
     quint32 currentGroupId;
     quint32 currentProgId;
 
+    bool currentBypassState;
+
     int promptAnswer;
 
     int WaitPromptAnswer(const QString &type);
@@ -138,6 +141,10 @@ private:
 signals:
     void ProgChanged(quint32 progId);
     void GroupChanged(quint32 grpId);
+
+    //only used when loaded as a vst3 plugin
+    void BypassChanged(bool bypass);
+
     void ProgDelete(quint32 progId);
     void GroupDelete(quint32 grpId);
     void MidiProgChanged(quint16 prog);
@@ -146,6 +153,7 @@ signals:
 public slots:
     void UserChangeGroup(quint16 grp);
     void UserChangeProg(quint16 prog);
+    void UserSetBypass(bool bypass);
 
 private slots:
     void UpdateView();

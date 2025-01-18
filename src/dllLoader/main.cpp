@@ -22,7 +22,7 @@
 #include <string>
 #include <list>
 
-#include "../vstdll/loaderhelpers.h"
+#include "loaderhelpers.h"
 
 #ifndef __ipluginbase__
 #include "pluginterfaces/base/ipluginbase.h"
@@ -58,7 +58,7 @@ const std::wstring GetCurrentDllPath()
 	const size_t last_slash_idx = path.rfind('\\');
 	if (std::wstring::npos != last_slash_idx)
 	{
-		path = path.substr(0, last_slash_idx);
+        path = path.substr(0, last_slash_idx);
 	}
 	return path;
 }
@@ -72,6 +72,8 @@ void AddDllPath()
 	path += L";";
 
 	try {
+        path += GetCurrentDllPath();
+        path += L"\\Qt;";
 		path += GetCurrentDllPath();
 		path += L";";
 	}
@@ -96,7 +98,7 @@ void AddDllPath()
 bool LoadRequiredDlls()
 {
 	std::list<std::wstring> dlls = {
-		L"Qt5Core",
+        L"Qt6Core",
 		/*	L"Qt5Gui",
 		L"Qt5Widgets",
 		L"Qt5Svg",
@@ -106,11 +108,11 @@ bool LoadRequiredDlls()
 		L"VstBoardPlugin"
 	};
 
-	for (auto const& dllName : dlls) {
-		if (!LoadDll(dllName)) {
-			throw FileError{ L"Can't load dll", 1, dllName };
-		}
-	}
+    for (auto const& dllName : dlls) {
+        if (!LoadDll(dllName)) {
+            throw FileError{ L"File not found : ", 1, dllName };
+        }
+    }
 
 	return true;
 }
@@ -128,7 +130,7 @@ bool InitModule()
 	//dlls not found, ask for a path
 	catch (FileError &e) {
 		MessageBox(NULL, 
-			(e.errMsg + L" " + e.filePath + L"\nSome VstBoard files are missing, please select the installation path").c_str(),
+            (e.errMsg + L" " + e.filePath + L"\nSome VstBoard files are missing, please select the installation path").c_str(),
 			L"VstBoard", 
 			MB_OK | MB_ICONERROR);
 		
@@ -170,7 +172,7 @@ bool InitModule()
 	//load the plugin dll
 	HpluginDll = LoadDll( L"VstBoardPlugin");
 	if (!HpluginDll) {
-		MessageBox(NULL, L"VstBoardPlugin(d).dll : not loaded", L"VstBoard", MB_OK | MB_ICONERROR);
+		MessageBox(NULL, L"VstBoardPlugin.dll : not loaded", L"VstBoard", MB_OK | MB_ICONERROR);
 		return false;
 	}
 
@@ -179,8 +181,8 @@ bool InitModule()
 
 bool DeinitModule()
 {
-//    FreeLibrary(HpluginDll);
-//    HpluginDll=0;
+	if(HpluginDll) FreeLibrary(HpluginDll);
+    HpluginDll=0;
 //    FreeLibrary(HwinMigrate);
 //    HwinMigrate=0;
 //    FreeLibrary(Hgui);
@@ -215,16 +217,16 @@ bool DllExport ExitDll ()
 namespace Steinberg {
 EXPORT_FACTORY IPluginFactory* PLUGIN_API GetPluginFactory ()
 {
-    if(!InitModule()) {
-        DeinitModule();
-        return 0;
-    }
+    // if(!InitModule()) {
+    //     DeinitModule();
+    //     return 0;
+    // }
 
     GetFactoryProc entryPoint = (GetFactoryProc)::GetProcAddress (HpluginDll, "GetPluginFactory");
 
     if(!entryPoint) {
         MessageBox(NULL,L"VstBoardPlugin.dll is not valid",L"VstBoard", MB_OK | MB_ICONERROR);
-        DeinitModule();
+        //DeinitModule();
         return 0;
     }
 

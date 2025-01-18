@@ -71,7 +71,6 @@ HEADERS  += \
     gui.h \
     connectables/vstaudiodevicein.h \
     connectables/vstaudiodeviceout.h \
-    loaderhelpers.h \
     vst.h \
     connectables/vstautomation.h \
     connectables/vstmididevice.h \

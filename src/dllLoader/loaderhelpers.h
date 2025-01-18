@@ -135,7 +135,7 @@ std::wstring openfilename(HWND owner = NULL) {
     ZeroMemory(&ofn, sizeof(ofn));
     ofn.lStructSize = sizeof(OPENFILENAME);
     ofn.hwndOwner = owner;
-    ofn.lpstrFilter = L"Programs (.exe)\0*.exe\0All Files\0*.*\0\0";
+    ofn.lpstrFilter = L"Libraries (.dll)\0*.dll\0Programs (.exe)\0*.exe\0All Files\0*.*\0\0";
     ofn.lpstrFile = fileName;
     ofn.nMaxFile = MAX_PATH;
     ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
@@ -162,7 +162,14 @@ std::wstring TestInstallPath(const std::wstring &currentPath) {
 
     for (auto const& p : instPaths) {
         struct __stat64 buffer;
-        if (_wstat64((p + L"\\Qt5Cored.dll").c_str(), &buffer) == 0) {
+        if (_wstat64((p + L"\\Qt6Cored.dll").c_str(), &buffer) == 0) {
+            return p;
+        }
+    }
+
+    for (auto const& p : instPaths) {
+        struct __stat64 buffer;
+        if (_wstat64((p + L"\\Qt6Core.dll").c_str(), &buffer) == 0) {
             return p;
         }
     }

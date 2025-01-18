@@ -46,7 +46,8 @@ VstBoardProcessor::VstBoardProcessor () :
     listEvnts(0),
 #endif
     currentProg(0),
-    currentGroup(0)
+    currentGroup(0),
+    currentBypass(false)
 {
 	objFactory = new Connectables::ObjectFactoryVst(this);
 
@@ -61,13 +62,38 @@ VstBoardProcessor::VstBoardProcessor () :
 
 VstBoardProcessor::~VstBoardProcessor()
 {
-    //Close();
+    Close();
 #ifdef VST24SDK
     if(listEvnts) {
         free(listEvnts);
         listEvnts = 0;
     }
 #endif
+}
+
+
+void VstBoardProcessor::Close()
+{
+    foreach(Connectables::VstAudioDeviceIn* dev, lstAudioIn) {
+        //dev->Close();
+        removeAudioIn(dev);
+    }
+    foreach(Connectables::VstAudioDeviceOut* dev, lstAudioOut) {
+        // dev->Close();
+        removeAudioOut(dev);
+    }
+    foreach(Connectables::VstMidiDevice* dev, lstMidiIn) {
+        // dev->Close();
+        removeMidiIn(dev);
+    }
+    foreach(Connectables::VstMidiDevice* dev, lstMidiOut) {
+        // dev->Close();
+        removeMidiOut(dev);
+    }
+    foreach(Connectables::VstAutomation* dev, lstVstAutomation) {
+        // dev->Close();
+        removeVstAutomation(dev);
+    }
 }
 
 void VstBoardProcessor::Init()
@@ -77,15 +103,39 @@ void VstBoardProcessor::Init()
             programManager, SLOT(UserChangeProg(quint16)));
     QObject::connect(this, SIGNAL(ChangeGroup(quint16)),
             programManager, SLOT(UserChangeGroup(quint16)));
+    QObject::connect(this, SIGNAL(SetBypass(bool)),
+            programManager, SLOT(UserSetBypass(bool)));
+}
+
+tresult PLUGIN_API VstBoardProcessor::setIoMode (Vst::IoMode mode)
+{
+    return kNotImplemented;
+}
+
+tresult PLUGIN_API VstBoardProcessor::getControllerClassId (TUID classID)
+{
+    if (controllerClass.isValid ())
+    {
+        controllerClass.toTUID (classID);
+        return kResultTrue;
+    }
+    return kResultFalse;
 }
 
 tresult PLUGIN_API VstBoardProcessor::initialize (FUnknown* context)
 {
-    Init();
-
     tresult result = AudioEffect::initialize (context);
     if (result != kResultTrue)
         return result;
+
+    // if (auto hostApp = Steinberg::U::cast<IHostApplication> (hostContext))
+    // {
+    //     Vst::String128 name;
+    //     if (hostApp->getName (name) == kResultTrue)
+    //     {
+
+    //     }
+    // }
 
 //    qRegisterMetaType<ConnectionInfo>("ConnectionInfo");
 //    qRegisterMetaType<ObjectInfo>("ObjectInfo");
@@ -99,9 +149,16 @@ tresult PLUGIN_API VstBoardProcessor::initialize (FUnknown* context)
 //    qRegisterMetaTypeStreamOperators<ObjectContainerAttribs>("ObjectContainerAttribs");
 
 
+    //already initialized
+    if(programManager) {
+        return kResultTrue;
+    }
+
+
     QCoreApplication::setOrganizationName("CtrlBrk");
     QCoreApplication::setApplicationName("VstBoard");
 
+    Init();
     Open();
 
     //load default setup file
@@ -254,9 +311,14 @@ tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
 
                 if (paramQueue->getPoint (numPoints - 1,  offsetSamples, value) == kResultTrue) {
 //                    LOG(paramQueue->getParameterId () << value)
+                    bool bypass=false;
+
                     switch (paramQueue->getParameterId ())
                     {
                         case paramByPass:
+                        // LOG("bypass"<<value)
+                            bypass = value > 0;
+                            emit SetBypass( bypass );
                             break;
                         case paramProgChange:
 //                            LOG("prgChn"<<value)
@@ -350,6 +412,18 @@ tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
                 paramQueue->addPoint(0, (Vst::ParamValue)grp/128, index2);
             }
             currentGroup=grp;
+        }
+        bool bypass = (programManager->GetCurrentBypassState()>.5);
+        if(bypass!=currentBypass) {
+            int32 index = 0;
+            Vst::IParamValueQueue* paramQueue = paramOutChanges->addParameterData(paramByPass, index);
+            if(paramQueue) {
+                int32 index2 = 0;
+                Vst::ParamValue setBypass = bypass ? 1.0 : 0.0;
+                setBypass = (Vst::ParamValue)bypass;
+                paramQueue->addPoint(0, setBypass, index2);
+            }
+            currentBypass=bypass;
         }
     }
     return kResultTrue;
@@ -455,16 +529,14 @@ bool VstBoardProcessor::addAudioOut(Connectables::VstAudioDeviceOut *dev)
 bool VstBoardProcessor::removeAudioIn(Connectables::VstAudioDeviceIn *dev)
 {
     QMutexLocker l(&mutexDevices);
-    int id = lstAudioIn.indexOf(dev);
-    lstAudioIn.removeAt(id);
+    lstAudioIn.removeAll(dev);
     return true;
 }
 
 bool VstBoardProcessor::removeAudioOut(Connectables::VstAudioDeviceOut *dev)
 {
     QMutexLocker l(&mutexDevices);
-    int id = lstAudioOut.indexOf(dev);
-    lstAudioOut.removeAt(id);
+    lstAudioOut.removeAll(dev);
     return true;
 }
 

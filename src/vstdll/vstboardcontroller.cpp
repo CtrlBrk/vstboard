@@ -35,6 +35,11 @@ tresult PLUGIN_API VstBoardController::initialize (FUnknown* context)
 //    mainWindow=0;
 //    view=0;
 
+    //alreeeady initialized
+    if(parameters.getParameterCount()>0) {
+        return kResultTrue;
+    }
+
     tresult result = EditController::initialize (context);
     if (result != kResultTrue)
         return result;
@@ -42,12 +47,21 @@ tresult PLUGIN_API VstBoardController::initialize (FUnknown* context)
     QCoreApplication::setOrganizationName("CtrlBrk");
     QCoreApplication::setApplicationName("VstBoard");
 
+    int32 stepCount = 127;
+    double defaultVal = 0;
+    int32 flags = Vst::ParameterInfo::kCanAutomate;
+
+    parameters.addParameter (STR16 ("Program"), nullptr, stepCount, defaultVal, flags, paramProgChange);
+    parameters.addParameter (STR16 ("Group"), nullptr, stepCount, defaultVal, flags, paramGroupChange);
+
     for(int32 i=0; i<NB_PARAM; i++) {
-        parameters.addParameter( (char16*)QString("Param%1").arg(i).utf16(), 0, 127, 0, Vst::ParameterInfo::kCanAutomate, i);
+        parameters.addParameter( (char16*)QString("Param%1").arg(i).utf16(), nullptr, stepCount, defaultVal, flags, i);
     }
-    parameters.addParameter (STR16 ("Program"), 0, 127, 0, Vst::ParameterInfo::kCanAutomate, paramProgChange);
-    parameters.addParameter (STR16 ("Group"), 0, 127, 0, Vst::ParameterInfo::kCanAutomate, paramGroupChange);
-    parameters.addParameter (STR16 ("Bypass"), 0, 1, 0, Vst::ParameterInfo::kCanAutomate | Vst::ParameterInfo::kIsBypass, paramByPass);
+
+    stepCount=1;
+    defaultVal = 0;
+    flags = Vst::ParameterInfo::kCanAutomate | Vst::ParameterInfo::kIsBypass;
+    parameters.addParameter (STR16 ("Bypass"), nullptr, 1, defaultVal, flags, paramByPass);
 
     return kResultTrue;
 }
@@ -60,6 +74,31 @@ VstBoardController::~VstBoardController()
 //        delete mainWindow;
 
 
+}
+
+tresult PLUGIN_API VstBoardController::setComponentState (IBStream* state)
+{
+    int size = 0;
+    state->read(&size, sizeof(int));
+    //don't know how to write directly to a bytearray
+    char* buf = new char[size];
+    state->read(buf, size);
+
+    QByteArray bArray(QByteArray::fromRawData(buf, size));
+
+    // QJsonDocument loadDoc(QJsonDocument::fromBinaryData(qUncompress(bArray)));
+    QJsonDocument loadDoc(QJsonDocument::fromJson(bArray));
+    QJsonObject json = loadDoc.object();
+    if (json.contains("proc")) {
+        json = json.value("proc").toObject();
+        if (json.contains("programs")) {
+            json = json.value("programs").toObject();
+            bool bypass = static_cast<Qt::CheckState>(json["bypass"].toBool());
+            setParamNormalized (paramByPass, bypass);
+        }
+    }
+
+    return kResultOk;
 }
 
 IPlugView* PLUGIN_API VstBoardController::createView (const char* name)
