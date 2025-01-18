@@ -29,6 +29,8 @@
 #include "pin.h"
 #include "../audiobuffer.h"
 
+
+
 namespace Connectables {
 
     class AudioPin : public Pin
@@ -55,12 +57,16 @@ namespace Connectables {
         void ReceivePinMsg(const PinMessage::Enum msgType,void *data=0);
         void SendAudioBuffer();
 
+        void ReceiveMsg(const MsgObject &);
+
     protected:
 
         /// true if double precision buffer
         bool doublePrecision;
 
         AudioBuffer *buffer;
+
+
     };
 }
 

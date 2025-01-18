@@ -112,6 +112,7 @@ SOURCES += \
     models/groupsprogramsmodel.cpp \
     models/parkingmodel.cpp \
     renderer/pathsolver.cpp \
+    views/audiograph.cpp \
     views/filebrowsertree.cpp \
     views/keypressedwidget.cpp \
     views/scripteditor.cpp \
@@ -225,6 +226,7 @@ HEADERS += \
     commands/comaddpin.h \
     commands/comprogramstate.h \
     renderer/pathsolver.h \
+    views/audiograph.h \
     views/filebrowsertree.h \
     views/keypressedwidget.h \
     views/scripteditor.h \

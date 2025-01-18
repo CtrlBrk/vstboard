@@ -28,11 +28,15 @@ using namespace Connectables;
 VstAudioDeviceOut::VstAudioDeviceOut(MainHost *myHost, int index, const ObjectInfo &info) :
     Object(myHost,index, info)
 {
+    audiograph = new View::AudioGraph();
+    audiograph ->resize(800, 600);
+    audiograph ->show();
 }
 
 VstAudioDeviceOut::~VstAudioDeviceOut()
 {
     Close();
+    delete audiograph;
 }
 
 bool VstAudioDeviceOut::Close()
@@ -85,23 +89,47 @@ void VstAudioDeviceOut::GetBuffersD(double **buf, int &cpt, int sampleFrames)
     }
 }
 
-void VstAudioDeviceOut::GetBuffers(Steinberg::Vst::AudioBusBuffers *buf, int sampleFrames)
+void VstAudioDeviceOut::GetBuffers(Steinberg::Vst::ProcessData& data)
 {
     int cpt=0;
     foreach(Pin *pin, listAudioPinIn->listPins) {
         AudioBuffer *abuf= static_cast<AudioPin*>(pin)->GetBuffer();
         abuf->ConsumeStack();
 
+        //no more buffers to fill
+        if(cpt==data.outputs->numChannels) {
+            return;
+        }
+
+        // std::fill(data.outputs->channelBuffers32[cpt],data.outputs->channelBuffers32[cpt]+sampleFrames,.0f);
+
         if(doublePrecision)
-            abuf->DumpToBuffer(buf->channelBuffers64[cpt],sampleFrames);
+            abuf->DumpToBuffer(data.outputs->channelBuffers64[cpt],data.numSamples);
         else
-            abuf->DumpToBuffer(buf->channelBuffers32[cpt],sampleFrames);
+            abuf->DumpToBuffer(data.outputs->channelBuffers32[cpt],data.numSamples);
+
+        //test tone
+        // if(cpt==0) {
+        //     float v=-0.440;
+        //     for(int i=0; i<sampleFrames/2; i++) {
+        //         *(buf->channelBuffers32[cpt]+i)=v;
+        //         v+=0.005;
+        //     }
+        //     for(int i=sampleFrames/2; i<sampleFrames; i++) {
+        //         *(buf->channelBuffers32[cpt]+i)=v;
+        //         v-=0.005;
+        //     }
+        // }
+
+        if(cpt==0) {
+            audiograph->UpdateGraph(data.outputs->channelBuffers32[0],data.numSamples,0);
+            audiograph->UpdateGraph((float*)abuf->GetPointer(),data.numSamples,1);
+        }
 
         abuf->ResetStackCounter();
         ++cpt;
 
-        if(cpt==buf->numChannels)
-            return;
+
     }
 }
 

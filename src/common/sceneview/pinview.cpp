@@ -23,6 +23,7 @@
 #include "../connectables/pin.h"
 #include "objectview.h"
 
+
 using namespace View;
 
 CableView *PinView::currentLine = 0;
@@ -49,6 +50,7 @@ PinView::PinView(int listPinId, float angle, MsgController *msgCtrl, int objId, 
     defaultCursor(Qt::OpenHandCursor),
     listPinId(listPinId)
 {
+
     setAcceptDrops(true);
     setCursor(defaultCursor);
     connect( config, SIGNAL(ColorChanged(ColorGroups::Enum,Colors::Enum,QColor)) ,
@@ -80,6 +82,8 @@ PinView::~PinView()
     foreach(CableView *cab, connectedCables) {
         delete cab;
     }
+
+
 }
 
 void PinView::UpdateKeyBinding()
@@ -140,6 +144,17 @@ void PinView::mousePressEvent ( QGraphicsSceneMouseEvent * event )
         return;
     }
 
+#ifdef DEBUG_BUFFERS
+    if(event->buttons() == Qt::MiddleButton) {
+
+
+        MSGOBJ();
+        msg.prop[MsgObject::Id]=connectInfo.pinNumber;
+        msg.prop[MsgObject::Value]=123;
+        msgCtrl->SendMsg(msg);
+
+    }
+#endif
     event->ignore();
 }
 

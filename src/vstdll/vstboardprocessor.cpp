@@ -39,6 +39,8 @@
 #include "pluginterfaces/vst/ivstevents.h"
 #include "public.sdk/source/common/memorystream.h"
 
+#include "../common/views/audiograph.h"
+
 VstBoardProcessor::VstBoardProcessor () :
     MainHost(0,0),
     Vst::AudioEffect(),
@@ -243,8 +245,9 @@ tresult PLUGIN_API VstBoardProcessor::setupProcessing (Vst::ProcessSetup& newSet
     }
 
     float sRate = static_cast<float>(newSetup.sampleRate);
-    if(sampleRate != sRate)
+    if(sampleRate != sRate) {
         SetSampleRate(sRate);
+    }
 
 	doublePrecision = newSetup.symbolicSampleSize == Vst::kSample64 ? true : false;
 	settings->SetSetting("currentDoublePrecision", doublePrecision);
@@ -278,11 +281,11 @@ tresult PLUGIN_API VstBoardProcessor::setActive (TBool state)
 
         if (state)
         {
-
+            EnableSolverUpdate(true);
         }
         else
         {
-
+            EnableSolverUpdate(true);
         }
         return AudioEffect::setActive (state);
 }
@@ -376,18 +379,10 @@ tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
 
     Render();
 
-    cpt=0;
-    buf = data.outputs;
-    foreach(Connectables::VstAudioDeviceOut* dev, lstAudioOut) {
-        if(cpt==data.numOutputs)
-            break;
-
-        if(buf)
-            dev->GetBuffers(buf,data.numSamples);
-
-        ++buf;
-        ++cpt;
-
+    if (data.numSamples > 0) {
+        foreach(Connectables::VstAudioDeviceOut* dev, lstAudioOut) {
+            dev->GetBuffers(data);
+        }
     }
 
     //output params

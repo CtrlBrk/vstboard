@@ -27,11 +27,14 @@
 #include "views/viewconfig.h"
 #include "msghandler.h"
 
+
+
 namespace Connectables {
     class Pin;
 }
 
 namespace View {
+
     class CableView;
     class PinView : public QGraphicsWidget, public MsgHandler
     {
@@ -50,6 +53,7 @@ namespace View {
 
         /// temporary cable for drag&drop
         static CableView *currentLine;
+
 
     protected:
         virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);

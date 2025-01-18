@@ -17,10 +17,10 @@
 #    You should have received a copy of the under the terms of the GNU Lesser General Public License
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
-#include <algorithm>
+// #include <algorithm>
 #include <windows.h>
 #include <string>
-#include <list>
+// #include <list>
 
 #include "loaderhelpers.h"
 
@@ -36,86 +36,11 @@
 
 #define DllExport __declspec( dllexport )
 
-static bool __dummyLoaderLocation;
+
 
 HMODULE HpluginDll = 0;
 
-const std::wstring GetCurrentDllPath()
-{
-	WCHAR buffer[MAX_PATH];
-	HMODULE hm = NULL;
 
-	if (GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCWSTR)&__dummyLoaderLocation, &hm) == 0)
-	{
-		throw FileError{ L"Can't get module handle", 1, L"" };
-	}
-	if (GetModuleFileName(hm, buffer, sizeof(buffer)) == 0)
-	{
-		throw FileError{ L"Can't get module filename", 1, L"" };
-	}
-
-	std::wstring path(buffer);
-	const size_t last_slash_idx = path.rfind('\\');
-	if (std::wstring::npos != last_slash_idx)
-	{
-        path = path.substr(0, last_slash_idx);
-	}
-	return path;
-}
-
-
-void AddDllPath()
-{
-	WCHAR newSearchPath[4096];
-	::GetEnvironmentVariable(L"Path", newSearchPath, MAX_PATH);
-	std::wstring path(newSearchPath);
-	path += L";";
-
-	try {
-        path += GetCurrentDllPath();
-        path += L"\\Qt;";
-		path += GetCurrentDllPath();
-		path += L";";
-	}
-	catch (FileError &e) {}
-
-	try {
-		path += RegGetString(HKEY_LOCAL_MACHINE, regBaseKey, installKey);
-		path += L";";
-	}
-	catch (RegistryError &e) {}
-
-	try {
-		path += RegGetString(HKEY_CURRENT_USER, regBaseKey, installKey);
-		path += L";";
-	}
-	catch (RegistryError &e) {}
-
-	::SetEnvironmentVariable(L"Path", path.c_str());
-	//::SetEnvironmentVariable(L"QT_QPA_PLATFORM_PLUGIN_PATH", GetPathFromRegistry().c_str());
-}
-
-bool LoadRequiredDlls()
-{
-	std::list<std::wstring> dlls = {
-        L"Qt6Core",
-		/*	L"Qt5Gui",
-		L"Qt5Widgets",
-		L"Qt5Svg",
-		L"qwindows",
-		L"qsvgicon",
-	*/
-		L"VstBoardPlugin"
-	};
-
-    for (auto const& dllName : dlls) {
-        if (!LoadDll(dllName)) {
-            throw FileError{ L"File not found : ", 1, dllName };
-        }
-    }
-
-	return true;
-}
 
 bool InitModule()
 {

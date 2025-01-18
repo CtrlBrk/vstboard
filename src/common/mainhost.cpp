@@ -202,7 +202,7 @@ void MainHost::Open()
     SetupMainContainer();
     ClearSetup();
     ClearProject();
-    EnableSolverUpdate(true);
+    // EnableSolverUpdate(true);
 }
 
 void MainHost::SetupMainContainer()

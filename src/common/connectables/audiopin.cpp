@@ -148,3 +148,10 @@ void AudioPin::SendAudioBuffer()
 {
     SendMsg(PinMessage::AudioBuffer,(void*)buffer);
 }
+
+void AudioPin::ReceiveMsg(const MsgObject &msg)
+{
+    if(buffer) {
+        buffer->AddGraph();
+    }
+}

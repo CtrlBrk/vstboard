@@ -21,9 +21,14 @@
 #ifndef LOADERHELPERS_H
 #define LOADERHELPERS_H
 
+#include <windows.h>
 
+#include <list>
 #include <sys/types.h>
 #include <wchar.h>
+#include <string>
+
+static bool __dummyLoaderLocation;
 
 struct RegistryError {
     std::wstring errMsg;
@@ -177,4 +182,80 @@ std::wstring TestInstallPath(const std::wstring &currentPath) {
     return L"";
 }
 
+const std::wstring GetCurrentDllPath()
+{
+    WCHAR buffer[MAX_PATH];
+    HMODULE hm = NULL;
+
+    if (GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCWSTR)&__dummyLoaderLocation, &hm) == 0)
+    {
+        throw FileError{ L"Can't get module handle", 1, L"" };
+    }
+    if (GetModuleFileName(hm, buffer, sizeof(buffer)) == 0)
+    {
+        throw FileError{ L"Can't get module filename", 1, L"" };
+    }
+
+    std::wstring path(buffer);
+    const size_t last_slash_idx = path.rfind('\\');
+    if (std::wstring::npos != last_slash_idx)
+    {
+        path = path.substr(0, last_slash_idx);
+    }
+    return path;
+}
+
+
+void AddDllPath()
+{
+    WCHAR newSearchPath[4096];
+    ::GetEnvironmentVariable(L"Path", newSearchPath, MAX_PATH);
+    std::wstring path(newSearchPath);
+    path += L";";
+
+    try {
+        path += GetCurrentDllPath();
+        path += L"\\Qt;";
+        path += GetCurrentDllPath();
+        path += L";";
+    }
+    catch (FileError &e) {}
+
+    try {
+        path += RegGetString(HKEY_LOCAL_MACHINE, regBaseKey, installKey);
+        path += L";";
+    }
+    catch (RegistryError &e) {}
+
+    try {
+        path += RegGetString(HKEY_CURRENT_USER, regBaseKey, installKey);
+        path += L";";
+    }
+    catch (RegistryError &e) {}
+
+    ::SetEnvironmentVariable(L"Path", path.c_str());
+    //::SetEnvironmentVariable(L"QT_QPA_PLATFORM_PLUGIN_PATH", GetPathFromRegistry().c_str());
+}
+
+bool LoadRequiredDlls()
+{
+    std::list<std::wstring> dlls = {
+        L"Qt6Core",
+        /*	L"Qt5Gui",
+        L"Qt5Widgets",
+        L"Qt5Svg",
+        L"qwindows",
+        L"qsvgicon",
+    */
+        L"VstBoardPlugin"
+    };
+
+    for (auto const& dllName : dlls) {
+        if (!LoadDll(dllName)) {
+            throw FileError{ L"File not found : ", 1, dllName };
+        }
+    }
+
+    return true;
+}
 #endif // LOADERHELPERS_H

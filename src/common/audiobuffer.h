@@ -25,6 +25,9 @@
 
 //#include "precomp.h"
 
+#include "views/audiograph.h"
+
+
 class AudioBuffer
 {
 public:
@@ -45,6 +48,8 @@ public:
         inline bool GetDoublePrecision() const {return doublePrecision;}
         float GetVu();
 
+        void AddGraph();
+
         /// \return the current buffer size
         inline unsigned long GetSize() const {return bufferSize;}
 
@@ -63,6 +68,9 @@ public:
         static float const blankBuffer[BLANK_BUFFER_SIZE];
 
 protected:
+
+        View::AudioGraph *audiograph;
+
         /// the stack size
         unsigned long stackSize;
 

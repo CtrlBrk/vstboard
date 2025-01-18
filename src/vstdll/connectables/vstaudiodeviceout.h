@@ -26,7 +26,9 @@
 #include "connectables/objectinfo.h"
 #include "pluginterfaces/vst/ivstaudioprocessor.h"
 
-class AudioBuffer;
+#include "views/audiograph.h"
+
+// class AudioBuffer;
 
 namespace Connectables {
 
@@ -42,7 +44,10 @@ namespace Connectables {
 
         void GetBuffers(float **buf, int &cpt, int sampleFrames);
         void GetBuffersD(double **buf, int &cpt, int sampleFrames);
-        void GetBuffers(Steinberg::Vst::AudioBusBuffers *buf, int sampleFrames);
+        void GetBuffers(Steinberg::Vst::ProcessData& data);
+
+    protected:
+        View::AudioGraph *audiograph;
 
     public slots:
         void SetBufferSize(unsigned long size);

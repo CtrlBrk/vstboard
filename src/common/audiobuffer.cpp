@@ -40,6 +40,7 @@ float const AudioBuffer::blankBuffer[] = {.0f};
   \todo check if the externalAllocation is still in use
   */
 AudioBuffer::AudioBuffer(bool doublePrecision, bool externAlloc) :
+    audiograph(0),
     stackSize(0),
     pBuffer(0),
     bufferSize(0),
@@ -58,6 +59,11 @@ AudioBuffer::AudioBuffer(bool doublePrecision, bool externAlloc) :
 AudioBuffer::~AudioBuffer()
 {
     debugbuf("delete");
+
+    if(audiograph ) {
+        delete audiograph;
+        audiograph = 0;
+    }
 
     if(pBuffer && !externAlloc) {
         if(doublePrecision) {
@@ -262,6 +268,11 @@ void *AudioBuffer::ConsumeStack()
 {
     //debugbuf("consume");
 
+    if(audiograph) {
+        audiograph->UpdateGraph((float*)pBuffer,bufferSize,0);
+    }
+
+
     if(!doublePrecision) {
         float ma = .0f;
         float mi = .0f;
@@ -275,7 +286,7 @@ void *AudioBuffer::ConsumeStack()
         } else {
             //find max value
             buf = (float*)pBuffer;
-            long i=bufferSize;
+            unsigned long i=bufferSize;
             while(i>0) {
 
                 if(*buf > ma)
@@ -295,7 +306,7 @@ void *AudioBuffer::ConsumeStack()
         //if we're off-limits : here is a limiter
         if(_maxVal > 1.0f) {
             buf = (float*)pBuffer;
-            long i=bufferSize;
+            unsigned long i=bufferSize;
             while(i>0) {
                 if(*buf > 1.0f)
                     *buf = .8f;
@@ -469,3 +480,13 @@ void AudioBuffer::DumpToBuffer(double *buff, unsigned long count)
         }
     }
 }
+
+void AudioBuffer::AddGraph()
+{
+    if(!audiograph) {
+        audiograph = new View::AudioGraph();
+        audiograph ->resize(800, 600);
+    }
+    audiograph ->show();
+}
+
