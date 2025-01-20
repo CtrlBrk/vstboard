@@ -437,7 +437,7 @@ void Vst::processReplacing (float** inputs, float** outputs, VstInt32 sampleFram
         myHost->SetTimeInfo( getTimeInfo( -1));
 
     if(bufferSize!=sampleFrames) {
-        myHost->SetBufferSize((unsigned long)sampleFrames);
+        myHost->SetBufferSize((qint32 )sampleFrames);
         bufferSize=sampleFrames;
     }
 
@@ -497,7 +497,7 @@ void Vst::processDoubleReplacing (double** inputs, double** outputs, VstInt32 sa
         myHost->SetTimeInfo( getTimeInfo( -1));
 
     if(bufferSize!=sampleFrames) {
-        myHost->SetBufferSize((unsigned long)sampleFrames);
+        myHost->SetBufferSize((qint32 )sampleFrames);
         bufferSize=sampleFrames;
     }
 
@@ -560,7 +560,7 @@ void Vst::setBlockSize (VstInt32 blockSize)
     if(blockSize<=0)
         return;
     bufferSize=blockSize;
-    myHost->SetBufferSize((unsigned long)blockSize);
+    myHost->SetBufferSize((qint32 )blockSize);
 }
 
 void Vst::suspend()

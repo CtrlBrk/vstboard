@@ -574,7 +574,7 @@ void Object::CopyStatusTo(QSharedPointer<Object>objPtr)
     }
 }
 
-void Object::SetBufferSize(unsigned long size)
+void Object::SetBufferSize(qint32 size)
 {
 //    QMutexLocker l(&objMutex);
     foreach(Pin *pin, listAudioPinIn->listPins) {

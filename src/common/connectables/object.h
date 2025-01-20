@@ -286,7 +286,7 @@ namespace Connectables {
         void OnProgramDirty();
 
         /// set the buffer size
-        virtual void SetBufferSize(unsigned long size);
+        virtual void SetBufferSize(qint32 size);
 
         /// set the sampling rate
         virtual void SetSampleRate(float /*rate*/) {}

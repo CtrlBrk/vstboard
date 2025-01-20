@@ -752,7 +752,7 @@ void Vst3Plugin::RemoveGui()
 }
 
 
-void Vst3Plugin::SetBufferSize(unsigned long size)
+void Vst3Plugin::SetBufferSize(qint32 size)
 {
     if(closed)
         return;

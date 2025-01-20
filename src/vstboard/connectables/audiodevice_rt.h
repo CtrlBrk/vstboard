@@ -68,7 +68,7 @@ namespace Connectables {
     #endif
 
         /// current buffre size
-        unsigned long bufferSize;
+        qint32 bufferSize;
         float **currentInputBuffer;
         float **currentOutputBuffer;
 
@@ -79,7 +79,7 @@ bool Close();
 
 
 //        static int paCallback( const void *inputBuffer, void *outputBuffer,
-//                               unsigned long framesPerBuffer,
+//                               qint32 framesPerBuffer,
 //                               const PaStreamCallbackTimeInfo* timeInfo,
 //                               PaStreamCallbackFlags statusFlags,
 //                               void *userData );
@@ -92,13 +92,13 @@ bool Close();
         void CreateCircularBuffers();
         void DeleteCircularBuffers();
 
-        bool DeviceToRingBuffers( const void *inputBuffer, unsigned long framesPerBuffer);
+        bool DeviceToRingBuffers( const void *inputBuffer, qint32 framesPerBuffer);
         void RingBuffersToPins();
-        bool RingBuffersToDevice( void *outputBuffer, unsigned long framesPerBuffer);
+        bool RingBuffersToDevice( void *outputBuffer, qint32 framesPerBuffer);
 #else
         //if not using ringbuffers
-        bool DeviceToPinBuffers( const void *inputBuffer, unsigned long framesPerBuffer );
-        bool PinBuffersToDevice( void *outputBuffer, unsigned long framesPerBuffer );
+        bool DeviceToPinBuffers( const void *inputBuffer, qint32 framesPerBuffer );
+        bool PinBuffersToDevice( void *outputBuffer, qint32 framesPerBuffer );
 #endif
 
         void SetErrorMsg(const QString &msg);

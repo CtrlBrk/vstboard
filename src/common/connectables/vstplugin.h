@@ -85,7 +85,7 @@ namespace Connectables {
         QString bankToLoad;
         QString currentBankFile;
         float sampleRate;
-        unsigned long bufferSize;
+        qint32 bufferSize;
         VstEvents *listEvnts;
 
         /// list of values used by the learn pin (off, learn, unlearn)
@@ -106,7 +106,7 @@ namespace Connectables {
         void WindowSizeChange(int newWidth, int newHeight);
 
     public slots:
-        void SetBufferSize(unsigned long size) override;
+        void SetBufferSize(qint32 size) override;
         void SetSampleRate(float rate=44100.0) override;
         void RaiseEditor();
         void EditorDestroyed();

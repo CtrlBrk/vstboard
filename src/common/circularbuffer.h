@@ -24,18 +24,18 @@
 class CircularBuffer
 {
 public:
-    CircularBuffer(unsigned long size=0);
+    CircularBuffer(qint32 size=0);
     ~CircularBuffer();
     void Clear();
-    void SetSize(unsigned long size);
-    bool Put(float *buf, unsigned long size);
-    unsigned long Put(CircularBuffer &buf, unsigned long size);
-    bool Put(double *buf, unsigned long size);
-    bool Get(float *buf, unsigned long size);
-    bool Get(double *buf, unsigned long size);
-    bool Skip(unsigned long size);
-    unsigned long buffSize;
-    unsigned long filledSize;
+    void SetSize(qint32 size);
+    bool Put(float *buf, qint32 size);
+    qint32 Put(CircularBuffer &buf, qint32 size);
+    bool Put(double *buf, qint32 size);
+    bool Get(float *buf, qint32 size);
+    bool Get(double *buf, qint32 size);
+    bool Skip(qint32 size);
+    qint32 buffSize;
+    qint32 filledSize;
 
 
 private:

@@ -48,10 +48,10 @@ public:
     MainHost( Settings *settings, QObject *parent = 0);
     virtual ~MainHost();
 
-    void SetBufferSizeMs(unsigned int ms);
-    void SetBufferSize(unsigned long size);
+    void SetBufferSizeMs(qint32 ms);
+    void SetBufferSize(qint32 size);
     void SetSampleRate(float rate=44100.0);
-    unsigned long GetBufferSize() {return bufferSize;}
+    qint32 GetBufferSize() {return bufferSize;}
     float GetSampleRate() {return sampleRate;}
 
     void EnableSolverUpdate(bool enable);
@@ -70,13 +70,13 @@ public:
     void SetSetupDirtyFlag() { if(hostContainer) hostContainer->SetDirty(); }
 
     void ReceiveMsg(const MsgObject &msg);
-
+/*
     inline void UpdateSolverNow() {
         //if we need to update everything now, we have to ask for an update and force a render loop
         SetSolverUpdateNeeded();
         Render();
     }
-
+*/
     inline void SetSolverUpdateNeeded() {
         solverMutex.lock();
         solverNeedAnUpdate = true;
@@ -128,7 +128,7 @@ protected:
     virtual void Close();
     QElapsedTimer timeFromStart;
     float sampleRate;
-    unsigned long bufferSize;
+    qint32 bufferSize;
     Renderer2 *renderer;
 
 private:
@@ -163,7 +163,7 @@ private:
 
 signals:
     void SampleRateChanged(float rate);
-    void BufferSizeChanged(unsigned long size);
+    void BufferSizeChanged(qint32 size);
     void ObjectRemoved(int contrainerId, int obj);
     void SolverToUpdate();
     void Rendered();

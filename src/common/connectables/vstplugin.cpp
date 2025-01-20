@@ -108,7 +108,7 @@ void VstPlugin::SetSleep(bool sleeping)
     Object::SetSleep(sleeping);
 }
 
-void VstPlugin::SetBufferSize(unsigned long size)
+void VstPlugin::SetBufferSize(qint32 size)
 {
     if(closed)
         return;

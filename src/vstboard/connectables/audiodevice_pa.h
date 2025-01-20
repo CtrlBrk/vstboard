@@ -88,13 +88,13 @@ bool Close();
         void CreateCircularBuffers();
         void DeleteCircularBuffers();
 
-        bool DeviceToRingBuffers( const void *inputBuffer, unsigned long framesPerBuffer);
+        bool DeviceToRingBuffers( const void *inputBuffer, qint32 framesPerBuffer);
         void RingBuffersToPins();
-        bool RingBuffersToDevice( void *outputBuffer, unsigned long framesPerBuffer);
+        bool RingBuffersToDevice( void *outputBuffer, qint32 framesPerBuffer);
 #else
         //if not using ringbuffers
-        bool DeviceToPinBuffers( const void *inputBuffer, unsigned long framesPerBuffer );
-        bool PinBuffersToDevice( void *outputBuffer, unsigned long framesPerBuffer );
+        bool DeviceToPinBuffers( const void *inputBuffer, qint32 framesPerBuffer );
+        bool PinBuffersToDevice( void *outputBuffer, qint32 framesPerBuffer );
 #endif
 
         void SetErrorMsg(const QString &msg);

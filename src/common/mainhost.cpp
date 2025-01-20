@@ -213,6 +213,9 @@ void MainHost::SetupMainContainer()
     info.name = "mainContainer";
     info.forcedObjId = FixedObjId::mainContainer;
 
+    if(mainContainer) {
+        mainContainer->destroyed();
+    }
     mainContainer = objFactory->NewObject(info).staticCast< Connectables::Container >();
     if(!mainContainer)
         return;
@@ -252,8 +255,8 @@ void MainHost::SetupHostContainer()
     hostContainer->SetLoadingMode(true);
     mainContainer->AddObject(hostContainer);
 
-    connect(this,SIGNAL(BufferSizeChanged(ulong)),
-            hostContainer.get(),SLOT(SetBufferSize(ulong)));
+    connect(this,SIGNAL(BufferSizeChanged(qint32)),
+            hostContainer.get(),SLOT(SetBufferSize(qint32)));
     connect(this,SIGNAL(SampleRateChanged(float)),
             hostContainer.get(),SLOT(SetSampleRate(float)));
 
@@ -366,8 +369,8 @@ void MainHost::SetupProjectContainer()
     projectContainer->SetLoadingMode(true);
     mainContainer->AddObject(projectContainer);
 
-    connect(this,SIGNAL(BufferSizeChanged(ulong)),
-            projectContainer.get(),SLOT(SetBufferSize(ulong)));
+    connect(this,SIGNAL(BufferSizeChanged(qint32)),
+            projectContainer.get(),SLOT(SetBufferSize(qint32)));
     connect(this,SIGNAL(SampleRateChanged(float)),
             projectContainer.get(),SLOT(SetSampleRate(float)));
 
@@ -491,8 +494,8 @@ void MainHost::SetupProgramContainer()
     programContainer->SetOptimizerFlag(true);
     mainContainer->AddObject(programContainer);
 
-    connect(this,SIGNAL(BufferSizeChanged(ulong)),
-            programContainer.get(),SLOT(SetBufferSize(ulong)));
+    connect(this,SIGNAL(BufferSizeChanged(qint32)),
+            programContainer.get(),SLOT(SetBufferSize(qint32)));
     connect(this,SIGNAL(SampleRateChanged(float)),
             programContainer.get(),SLOT(SetSampleRate(float)));
 
@@ -612,8 +615,8 @@ void MainHost::SetupGroupContainer()
 
     mainContainer->AddObject(groupContainer);
 
-    connect(this,SIGNAL(BufferSizeChanged(ulong)),
-            groupContainer.get(),SLOT(SetBufferSize(ulong)));
+    connect(this,SIGNAL(BufferSizeChanged(qint32)),
+            groupContainer.get(),SLOT(SetBufferSize(qint32)));
     connect(this,SIGNAL(SampleRateChanged(float)),
             groupContainer.get(),SLOT(SetSampleRate(float)));
 
@@ -806,13 +809,13 @@ void MainHost::ChangeNbThreads(int nbTh)
     SetSolverUpdateNeeded();
 }
 
-void MainHost::SetBufferSizeMs(unsigned int ms)
+void MainHost::SetBufferSizeMs(qint32 ms)
 {
-    ulong size = ms*sampleRate/1000;
+    qint32 size = ms*sampleRate/1000;
     SetBufferSize(size);
 }
 
-void MainHost::SetBufferSize(unsigned long size)
+void MainHost::SetBufferSize(qint32 size)
 {
     if(bufferSize == size)
         return;

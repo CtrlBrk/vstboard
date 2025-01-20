@@ -46,7 +46,7 @@ namespace Connectables {
         QString name = "";
         bool doublePrecision = false;
         bool externalAllocation = false;
-        unsigned long bufferSize = 0;
+        qint32 bufferSize = 0;
 
         pinConstructArgs() {};
 

@@ -196,7 +196,7 @@ namespace Connectables {
         void RemoveProgram(quint32 progId=0);
         void PostRender();
 
-        void SetBufferSize(unsigned long size) override;
+        void SetBufferSize(qint32 size) override;
         void SetSampleRate(float rate=44100.0) override;
 
         friend class ContainerProgram;

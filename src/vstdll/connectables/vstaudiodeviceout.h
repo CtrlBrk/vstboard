@@ -42,15 +42,14 @@ namespace Connectables {
         bool Open();
         bool Close();
 
-        void GetBuffers(float **buf, int &cpt, int sampleFrames);
-        void GetBuffersD(double **buf, int &cpt, int sampleFrames);
-        void GetBuffers(Steinberg::Vst::ProcessData& data);
+        void GetBuffers(float **buf, int sampleFrames);
+        void GetBuffersD(double **buf, int sampleFrames);
 
     protected:
         View::AudioGraph *audiograph;
 
     public slots:
-        void SetBufferSize(unsigned long size);
+        void SetBufferSize(qint32 size);
     };
 
 }

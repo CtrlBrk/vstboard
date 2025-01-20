@@ -118,7 +118,7 @@ bool AudioPin::SetDoublePrecision(bool dblp)
   Resize the current buffer
   \param size the new size
   */
-void AudioPin::SetBufferSize(unsigned long size)
+void AudioPin::SetBufferSize(qint32 size)
 {
     buffer->SetSize(size);
 }

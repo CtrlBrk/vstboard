@@ -24,7 +24,7 @@
 //#include "precomp.h"
 #include "connectables/object.h"
 #include "connectables/objectinfo.h"
-#include "pluginterfaces/vst/ivstaudioprocessor.h"
+// #include "pluginterfaces/vst/ivstaudioprocessor.h"
 
 class AudioBuffer;
 
@@ -41,12 +41,11 @@ namespace Connectables {
         bool Close();
         void Render();
 
-        void SetBuffers(float **buf, int &cpt, Steinberg::int32 sampleFrames);
-        void SetBuffersD(double **buf, int &cpt, Steinberg::int32 sampleFrames);
-        void SetBuffers(Steinberg::Vst::AudioBusBuffers *buf, Steinberg::int32 sampleFrames);
+        void SetBuffers(float **buf, int sampleFrames);
+        void SetBuffersD(double **buf, int sampleFrames);
 
     public slots:
-        void SetBufferSize(unsigned long size);
+        void SetBufferSize(qint32 size);
 
     };
 }

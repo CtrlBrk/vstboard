@@ -275,7 +275,7 @@ void Container::PostRender()
     }
 }
 
-void Container::SetBufferSize(unsigned long size)
+void Container::SetBufferSize(qint32 size)
 {
     foreach(QSharedPointer<Object>obj, listLoadedObjects) {
         if(obj)

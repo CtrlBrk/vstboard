@@ -44,7 +44,7 @@ namespace Connectables {
 
 //        float GetVal() { return buffer->GetCurrentVu(); }
 
-        void SetBufferSize(unsigned long size);
+        void SetBufferSize(qint32 size);
         bool SetDoublePrecision(bool dblp);
 
         /// \return pointer to the current buffer

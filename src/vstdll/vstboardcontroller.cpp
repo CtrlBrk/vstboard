@@ -35,7 +35,7 @@ tresult PLUGIN_API VstBoardController::initialize (FUnknown* context)
 //    mainWindow=0;
 //    view=0;
 
-    //alreeeady initialized
+    //already initialized
     if(parameters.getParameterCount()>0) {
         return kResultTrue;
     }

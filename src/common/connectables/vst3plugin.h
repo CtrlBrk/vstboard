@@ -189,7 +189,7 @@ signals:
     void WindowSizeChange(int newWidth, int newHeight);
 
 public slots:
-    void SetBufferSize(unsigned long size) override;
+    void SetBufferSize(qint32 size) override;
     void SetSampleRate(float rate=44100.0) override;
     void OnParameterChanged(ConnectionInfo pinInfo, float value) override;
     void EditorDestroyed();

@@ -24,7 +24,6 @@
 #define BLANK_BUFFER_SIZE 44100
 
 //#include "precomp.h"
-
 #include "views/audiograph.h"
 
 
@@ -34,12 +33,12 @@ public:
         AudioBuffer(bool doublePrecision, bool externAlloc);
         ~AudioBuffer();
         void SetBufferPointer(void *pt) {if(!externAlloc)return; pBuffer=pt;}
-        bool SetSize(unsigned long size, bool forceRealloc=false);
+        bool SetSize(qint32 size, bool forceRealloc=false);
         void AddToStack(const AudioBuffer * buff);
-        void SetBufferContent(float *buff, unsigned long count);
-        void SetBufferContent(double *buff, unsigned long count);
-        void DumpToBuffer(float *buff, unsigned long count);
-        void DumpToBuffer(double *buff, unsigned long count);
+        void SetBufferContent(float *buff, qint32 count);
+        void SetBufferContent(double *buff, qint32 count);
+        void DumpToBuffer(float *buff, qint32 count);
+        void DumpToBuffer(double *buff, qint32 count);
 
         void *GetPointer() const {return pBuffer;}
         void *GetPointerWillBeFilled();
@@ -51,7 +50,7 @@ public:
         void AddGraph();
 
         /// \return the current buffer size
-        inline unsigned long GetSize() const {return bufferSize;}
+        inline qint32 GetSize() const {return bufferSize;}
 
         /*!
          Get the last vu-meter value. Don't reset the peak value (used by bridges)
@@ -72,16 +71,16 @@ protected:
         View::AudioGraph *audiograph;
 
         /// the stack size
-        unsigned long stackSize;
+        qint32 stackSize;
 
         /// pointer to the audio buffer
         void * pBuffer;
 
         /// buffer size
-        unsigned long bufferSize;
+        qint32 bufferSize;
 
         /// allocated buffer size, can be bigger than the useable buffer size
-        unsigned long allocatedSize;
+        qint32 allocatedSize;
 
         /// vu-meter peak
         float _maxVal;

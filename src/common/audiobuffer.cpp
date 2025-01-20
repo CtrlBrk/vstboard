@@ -80,7 +80,7 @@ AudioBuffer::~AudioBuffer()
   Don't allocate anything if it's externally allocated
   \param size the new size
   */
-bool AudioBuffer::SetSize(unsigned long newSize, bool forceRealloc)
+bool AudioBuffer::SetSize(qint32 newSize, bool forceRealloc)
 {
     debugbuf("setsize old:"<<bufferSize<<"new"<<newSize);
 
@@ -112,12 +112,14 @@ bool AudioBuffer::SetSize(unsigned long newSize, bool forceRealloc)
         }
     }
 
-    bufferSize = allocatedSize = newSize;
+    allocatedSize = newSize;
+    bufferSize = newSize;
     if(!externAlloc) {
-        if(!doublePrecision)
-            memset( pBuffer, 0, sizeof(float)*bufferSize );
-        else
-            memset( pBuffer, 0, sizeof(double)*bufferSize );
+        if(!doublePrecision) {
+            std::fill_n((float*)pBuffer, bufferSize, .0f);
+        } else {
+            std::fill_n((double*)pBuffer, bufferSize, .0);
+        }
     }
     return true;
 }
@@ -277,7 +279,6 @@ void *AudioBuffer::ConsumeStack()
         float ma = .0f;
         float mi = .0f;
         float *buf;
-
         if(stackSize==0) {
             //empty stack : return a blank buffer
             memset( pBuffer, 0, sizeof(float)*bufferSize );
@@ -286,9 +287,8 @@ void *AudioBuffer::ConsumeStack()
         } else {
             //find max value
             buf = (float*)pBuffer;
-            unsigned long i=bufferSize;
+            qint32 i=bufferSize;
             while(i>0) {
-
                 if(*buf > ma)
                     ma = *buf;
                 if(mi > *buf)
@@ -306,7 +306,7 @@ void *AudioBuffer::ConsumeStack()
         //if we're off-limits : here is a limiter
         if(_maxVal > 1.0f) {
             buf = (float*)pBuffer;
-            unsigned long i=bufferSize;
+            qint32 i=bufferSize;
             while(i>0) {
                 if(*buf > 1.0f)
                     *buf = .8f;
@@ -377,7 +377,7 @@ float AudioBuffer::GetVu()
     return currentVu;
 }
 
-void AudioBuffer::SetBufferContent(float *buff, unsigned long count)
+void AudioBuffer::SetBufferContent(float *buff, qint32 count)
 {
     debugbuf("setcontent float");
 
@@ -403,7 +403,7 @@ void AudioBuffer::SetBufferContent(float *buff, unsigned long count)
     stackSize=1;
 }
 
-void AudioBuffer::SetBufferContent(double *buff, unsigned long count)
+void AudioBuffer::SetBufferContent(double *buff, qint32 count)
 {
     debugbuf("setcontent double");
 
@@ -419,7 +419,7 @@ void AudioBuffer::SetBufferContent(double *buff, unsigned long count)
     } else {
         //TDOO: double to float : dither maybe ?
         float *dest = (float*)pBuffer;
-        unsigned long i = count;
+        qint32 i = count;
         while(i>0) {
             *dest=(float)*buff;
             ++dest;
@@ -430,7 +430,7 @@ void AudioBuffer::SetBufferContent(double *buff, unsigned long count)
     stackSize=1;
 }
 
-void AudioBuffer::DumpToBuffer(float *buff, unsigned long count)
+void AudioBuffer::DumpToBuffer(float *buff, qint32 count)
 {
     debugbuf("dump float");
 
@@ -441,9 +441,13 @@ void AudioBuffer::DumpToBuffer(float *buff, unsigned long count)
         count=bufferSize;
     }
 
+    if(count!=bufferSize) {
+        SetSize(count);
+    }
+
     if(doublePrecision) {
         double *ori = (double*)pBuffer;
-        unsigned long i = count;
+        qint32 i = count;
         while(i>0) {
             *buff=(float)*ori;
             ++ori;
@@ -455,7 +459,7 @@ void AudioBuffer::DumpToBuffer(float *buff, unsigned long count)
     }
 }
 
-void AudioBuffer::DumpToBuffer(double *buff, unsigned long count)
+void AudioBuffer::DumpToBuffer(double *buff, qint32 count)
 {
     debugbuf("dump double");
 
@@ -466,12 +470,16 @@ void AudioBuffer::DumpToBuffer(double *buff, unsigned long count)
         count=bufferSize;
     }
 
+    if(count!=bufferSize) {
+        SetSize(count);
+    }
+
     if(doublePrecision) {
         memcpy(buff,pBuffer,count*sizeof(double));
     } else {
         //TDOO: double to float : dither maybe ?
         float *ori = (float*)pBuffer;
-        unsigned long i = count;
+        qint32 i = count;
         while(i>0) {
             *buff=(double)*ori;
             ++ori;

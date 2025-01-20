@@ -175,7 +175,7 @@ Pin* AudioDeviceIn::CreatePin(const ConnectionInfo &info)
 #ifdef CIRCULAR_BUFFER
 void AudioDeviceIn::SetBufferFromRingBuffer(QList<CircularBuffer*>listCircularBuffers)
 {
-    unsigned long hostBuffSize = myHost->GetBufferSize();
+    qint32 hostBuffSize = myHost->GetBufferSize();
 
     int cpt=0;
     foreach(CircularBuffer *buf, listCircularBuffers) {

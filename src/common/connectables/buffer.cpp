@@ -86,7 +86,7 @@ void Buffer::Resize()
 {
     if(desiredSize<delaySize) {
         //fast forward
-        unsigned long tmpSize = delaySize-desiredSize;
+        qint32 tmpSize = delaySize-desiredSize;
         if(tmpSize>buffer.filledSize) {
             tmpSize = buffer.filledSize;
         }
@@ -96,7 +96,7 @@ void Buffer::Resize()
 
     if(desiredSize>delaySize) {
         AudioBuffer *pinInBuf = listAudioPinIn->GetBuffer(0);
-        unsigned long tmpSize = desiredSize-delaySize;
+        qint32 tmpSize = desiredSize-delaySize;
         if(tmpSize>pinInBuf->GetSize()) {
             tmpSize = pinInBuf->GetSize();
         }
@@ -104,7 +104,7 @@ void Buffer::Resize()
         resizeBuffer.Put( (float*)pinInBuf->GetPointer(), tmpSize );
 
         if(resizeBuffer.filledSize>3000) {
-            unsigned long canAdd=resizeBuffer.filledSize;
+            qint32 canAdd=resizeBuffer.filledSize;
             if(delaySize+canAdd > desiredSize)
                 canAdd = desiredSize-delaySize;
 

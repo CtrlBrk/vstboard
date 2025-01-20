@@ -11,7 +11,7 @@ namespace View {
     class AudioGraph : public QWidget {
     public:
     explicit AudioGraph(QWidget *parent = nullptr);
-    void UpdateGraph(float *buffer, unsigned long size, int serie=0);
+    void UpdateGraph(float *buffer, qint32 size, int serie=0);
 
 private:
     QChart *m_chart = nullptr;

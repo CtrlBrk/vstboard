@@ -486,7 +486,7 @@ bool AudioDevice::SetSleep(bool sleeping)
 //}
 
 #ifdef CIRCULAR_BUFFER
-bool AudioDevice::DeviceToRingBuffers( const void *inputBuffer, unsigned long framesPerBuffer)
+bool AudioDevice::DeviceToRingBuffers( const void *inputBuffer, qint32 framesPerBuffer)
 {
     //if no input, render when the host buffer is full
     static ulong fakeFilledSize=0;
@@ -496,7 +496,7 @@ bool AudioDevice::DeviceToRingBuffers( const void *inputBuffer, unsigned long fr
         if(isClosing) return false;
     }
 
-    unsigned long hostBuffSize = myHost->GetBufferSize();
+    qint32 hostBuffSize = myHost->GetBufferSize();
     if(framesPerBuffer > hostBuffSize) {
 #ifdef DEBUG_DEVICES
         LOG(QString("ajusting host buffer %1->%2")
@@ -582,7 +582,7 @@ void AudioDevice::PinsToRingBuffers()
 
 }
 
-bool AudioDevice::RingBuffersToDevice( void *outputBuffer, unsigned long framesPerBuffer)
+bool AudioDevice::RingBuffersToDevice( void *outputBuffer, qint32 framesPerBuffer)
 {
     {
         QMutexLocker lo(&mutexOpenClose);
@@ -656,9 +656,9 @@ bool AudioDevice::RingBuffersToDevice( void *outputBuffer, unsigned long framesP
     return true;
 }
 #else
-bool AudioDevice::DeviceToPinBuffers( const void *inputBuffer, unsigned long framesPerBuffer )
+bool AudioDevice::DeviceToPinBuffers( const void *inputBuffer, qint32 framesPerBuffer )
 {
-//    unsigned long hostBuffSize = myHost->GetBufferSize();
+//    qint32 hostBuffSize = myHost->GetBufferSize();
 //    if(framesPerBuffer > hostBuffSize) {
 //       myHost->SetBufferSize(framesPerBuffer);
 //       hostBuffSize = framesPerBuffer;
@@ -690,9 +690,9 @@ bool AudioDevice::DeviceToPinBuffers( const void *inputBuffer, unsigned long fra
     return true;
 }
 
-bool AudioDevice::PinBuffersToDevice( void *outputBuffer, unsigned long framesPerBuffer )
+bool AudioDevice::PinBuffersToDevice( void *outputBuffer, qint32 framesPerBuffer )
 {
-//    unsigned long hostBuffSize = myHost->GetBufferSize();
+//    qint32 hostBuffSize = myHost->GetBufferSize();
 //    if(framesPerBuffer > hostBuffSize) {
 //       myHost->SetBufferSize(framesPerBuffer);
 //       hostBuffSize = framesPerBuffer;
@@ -707,7 +707,7 @@ bool AudioDevice::PinBuffersToDevice( void *outputBuffer, unsigned long framesPe
 
         //for (int i = 0; i < devInfo.maxOutputChannels; i++) {
         for (int i = 0; i < objInfo.outputs; i++) {
-            for (unsigned long j = 0; j < framesPerBuffer; j++) {
+            for (qint32 j = 0; j < framesPerBuffer; j++) {
 				((float **)outputBuffer)[i][j] = .0f;
 			}
 		}
@@ -837,7 +837,7 @@ int AudioDevice::callback( void *outputBuffer, void *inputBuffer, unsigned int f
   send the resulting buffers back to PortAudio
   */
 //int AudioDevice::paCallback( const void *inputBuffer, void *outputBuffer,
-//                                 unsigned long framesPerBuffer,
+//                                 qint32 framesPerBuffer,
 //                                 const PaStreamCallbackTimeInfo* /*timeInfo*/,
 //                                 PaStreamCallbackFlags /*statusFlags*/,
 //                                 void *userData )

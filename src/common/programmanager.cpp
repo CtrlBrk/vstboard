@@ -478,7 +478,8 @@ bool ProgramManager::ChangeProgNow(int midiGroupNum, int midiProgNum)
         return false;
 
     //if program changed, force the host to update
-    myHost->UpdateSolverNow();
+    //myHost->UpdateSolverNow();
+    myHost->SetSolverUpdateNeeded();
     return true;
 }
 

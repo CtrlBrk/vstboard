@@ -37,12 +37,12 @@
 #include "connectables/vstmididevice.h"
 #include "connectables/vstautomation.h"
 #include "mainhost.h"
-#include "settings.h"
+// #include "settings.h"
 
 #define NB_MAIN_BUSES_IN 4
 #define NB_MAIN_BUSES_OUT 4
-#define NB_AUX_BUSES_IN 1
-#define NB_AUX_BUSES_OUT 1
+// #define NB_AUX_BUSES_IN 1
+// #define NB_AUX_BUSES_OUT 1
 #define NB_MIDI_BUSES_IN 1
 #define NB_MIDI_BUSES_OUT 1
 #define VST_EVENT_BUFFER_SIZE 1000
@@ -57,20 +57,28 @@ public:
         VstBoardProcessor ();
         virtual ~VstBoardProcessor();
 
-        tresult PLUGIN_API initialize (FUnknown* context);
-        tresult PLUGIN_API terminate ();
-        tresult PLUGIN_API setBusArrangements (Vst::SpeakerArrangement* inputs, int32 numIns, Vst::SpeakerArrangement* outputs, int32 numOuts);
+        tresult PLUGIN_API initialize (FUnknown* context) SMTG_OVERRIDE;
+        tresult PLUGIN_API terminate () SMTG_OVERRIDE;
+        tresult PLUGIN_API setActive (TBool state) SMTG_OVERRIDE;
+        tresult PLUGIN_API getControllerClassId (TUID classID) SMTG_OVERRIDE;
+        tresult PLUGIN_API setIoMode (Vst::IoMode mode) SMTG_OVERRIDE;
+        tresult PLUGIN_API setState (IBStream* state) SMTG_OVERRIDE;
+        tresult PLUGIN_API getState (IBStream* state) SMTG_OVERRIDE;
+        tresult PLUGIN_API notify (Vst::IMessage* message) SMTG_OVERRIDE;
 
-        tresult PLUGIN_API setActive (TBool state);
-        tresult PLUGIN_API process (Vst::ProcessData& data);
+        tresult PLUGIN_API getBusArrangement (Vst::BusDirection dir, int32 busIndex, Vst::SpeakerArrangement& arr) SMTG_OVERRIDE;
+        tresult PLUGIN_API setBusArrangements (Vst::SpeakerArrangement* inputs, int32 numIns, Vst::SpeakerArrangement* outputs, int32 numOuts) SMTG_OVERRIDE;
+        tresult PLUGIN_API canProcessSampleSize (int32 symbolicSampleSize) SMTG_OVERRIDE;
+        tresult PLUGIN_API process (Vst::ProcessData& data) SMTG_OVERRIDE;
+        tresult PLUGIN_API setupProcessing (Vst::ProcessSetup& setup) SMTG_OVERRIDE;
+
 
         static FUnknown* createInstance (void*) {
             return (Vst::IAudioProcessor*)new VstBoardProcessor ();
         }
 
-        tresult PLUGIN_API notify (Vst::IMessage* message);
+        void SendMsg(const MsgObject &msg) override;
 
-        void SendMsg(const MsgObject &msg);
 
         bool addAudioIn(Connectables::VstAudioDeviceIn *dev);
         bool addAudioOut(Connectables::VstAudioDeviceOut *dev);
@@ -85,20 +93,15 @@ public:
         void addVstAutomation(Connectables::VstAutomation *dev);
         void removeVstAutomation(Connectables::VstAutomation *dev);
 
-        tresult PLUGIN_API getControllerClassId (TUID classID) SMTG_OVERRIDE;
-        tresult PLUGIN_API setIoMode (Vst::IoMode mode) SMTG_OVERRIDE;
-        tresult PLUGIN_API setupProcessing (Vst::ProcessSetup& setup);
 
-        tresult PLUGIN_API setState (IBStream* state);
-        tresult PLUGIN_API getState (IBStream* state);
 #ifdef VST24SDK
         VstInt32 processEvents(VstEvents* events);
         bool processOutputEvents();
         VstEvents * getEvents() {return listEvnts;}
 #endif
 protected:
-       // QApplication *myApp;
-        void Close();
+        // QApplication *myApp;
+        void Close() override;
 
         QList<Connectables::VstAudioDeviceIn*>lstAudioIn;
         QList<Connectables::VstAudioDeviceOut*>lstAudioOut;
@@ -123,7 +126,7 @@ signals:
         void SetBypass(bool bypass);
 
 public slots:
-        void Init();
+        void Init() override;
 };
 
 #endif // VSTBOARDPROCESSOR_H

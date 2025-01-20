@@ -122,6 +122,12 @@
     #include <QWaitCondition>
     #include <QWidget>
 
+    #include <QChart>
+    #include <QChartView>
+    #include <QLineSeries>
+    #include <QValueAxis>
+
+
 #ifdef SCRIPTENGINE
 #ifdef OLDSCRIPTENGINE
     #include <QScriptEngine>

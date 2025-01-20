@@ -1,9 +1,5 @@
 #include "audiograph.h"
-#include <QChart>
-#include <QChartView>
-#include <QLineSeries>
-#include <QValueAxis>
-#include <QVBoxLayout>
+#include "precomp.h"
 
 namespace View {
 
@@ -44,7 +40,7 @@ AudioGraph::AudioGraph(QWidget *parent) :
     mainLayout->addWidget(chartView);
 }
 
-void AudioGraph::UpdateGraph(float *buffer, unsigned long sampleCount, int serie)
+void AudioGraph::UpdateGraph(float *buffer, qint32 sampleCount, int serie)
 {
 
     QList<QPointF> m_buffer;
@@ -56,14 +52,14 @@ void AudioGraph::UpdateGraph(float *buffer, unsigned long sampleCount, int serie
     }
 
     if(sampleCount>600) sampleCount=600;
-    unsigned long i=sampleCount;
+    qint32 i=sampleCount;
 
     while(i>0) {
         --i;
         if(serie==0) {
             m_buffer[i].setY(buffer[i]);
         } else {
-            m_buffer[i].setY(buffer[i]+.1f);
+            m_buffer[i].setY(buffer[i]+.02f);
         }
 
     }

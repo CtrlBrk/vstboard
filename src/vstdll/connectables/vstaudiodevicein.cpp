@@ -51,7 +51,7 @@ void VstAudioDeviceIn::Render()
     }
 }
 
-void VstAudioDeviceIn::SetBufferSize(unsigned long size)
+void VstAudioDeviceIn::SetBufferSize(qint32 size)
 {
     foreach(Pin *pin, listAudioPinOut->listPins) {
         static_cast<AudioPin*>(pin)->GetBuffer()->SetSize(size);
@@ -71,39 +71,24 @@ bool VstAudioDeviceIn::Open()
     return true;
 }
 
-void VstAudioDeviceIn::SetBuffers(float **buf, int &cpt, Steinberg::int32 sampleFrames)
-{
-    foreach(Pin *pin, listAudioPinOut->listPins) {
-        AudioBuffer *abuf= static_cast<AudioPin*>(pin)->GetBuffer();
-        abuf->SetBufferContent(buf[cpt],sampleFrames);
-        cpt++;
-    }
-}
-
-void VstAudioDeviceIn::SetBuffersD(double **buf, int &cpt, Steinberg::int32 sampleFrames)
-{
-    foreach(Pin *pin, listAudioPinOut->listPins) {
-        AudioBuffer *abuf= static_cast<AudioPin*>(pin)->GetBuffer();
-        abuf->SetBufferContent(buf[cpt],sampleFrames);
-        cpt++;
-    }
-}
-
-void VstAudioDeviceIn::SetBuffers(Steinberg::Vst::AudioBusBuffers *buf, Steinberg::int32 sampleFrames)
+void VstAudioDeviceIn::SetBuffers(float **buf, int sampleFrames)
 {
     int cpt=0;
     foreach(Pin *pin, listAudioPinOut->listPins) {
-
         AudioBuffer *abuf= static_cast<AudioPin*>(pin)->GetBuffer();
-        if(doublePrecision)
-            abuf->SetBufferContent(buf->channelBuffers64[cpt],sampleFrames);
-        else
-            abuf->SetBufferContent(buf->channelBuffers32[cpt],sampleFrames);
-
-        ++cpt;
-
-        if(cpt==buf->numChannels)
-            return;
+        abuf->SetBufferContent(buf[cpt],sampleFrames);
+        cpt++;
     }
 }
+
+void VstAudioDeviceIn::SetBuffersD(double **buf, int sampleFrames)
+{
+    int cpt=0;
+    foreach(Pin *pin, listAudioPinOut->listPins) {
+        AudioBuffer *abuf= static_cast<AudioPin*>(pin)->GetBuffer();
+        abuf->SetBufferContent(buf[cpt],sampleFrames);
+        cpt++;
+    }
+}
+
 

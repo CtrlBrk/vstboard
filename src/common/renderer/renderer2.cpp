@@ -100,7 +100,7 @@ bool Renderer2::StartRender()
     QMutexLocker l(&mutexThreadList);
     stepCanStart.first()->AddLock(threads.count());
 
-    if(!waitThreadReady.WaitAllThreads(500)) {
+    if(!waitThreadReady.WaitAllThreads(100)) {
         QString err("renderer start timeout");
 //        waitThreadReady.WakeAll()
 //        waitThreadReady.RemoveClient();
@@ -113,7 +113,7 @@ bool Renderer2::StartRender()
         return false;
     }
 
-    if(!waitThreadEnd.WaitAllThreads(500)) {
+    if(!waitThreadEnd.WaitAllThreads(100)) {
 //        waitThreadEnd.WakeAll();
         QString err("renderer end timeout");
 //        waitThreadEnd.RemoveClient();
