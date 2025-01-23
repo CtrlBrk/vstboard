@@ -25,14 +25,15 @@ using namespace View;
 
 MinMaxPinView::MinMaxPinView(int listPinId, float angle, MsgController *msgCtrl, int objId, QGraphicsItem * parent, const ConnectionInfo &pinInfo, ViewConfig *config) :
     ConnectablePinView(listPinId,angle,msgCtrl,objId,parent,pinInfo,config),
-    changingValue(false),
-    startDragValue(.0f),
     inMin(0),
     inMax(0),
     outMin(0),
     outMax(0),
     scaledView(0),
-	parentObjType(ObjType::ND)
+    changingValue(false),
+    startDragValue(.0f),
+    parentObjType(ObjType::ND),
+    nbValues(0)
 {
     CreateCursors();
 }
@@ -48,6 +49,10 @@ void MinMaxPinView::ReceiveMsg(const MsgObject &msg)
     }
 
     ConnectablePinView::ReceiveMsg(msg);
+
+    if(msg.prop.contains(MsgObject::Row)) {
+        nbValues = msg.prop[MsgObject::Row].toInt();
+    }
 
     if(msg.prop.contains(MsgObject::Value)) {
         UpdateScaleView();
@@ -235,16 +240,20 @@ void MinMaxPinView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void MinMaxPinView::mouseMoveEvent ( QGraphicsSceneMouseEvent  * event )
 {
     if(changingValue) {
-        float mouseSensibility = 1.0f/size().width();
+        float _mouseSensitivity = 1.0f/size().width();
         if(event->modifiers() & Qt::ControlModifier)
-            mouseSensibility /= 10;
+            _mouseSensitivity /= 10.0f;
         if(event->modifiers() & Qt::ShiftModifier)
-            mouseSensibility /= 10;
+            _mouseSensitivity /= 10.0f;
         if(event->modifiers() & Qt::AltModifier)
-            mouseSensibility /= 10;
+            _mouseSensitivity /= 10.0f;
+
+        // if(nbValues!=0 && nbValues<20) {
+        //     _mouseSensitivity *= 5.0f;
+        // }
 
         qreal increm = event->pos().x() - startDragPos.x();
-        startDragValue += mouseSensibility*increm;
+        startDragValue += _mouseSensitivity*increm;
         startDragValue = std::max(.0f,startDragValue);
         startDragValue = std::min(1.0f,startDragValue);
 
@@ -268,12 +277,20 @@ void MinMaxPinView::mouseReleaseEvent ( QGraphicsSceneMouseEvent  * event )
 void MinMaxPinView::wheelEvent ( QGraphicsSceneWheelEvent * event )
 {
     const KeyBind::MoveBind b = config->keyBinding->GetMoveSortcuts(KeyBind::changeValue);
-    if(b.input == KeyBind::mouseWheel && b.modifier == event->modifiers()) {
+    Qt::KeyboardModifiers mod = event->modifiers();
+    if(b.input == KeyBind::mouseWheel && (b.modifier == Qt::NoModifier || b.modifier == mod )) {
         event->accept();
 
         int increm=1;
         if(event->delta()<0)
             increm=-1;
+
+        if(mod & Qt::ControlModifier && mod != b.modifier)
+            increm *= 10.0f;
+        if(mod & Qt::ShiftModifier && mod != b.modifier)
+            increm *= 10.0f;
+        if(mod & Qt::AltModifier && mod != b.modifier)
+            increm *= 10.0f;
 
         MSGOBJ();
         msg.prop[MsgObject::Increment]=increm;

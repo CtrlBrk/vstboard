@@ -33,9 +33,9 @@
 //#include "public.sdk/source/vst/hosting/eventlist.h"
 //#include "public.sdk/source/vst/hosting/parameterchanges.h"
 //#include "public.sdk/source/vst/hosting/stringconvert.h"
+#include "public.sdk/source/vst/hosting/connectionproxy.h"
 //#include "pluginterfaces/vst/ivsteditcontroller.h"
 //#include "pluginterfaces/vst/ivstmidicontrollers.h"
-
 
 namespace Steinberg {
     FUnknown* gStandardPluginContext = 0;
@@ -75,7 +75,8 @@ Vst3Plugin::Vst3Plugin(MainHost *host, int index, const ObjectInfo &info) :
     }
 
     listBypass << "On" << "Bypass" << "Mute";
-    listIsLearning << "off" << "learn" << "unlearn";
+    listIsLearning << "Off" << "Learn" << "Unlearn";
+    listEditorVisible << "Hide" << "Show";
 
 	gStandardPluginContext = myHost->vst3Host;
 }
@@ -224,7 +225,7 @@ Vst::PlugProvider* Vst3Plugin::GetDefaultProvider()
 
 bool Vst3Plugin::initPlugin()
 {
-	VST3::Optional<VST3::UID> effectID;
+    // VST3::Optional<VST3::UID> effectID;
     if (objInfo.apiName != "")
 	{
         std::string str = objInfo.apiName.toStdString();
@@ -251,13 +252,14 @@ bool Vst3Plugin::initPlugin()
 		return true;
 	}
 
+
     component = plugProvider->getComponent();
     if (!component)
 	{
 		SetErrorMessage( tr("plugin not created") );
 		return true;
 	}
-    bool res = (component->initialize (gStandardPluginContext) == kResultOk);
+    // component->initialize (gStandardPluginContext);
 
 //    if (component->queryInterface (Vst::IEditController::iid, (void**)&editController) != kResultTrue)
 //    {
@@ -270,9 +272,14 @@ bool Vst3Plugin::initPlugin()
         SetErrorMessage("No EditController found");
         return true;
     }
-    res = (editController->initialize (gStandardPluginContext) == kResultOk);
 
-    
+    bool res = false;
+
+    res = (editController->initialize (gStandardPluginContext)== kResultOk);
+    if(!res) {
+
+    }
+    // connectComponents();
 
 	if(!initProcessor())
 		return true;
@@ -311,6 +318,48 @@ bool Vst3Plugin::initPlugin()
 	//SetSleep(false);
     return true;
 }
+
+// bool Vst3Plugin::connectComponents ()
+// {
+//     if (!component || !editController)
+//         return false;
+
+//     auto compICP = U::cast<IConnectionPoint> (component);
+//     auto contrICP = U::cast<IConnectionPoint> (editController);
+//     if (!compICP || !contrICP)
+//         return false;
+
+//     componentCP = owned (new ConnectionProxy (compICP));
+//     controllerCP = owned (new ConnectionProxy (contrICP));
+
+//     tresult tres = componentCP->connect (contrICP);
+//     if (tres != kResultTrue)
+//     {
+//         SetErrorMessage("Failed to connect the component with the controller");
+//         return false;
+//     }
+//     tres = controllerCP->connect (compICP);
+//     if (tres != kResultTrue)
+//     {
+//         SetErrorMessage("Failed to connect the component with the controller");
+//         return false;
+//     }
+//     return true;
+// }
+
+// bool PlugProvider::disconnectComponents ()
+// {
+//     if (!componentCP || !controllerCP)
+//         return false;
+
+//     bool res = componentCP->disconnect ();
+//     res &= controllerCP->disconnect ();
+
+//     componentCP.reset ();
+//     controllerCP.reset ();
+
+//     return res;
+// }
 
 void Vst3Plugin::initProcessData() {
     qint32 numBusEIn = component->getBusCount(Vst::kEvent, Vst::kInput);
@@ -357,12 +406,12 @@ bool Vst3Plugin::initProcessor()
 //    initAudioBuffers(Vst::kOutput);
 	
 	//connect processor with controller
-	component->queryInterface(Vst::IConnectionPoint::iid, (void**)&iConnectionPointComponent);
-	editController->queryInterface(Vst::IConnectionPoint::iid, (void**)&iConnectionPointController);
-	if (iConnectionPointComponent && iConnectionPointController) {
-		iConnectionPointComponent->connect(iConnectionPointController);
-		iConnectionPointController->connect(iConnectionPointComponent);
-	}
+    component->queryInterface(Vst::IConnectionPoint::iid, (void**)&iConnectionPointComponent);
+    editController->queryInterface(Vst::IConnectionPoint::iid, (void**)&iConnectionPointController);
+    if (iConnectionPointComponent && iConnectionPointController) {
+        tresult rcmpt = iConnectionPointComponent->connect(iConnectionPointController);
+        tresult rctrl = iConnectionPointController->connect(iConnectionPointComponent);
+    }
 
 	//synchronize controller
 	//shouldn't we do that regularly ?
@@ -846,7 +895,9 @@ void Vst3Plugin::Unload()
 		initAudioBuffers(Vst::kInput, true);
 		initAudioBuffers(Vst::kOutput, true);
 	}
-	
+
+    //disconnectComponents();
+
 	if (iConnectionPointComponent && iConnectionPointController) {
         iConnectionPointComponent->disconnect (iConnectionPointController);
         iConnectionPointController->disconnect (iConnectionPointComponent);
@@ -969,7 +1020,10 @@ void Vst3Plugin::Render()
     }
 
     if(closed) // || GetSleep())
+    {
         return;
+    }
+
 
 	{
 		QMutexLocker lock(&objMutex);
@@ -1359,6 +1413,16 @@ Pin* Vst3Plugin::CreatePin(const ConnectionInfo &info)
 
     if(info.type == PinType::Parameter) {
 
+        if(info.pinNumber==FixedPinNumber::editorVisible) {
+            if(!hasEditor && !IsInError())
+                return 0;
+
+            args.listValues = &listEditorVisible;
+            args.defaultVariantValue = "Hide";
+            args.name = tr("Editor");
+            return PinFactory::MakePin(args);
+        }
+
         if(info.pinNumber==progChangeParameter) {
             args.listValues = &listValues;
             args.defaultVariantValue = 0;
@@ -1378,7 +1442,7 @@ Pin* Vst3Plugin::CreatePin(const ConnectionInfo &info)
                 return 0;
 
             args.listValues = &listIsLearning;
-            args.defaultVariantValue = "off";
+            args.defaultVariantValue = "Off";
             args.name = tr("Learn");
             return PinFactory::MakePin(args);
         }

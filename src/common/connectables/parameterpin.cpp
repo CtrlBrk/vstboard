@@ -383,6 +383,9 @@ void ParameterPin::SetVisible(bool vis)
 void ParameterPin::GetInfos(MsgObject &msg)
 {
     Pin::GetInfos(msg);
+    if(listValues) {
+        msg.prop[MsgObject::Row]=listValues->size();
+    }
 
 //    MsgObject l1(GetIndex());
     _MSGOBJ(l1,GetIndex());

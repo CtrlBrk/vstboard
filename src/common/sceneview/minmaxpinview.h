@@ -56,6 +56,7 @@ Q_OBJECT
         float startDragValue;
         QPointF startDragPos;
         ObjType::Enum parentObjType;
+        qint32 nbValues;
 
     public slots:
         void CursorValueChanged();

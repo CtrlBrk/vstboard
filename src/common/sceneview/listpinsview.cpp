@@ -99,7 +99,7 @@ void ListPinsView::AddPin(const MsgObject &msg)
             angle=.0f;
 
         if(pinInfo.type==PinType::Parameter) {
-            pinView = new MinMaxPinView(GetIndex(), angle,msgCtrl,msg.prop[MsgObject::Id].toInt(),this,pinInfo,config);
+            pinView = new MinMaxPinView(GetIndex(), angle, msgCtrl, msg.prop[MsgObject::Id].toInt(), this, pinInfo, config);
         } else {
             pinView = new ConnectablePinView(GetIndex(), angle, msgCtrl, msg.prop[MsgObject::Id].toInt(), this, pinInfo, config);
         }

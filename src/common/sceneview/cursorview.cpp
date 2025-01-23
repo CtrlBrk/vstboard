@@ -120,18 +120,20 @@ void CursorView::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 void CursorView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     if(drag) {
-        float mouseSensibility = 1.0f/parentWidget()->size().width();
+        float _mouseSensitivity = 1.0f/parentWidget()->size().width();
         if(event->modifiers() & Qt::ControlModifier)
-            mouseSensibility /= 10;
+            _mouseSensitivity /= 10.0f;
         if(event->modifiers() & Qt::ShiftModifier)
-            mouseSensibility /= 10;
+            _mouseSensitivity /= 10.0f;
         if(event->modifiers() & Qt::AltModifier)
-            mouseSensibility /= 10;
+            _mouseSensitivity /= 10.0f;
 
         qreal increm = mapToParent(event->pos()).x() - startDragPos.x();
-        startDragValue += mouseSensibility*increm;
+
+        startDragValue += _mouseSensitivity*increm;
         startDragValue = std::max(.0f,startDragValue);
         startDragValue = std::min(1.0f,startDragValue);
+
 
         event->accept();
         startDragPos=mapToParent(event->pos());
