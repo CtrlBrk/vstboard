@@ -141,6 +141,7 @@ void CursorView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void CursorView::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 {
     drag=false;
+    event->accept();
     QGraphicsWidget::mouseReleaseEvent(event);
 }
 

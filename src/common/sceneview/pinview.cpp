@@ -48,7 +48,8 @@ PinView::PinView(int listPinId, float angle, MsgController *msgCtrl, int objId, 
     pinAngle(angle),
     config(config),
     defaultCursor(Qt::OpenHandCursor),
-    listPinId(listPinId)
+    listPinId(listPinId),
+    contextMenuEnabled(false)
 {
 
     setAcceptDrops(true);
@@ -98,8 +99,10 @@ void PinView::UpdateKeyBinding()
   */
 void PinView::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
-    if(actions().isEmpty())
-        return;
+    if(!contextMenuEnabled) return;
+    contextMenuEnabled = false;
+
+    if(actions().isEmpty()) return;
 
     QMenu menu;
     menu.exec(actions(),event->screenPos(),actions().at(0),event->widget());
@@ -136,6 +139,8 @@ QVariant PinView::itemChange ( GraphicsItemChange change, const QVariant & value
   */
 void PinView::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 {
+    contextMenuEnabled = true;
+
     const KeyBind::MoveBind b = config->keyBinding->GetMoveSortcuts(KeyBind::createCable);
     if(b.input == KeyBind::mouse && b.buttons == event->buttons() && b.modifier == event->modifiers()) {
         startDragMousePos = event->screenPos();
@@ -186,7 +191,6 @@ void PinView::mouseMoveEvent ( QGraphicsSceneMouseEvent  * event )
 
     if(currentLine) {
         RemoveCable(currentLine);
-        currentLine->deleteLater();
         currentLine = 0;
     }
     setCursor(defaultCursor);

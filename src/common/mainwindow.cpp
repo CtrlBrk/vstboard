@@ -364,14 +364,45 @@ void MainWindow::UpdateStylesheet()
 
 void MainWindow::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &/*color*/)
 {
-    // if(groupId==ColorGroups::Theme) {
+    if(groupId==ColorGroups::Theme) {
 
-    //     QString thName = QString("%1").arg(colorId == Colors::Dark ? "dark" : "light");
-    //     QIcon::setThemeName(thName);
-    //     QIcon::setThemeSearchPaths(QStringList(":/" + thName));
 
-    //     return;
-    // }
+
+        QString thName = QString("%1").arg(colorId == Colors::Dark ? "dark" : "light");
+
+       // QIcon::setThemeSearchPaths(QStringList(":/" + thName));
+        QIcon::setThemeName(thName);
+
+        ui->actionSave->setIcon( QIcon::fromTheme(":/" + thName + "/svg/document-save"));
+        ui->actionLoad->setIcon( QIcon::fromTheme(":/" + thName + "/svg/document-open"));
+        ui->actionNew->setIcon( QIcon::fromTheme(":/" + thName + "/svg/document-new"));
+        ui->actionConfig->setIcon( QIcon::fromTheme(":/" + thName + "/svg/configure"));
+        ui->actionDelete->setIcon( QIcon::fromTheme(":/" + thName + "/svg/process-stop"));
+        ui->actionSave_Setup->setIcon( QIcon::fromTheme(":/" + thName + "/svg/document-save"));
+        ui->actionNew_Setup->setIcon( QIcon::fromTheme(":/" + thName + "/svg/document-new"));
+        ui->actionHost_panel->setIcon( QIcon::fromTheme(":/" + thName + "/svg/layer-visible-on"));
+        ui->actionAbout->setIcon( QIcon::fromTheme(":/" + thName + "/svg/help-about"));
+        ui->actionSave_Project_As->setIcon( QIcon::fromTheme(":/" + thName + "/svg/document-save-as"));
+        ui->actionSave_Setup_As->setIcon( QIcon::fromTheme(":/" + thName + "/svg/document-save-as"));
+        ui->actionGroup_panel->setIcon( QIcon::fromTheme(":/" + thName + "/svg/layer-visible-on"));
+        ui->actionProgram_panel->setIcon( QIcon::fromTheme(":/" + thName + "/svg/layer-visible-on"));
+        ui->actionRefresh_Audio_devices->setIcon( QIcon::fromTheme(":/" + thName + "/svg/view-refresh"));
+        ui->actionRefresh_Midi_devices->setIcon( QIcon::fromTheme(":/" + thName + "/svg/view-refresh"));
+        ui->actionRestore_default_layout->setIcon( QIcon::fromTheme(":/" + thName + "/svg/view-refresh"));
+        ui->actionProject_panel->setIcon( QIcon::fromTheme(":/" + thName + "/svg/layer-visible-on"));
+        ui->actionLoad_Setup->setIcon( QIcon::fromTheme(":/" + thName + "/svg/document-open"));
+        ui->actionAppearance->setIcon( QIcon::fromTheme(":/" + thName + "/svg/edit-paste-style"));
+        ui->actionCable->setIcon( QIcon::fromTheme(":/" + thName + "/svg/object-unlocked"));
+        ui->actionValue->setIcon( QIcon::fromTheme(":/" + thName + "/svg/object-locked"));
+        ui->actionKeyBinding->setIcon( QIcon::fromTheme(":/" + thName + "/svg/key-enter"));
+        ui->actionHide_all_editors->setIcon( QIcon::fromTheme(":/" + thName + "/svg/arrow-down"));
+        ui->actionAutoShowGui->setIcon( QIcon::fromTheme(":/" + thName + "/svg/arrow-up"));
+        ui->actionUndo->setIcon( QIcon::fromTheme(":/" + thName + "/svg/edit-undo"));
+        ui->actionRedo->setIcon( QIcon::fromTheme(":/" + thName + "/svg/edit-redo"));
+        ui->actionFullscreen->setIcon( QIcon::fromTheme(":/" + thName + "/svg/view-fullscreen"));
+
+        return;
+    }
 
 
 

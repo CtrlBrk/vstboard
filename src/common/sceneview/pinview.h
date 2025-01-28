@@ -95,6 +95,8 @@ namespace View {
 
         int listPinId;
 
+        bool contextMenuEnabled;
+
     signals:
 //        void ConnectPins(ConnectionInfo outputPin, ConnectionInfo inputPin);
 //        void RemoveCablesFromPin(ConnectionInfo pin);

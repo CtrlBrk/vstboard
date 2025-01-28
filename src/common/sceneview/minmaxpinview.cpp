@@ -217,6 +217,8 @@ void MinMaxPinView::ValueChanged(float newVal)
 
 void MinMaxPinView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    contextMenuEnabled = true;
+
     const KeyBind::MoveBind b = config->keyBinding->GetMoveSortcuts(KeyBind::changeValue);
     if(b.input == KeyBind::mouse && b.buttons == event->buttons() && b.modifier == event->modifiers()) {
         changingValue=true;
@@ -240,6 +242,8 @@ void MinMaxPinView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void MinMaxPinView::mouseMoveEvent ( QGraphicsSceneMouseEvent  * event )
 {
     if(changingValue) {
+        contextMenuEnabled = false;
+
         float _mouseSensitivity = 1.0f/size().width();
         if(event->modifiers() & Qt::ControlModifier)
             _mouseSensitivity /= 10.0f;

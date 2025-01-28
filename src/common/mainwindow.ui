@@ -1014,7 +1014,8 @@
   </widget>
   <action name="actionSave">
    <property name="icon">
-    <iconset theme="document-save"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/document-save.svg</normaloff>:/light/svg/document-save.svg</iconset>
    </property>
    <property name="text">
     <string>Save Project</string>
@@ -1031,7 +1032,8 @@
   </action>
   <action name="actionLoad">
    <property name="icon">
-    <iconset theme="document-open"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/document-open.svg</normaloff>:/light/svg/document-open.svg</iconset>
    </property>
    <property name="text">
     <string>Open Project</string>
@@ -1051,7 +1053,8 @@
   </action>
   <action name="actionNew">
    <property name="icon">
-    <iconset theme="document-new"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/document-new.svg</normaloff>:/light/svg/document-new.svg</iconset>
    </property>
    <property name="text">
     <string>New Project</string>
@@ -1068,7 +1071,8 @@
   </action>
   <action name="actionConfig">
    <property name="icon">
-    <iconset theme="configure"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/configure.svg</normaloff>:/light/svg/configure.svg</iconset>
    </property>
    <property name="text">
     <string>Configuration</string>
@@ -1082,7 +1086,8 @@
   </action>
   <action name="actionDelete">
    <property name="icon">
-    <iconset theme="process-stop"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/process-stop.svg</normaloff>:/light/svg/process-stop.svg</iconset>
    </property>
    <property name="text">
     <string>Delete</string>
@@ -1096,7 +1101,8 @@
   </action>
   <action name="actionSave_Setup">
    <property name="icon">
-    <iconset theme="document-save"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/document-save.svg</normaloff>:/light/svg/document-save.svg</iconset>
    </property>
    <property name="text">
     <string>Save Setup</string>
@@ -1113,7 +1119,8 @@
   </action>
   <action name="actionNew_Setup">
    <property name="icon">
-    <iconset theme="document-new"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/document-new.svg</normaloff>:/light/svg/document-new.svg</iconset>
    </property>
    <property name="text">
     <string>New Setup</string>
@@ -1136,7 +1143,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="layer-visible-on"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/layer-visible-on.svg</normaloff>:/light/svg/layer-visible-on.svg</iconset>
    </property>
    <property name="text">
     <string>Toggle Host panel</string>
@@ -1153,7 +1161,8 @@
   </action>
   <action name="actionAbout">
    <property name="icon">
-    <iconset theme="help-about"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/help-about.svg</normaloff>:/light/svg/help-about.svg</iconset>
    </property>
    <property name="text">
     <string>About...</string>
@@ -1167,7 +1176,8 @@
   </action>
   <action name="actionSave_Project_As">
    <property name="icon">
-    <iconset theme="document_saveas"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/document-save-as.svg</normaloff>:/light/svg/document-save-as.svg</iconset>
    </property>
    <property name="text">
     <string>Save Project As ...</string>
@@ -1184,7 +1194,8 @@
   </action>
   <action name="actionSave_Setup_As">
    <property name="icon">
-    <iconset theme="document-savas"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/document-save-as.svg</normaloff>:/light/svg/document-save-as.svg</iconset>
    </property>
    <property name="text">
     <string>Save Setup As ...</string>
@@ -1207,7 +1218,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="layer-visible-on"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/layer-visible-on.svg</normaloff>:/light/svg/layer-visible-on.svg</iconset>
    </property>
    <property name="text">
     <string>Toggle Group panel</string>
@@ -1233,7 +1245,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="layer-visible-on"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/layer-visible-on.svg</normaloff>:/light/svg/layer-visible-on.svg</iconset>
    </property>
    <property name="text">
     <string>Toggle Program panel</string>
@@ -1250,7 +1263,8 @@
   </action>
   <action name="actionRefresh_Audio_devices">
    <property name="icon">
-    <iconset theme="view-refresh"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/view-refresh.svg</normaloff>:/light/svg/view-refresh.svg</iconset>
    </property>
    <property name="text">
     <string>Refresh Audio devices</string>
@@ -1261,7 +1275,8 @@
   </action>
   <action name="actionRefresh_Midi_devices">
    <property name="icon">
-    <iconset theme="view-refresh"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/view-refresh.svg</normaloff>:/light/svg/view-refresh.svg</iconset>
    </property>
    <property name="text">
     <string>Refresh Midi devices</string>
@@ -1272,7 +1287,8 @@
   </action>
   <action name="actionRestore_default_layout">
    <property name="icon">
-    <iconset theme="view-refresh"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/view-refresh.svg</normaloff>:/light/svg/view-refresh.svg</iconset>
    </property>
    <property name="text">
     <string>Restore default layout</string>
@@ -1300,7 +1316,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="layer-visible-on"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/layer-visible-on.svg</normaloff>:/light/svg/layer-visible-on.svg</iconset>
    </property>
    <property name="text">
     <string>Toggle Project panel</string>
@@ -1311,7 +1328,8 @@
   </action>
   <action name="actionLoad_Setup">
    <property name="icon">
-    <iconset theme="document-load"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/document-open.svg</normaloff>:/light/svg/document-open.svg</iconset>
    </property>
    <property name="text">
     <string>Open Setup</string>
@@ -1334,7 +1352,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="edit-paste-style"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/edit-paste-style.svg</normaloff>:/light/svg/edit-paste-style.svg</iconset>
    </property>
    <property name="text">
     <string>Appearance</string>
@@ -1351,7 +1370,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="object-unlocked"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/object-unlocked.svg</normaloff>:/light/svg/object-unlocked.svg</iconset>
    </property>
    <property name="text">
     <string>Cable</string>
@@ -1368,7 +1388,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="object-locked"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/object-locked.svg</normaloff>:/light/svg/object-locked.svg</iconset>
    </property>
    <property name="text">
     <string>Value</string>
@@ -1382,7 +1403,8 @@
   </action>
   <action name="actionKeyBinding">
    <property name="icon">
-    <iconset theme="key-enter"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/key-enter.svg</normaloff>:/light/svg/key-enter.svg</iconset>
    </property>
    <property name="text">
     <string>Keyboard mapping</string>
@@ -1399,7 +1421,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="arrow-down"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/arrow-down.svg</normaloff>:/light/svg/arrow-down.svg</iconset>
    </property>
    <property name="text">
     <string>Hide all plugins editors</string>
@@ -1416,7 +1439,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="arrow-up"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/arrow-up.svg</normaloff>:/light/svg/arrow-up.svg</iconset>
    </property>
    <property name="text">
     <string>Auto-open plugins editors</string>
@@ -1430,7 +1454,8 @@
   </action>
   <action name="actionUndo">
    <property name="icon">
-    <iconset theme="edit-undo"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/edit-undo.svg</normaloff>:/light/svg/edit-undo.svg</iconset>
    </property>
    <property name="text">
     <string>Undo</string>
@@ -1441,7 +1466,8 @@
   </action>
   <action name="actionRedo">
    <property name="icon">
-    <iconset theme="edit-redo"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/edit-redo.svg</normaloff>:/light/svg/edit-redo.svg</iconset>
    </property>
    <property name="text">
     <string>Redo</string>
@@ -1455,7 +1481,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="view-fullscreen"/>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/light/svg/view-fullscreen.svg</normaloff>:/light/svg/view-fullscreen.svg</iconset>
    </property>
    <property name="text">
     <string>Fullscreen</string>

@@ -19,19 +19,18 @@
 **************************************************************************/
 
 #include "connectablepinview.h"
-#include "connectables/objectfactory.h"
 
 using namespace View;
 
 ConnectablePinView::ConnectablePinView(int listPinId, float angle, MsgController *msgCtrl, int objId, QGraphicsItem * parent, const ConnectionInfo &pinInfo, ViewConfig *config) :
     PinView(listPinId, angle,msgCtrl,objId,parent,pinInfo,config),
-    value(0),
-    isParameter(false),
-    overload(0),
     textItem(0),
     rectVu(0),
+    value(0),
+    isParameter(false),
     colorGroupId(ColorGroups::ND),
     vuColor(Qt::gray),
+    overload(0),
     vuFall(.01f)
 {
     outline = new QGraphicsRectItem(rect(), this);

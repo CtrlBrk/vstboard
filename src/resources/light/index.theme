@@ -1,8 +1,14 @@
 [Icon Theme]
 Name=light
 Comment=light theme
+PanelDefault=22
+PanelSizes=22
+Directories=svg
 
-[actions/24]
+[svg]
 Size=24
-Context=Actions
+Context=Applications
 Type=Fixed
+MinSize=16
+MaxSize=512
+Type=Scalable

@@ -13,69 +13,69 @@
         <file>translations/vstdll_fr.qm</file>
         <file>vst3.png</file>
         <file>asio.png</file>
-        <file>dark/actions/24/arrow-down.svg</file>
-        <file>dark/actions/24/arrow-up.svg</file>
-        <file>dark/actions/24/configure.svg</file>
-        <file>dark/actions/24/document-new.svg</file>
-        <file>dark/actions/24/document-open.svg</file>
-        <file>dark/actions/24/document-save-as.svg</file>
-        <file>dark/actions/24/document-save.svg</file>
-        <file>dark/actions/24/edit-cut.svg</file>
-        <file>dark/actions/24/edit-paste-style.svg</file>
-        <file>dark/actions/24/edit-redo.svg</file>
-        <file>dark/actions/24/edit-undo-history.svg</file>
-        <file>dark/actions/24/edit-undo.svg</file>
-        <file>dark/actions/24/folder-new.svg</file>
-        <file>dark/actions/24/help-about.svg</file>
-        <file>dark/actions/24/key-enter.svg</file>
-        <file>dark/actions/24/layer-visible-on.svg</file>
-        <file>dark/actions/24/object-locked.svg</file>
-        <file>dark/actions/24/object-unlocked.svg</file>
-        <file>dark/actions/24/plugins.svg</file>
-        <file>dark/actions/24/process-stop.svg</file>
-        <file>dark/actions/24/view-refresh.svg</file>
+        <file>dark/svg/arrow-down.svg</file>
+        <file>dark/svg/arrow-up.svg</file>
+        <file>dark/svg/configure.svg</file>
+        <file>dark/svg/document-new.svg</file>
+        <file>dark/svg/document-open.svg</file>
+        <file>dark/svg/document-save-as.svg</file>
+        <file>dark/svg/document-save.svg</file>
+        <file>dark/svg/edit-cut.svg</file>
+        <file>dark/svg/edit-paste-style.svg</file>
+        <file>dark/svg/edit-redo.svg</file>
+        <file>dark/svg/edit-undo-history.svg</file>
+        <file>dark/svg/edit-undo.svg</file>
+        <file>dark/svg/folder-new.svg</file>
+        <file>dark/svg/help-about.svg</file>
+        <file>dark/svg/key-enter.svg</file>
+        <file>dark/svg/layer-visible-on.svg</file>
+        <file>dark/svg/object-locked.svg</file>
+        <file>dark/svg/object-unlocked.svg</file>
+        <file>dark/svg/plugins.svg</file>
+        <file>dark/svg/process-stop.svg</file>
+        <file>dark/svg/view-refresh.svg</file>
         <file>dark/index.theme</file>
-        <file>light/actions/24/arrow-down.svg</file>
-        <file>light/actions/24/arrow-up.svg</file>
-        <file>light/actions/24/configure.svg</file>
-        <file>light/actions/24/document-new.svg</file>
-        <file>light/actions/24/document-open.svg</file>
-        <file>light/actions/24/document-save-as.svg</file>
-        <file>light/actions/24/document-save.svg</file>
-        <file>light/actions/24/edit-cut.svg</file>
-        <file>light/actions/24/edit-paste-style.svg</file>
-        <file>light/actions/24/edit-redo.svg</file>
-        <file>light/actions/24/edit-undo-history.svg</file>
-        <file>light/actions/24/edit-undo.svg</file>
-        <file>light/actions/24/folder-new.svg</file>
-        <file>light/actions/24/help-about.svg</file>
-        <file>light/actions/24/key-enter.svg</file>
-        <file>light/actions/24/layer-visible-on.svg</file>
-        <file>light/actions/24/object-locked.svg</file>
-        <file>light/actions/24/object-unlocked.svg</file>
-        <file>light/actions/24/plugins.svg</file>
-        <file>light/actions/24/process-stop.svg</file>
-        <file>light/actions/24/view-refresh.svg</file>
+        <file>light/svg/arrow-down.svg</file>
+        <file>light/svg/arrow-up.svg</file>
+        <file>light/svg/configure.svg</file>
+        <file>light/svg/document-new.svg</file>
+        <file>light/svg/document-open.svg</file>
+        <file>light/svg/document-save-as.svg</file>
+        <file>light/svg/document-save.svg</file>
+        <file>light/svg/edit-cut.svg</file>
+        <file>light/svg/edit-paste-style.svg</file>
+        <file>light/svg/edit-redo.svg</file>
+        <file>light/svg/edit-undo-history.svg</file>
+        <file>light/svg/edit-undo.svg</file>
+        <file>light/svg/folder-new.svg</file>
+        <file>light/svg/help-about.svg</file>
+        <file>light/svg/key-enter.svg</file>
+        <file>light/svg/layer-visible-on.svg</file>
+        <file>light/svg/object-locked.svg</file>
+        <file>light/svg/object-unlocked.svg</file>
+        <file>light/svg/plugins.svg</file>
+        <file>light/svg/process-stop.svg</file>
+        <file>light/svg/view-refresh.svg</file>
         <file>light/index.theme</file>
         <file>translations/common_fr.ts</file>
         <file>translations/vstboard_fr.ts</file>
         <file>translations/vstdll_fr.ts</file>
         <file>vst.png</file>
-        <file>dark/actions/24/dash.svg</file>
-        <file>dark/actions/24/plus.svg</file>
-        <file>dark/actions/24/view-fullscreen.svg</file>
-        <file>light/actions/24/dash.svg</file>
-        <file>light/actions/24/view-fullscreen.svg</file>
-        <file>dark/actions/24/edit-copy.svg</file>
-        <file>dark/actions/24/edit-paste.svg</file>
-        <file>dark/actions/24/edit-rename.svg</file>
-        <file>light/actions/24/edit-copy.svg</file>
-        <file>light/actions/24/edit-paste.svg</file>
-        <file>light/actions/24/edit-rename.svg</file>
-        <file>light/actions/24/plus.svg</file>
-        <file>dark/actions/24/games-hint.svg</file>
-        <file>dark/actions/24/gtk-stop.svg</file>
-        <file>light/actions/24/games-hint.svg</file>
-        <file>light/actions/24/gtk-stop.svg</file>
+        <file>dark/svg/dash.svg</file>
+        <file>dark/svg/plus.svg</file>
+        <file>dark/svg/view-fullscreen.svg</file>
+        <file>light/svg/dash.svg</file>
+        <file>light/svg/view-fullscreen.svg</file>
+        <file>dark/svg/edit-copy.svg</file>
+        <file>dark/svg/edit-paste.svg</file>
+        <file>dark/svg/edit-rename.svg</file>
+        <file>light/svg/edit-copy.svg</file>
+        <file>light/svg/edit-paste.svg</file>
+        <file>light/svg/edit-rename.svg</file>
+        <file>light/svg/plus.svg</file>
+        <file>dark/svg/games-hint.svg</file>
+        <file>dark/svg/gtk-stop.svg</file>
+        <file>light/svg/games-hint.svg</file>
+        <file>light/svg/gtk-stop.svg</file>
     </qresource>
 </RCC>
