@@ -58,9 +58,7 @@ namespace View {
         QPersistentModelIndex modelIndex;
         QPointF offset;
         ViewConfig *config;
-
         float startDragValue;
-        QPointF startDragPos;
 
     signals:
         void ValueChanged();

@@ -36,7 +36,7 @@ CursorView::CursorView(MsgController *msgCtrl, int objId, bool isMaxi,bool upsid
     value(.0f),
     offset(QPointF(0,0)),
     config(config),
-	startDragValue(.0f)
+    startDragValue(.0f)
 {
     QPolygonF pol;
 
@@ -111,7 +111,6 @@ void CursorView::mousePressEvent ( QGraphicsSceneMouseEvent * event )
         event->accept();
         drag=true;
         startDragValue=value;
-        startDragPos=mapToParent(event->pos());
         return;
     }
     QGraphicsWidget::mousePressEvent(event);
@@ -128,15 +127,11 @@ void CursorView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         if(event->modifiers() & Qt::AltModifier)
             _mouseSensitivity /= 10.0f;
 
-        qreal increm = mapToParent(event->pos()).x() - startDragPos.x();
-
-        startDragValue += _mouseSensitivity*increm;
+        startDragValue += _mouseSensitivity* ( event->pos().x() - event->lastPos().x() );
         startDragValue = std::max(.0f,startDragValue);
         startDragValue = std::min(1.0f,startDragValue);
 
-
         event->accept();
-        startDragPos=mapToParent(event->pos());
         ValueChanged( startDragValue );
         return;
     }
