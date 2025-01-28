@@ -36,6 +36,14 @@ public:
     ~ModifiersWidget();
     void SetData(int mb);
     int GetData();
+
+private slots:
+    void on_shift_checkStateChanged(const Qt::CheckState &arg1);
+
+    void on_ctrl_checkStateChanged(const Qt::CheckState &arg1);
+
+    void on_alt_checkStateChanged(const Qt::CheckState &arg1);
+
 private:
     Ui::ModifiersWidget *ui;
 };
