@@ -311,12 +311,12 @@ void KeyBind::SetDefaults()
         }
 
         {
-            MoveBind b={mouse, Qt::LeftButton, Qt::ControlModifier};
+            MoveBind b={mouse, Qt::RightButton, Qt::NoModifier};
             mapMv.insert( changeValue, b );
         }
 
         {
-            MoveBind b={mouseWheel, Qt::NoButton, Qt::NoModifier};
+            MoveBind b={mouse, Qt::RightButton, Qt::NoModifier};
             mapMv.insert( changeCursorValue, b );
         }
         mapModes.insert("Cable",mapMv);
