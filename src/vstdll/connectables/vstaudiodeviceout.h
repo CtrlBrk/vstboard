@@ -24,9 +24,9 @@
 //#include "precomp.h"
 #include "connectables/object.h"
 #include "connectables/objectinfo.h"
-#include "pluginterfaces/vst/ivstaudioprocessor.h"
+// #include "pluginterfaces/vst/ivstaudioprocessor.h"
 
-#include "views/audiograph.h"
+// #include "views/audiograph.h"
 
 // class AudioBuffer;
 
@@ -46,7 +46,7 @@ namespace Connectables {
         void GetBuffersD(double **buf, int sampleFrames);
 
     protected:
-        View::AudioGraph *audiograph;
+        // View::AudioGraph *audiograph;
 
     public slots:
         void SetBufferSize(qint32 size);

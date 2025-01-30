@@ -47,6 +47,7 @@ namespace View {
         BridgeView *bridgeReturn;
 
     private:
+        // bool eventFilter(QObject *obj, QEvent *event);
         void AddBridge(const MsgObject &msg);
         void AddObject(const MsgObject &msg);
         void AddCable(const MsgObject &msg);

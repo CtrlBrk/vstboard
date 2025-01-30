@@ -33,7 +33,7 @@ namespace View {
     Q_OBJECT
     public:
         explicit ContainerContent(ViewConfig *config, MsgController *msgCtrl, int objId, MainContainerView *parent);
-        virtual void ReceiveMsg(const MsgObject &msg);
+        virtual void ReceiveMsg(const MsgObject &msg) override;
 //        void SetModelIndex(QPersistentModelIndex index);
         QPointF GetDropPos();
         void SetDropPos(const QPointF &pt);
@@ -41,9 +41,10 @@ namespace View {
         ViewConfig *config;
 
     protected:
-        void dragEnterEvent( QGraphicsSceneDragDropEvent *event);
-        void dragMoveEvent( QGraphicsSceneDragDropEvent *event);
-        void dragLeaveEvent( QGraphicsSceneDragDropEvent *event);
+        // bool eventFilter(QObject *obj, QEvent *event);
+        void dragEnterEvent( QGraphicsSceneDragDropEvent *event) override;
+        void dragMoveEvent( QGraphicsSceneDragDropEvent *event) override;
+        void dragLeaveEvent( QGraphicsSceneDragDropEvent *event) override;
 //        void dropEvent( QGraphicsSceneDragDropEvent *event);
 
         QPersistentModelIndex objIndex;
@@ -57,8 +58,8 @@ namespace View {
 
     public slots:
         void UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color);
-        void HighlightStart();
-        void HighlightStop();
+        void HighlightStart() override;
+        void HighlightStop() override;
     };
 }
 #endif // CONTAINERCONTENT_H

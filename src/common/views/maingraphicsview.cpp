@@ -34,6 +34,8 @@ MainGraphicsView::MainGraphicsView(QWidget * parent) :
     config(0),
     moving(false)
 {
+    // qApp->installEventFilter(this);
+
     actZoomIn = new QAction(tr("Zoom in"), this);
     actZoomIn->setShortcutContext(Qt::WidgetShortcut);
     connect(actZoomIn,SIGNAL(triggered()),
@@ -52,6 +54,19 @@ MainGraphicsView::MainGraphicsView(QWidget * parent) :
             this,SLOT(zoomReset()));
     addAction(actZoomReset);
 }
+
+
+// bool MainGraphicsView::eventFilter(QObject *obj, QEvent *event)
+// {
+//     if(event->type() == QEvent::DragEnter) {
+//         qDebug("Enter");
+//     } else if(event->type() == QEvent::Drop) {
+//         qDebug("Drop");
+//     } else if(event->type() == QEvent::GraphicsSceneDrop)   {
+//         qDebug("Scene drop");
+//     }
+//     return QObject::eventFilter(obj, event);
+// }
 
 void MainGraphicsView::SetViewConfig(View::ViewConfig *conf)
 {

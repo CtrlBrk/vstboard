@@ -28,6 +28,8 @@ using namespace View;
 MainContainerView::MainContainerView(ViewConfig *config, MsgController *msgCtrl, int objId) :
         ObjectView(config,msgCtrl,objId)
 {
+    // qApp->installEventFilter(this);
+
     content = new ContainerContent(config,msgCtrl,-1,this);
     content->setAcceptDrops(true);
     connect(content, SIGNAL(ObjectDropped(QGraphicsSceneDragDropEvent*,MsgObject)),
@@ -48,6 +50,19 @@ MainContainerView::~MainContainerView()
         c->deleteLater();
     }
 }
+
+
+// bool MainContainerView::eventFilter(QObject *obj, QEvent *event)
+// {
+//     if(event->type() == QEvent::DragEnter) {
+//         LOG("Enter");
+//     } else if(event->type() == QEvent::Drop) {
+//         LOG("Drop");
+//     } else if(event->type() == QEvent::GraphicsSceneDrop)   {
+//         LOG("Scene drop");
+//     }
+//     return QObject::eventFilter(obj, event);
+// }
 
 void MainContainerView::showEvent(QShowEvent *event)
 {

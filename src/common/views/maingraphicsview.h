@@ -51,6 +51,7 @@ namespace View {
         QAction *actZoomReset;
 
     protected:
+        // bool eventFilter(QObject *obj, QEvent *event);
         void wheelEvent(QWheelEvent * event);
         void mousePressEvent ( QMouseEvent * event );
         void mouseMoveEvent(QMouseEvent *event);

@@ -110,6 +110,23 @@ void VstBoardProcessor::Init()
             programManager, SLOT(UserSetBypass(bool)));
 }
 
+// uint32 PLUGIN_API VstBoardProcessor::getProcessContextRequirements ()
+// {
+//     processContextRequirements.needSystemTime ();
+//     processContextRequirements.needContinousTimeSamples ();
+//     processContextRequirements.needProjectTimeMusic ();
+//     processContextRequirements.needBarPositionMusic ();
+//     processContextRequirements.needCycleMusic ();
+//     processContextRequirements.needSamplesToNextClock ();
+//     processContextRequirements.needTempo ();
+//     processContextRequirements.needTimeSignature ();
+//     processContextRequirements.needChord ();
+//     processContextRequirements.needFrameRate ();
+//     processContextRequirements.needTransportState ();
+
+//     return AudioEffect::getProcessContextRequirements ();
+// }
+
 tresult PLUGIN_API VstBoardProcessor::setIoMode (Vst::IoMode mode)
 {
     return kNotImplemented;

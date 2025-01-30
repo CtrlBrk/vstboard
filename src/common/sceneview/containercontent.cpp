@@ -36,6 +36,9 @@ ContainerContent::ContainerContent(ViewConfig *config, MsgController *msgCtrl, i
     rectAttachRight(0),
     config(config)
 {
+
+    // qApp->installEventFilter(this);
+
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     setGeometry(0,0,50,50);
 
@@ -52,6 +55,26 @@ ContainerContent::ContainerContent(ViewConfig *config, MsgController *msgCtrl, i
 
     HighlightStop();
 }
+
+
+
+// bool ContainerContent::eventFilter(QObject *obj, QEvent *event)
+// {
+//     if(event->type() == QEvent::DragEnter) {
+//         // LOG("Enter");
+//         QDragMoveEvent *mouseEvent = static_cast<QDragMoveEvent*>(event);
+//         LOG(QString("Mouse enter (%1,%2)").arg(mouseEvent->position().x()).arg(mouseEvent->position().y()));
+//     } else if(event->type() == QEvent::DragMove) {
+//         // LOG("DropMove");
+//         QDragMoveEvent *mouseEvent = static_cast<QDragMoveEvent*>(event);
+//         LOG(QString("Mouse move (%1,%2)").arg(mouseEvent->position().x()).arg(mouseEvent->position().y()));
+//     } else if(event->type() == QEvent::Drop) {
+//         // LOG("Drop");
+//     } else if(event->type() == QEvent::GraphicsSceneDrop)   {
+//         // LOG("Scene drop");
+//     }
+//     return QObject::eventFilter(obj, event);
+// }
 
 void ContainerContent::ReceiveMsg(const MsgObject &/*msg*/)
 {
@@ -78,6 +101,7 @@ void ContainerContent::SetDropPos(const QPointF &pt)
 
 void ContainerContent::dragEnterEvent( QGraphicsSceneDragDropEvent *event)
 {
+    // LOG("dragenter")
     //update connecting cable position
     if(event->mimeData()->hasFormat("application/x-pin")) {
         if(PinView::currentLine && PinView::currentLine->scene()==scene()) {
@@ -99,6 +123,7 @@ void ContainerContent::dragEnterEvent( QGraphicsSceneDragDropEvent *event)
 
 void ContainerContent::dragMoveEvent( QGraphicsSceneDragDropEvent *event)
 {
+    // LOG("dragmove")
     //update connecting cable position
     if(event->mimeData()->hasFormat("application/x-pin")) {
         if(PinView::currentLine) {

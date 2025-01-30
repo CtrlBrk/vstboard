@@ -33,9 +33,10 @@
 //#include "public.sdk/source/vst/hosting/eventlist.h"
 //#include "public.sdk/source/vst/hosting/parameterchanges.h"
 //#include "public.sdk/source/vst/hosting/stringconvert.h"
-#include "public.sdk/source/vst/hosting/connectionproxy.h"
+// #include "public.sdk/source/vst/hosting/connectionproxy.h"
 //#include "pluginterfaces/vst/ivsteditcontroller.h"
 //#include "pluginterfaces/vst/ivstmidicontrollers.h"
+#include "public.sdk/source/common/memorystream.h"
 
 namespace Steinberg {
     FUnknown* gStandardPluginContext = 0;

@@ -28,15 +28,15 @@ using namespace Connectables;
 VstAudioDeviceOut::VstAudioDeviceOut(MainHost *myHost, int index, const ObjectInfo &info) :
     Object(myHost,index, info)
 {
-    audiograph = new View::AudioGraph();
-    audiograph ->resize(800, 600);
-    audiograph ->show();
+    // audiograph = new View::AudioGraph();
+    // audiograph ->resize(800, 600);
+    // audiograph ->show();
 }
 
 VstAudioDeviceOut::~VstAudioDeviceOut()
 {
     Close();
-    delete audiograph;
+    // delete audiograph;
 }
 
 bool VstAudioDeviceOut::Close()
@@ -75,9 +75,9 @@ void VstAudioDeviceOut::GetBuffers(float **buf, int sampleFrames)
         abuf->ConsumeStack();
         abuf->DumpToBuffer(buf[cpt],sampleFrames);
 
-        if(cpt==0) {
-            audiograph->UpdateGraph((float*)abuf->GetPointer(),sampleFrames);
-        }
+        // if(cpt==0) {
+            // audiograph->UpdateGraph((float*)abuf->GetPointer(),sampleFrames);
+        // }
 
         abuf->ResetStackCounter();
         cpt++;
