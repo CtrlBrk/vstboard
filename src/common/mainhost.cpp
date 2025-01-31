@@ -160,6 +160,7 @@ void MainHost::Init()
 #endif
 #ifdef VSTSDK
     vst3Host = new Vst3Host(this);
+    //PluginContextFactory::instance ().setPluginContext (vst3Host);
     connect(this,SIGNAL(SampleRateChanged(float)),
             vst3Host,SLOT(SetSampleRate(float)));
 #endif
