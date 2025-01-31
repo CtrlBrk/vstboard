@@ -45,7 +45,7 @@ namespace View {
         void dragEnterEvent( QGraphicsSceneDragDropEvent *event) override;
         void dragMoveEvent( QGraphicsSceneDragDropEvent *event) override;
         void dragLeaveEvent( QGraphicsSceneDragDropEvent *event) override;
-//        void dropEvent( QGraphicsSceneDragDropEvent *event);
+       // void dropEvent( QGraphicsSceneDragDropEvent *event);
 
         QPersistentModelIndex objIndex;
         QPointF dropPos;

@@ -67,7 +67,9 @@ ContainerContent::ContainerContent(ViewConfig *config, MsgController *msgCtrl, i
 //     } else if(event->type() == QEvent::DragMove) {
 //         // LOG("DropMove");
 //         QDragMoveEvent *mouseEvent = static_cast<QDragMoveEvent*>(event);
-//         LOG(QString("Mouse move (%1,%2)").arg(mouseEvent->position().x()).arg(mouseEvent->position().y()));
+//         LOG(QString("Mouse move (%1,%2)")  .arg(mouseEvent->position().x()) .arg(mouseEvent->position().y())  );
+//         QObject * src = mouseEvent->source();
+//         LOG(src->objectName())
 //     } else if(event->type() == QEvent::Drop) {
 //         // LOG("Drop");
 //     } else if(event->type() == QEvent::GraphicsSceneDrop)   {

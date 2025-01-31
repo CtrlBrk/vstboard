@@ -86,6 +86,7 @@ namespace View {
         REFCOUNT_METHODS(FObject)
 
     protected:
+        // bool eventFilter(QObject *obj, QEvent *event);
         void resizeEvent ( QResizeEvent * event ) override;
         void showEvent ( QShowEvent * event ) override;
         void closeEvent ( QCloseEvent * event ) override;
@@ -94,6 +95,7 @@ namespace View {
         QModelIndex modelIndex;
 
     private:
+
         Ui::VstPluginWindow *ui;
         bool canResize;
 

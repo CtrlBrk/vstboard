@@ -33,6 +33,7 @@ namespace View {
         QWidget *GetParking() {return myParking;}
 
     protected:
+        // bool eventFilter(QObject *obj, QEvent *event);
         void dragEnterEvent( QGraphicsSceneDragDropEvent *event);
         void dragMoveEvent( QGraphicsSceneDragDropEvent *event);
         void dragLeaveEvent( QGraphicsSceneDragDropEvent *event);

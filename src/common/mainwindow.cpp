@@ -59,7 +59,8 @@ void MainWindow::UpdateDebugGraph(QVector<float> grph)  {
     if(debugPixmap) {
         int w = debugPix.width();
         int h = debugPix.height();
-        int bs = (int)myHost->GetBufferSize();
+        //TODO get buffer size from host via message
+        int bs = 500; //(int)myHost->GetBufferSize();
         if(w != bs) {
             debugPix = QPixmap(bs,200);
         }
@@ -200,6 +201,12 @@ void MainWindow::ReceiveMsg(const MsgObject &msg)
             return;
         }
 
+        if(msg.prop.contains(MsgObject::Update)) {
+            if(msg.prop[MsgObject::Update].toString() == "recentFiles") {
+                updateRecentFileActions();
+                return;
+            }
+        }
         return;
     }
 
@@ -366,40 +373,38 @@ void MainWindow::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, co
 {
     if(groupId==ColorGroups::Theme) {
 
-
-
         QString thName = QString("%1").arg(colorId == Colors::Dark ? "dark" : "light");
 
-       // QIcon::setThemeSearchPaths(QStringList(":/" + thName));
+        QIcon::setThemeSearchPaths(QStringList(":/"));
         QIcon::setThemeName(thName);
 
-        ui->actionSave->setIcon( QIcon::fromTheme(":/" + thName + "/svg/document-save"));
-        ui->actionLoad->setIcon( QIcon::fromTheme(":/" + thName + "/svg/document-open"));
-        ui->actionNew->setIcon( QIcon::fromTheme(":/" + thName + "/svg/document-new"));
-        ui->actionConfig->setIcon( QIcon::fromTheme(":/" + thName + "/svg/configure"));
-        ui->actionDelete->setIcon( QIcon::fromTheme(":/" + thName + "/svg/process-stop"));
-        ui->actionSave_Setup->setIcon( QIcon::fromTheme(":/" + thName + "/svg/document-save"));
-        ui->actionNew_Setup->setIcon( QIcon::fromTheme(":/" + thName + "/svg/document-new"));
-        ui->actionHost_panel->setIcon( QIcon::fromTheme(":/" + thName + "/svg/layer-visible-on"));
-        ui->actionAbout->setIcon( QIcon::fromTheme(":/" + thName + "/svg/help-about"));
-        ui->actionSave_Project_As->setIcon( QIcon::fromTheme(":/" + thName + "/svg/document-save-as"));
-        ui->actionSave_Setup_As->setIcon( QIcon::fromTheme(":/" + thName + "/svg/document-save-as"));
-        ui->actionGroup_panel->setIcon( QIcon::fromTheme(":/" + thName + "/svg/layer-visible-on"));
-        ui->actionProgram_panel->setIcon( QIcon::fromTheme(":/" + thName + "/svg/layer-visible-on"));
-        ui->actionRefresh_Audio_devices->setIcon( QIcon::fromTheme(":/" + thName + "/svg/view-refresh"));
-        ui->actionRefresh_Midi_devices->setIcon( QIcon::fromTheme(":/" + thName + "/svg/view-refresh"));
-        ui->actionRestore_default_layout->setIcon( QIcon::fromTheme(":/" + thName + "/svg/view-refresh"));
-        ui->actionProject_panel->setIcon( QIcon::fromTheme(":/" + thName + "/svg/layer-visible-on"));
-        ui->actionLoad_Setup->setIcon( QIcon::fromTheme(":/" + thName + "/svg/document-open"));
-        ui->actionAppearance->setIcon( QIcon::fromTheme(":/" + thName + "/svg/edit-paste-style"));
-        ui->actionCable->setIcon( QIcon::fromTheme(":/" + thName + "/svg/object-unlocked"));
-        ui->actionValue->setIcon( QIcon::fromTheme(":/" + thName + "/svg/object-locked"));
-        ui->actionKeyBinding->setIcon( QIcon::fromTheme(":/" + thName + "/svg/key-enter"));
-        ui->actionHide_all_editors->setIcon( QIcon::fromTheme(":/" + thName + "/svg/arrow-down"));
-        ui->actionAutoShowGui->setIcon( QIcon::fromTheme(":/" + thName + "/svg/arrow-up"));
-        ui->actionUndo->setIcon( QIcon::fromTheme(":/" + thName + "/svg/edit-undo"));
-        ui->actionRedo->setIcon( QIcon::fromTheme(":/" + thName + "/svg/edit-redo"));
-        ui->actionFullscreen->setIcon( QIcon::fromTheme(":/" + thName + "/svg/view-fullscreen"));
+        ui->actionSave->setIcon( QIcon::fromTheme("document-save"));
+        ui->actionLoad->setIcon( QIcon::fromTheme("document-open"));
+        ui->actionNew->setIcon( QIcon::fromTheme("document-new"));
+        ui->actionConfig->setIcon( QIcon::fromTheme("configure"));
+        ui->actionDelete->setIcon( QIcon::fromTheme("process-stop"));
+        ui->actionSave_Setup->setIcon( QIcon::fromTheme("document-save"));
+        ui->actionNew_Setup->setIcon( QIcon::fromTheme("document-new"));
+        ui->actionHost_panel->setIcon( QIcon::fromTheme("layer-visible-on"));
+        ui->actionAbout->setIcon( QIcon::fromTheme("help-about"));
+        ui->actionSave_Project_As->setIcon( QIcon::fromTheme("document-save-as"));
+        ui->actionSave_Setup_As->setIcon( QIcon::fromTheme("document-save-as"));
+        ui->actionGroup_panel->setIcon( QIcon::fromTheme("layer-visible-on"));
+        ui->actionProgram_panel->setIcon( QIcon::fromTheme("layer-visible-on"));
+        ui->actionRefresh_Audio_devices->setIcon( QIcon::fromTheme("view-refresh"));
+        ui->actionRefresh_Midi_devices->setIcon( QIcon::fromTheme("view-refresh"));
+        ui->actionRestore_default_layout->setIcon( QIcon::fromTheme("view-refresh"));
+        ui->actionProject_panel->setIcon( QIcon::fromTheme("layer-visible-on"));
+        ui->actionLoad_Setup->setIcon( QIcon::fromTheme("document-open"));
+        ui->actionAppearance->setIcon( QIcon::fromTheme("edit-paste-style"));
+        ui->actionCable->setIcon( QIcon::fromTheme("object-unlocked"));
+        ui->actionValue->setIcon( QIcon::fromTheme("object-locked"));
+        ui->actionKeyBinding->setIcon( QIcon::fromTheme("key-enter"));
+        ui->actionHide_all_editors->setIcon( QIcon::fromTheme("arrow-down"));
+        ui->actionAutoShowGui->setIcon( QIcon::fromTheme("arrow-up"));
+        ui->actionUndo->setIcon( QIcon::fromTheme("edit-undo"));
+        ui->actionRedo->setIcon( QIcon::fromTheme("edit-redo"));
+        ui->actionFullscreen->setIcon( QIcon::fromTheme("view-fullscreen"));
 
         return;
     }
@@ -424,15 +429,21 @@ void MainWindow::changeEvent(QEvent *e)
     }
 }
 
+
 void MainWindow::BuildObjectsTree()
 {
-//    objectsTreeModel = new ListObjectsModel(this,32,this);
-//    ui->treeObjects->setModel(objectsTreeModel);
-
+    /*
+    //TODO get model from host
     objectsTreeModel->clear();
     objectsTreeModel->invisibleRootItem()->appendRow(
         myHost->mainContainer->GetModel()
     );
+    */
+
+
+//    objectsTreeModel = new ListObjectsModel(this,32,this);
+//    ui->treeObjects->setModel(objectsTreeModel);
+
 //    ui->treeObjects->expandAll();
 
 //    QStandardItem *parentItem=0;
@@ -708,20 +719,6 @@ void MainWindow::readSettings()
     LoadProgramsFont();
 }
 
-void MainWindow::LoadDefaultFiles()
-{
-    //load default files
-    QString file = ConfigDialog::defaultSetupFile(settings);
-    if(!file.isEmpty())
-        myHost->LoadSetupFile( file );
-
-    file = ConfigDialog::defaultProjectFile(settings);
-    if(!file.isEmpty())
-        myHost->LoadProjectFile( file );
-
-    updateRecentFileActions();
-}
-
 void MainWindow::currentFileChanged(const MsgObject &msg)
 {
     QFileInfo setup( msg.prop[MsgObject::Setup].toString() );
@@ -844,7 +841,10 @@ void MainWindow::openRecentSetup()
     if(!action)
         return;
 
-    myHost->LoadSetupFile( action->data().toString() );
+    _MSGOBJ(msg,FixedObjId::mainHost);
+    msg.prop[MsgObject::FilesToLoad]=action->data().toString();
+    SendMsg(msg);
+    // myHost->LoadSetupFile( action->data().toString() );
 }
 
 void MainWindow::openRecentProject()
@@ -853,7 +853,10 @@ void MainWindow::openRecentProject()
     if(!action)
         return;
 
-    myHost->LoadProjectFile( action->data().toString() );
+    _MSGOBJ(msg,FixedObjId::mainHost);
+    msg.prop[MsgObject::FilesToLoad]=action->data().toString();
+    SendMsg(msg);
+    // myHost->LoadProjectFile( action->data().toString() );
 }
 
 
@@ -875,7 +878,7 @@ void MainWindow::on_actionAppearance_toggled(bool arg1)
     if(arg1) {
         if(viewConfigDlg)
             return;
-        viewConfigDlg = new View::ViewConfigDialog(myHost,this);
+        viewConfigDlg = new View::ViewConfigDialog(this);
         connect(viewConfigDlg, SIGNAL(destroyed()),
                 this, SLOT(OnViewConfigClosed()));
         viewConfigDlg->setAttribute( Qt::WA_DeleteOnClose, true );
@@ -942,6 +945,8 @@ void MainWindow::on_actionKeyBinding_triggered()
 
 void MainWindow::on_actionHide_all_editors_triggered(bool checked)
 {
+    //TODO get list of object via message
+    /*
     if(checked) {
         listClosedEditors.clear();
         foreach(QSharedPointer<Connectables::Object>obj, myHost->objFactory->GetListObjects()) {
@@ -957,6 +962,7 @@ void MainWindow::on_actionHide_all_editors_triggered(bool checked)
         }
         listClosedEditors.clear();
     }
+*/
 }
 
 void MainWindow::on_actionAutoShowGui_triggered(bool checked)

@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
     host.Open();
     w.readSettings();
     w.show();
-    w.LoadDefaultFiles();
+    host.LoadDefaultFiles();
 
     app.exec();
 

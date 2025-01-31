@@ -28,8 +28,30 @@ ObjectDropZone::ObjectDropZone(MsgController *msgCtrl, int objId, QGraphicsItem 
     MsgHandler(msgCtrl,objId),
     myParking(parking)
 {
+    // qApp->installEventFilter(this);
     setAcceptDrops(true);
 }
+
+
+// bool ObjectDropZone::eventFilter(QObject *obj, QEvent *event)
+// {
+//     if(event->type() == QEvent::DragEnter) {
+//         // LOG("Enter");
+//         QDragMoveEvent *mouseEvent = static_cast<QDragMoveEvent*>(event);
+//         LOG(QString("Mouse enter (%1,%2)").arg(mouseEvent->position().x()).arg(mouseEvent->position().y()));
+//     } else if(event->type() == QEvent::DragMove) {
+//         // LOG("DropMove");
+//         QDragMoveEvent *mouseEvent = static_cast<QDragMoveEvent*>(event);
+//         LOG(QString("Mouse move (%1,%2)")  .arg(mouseEvent->position().x()) .arg(mouseEvent->position().y())  );
+//         QObject * src = mouseEvent->source();
+//         LOG(src->objectName())
+//     } else if(event->type() == QEvent::Drop) {
+//         // LOG("Drop");
+//     } else if(event->type() == QEvent::GraphicsSceneDrop)   {
+//         // LOG("Scene drop");
+//     }
+//     return QObject::eventFilter(obj, event);
+// }
 
 void ObjectDropZone::dragEnterEvent( QGraphicsSceneDragDropEvent *event)
 {

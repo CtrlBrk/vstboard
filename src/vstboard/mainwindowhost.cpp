@@ -88,7 +88,11 @@ void MainWindowHost::Init()
 
     BuildListTools();
 
-    myHost->SetSampleRate( ConfigDialog::defaultSampleRate(settings) );
+    _MSGOBJ(msg,FixedObjId::mainHost);
+    msg.prop[MsgObject::Type]="sampleRate";
+    msg.prop[MsgObject::Value]=ConfigDialog::defaultSampleRate(settings);
+    SendMsg(msg);
+    // myHost->SetSampleRate( ConfigDialog::defaultSampleRate(settings) );
 }
 
 void MainWindowHost::closeEvent(QCloseEvent *event)

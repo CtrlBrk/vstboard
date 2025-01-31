@@ -934,6 +934,26 @@ void MainHost::GetTempo(int &tempo, int &sign1, int &sign2)
 //    }
 //}
 
+
+void MainHost::LoadDefaultFiles()
+{
+    //load default files
+    QString file = ConfigDialog::defaultSetupFile(settings);
+    if(!file.isEmpty()) {
+        LoadSetupFile( file );
+    }
+
+    file = ConfigDialog::defaultProjectFile(settings);
+    if(!file.isEmpty()) {
+        LoadProjectFile( file );
+    }
+
+    //updateRecentFileActions();
+    _MSGOBJ(msg,FixedObjId::mainWindow);
+    msg.prop[MsgObject::Update]="recentFiles";
+    SendMsg(msg);
+}
+
 bool MainHost::LoadSetupFile(const QString &filename)
 {
 
@@ -1095,8 +1115,8 @@ void MainHost::ClearSetup()
     EnableSolverUpdate(false);
     SetupHostContainer();
     EnableSolverUpdate(true);
-    if(mainWindow)
-        mainWindow->viewConfig->LoadFromRegistry();
+    // if(mainWindow)
+        // mainWindow->viewConfig->LoadFromRegistry();
 
     currentSetupFile = "";
     currentFileChanged();
@@ -1260,6 +1280,10 @@ void MainHost::ReceiveMsg(const MsgObject &msg)
 {
 
     if(msg.objIndex == FixedObjId::mainHost) {
+
+        if(msg.prop.contains(MsgObject::Type) && msg.prop[MsgObject::Type]=="sampleRate") {
+            SetSampleRate( msg.prop[MsgObject::Value].toFloat() );
+        }
 
         if(msg.prop.contains(MsgObject::Undo)) {
             undoStack.undo();

@@ -39,7 +39,7 @@ namespace View {
         Q_OBJECT
 
     public:
-        explicit ViewConfigDialog(MainHost *myHost, QWidget *parent = 0);
+        explicit ViewConfigDialog(MainWindow *myWindow);
         ~ViewConfigDialog();
 
     private:
@@ -62,7 +62,7 @@ namespace View {
         Ui::ViewConfigDialog *ui;
 
         /// pointer to the MainHost
-        MainHost *myHost;
+        MainWindow *myWindow;
 
         /// pointer to the config
         ViewConfig *conf;

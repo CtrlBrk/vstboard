@@ -2,7 +2,7 @@
 <ui version="4.0">
  <class>VstPluginWindow</class>
  <widget class="QFrame" name="VstPluginWindow">
-  <property name="enabled">
+   <property name="enabled">
    <bool>true</bool>
   </property>
   <property name="geometry">

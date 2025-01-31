@@ -176,6 +176,7 @@ public slots:
     void SetTempo(int tempo=120, int sign1=0, int sign2=0);
     virtual void Render();
 //    bool LoadFile(const QString &filename);
+    void LoadDefaultFiles();
     bool LoadSetupFile(const QString &filename = QString());
     bool LoadProjectFile(const QString &filename = QString());
     void ReloadProject();

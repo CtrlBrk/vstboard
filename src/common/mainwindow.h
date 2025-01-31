@@ -110,7 +110,6 @@ signals:
 
 public slots:
     void OnViewConfigClosed();
-    void LoadDefaultFiles();
     void SetProgramsFont(const QFont &f);
     void LoadProgramsFont();
     void UpdateDebugGraph(QVector<float> grph);
