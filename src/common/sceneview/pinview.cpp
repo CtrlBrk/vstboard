@@ -190,7 +190,7 @@ void PinView::mouseMoveEvent ( QGraphicsSceneMouseEvent  * event )
     drag->exec(Qt::CopyAction);
 
     if(currentLine) {
-        RemoveCable(currentLine);
+        delete currentLine;
         currentLine = 0;
     }
     setCursor(defaultCursor);

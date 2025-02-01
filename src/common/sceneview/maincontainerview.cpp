@@ -175,7 +175,7 @@ void MainContainerView::AddCable(const MsgObject &msg)
         return;
     }
     CableView *cable = new CableView(msgCtrl, msg.prop[MsgObject::Id].toInt(), pinOut, pinIn, this, config);
-    cable->ReceiveMsg(msg);
+   // cable->ReceiveMsg(msg);
     pinOut->AddCable(cable);
     pinIn->AddCable(cable);
     cable->ReceiveMsg(msg);

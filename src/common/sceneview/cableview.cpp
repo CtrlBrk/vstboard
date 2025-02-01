@@ -23,17 +23,16 @@
 using namespace View;
 
 CableView::CableView(MsgController *msgCtrl, int objId, PinView *pinOut, PinView *pinIn, QGraphicsItem *parent, ViewConfig *config)
+    : QObject(),
 #ifndef SIMPLE_CABLES
-    : QGraphicsPathItem(parent),
+    QGraphicsPathItem(parent),
 #else
-    : QGraphicsLineItem(parent),
+    QGraphicsLineItem(parent),
 #endif
-
-    QObject(),
     MsgHandler(msgCtrl,objId),
+    config(0),
     pinOut(pinOut),
-    pinIn(pinIn),
-	config(0)
+    pinIn(pinIn)
 {
     setPen( config->GetColor(ColorGroups::Panel,Colors::Lines) );
     connect( config, SIGNAL(ColorChanged(ColorGroups::Enum,Colors::Enum,QColor)),
@@ -41,16 +40,16 @@ CableView::CableView(MsgController *msgCtrl, int objId, PinView *pinOut, PinView
 }
 
 CableView::CableView(MsgController *msgCtrl, int objId, PinView *pinOut, const QPointF &PtIn, QGraphicsItem *parent, ViewConfig *config)
+    : QObject(),
 #ifndef SIMPLE_CABLES
-    : QGraphicsPathItem(parent),
+    QGraphicsPathItem(parent),
 #else
-    : QGraphicsLineItem(parent),
+    QGraphicsLineItem(parent),
 #endif
-    QObject(),
     MsgHandler(msgCtrl,objId),
+    PtIn(PtIn),
     pinOut(pinOut),
     pinIn(0),
-    PtIn(PtIn),
     config(config)
 {
     setPen( config->GetColor(ColorGroups::Panel,Colors::Lines) );

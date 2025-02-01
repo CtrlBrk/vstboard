@@ -116,8 +116,8 @@ void ContainerContent::dragEnterEvent( QGraphicsSceneDragDropEvent *event)
         return;
     }
 
-    QString fName;
-    QFileInfo info;
+    // QString fName;
+    // QFileInfo info;
 
 
     ObjectDropZone::dragEnterEvent(event);
