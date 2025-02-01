@@ -119,13 +119,13 @@ SOURCES += \
     views/vst3contextmenu.cpp
 
 SOURCES += \
-    views/programlist.cpp \
     views/filebrowser.cpp \
     views/grouplistview.cpp \
     views/proglistview.cpp \
     views/aboutdialog.cpp \
     views/configdialog.cpp \
     views/maingraphicsview.cpp \
+    views/programlistwidget.cpp \
     views/splash.cpp \
     views/viewconfigdialog.cpp \
     views/viewconfig.cpp \
@@ -234,12 +234,12 @@ HEADERS += \
 
 HEADERS += \
     views/configdialog.h \
-    views/programlist.h \
     views/filebrowser.h \
     views/grouplistview.h \
     views/proglistview.h \
     views/aboutdialog.h \
     views/maingraphicsview.h \
+    views/programlistwidget.h \
     views/splash.h \
     views/viewconfigdialog.h \
     views/viewconfig.h \
@@ -272,8 +272,8 @@ FORMS += \
     mainwindow.ui \
     views/configdialog.ui \
     views/filebrowser.ui \
-    views/programlist.ui \
     views/aboutdialog.ui \
+    views/programlistwidget.ui \
     views/scripteditor.ui \
     views/splash.ui \
     views/viewconfigdialog.ui \

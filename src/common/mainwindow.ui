@@ -491,7 +491,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="ProgramList" name="Programs" native="true">
+      <widget class="ProgramListWidget" name="Programs" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -1527,9 +1527,9 @@
    </slots>
   </customwidget>
   <customwidget>
-   <class>ProgramList</class>
+   <class>ProgramListWidget</class>
    <extends>QWidget</extends>
-   <header>views/programlist.h</header>
+   <header>views/programlistwidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

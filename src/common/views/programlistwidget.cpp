@@ -18,27 +18,27 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 
-#include "programlist.h"
+#include "programlistwidget.h"
 #include "mainhost.h"
-#include "ui_programlist.h"
+#include "ui_programlistwidget.h"
 //#include "models/programsmodel.h"
 #include "models/groupsprogramsmodel.h"
 #include "settings.h"
 
-ProgramList::ProgramList(QWidget *parent) :
+ProgramListWidget::ProgramListWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ProgramList),
+    ui(new Ui::ProgramListWidget),
     model(0)
 {
     ui->setupUi(this);
 }
 
-ProgramList::~ProgramList()
+ProgramListWidget::~ProgramListWidget()
 {
     delete ui;
 }
 
-void ProgramList::SetModel(GroupsProgramsModel *mod)
+void ProgramListWidget::SetModel(GroupsProgramsModel *mod)
 {
     if(!mod)
         return;
@@ -63,13 +63,13 @@ void ProgramList::SetModel(GroupsProgramsModel *mod)
             model, SLOT(UserChangeGroupAutosave(Qt::CheckState)));
 }
 
-void ProgramList::writeSettings(Settings *settings)
+void ProgramListWidget::writeSettings(Settings *settings)
 {
     settings->SetSetting("ProgramList/geometry", saveGeometry());
     settings->SetSetting("ProgramList/state", ui->splitter->saveState());
 }
 
-void ProgramList::readSettings(Settings *settings)
+void ProgramListWidget::readSettings(Settings *settings)
 {
     if(settings->SettingDefined("ProgramList/geometry")) {
         restoreGeometry(settings->GetSetting("ProgramList/geometry").toByteArray());
@@ -79,7 +79,7 @@ void ProgramList::readSettings(Settings *settings)
     }
 }
 
-void ProgramList::resetSettings()
+void ProgramListWidget::resetSettings()
 {
     int w = ui->splitter->width();
     QList<int>widths;
@@ -87,29 +87,29 @@ void ProgramList::resetSettings()
     ui->splitter->setSizes(widths);
 }
 
-void ProgramList::OnProgAutoSaveChanged(const Qt::CheckState state)
+void ProgramListWidget::OnProgAutoSaveChanged(const Qt::CheckState state)
 {
     ui->ProgAutosave->setCheckState( state );
 }
 
-void ProgramList::OnGroupAutoSaveChanged(const Qt::CheckState state)
+void ProgramListWidget::OnGroupAutoSaveChanged(const Qt::CheckState state)
 {
     ui->GroupAutosave->setCheckState(state);
 }
 
-void ProgramList::on_GroupAutosave_stateChanged(int state)
+void ProgramListWidget::on_GroupAutosave_stateChanged(int state)
 {
     SetAutosaveToolTip( ui->GroupAutosave );
     emit GroupAutoSave( (Qt::CheckState)state );
 }
 
-void ProgramList::on_ProgAutosave_stateChanged(int state)
+void ProgramListWidget::on_ProgAutosave_stateChanged(int state)
 {
     SetAutosaveToolTip( ui->ProgAutosave );
     emit ProgAutoSave( (Qt::CheckState)state );
 }
 
-void ProgramList::SetAutosaveToolTip( QCheckBox *chkBox )
+void ProgramListWidget::SetAutosaveToolTip( QCheckBox *chkBox )
 {
     switch( chkBox->checkState() ) {
         case Qt::Checked :

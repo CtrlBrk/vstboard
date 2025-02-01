@@ -38,9 +38,9 @@
 //#include "pluginterfaces/vst/ivstmidicontrollers.h"
 #include "public.sdk/source/common/memorystream.h"
 
-namespace Steinberg {
-    FUnknown* gStandardPluginContext = 0;
-}
+// namespace Steinberg {
+    // FUnknown* gStandardPluginContext = 0;
+// }
 
 using namespace Connectables;
 using namespace Steinberg;
@@ -71,7 +71,10 @@ Vst3Plugin::Vst3Plugin(MainHost *host, int index, const ObjectInfo &info) :
     progChangeParameter(-1),
     bypassParameter(FixedPinNumber::bypass)
 {
-    PluginContextFactory::instance ().setPluginContext (host->vst3Host);
+
+    FUnknown *myVstHost;
+    myHost->vst3Host->queryInterface(IHostApplication::iid, (void**)&myVstHost);
+    PluginContextFactory::instance ().setPluginContext ( myVstHost );
 
     for(int i=0;i<128;i++) {
         listValues << i;
@@ -81,7 +84,7 @@ Vst3Plugin::Vst3Plugin(MainHost *host, int index, const ObjectInfo &info) :
     listIsLearning << "Off" << "Learn" << "Unlearn";
     listEditorVisible << "Hide" << "Show";
 
-    gStandardPluginContext = myHost->vst3Host;
+    // gStandardPluginContext = myHost->vst3Host;
 }
 
 Vst3Plugin::~Vst3Plugin()
@@ -269,6 +272,7 @@ bool Vst3Plugin::initPlugin()
         return true;
     }
 
+
     // component->initialize (gStandardPluginContext);
 
 //    if (component->queryInterface (Vst::IEditController::iid, (void**)&editController) != kResultTrue)
@@ -283,9 +287,10 @@ bool Vst3Plugin::initPlugin()
         return true;
     }
 
-    bool res = false;
-
-    res = (editController->initialize (gStandardPluginContext)== kResultOk);
+    FUnknown *myVstHost;
+    myHost->vst3Host->queryInterface(IHostApplication::iid, (void**)&myVstHost);
+    PluginContextFactory::instance ().setPluginContext ( myVstHost );
+    bool res = (editController->initialize (myVstHost)== kResultOk);
     if(!res) {
 
     }
@@ -415,6 +420,8 @@ bool Vst3Plugin::initProcessor()
 //    initAudioBuffers(Vst::kInput);
 //    initAudioBuffers(Vst::kOutput);
 
+
+
     //connect processor with controller
     component->queryInterface(Vst::IConnectionPoint::iid, (void**)&iConnectionPointComponent);
     editController->queryInterface(Vst::IConnectionPoint::iid, (void**)&iConnectionPointController);
@@ -422,6 +429,9 @@ bool Vst3Plugin::initProcessor()
         tresult rcmpt = iConnectionPointComponent->connect(iConnectionPointController);
         tresult rctrl = iConnectionPointController->connect(iConnectionPointComponent);
     }
+
+    uint32 latency = processor->getLatencySamples();
+    SetInitDelay(latency);
 
     //synchronize controller
     //shouldn't we do that regularly ?
@@ -880,6 +890,8 @@ void Vst3Plugin::SetSleep(bool sleeping)
                 initAudioBuffers(Vst::kInput);
                 initAudioBuffers(Vst::kOutput);
                 component->setActive(true);
+                uint32 latency = processor->getLatencySamples();
+                SetInitDelay(latency);
                 processor->setProcessing(true);
             }
         }

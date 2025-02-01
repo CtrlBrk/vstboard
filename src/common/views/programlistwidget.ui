@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ProgramList</class>
- <widget class="QWidget" name="ProgramList">
+ <class>ProgramListWidget</class>
+ <widget class="QWidget" name="ProgramListWidget">
   <property name="enabled">
    <bool>true</bool>
   </property>
