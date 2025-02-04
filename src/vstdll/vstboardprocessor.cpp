@@ -41,6 +41,10 @@
 
 #include "../common/views/audiograph.h"
 
+//conflict Qt & Vst
+#undef foreach
+#include "public.sdk/source/vst/vstaudioprocessoralgo.h"
+
 VstBoardProcessor::VstBoardProcessor () :
     MainHost(0,0),
     Vst::AudioEffect(),
@@ -77,23 +81,23 @@ VstBoardProcessor::~VstBoardProcessor()
 
 void VstBoardProcessor::Close()
 {
-    foreach(Connectables::VstAudioDeviceIn* dev, lstAudioIn) {
+    Q_FOREACH(Connectables::VstAudioDeviceIn* dev, lstAudioIn) {
         //dev->Close();
         removeAudioIn(dev);
     }
-    foreach(Connectables::VstAudioDeviceOut* dev, lstAudioOut) {
+    Q_FOREACH(Connectables::VstAudioDeviceOut* dev, lstAudioOut) {
         // dev->Close();
         removeAudioOut(dev);
     }
-    foreach(Connectables::VstMidiDevice* dev, lstMidiIn) {
+    Q_FOREACH(Connectables::VstMidiDevice* dev, lstMidiIn) {
         // dev->Close();
         removeMidiIn(dev);
     }
-    foreach(Connectables::VstMidiDevice* dev, lstMidiOut) {
+    Q_FOREACH(Connectables::VstMidiDevice* dev, lstMidiOut) {
         // dev->Close();
         removeMidiOut(dev);
     }
-    foreach(Connectables::VstAutomation* dev, lstVstAutomation) {
+    Q_FOREACH(Connectables::VstAutomation* dev, lstVstAutomation) {
         // dev->Close();
         removeVstAutomation(dev);
     }
@@ -376,7 +380,7 @@ tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
                             emit ChangeGroup( value*128 );
                             break;
                         default:
-                            foreach(Connectables::VstAutomation *dev, lstVstAutomation) {
+                            Q_FOREACH(Connectables::VstAutomation *dev, lstVstAutomation) {
                                 dev->ValueFromHost(paramQueue->getParameterId(),value);
                             }
                             break;
@@ -408,31 +412,68 @@ tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
         SetBufferSize(bSize);
     }
 
-    //get audio from input
-    if (data.numSamples > 0) {
-        Vst::AudioBusBuffers *buf = data.inputs;
-        foreach(Connectables::VstAudioDeviceIn* dev, lstAudioIn) {
-            if(doublePrecision) {
-                dev->SetBuffersD(buf->channelBuffers64,data.numSamples);
-            } else {
-                dev->SetBuffers(buf->channelBuffers32,data.numSamples);
+
+    uint32 sampleFramesSize = getSampleFramesSizeInBytes (processSetup, data.numSamples);
+
+
+    if (currentBypass)
+    {
+        void** in;
+        void** out;
+        for (int32 dev = 0; dev < data.numOutputs; dev++)
+        {
+            int32 numChannels = data.outputs[dev].numChannels;
+            int32 numInChannels = data.inputs[dev].numChannels;
+
+            if(numInChannels < numChannels) {
+                //less input channels than output ?
+                numChannels = numInChannels;
             }
-            ++buf;
+            if(dev<data.numInputs) {
+                //less inputs than outputs
+                in = getChannelBuffersPointer (processSetup, data.inputs[dev]);
+            }
+            out = getChannelBuffersPointer (processSetup, data.outputs[dev]);
+
+            for (int32 i = 0; i < numChannels; i++)
+            {
+                if (in[i] != out[i])
+                {
+                    memcpy (out[i], in[i], sampleFramesSize );
+                }
+            }
         }
-    }
+    } else {
 
-    Render();
-
-    //put audio to outputs
-    if (data.numSamples > 0) {
-        Vst::AudioBusBuffers* buf = data.outputs;
-        foreach(Connectables::VstAudioDeviceOut* dev, lstAudioOut) {
-            if(doublePrecision) {
-                dev->GetBuffersD(buf->channelBuffers64,data.numSamples);
-            } else {
-                dev->GetBuffers(buf->channelBuffers32,data.numSamples);
+        //get audio from input
+        if (data.numSamples > 0) {
+            Vst::AudioBusBuffers *buf = data.inputs;
+            Q_FOREACH(Connectables::VstAudioDeviceIn* dev, lstAudioIn) {
+                if(doublePrecision) {
+                    dev->SetBuffersD(buf->channelBuffers64,data.numSamples);
+                } else {
+                    dev->SetBuffers(buf->channelBuffers32,data.numSamples);
+                }
+                ++buf;
             }
-            ++buf;
+        }
+
+        Render();
+
+
+        //put audio to outputs
+        if (data.numSamples > 0) {
+            Vst::AudioBusBuffers* buf = data.outputs;
+            Q_FOREACH(Connectables::VstAudioDeviceOut* dev, lstAudioOut) {
+                if(doublePrecision) {
+                    dev->GetBuffersD(buf->channelBuffers64,data.numSamples);
+                } else {
+                    dev->GetBuffers(buf->channelBuffers32,data.numSamples);
+                }
+
+                buf->silenceFlags = 0;
+                ++buf;
+            }
         }
     }
 
@@ -610,7 +651,7 @@ VstInt32 VstBoardProcessor::processEvents(VstEvents* events)
         if( evnt->type==kVstMidiType) {
             VstMidiEvent *midiEvnt = (VstMidiEvent*)evnt;
 
-            foreach(Connectables::VstMidiDevice *dev, lstMidiIn) {
+            Q_FOREACH(Connectables::VstMidiDevice *dev, lstMidiIn) {
                 long msg;
                 memcpy(&msg, midiEvnt->midiData, sizeof(midiEvnt->midiData));
                 dev->midiQueue << msg;
@@ -632,8 +673,8 @@ bool VstBoardProcessor::processOutputEvents()
     }
 
     int cpt=0;
-    foreach(Connectables::VstMidiDevice *dev, lstMidiOut) {
-		foreach(long msg, dev->midiQueue) {
+    Q_FOREACH(Connectables::VstMidiDevice *dev, lstMidiOut) {
+        Q_FOREACH(long msg, dev->midiQueue) {
 
 			//allocate a new buffer
 			if (!listEvnts)

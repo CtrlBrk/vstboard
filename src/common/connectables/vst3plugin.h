@@ -188,6 +188,7 @@ private:
     Vst::HostProcessData processData;
 	Vst::EventList inEvents;
     Vst::ParameterChanges inputParameterChanges;
+    Vst::ParameterChanges outputParameterChanges;
     bool isProcessing;
 
 signals:

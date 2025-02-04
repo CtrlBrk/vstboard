@@ -47,7 +47,7 @@
 #define NB_MIDI_BUSES_OUT 1
 #define VST_EVENT_BUFFER_SIZE 1000
 
-using namespace Steinberg;
+// using namespace Steinberg;
 
 class MainHostVst;
 class VstBoardProcessor : public MainHost, public Vst::AudioEffect

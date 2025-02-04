@@ -70,6 +70,8 @@ Vst3Plugin::Vst3Plugin(MainHost *host, int index, const ObjectInfo &info) :
     bypass(false),
     progChangeParameter(-1),
     bypassParameter(FixedPinNumber::bypass)
+    ,inputParameterChanges()
+    ,outputParameterChanges()
 {
 
     FUnknown *myVstHost;
@@ -85,6 +87,8 @@ Vst3Plugin::Vst3Plugin(MainHost *host, int index, const ObjectInfo &info) :
     listEditorVisible << "Hide" << "Show";
 
     // gStandardPluginContext = myHost->vst3Host;
+    // processData.outputParameterChanges = new ParameterChanges();
+
 }
 
 Vst3Plugin::~Vst3Plugin()
@@ -157,6 +161,22 @@ bool Vst3Plugin::Open()
 
 void Vst3Plugin::ReceiveMsg(const MsgObject &msg)
 {
+    //TODO not sure about this, need to find a place to process parameters outside of process thread
+    //output params
+    //if (processData.outputParameterChanges) {
+        Vst::ParamValue value;
+        int32 sampleOffset;
+        for (int32 i = 0; i < outputParameterChanges.getParameterCount(); i++) {
+            Vst::IParamValueQueue* queue = outputParameterChanges.getParameterData(i);
+            if (queue) {
+                if (queue->getPoint(queue->getPointCount() - 1, sampleOffset, value) == kResultTrue) {
+                    performEdit(queue->getParameterId(), value);
+                }
+            }
+        }
+        outputParameterChanges.clearQueue();
+    //}
+
     //reload a shell plugin with the selected id
     if(msg.prop.contains(MsgObject::ObjInfo) && objInfo.apiName=="") {
         objInfo = msg.prop[MsgObject::ObjInfo].value<ObjectInfo>();
@@ -386,10 +406,13 @@ void Vst3Plugin::initProcessData() {
     //couture doesnt have connection point and crashes when inputParameter is set... is there a link between those ?
     if (iConnectionPointComponent && iConnectionPointController) {
         processData.inputParameterChanges = &inputParameterChanges;
+        processData.outputParameterChanges = &outputParameterChanges;
     }
     processData.processContext = &myHost->vst3Host->processContext;
     processData.symbolicSampleSize = doublePrecision ? Vst::kSample64 : Vst::kSample32;
     processData.numSamples = myHost->GetBufferSize();
+
+
 }
 
 bool Vst3Plugin::initProcessor()
@@ -1111,6 +1134,9 @@ void Vst3Plugin::Render()
             }
         }
 
+        // processData.outputParameterChanges = &outputParameterChanges;
+        // outputParameterChanges.clearQueue();
+
         try
         {
             QMutexLocker l(&paramLock);
@@ -1121,12 +1147,14 @@ void Vst3Plugin::Render()
                 LOG("error while processing")
             }
 
-            inEvents.clear();
-            inputParameterChanges.clearQueue();
+            // inEvents.clear();
+            // inputParameterChanges.clearQueue();
         } catch(...) {
             LOG("ex")
         }
 
+
+/*
         //output params
         if (processData.outputParameterChanges) {
             Vst::ParamValue value;
@@ -1135,11 +1163,12 @@ void Vst3Plugin::Render()
                 Vst::IParamValueQueue* queue = processData.outputParameterChanges->getParameterData(i);
                 if (queue) {
                     if (queue->getPoint(queue->getPointCount() - 1, sampleOffset, value) == kResultTrue) {
-                        performEdit(queue->getParameterId(), value);
+                       performEdit(queue->getParameterId(), value);
                     }
                 }
             }
         }
+*/
 
         //send result
         //=========================
@@ -1365,13 +1394,13 @@ void Vst3Plugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
         if(pinInfo.pinNumber==FixedPinNumber::bypass) {
             QString val = static_cast<ParameterPinIn*>(listParameterPinIn->listPins.value(pinInfo.pinNumber))->GetVariantValue().toString();
             if(val=="On") {
-                SetSleep(false);
                 bypass=false;
+                SetSleep(false);
             }
             if(val=="Bypass") {
                 SetSleep(true);
-                SetSleep(false);
                 bypass=true;
+                SetSleep(false);
             }
             if(val=="Mute") {
                 SetSleep(true);
@@ -1403,7 +1432,7 @@ void Vst3Plugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
                 pId = bypassParameter;
                 value = bypass?1.0f:.0f;
                 //test, disabling that bypass parameter:
-                return;
+                //return;
             }
 
             int32 index = 0;
@@ -1549,17 +1578,18 @@ tresult PLUGIN_API Vst3Plugin::queryInterface (const TUID iid, void** obj)
 
     //bus activate
     //QUERY_INTERFACE (iid, obj, Vst::IComponentHandlerBusActivation::iid, Vst::IComponentHandlerBusActivation)
-    char8 cidString[50];
-    FUID fuid = FUID::fromTUID(iid);
-    fuid.toRegistryString(cidString);
-    QString cidStr(cidString);
-    LOG(cidStr)
+
+    // char8 cidString[50];
+    // FUID fuid = FUID::fromTUID(iid);
+    // fuid.toString(cidString);
+    // fuid.toRegistryString(cidString);
+    // QString cidStr(cidString);
+    // LOG(cidStr)
 
     return kNoInterface;
 }
 
 
-//what are those ? pointer ref counter probbly...
 uint32 PLUGIN_API Vst3Plugin::addRef ()
 {
     return 1;

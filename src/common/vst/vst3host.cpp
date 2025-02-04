@@ -3,6 +3,7 @@
 #include "pluginterfaces/vst/ivsteditcontroller.h"
 #include "pluginterfaces/vst/ivstunits.h"
 #include "pluginterfaces/vst/ivstmessage.h"
+#include "public.sdk/source/vst/utility/stringconvert.h"
 
 using namespace Steinberg;
 using namespace Vst;
@@ -53,8 +54,7 @@ Vst3Host::Vst3Host(QObject *parent) :
 
 tresult PLUGIN_API Vst3Host::getName (String128 name)
 {
-    std::u16string ucs2 = u"VstBoard";
-    ucs2.copy (reinterpret_cast<char16_t*> (name), ucs2.length ());
+    StringConvert::convert ("VstBoard", name, 127);
     return kResultTrue;
 }
 
@@ -115,6 +115,7 @@ tresult PLUGIN_API Vst3Host::queryInterface (const char* _iid, void** obj)
 {
     QUERY_INTERFACE (_iid, obj, FUnknown::iid, IHostApplication)
     QUERY_INTERFACE (_iid, obj, IHostApplication::iid, IHostApplication)
+    //QUERY_INTERFACE (_iid, obj, IComponentHandler::iid, IComponentHandler)
     QUERY_INTERFACE (_iid, obj, IPlugInterfaceSupport::iid, IPlugInterfaceSupport)
 
     if (mPlugInterfaceSupport && mPlugInterfaceSupport->queryInterface (_iid, obj) == kResultTrue)
@@ -161,6 +162,9 @@ void Vst3Host::UpdateTime(long buffSize, float sampleRate)
     //start of last bar
     currentBar = floor(processContext.projectTimeMusic/barLengthq);
     processContext.barPositionMusic = barLengthq*(TQuarterNotes)currentBar;
+
+    std::chrono::time_point<std::chrono::system_clock> timestamp = std::chrono::system_clock::now();
+    processContext.systemTime = std::chrono::duration_cast<std::chrono::nanoseconds>(timestamp.time_since_epoch()).count();
 }
 
 float Vst3Host::GetCurrentBarTic()
