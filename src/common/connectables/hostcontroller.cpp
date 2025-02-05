@@ -38,7 +38,7 @@ HostController::HostController(MainHost *myHost,int index):
         listTempo << i;
     }
 
-    for(int i=2;i<30;i++) {
+    for(int i=2;i<50;i++) {
         listSign1 << i;
     }
 
