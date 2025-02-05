@@ -39,7 +39,7 @@ public:
 
 
 private:
-    void Fit(ulong size);
+    void Fit(qint32 size);
     float *readPos;
     float *writePos;
     float *bufStart;

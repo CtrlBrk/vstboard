@@ -49,17 +49,17 @@ int ModifiersWidget::GetData()
     return ret;
 }
 
-void ModifiersWidget::on_shift_checkStateChanged(const Qt::CheckState &arg1)
+void ModifiersWidget::on_shift_checkStateChanged(const Qt::CheckState & /*arg1*/)
 {
     this->close();
 }
 
-void ModifiersWidget::on_ctrl_checkStateChanged(const Qt::CheckState &arg1)
+void ModifiersWidget::on_ctrl_checkStateChanged(const Qt::CheckState & /*arg1*/)
 {
     this->close();
 }
 
-void ModifiersWidget::on_alt_checkStateChanged(const Qt::CheckState &arg1)
+void ModifiersWidget::on_alt_checkStateChanged(const Qt::CheckState & /*arg1*/)
 {
     this->close();
 }

@@ -34,7 +34,7 @@ HostController::HostController(MainHost *myHost,int index):
     tapTrigger(false)
 {
 
-    for(int i=1;i<300;i++) {
+    for(int i=1;i<600;i++) {
         listTempo << i;
     }
 

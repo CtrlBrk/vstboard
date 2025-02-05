@@ -17,9 +17,14 @@
 #    You should have received a copy of the under the terms of the GNU Lesser General Public License
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
-
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning (disable: 4100)
+#endif
 #include "vstbankbase.h"
-
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
 using namespace vst;
 

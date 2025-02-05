@@ -183,7 +183,7 @@ void MidiDevices::ReceiveMsg(const MsgObject &msg)
     }
 }
 
-void MidiDevices::MidiReceive_poll(PtTimestamp timestamp, void *userData)
+void MidiDevices::MidiReceive_poll(PtTimestamp /*timestamp*/, void *userData)
 {
    PmEvent buffer;
    PmError result = pmNoError;

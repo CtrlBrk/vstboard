@@ -97,7 +97,7 @@ Vst3Plugin::~Vst3Plugin()
 #ifdef DEBUG_OBJECTS
     LOG("Close"<<objectName())
 #endif
-    Close();
+    _Close();
 }
 
 bool Vst3Plugin::Open()
@@ -449,8 +449,8 @@ bool Vst3Plugin::initProcessor()
     component->queryInterface(Vst::IConnectionPoint::iid, (void**)&iConnectionPointComponent);
     editController->queryInterface(Vst::IConnectionPoint::iid, (void**)&iConnectionPointController);
     if (iConnectionPointComponent && iConnectionPointController) {
-        tresult rcmpt = iConnectionPointComponent->connect(iConnectionPointController);
-        tresult rctrl = iConnectionPointController->connect(iConnectionPointComponent);
+        iConnectionPointComponent->connect(iConnectionPointController);
+        iConnectionPointController->connect(iConnectionPointComponent);
     }
 
     uint32 latency = processor->getLatencySamples();
@@ -864,7 +864,7 @@ void Vst3Plugin::SetBufferSize(qint32 size)
 //    SetSleep(false);
 }
 
-void Vst3Plugin::SetSampleRate(float rate)
+void Vst3Plugin::SetSampleRate(float /*rate*/)
 {
     SetSleep(true);
     SetSleep(false);
@@ -923,7 +923,7 @@ void Vst3Plugin::SetSleep(bool sleeping)
     Object::SetSleep(sleeping);
 }
 
-bool Vst3Plugin::Close()
+bool Vst3Plugin::_Close()
 {
     SetSleep(true);
     Unload();
@@ -1147,8 +1147,8 @@ void Vst3Plugin::Render()
                 LOG("error while processing")
             }
 
-            // inEvents.clear();
-            // inputParameterChanges.clearQueue();
+            inEvents.clear();
+            inputParameterChanges.clearQueue();
         } catch(...) {
             LOG("ex")
         }
@@ -1556,7 +1556,7 @@ void Vst3Plugin::UserAddPin(const ConnectionInfo &info)
     OnProgramDirty();
 }
 
-tresult PLUGIN_API Vst3Plugin::createInstance (TUID cid, TUID _iid, void** obj)
+tresult PLUGIN_API Vst3Plugin::createInstance (TUID /*cid*/, TUID /*_iid*/, void** /*obj*/)
 {
     return kResultOk;
 }
@@ -1728,18 +1728,18 @@ tresult PLUGIN_API Vst3Plugin::finishGroupEdit ()
 {
     return kNotImplemented;
 }
-Vst::IContextMenu* PLUGIN_API Vst3Plugin::createContextMenu (IPlugView* plugView, const Vst::ParamID* paramID)
+Vst::IContextMenu* PLUGIN_API Vst3Plugin::createContextMenu (IPlugView* /*plugView*/, const Vst::ParamID* /*paramID*/)
 {
 //    View::Vst3ContextMenu* menu = new View::Vst3ContextMenu(myHost->mainWindow);
 //    return menu;
     return 0;
 }
-tresult PLUGIN_API Vst3Plugin::executeMenuItem (int32 tag)
+tresult PLUGIN_API Vst3Plugin::executeMenuItem (int32 /*tag*/)
 {
     return kNotImplemented;
 }
 
-tresult PLUGIN_API Vst3Plugin::requestBusActivation (Vst::MediaType type, Vst::BusDirection dir, int32 index, TBool state)
+tresult PLUGIN_API Vst3Plugin::requestBusActivation (Vst::MediaType /*type*/, Vst::BusDirection /*dir*/, int32 /*index*/, TBool /*state*/)
 {
     return kNotImplemented;
 }

@@ -2,7 +2,7 @@
 #include "mainhost.h"
 #include "mainwindow.h"
 
-bool JsonWriter::writeProjectFile(QIODevice *device, MainHost *host, MainWindow *window, bool saveProject, bool saveSetup, bool binary)
+bool JsonWriter::writeProjectFile(QIODevice *device, MainHost *host, MainWindow *window, bool saveProject, bool saveSetup, bool /*binary*/)
 {
 	bool no_error = true;
 

@@ -68,14 +68,14 @@ void AudioPin::NewRenderLoop()
   */
 bool AudioPin::SetDoublePrecision(bool dblp)
 {
-    if(dblp==doublePrecision)
-        return true;
-
-    if(doublePrecision) {
+    if(dblp) {
         displayedText=objectName()+"=D=";
     } else {
         displayedText=objectName()+"=S=";
     }
+
+    if(dblp==doublePrecision)
+        return true;
 
     doublePrecision=dblp;
     buffer->SetDoublePrecision(dblp);
@@ -149,7 +149,7 @@ void AudioPin::SendAudioBuffer()
     SendMsg(PinMessage::AudioBuffer,(void*)buffer);
 }
 
-void AudioPin::ReceiveMsg(const MsgObject &msg)
+void AudioPin::ReceiveMsg(const MsgObject &/*msg*/)
 {
     if(buffer) {
         buffer->AddGraph();

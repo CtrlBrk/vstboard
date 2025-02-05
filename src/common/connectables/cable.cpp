@@ -121,7 +121,7 @@ Cable::~Cable()
   Remove the cable from the model
   \param parentIndex the Container index
   */
-void Cable::RemoveFromParentNode(const QModelIndex &parentIndex)
+void Cable::RemoveFromParentNode(const QModelIndex & /*parentIndex*/)
 {
     delete buffer;
     buffer=0;

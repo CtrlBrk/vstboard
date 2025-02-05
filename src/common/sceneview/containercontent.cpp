@@ -24,17 +24,18 @@
 #include "pinview.h"
 #include "cableview.h"
 
-#ifdef _MSC_VER
-#pragma warning( disable: 4100 )
-#endif
+// #ifdef _MSC_VER
+// #pragma warning( disable: 4100 )
+// #endif
 
 using namespace View;
 
 ContainerContent::ContainerContent(ViewConfig *config, MsgController *msgCtrl, int objId, MainContainerView * parent ) :
     ObjectDropZone(msgCtrl,objId,parent),
+    config(config),
     rectAttachLeft(0),
-    rectAttachRight(0),
-    config(config)
+    rectAttachRight(0)
+
 {
 
     // qApp->installEventFilter(this);

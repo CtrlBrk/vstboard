@@ -26,7 +26,7 @@
     #include "connectables/vstplugin.h"
 #endif
 #include "connectables/vst3plugin.h"
-#include "mainhost.h"
+// #include "mainhost.h"
 
 using namespace View;
 
@@ -244,7 +244,7 @@ void VstPluginWindow::resizeEvent ( QResizeEvent * event )
 //    return pix;
 //}
 
-tresult PLUGIN_API VstPluginWindow::resizeView (IPlugView* view, ViewRect* newSize)
+tresult PLUGIN_API VstPluginWindow::resizeView (IPlugView* /*view*/, ViewRect* newSize)
 {
     SetWindowSize(newSize->getWidth(), newSize->getHeight());
     return kResultOk;

@@ -2,9 +2,14 @@
 #define VSTBANKBASE_H
 
 //#include "../precomp.h"
-#pragma warning ( push, 1 )
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning (disable: 4200)
+#endif
 #include "public.sdk/source/vst2.x/aeffeditor.h"
-#pragma warning ( pop )
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
 namespace vst
 {

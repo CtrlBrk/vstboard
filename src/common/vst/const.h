@@ -24,7 +24,8 @@
 #include "../precomp.h"
 
 #ifdef _MSC_VER
-#pragma warning( push, 1 )
+#pragma warning( push )
+#pragma warning (disable: 4100)
 #endif
 //#include "pluginterfaces/vst2.x/aeffect.h"
 #include "public.sdk/source/vst2.x/audioeffectx.h"

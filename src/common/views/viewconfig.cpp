@@ -119,17 +119,17 @@ void ViewConfig::InitPresets()
     */
 float ViewConfig::KeyboardNumber(int key)
 {
-    if(key==QKeySequence(tr("!"))[0] || key==QKeySequence(tr("1"))[0]) return 0.0f;
-    if(key==QKeySequence(tr("@"))[0] || key==QKeySequence(tr("2"))[0]) return 0.1f;
-    if(key==QKeySequence(tr("#"))[0] || key==QKeySequence(tr("3"))[0]) return 0.2f;
-    if(key==QKeySequence(tr("$"))[0] || key==QKeySequence(tr("4"))[0]) return 0.3f;
-    if(key==QKeySequence(tr("%"))[0] || key==QKeySequence(tr("5"))[0]) return 0.4f;
-    if(key==QKeySequence(tr("^"))[0] || key==QKeySequence(tr("6"))[0]) return 0.5f;
-    if(key==QKeySequence(tr("&"))[0] || key==QKeySequence(tr("7"))[0]) return 0.6f;
-    if(key==QKeySequence(tr("*"))[0] || key==QKeySequence(tr("8"))[0]) return 0.7f;
-    if(key==QKeySequence(tr("("))[0] || key==QKeySequence(tr("9"))[0]) return 0.8f;
-    if(key==QKeySequence(tr(")"))[0] || key==QKeySequence(tr("0"))[0]) return 0.9f;
-    if(key==QKeySequence(tr("_"))[0] || key==QKeySequence(tr("-"))[0]) return 1.0f;
+    if(key==Qt::Key_Ampersand   || key==Qt::Key_1) return 0.0f;
+    if(key==Qt::Key_Eacute      || key==Qt::Key_2) return 0.1f;
+    if(key==Qt::Key_QuoteDbl    || key==Qt::Key_3) return 0.2f;
+    if(key==Qt::Key_Apostrophe  || key==Qt::Key_4) return 0.3f;
+    if(key==Qt::Key_ParenLeft   || key==Qt::Key_5) return 0.4f;
+    if(key==Qt::Key_Minus       || key==Qt::Key_6) return 0.5f;
+    if(key==Qt::Key_Egrave      || key==Qt::Key_7) return 0.6f;
+    if(key==Qt::Key_Underscore  || key==Qt::Key_8) return 0.7f;
+    if(key==Qt::Key_Ccedilla    || key==Qt::Key_9) return 0.8f;
+    if(key==Qt::Key_Agrave      || key==Qt::Key_0) return 0.9f;
+    if(key==Qt::Key_ParenRight  || key==Qt::Key_Equal) return 1.0f;
     return -1.0f;
 }
 

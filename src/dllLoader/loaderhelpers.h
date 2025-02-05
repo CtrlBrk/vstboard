@@ -158,12 +158,12 @@ std::wstring TestInstallPath(const std::wstring &currentPath) {
     try {
         instPaths.push_back(RegGetString(HKEY_CURRENT_USER, regBaseKey, installKey));
     }
-    catch (RegistryError &e) {}
+    catch (RegistryError & /*e*/) {}
 
     try {
         instPaths.push_back( RegGetString(HKEY_LOCAL_MACHINE, regBaseKey, installKey) );
     }
-    catch (RegistryError &e) {}
+    catch (RegistryError & /*e*/) {}
 
     for (auto const& p : instPaths) {
         struct __stat64 buffer;
@@ -219,19 +219,19 @@ void AddDllPath()
         path += GetCurrentDllPath();
         path += L";";
     }
-    catch (FileError &e) {}
+    catch (FileError & /*e*/) {}
 
     try {
         path += RegGetString(HKEY_LOCAL_MACHINE, regBaseKey, installKey);
         path += L";";
     }
-    catch (RegistryError &e) {}
+    catch (RegistryError & /*e*/) {}
 
     try {
         path += RegGetString(HKEY_CURRENT_USER, regBaseKey, installKey);
         path += L";";
     }
-    catch (RegistryError &e) {}
+    catch (RegistryError & /*e*/) {}
 
     ::SetEnvironmentVariable(L"Path", path.c_str());
     //::SetEnvironmentVariable(L"QT_QPA_PLATFORM_PLUGIN_PATH", GetPathFromRegistry().c_str());

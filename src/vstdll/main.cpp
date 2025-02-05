@@ -24,13 +24,13 @@
     // #include "loaderhelpers.h"
 #endif
 
-#pragma warning ( push, 1 )
+// #pragma warning ( push, 1 )
 // #include "pluginterfaces/base/ftypes.h"
 //#ifdef VST24SDK
     // #include "public.sdk/source/vst/vst2wrapper/vst2wrapper.h"
 //    #include "vst2shell.h"
 //#endif
-#pragma warning ( pop )
+// #pragma warning ( pop )
 
 #include "ids.h"
 
@@ -105,7 +105,7 @@ bool DllExport ExitDll ()
 #endif
 
 //------------------------------------------------------------------------
-BOOL WINAPI DllMain (HINSTANCE hInst, DWORD dwReason, LPVOID /*lpvReserved*/)
+BOOL WINAPI DllMain (HINSTANCE /*hInst*/, DWORD dwReason, LPVOID /*lpvReserved*/)
 {
     if ( dwReason == DLL_PROCESS_ATTACH)
     {

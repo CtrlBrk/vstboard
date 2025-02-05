@@ -19,7 +19,7 @@
 **************************************************************************/
 //#include "precomp.h"
 #include "proglistview.h"
-#include "globals.h"
+// #include "globals.h"
 #include "models/groupsprogramsmodel.h"
 
 ProgListView::ProgListView(QWidget *parent) :
@@ -59,7 +59,7 @@ void ProgListView::dragEnterEvent(QDragEnterEvent *event)
 void ProgListView::dragMoveEvent ( QDragMoveEvent * event )
 {
     //don't allow drop on itself
-    QModelIndex idx = indexAt( event->pos() );
+    QModelIndex idx = indexAt( event->position().toPoint() );
 
     if(idx.isValid()) {
         if( selectionModel()->selectedIndexes().contains( idx )) {

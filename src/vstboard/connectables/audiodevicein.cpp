@@ -149,8 +149,10 @@ Pin* AudioDeviceIn::CreatePin(const ConnectionInfo &info)
 {
     Pin *newPin = Object::CreatePin(info);
     if(newPin) {
-        if(info.type==PinType::Audio)
+        if(info.type==PinType::Audio) {
             newPin->setObjectName(QString("Input %1").arg(info.pinNumber));
+        }
+
         return newPin;
     }
 

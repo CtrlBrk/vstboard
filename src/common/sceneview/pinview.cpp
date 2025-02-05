@@ -371,7 +371,7 @@ void PinView::RemoveCable(CableView *cable)
     }
 }
 
-void PinView::ReceiveMsg(const MsgObject &msg)
+void PinView::ReceiveMsg(const MsgObject & /*msg*/)
 {
 
 }

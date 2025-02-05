@@ -25,9 +25,9 @@
 #if !defined(VSTHOST_H__INCLUDED_)
 #define VSTHOST_H__INCLUDED_
 
-#ifdef _MSC_VER
-#pragma warning( disable: 4100 )
-#endif
+// #ifdef _MSC_VER
+// #pragma warning( disable: 4100 )
+// #endif
 
 
 //#include "../precomp.h"

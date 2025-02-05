@@ -64,7 +64,7 @@ MainContainerView::~MainContainerView()
 //     return QObject::eventFilter(obj, event);
 // }
 
-void MainContainerView::showEvent(QShowEvent *event)
+void MainContainerView::showEvent(QShowEvent * /*event*/)
 {
 //    LOG("container show event"<<GetIndex())
 }

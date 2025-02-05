@@ -283,7 +283,7 @@ void MainWindow::UpdateSolverMap(const MsgObject &msg)
     ui->solverView->resizeRowsToContents();
 }
 
-void MainWindow::showEvent(QShowEvent *event)
+void MainWindow::showEvent(QShowEvent * /*event*/)
 {
 //    LOG("window show event")
 
@@ -309,7 +309,7 @@ void MainWindow::showEvent(QShowEvent *event)
     }
 }
 
-void MainWindow::hideEvent(QHideEvent *event)
+void MainWindow::hideEvent(QHideEvent * /*event*/)
 {
 //    MsgObject msg;
     _MSGOBJ(msg,FixedObjId::ND);
@@ -943,7 +943,7 @@ void MainWindow::on_actionKeyBinding_triggered()
     bind.exec();
 }
 
-void MainWindow::on_actionHide_all_editors_triggered(bool checked)
+void MainWindow::on_actionHide_all_editors_triggered(bool /*checked*/)
 {
     //TODO get list of object via message
     /*

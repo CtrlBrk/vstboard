@@ -22,7 +22,8 @@
 #define VSTMIDIDEVICE_H
 
 #ifdef _MSC_VER
-#pragma warning( push, 1 )
+#pragma warning( push )
+#pragma warning (disable: 4200)
 #endif
 #include "pluginterfaces/vst/ivstevents.h"
 #ifdef _MSC_VER

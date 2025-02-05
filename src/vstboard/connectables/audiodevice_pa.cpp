@@ -19,7 +19,7 @@
 **************************************************************************/
 
 #include "connectables/audiodevice_pa.h"
-#include "connectables/object.h"
+// #include "connectables/object.h"
 #include "connectables/audiodevicein.h"
 #include "connectables/audiodeviceout.h"
 #include "globals.h"
@@ -628,7 +628,7 @@ float AudioDevice::GetCpuUsage()
 bool AudioDevice::DeviceToRingBuffers( const void *inputBuffer, qint32 framesPerBuffer)
 {
     //if no input, render when the host buffer is full
-    static ulong fakeFilledSize=0;
+    static qint32 fakeFilledSize=0;
 
     {
         QMutexLocker lo(&mutexOpenClose);

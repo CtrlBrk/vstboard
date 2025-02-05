@@ -400,7 +400,7 @@ void ObjectView::ToggleBypass(bool b)
         bypassPin->ValueChanged(0.34f);
 }
 
-void ObjectView::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+void ObjectView::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * /*event*/)
 {
     ToggleEditor();
 }

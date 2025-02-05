@@ -22,7 +22,8 @@
 #define CEFFECT_H
 
 #ifdef _MSC_VER
-#pragma warning( push, 1 )
+#pragma warning( push )
+#pragma warning (disable: 4100)
 #endif
 
 //#include "../precomp.h"
@@ -119,8 +120,8 @@ namespace vst
 
         //as const
         virtual long EffGetChunk(void **ptr, bool isPreset = false) const
-        { if (!pEffect)
-            return 0;
+        {   if (!pEffect)
+                return 0;
 
             long disp=0L;
             disp = pEffect->dispatcher(pEffect, effGetChunk, isPreset, 0, ptr, .0);

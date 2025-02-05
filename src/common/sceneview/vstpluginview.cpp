@@ -202,7 +202,7 @@ void VstPluginView::dragEnterEvent( QGraphicsSceneDragDropEvent *event)
     event->ignore();
 }
 
-void VstPluginView::dragLeaveEvent( QGraphicsSceneDragDropEvent *event)
+void VstPluginView::dragLeaveEvent( QGraphicsSceneDragDropEvent * /*event*/)
 {
     HighlightStop();
 }

@@ -37,9 +37,8 @@
 #include "pluginterfaces/base/ibstream.h"
 #include "pluginterfaces/vst/ivstparameterchanges.h"
 #include "pluginterfaces/vst/ivstevents.h"
-#include "public.sdk/source/common/memorystream.h"
-
-#include "../common/views/audiograph.h"
+// #include "public.sdk/source/common/memorystream.h"
+// #include "../common/views/audiograph.h"
 
 //conflict Qt & Vst
 #undef foreach
@@ -131,7 +130,7 @@ void VstBoardProcessor::Init()
 //     return AudioEffect::getProcessContextRequirements ();
 // }
 
-tresult PLUGIN_API VstBoardProcessor::setIoMode (Vst::IoMode mode)
+tresult PLUGIN_API VstBoardProcessor::setIoMode (Vst::IoMode /*mode*/)
 {
     return kNotImplemented;
 }
@@ -500,7 +499,7 @@ tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
             }
             currentGroup=grp;
         }
-        bool bypass = (programManager->GetCurrentBypassState()>.5);
+        bool bypass = programManager->GetCurrentBypassState();
         if(bypass!=currentBypass) {
             int32 index = 0;
             Vst::IParamValueQueue* paramQueue = paramOutChanges->addParameterData(paramByPass, index);

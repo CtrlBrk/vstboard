@@ -21,8 +21,18 @@
 #ifndef MIDIDEVICE_PM_H
 #define MIDIDEVICE_PM_H
 
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning (disable: 4200)
+#endif
+
 #include "portmidi.h"
 #include "pmutil.h"
+
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
+
 #include "connectables/object.h"
 
 #define QUEUE_SIZE 1024

@@ -76,7 +76,7 @@ namespace Connectables {
         MainHost *myHost;
 
         CircularBuffer *buffer;
-        quint32 delay;
+        qint32 delay;
         AudioBuffer *tmpBuf;
         QMutex mutexDelay;
     };

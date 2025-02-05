@@ -20,9 +20,9 @@
 
 #include "vstboardcontroller.h"
 #include "ids.h"
-#include "pluginterfaces/base/ustring.h"
+// #include "pluginterfaces/base/ustring.h"
 #include "gui.h"
-#include "mainwindowvst.h"
+// #include "mainwindowvst.h"
 #include "public.sdk/source/common/memorystream.h"
 
 using namespace Steinberg;
@@ -210,7 +210,7 @@ tresult PLUGIN_API VstBoardController::getState (IBStream* state)
 	return kResultOk;
 }
 
-tresult PLUGIN_API VstBoardController::getMidiControllerAssignment(int32 busIndex, int16 channel, Vst::CtrlNumber midiControllerNumber, Vst::ParamID& tag /*out*/)
+tresult PLUGIN_API VstBoardController::getMidiControllerAssignment(int32 busIndex, int16 /*channel*/, Vst::CtrlNumber midiControllerNumber, Vst::ParamID& tag /*out*/)
 {
 	if (busIndex == 0 && midiControllerNumber < Vst::kCountCtrlNumber && midiCCParamID[midiControllerNumber] != -1)
 	{

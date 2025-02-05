@@ -22,7 +22,8 @@
 #define VSTBOARDPROCESSOR_H
 
 #ifdef _MSC_VER
-#pragma warning( push, 1 )
+#pragma warning( push )
+#pragma warning (disable: 4100)
 #endif
 #include "public.sdk/source/vst/vstaudioeffect.h"
 #ifdef _MSC_VER

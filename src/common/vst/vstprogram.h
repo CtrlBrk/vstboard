@@ -1,7 +1,14 @@
 #ifndef VSTPROGRAM_H
 #define VSTPROGRAM_H
 
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning (disable: 4100)
+#endif
 #include "vstbankbase.h"
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
 namespace vst
 {

@@ -152,9 +152,9 @@
         #define LOG(...); {qDebug()<<__VA_ARGS__<<"("<<__FUNCTION__<<":"<< __LINE__<<" )";}
     #endif
 
-#ifdef _MSC_VER
-#pragma warning( push, 1 )
-#endif
+// #ifdef _MSC_VER
+// #pragma warning( push, 1 )
+// #endif
 //	#include "./public.sdk/source/vst2.x/audioeffectx.h"
 //	#include "./public.sdk/source/vst2.x/aeffeditor.h"
 
@@ -178,9 +178,9 @@
 
 //    #include "base/source/fobject.h"
 //	#include "pluginterfaces/gui/iplugview.h"
-#ifdef _MSC_VER
-#pragma warning( pop )
-#endif
+// #ifdef _MSC_VER
+// #pragma warning( pop )
+// #endif
 
 
 #endif

@@ -58,7 +58,7 @@ void BridgeView::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, co
 /*!
   update the connected cables position
   */
-void BridgeView::moveEvent ( QGraphicsSceneMoveEvent * event )
+void BridgeView::moveEvent ( QGraphicsSceneMoveEvent * /*event*/ )
 {
     listBridge->UpdateCablesPosition();
 }

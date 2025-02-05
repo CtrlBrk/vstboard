@@ -25,7 +25,7 @@
 
 using namespace View;
 
-const int default_diameter = 5;
+// const int default_diameter = 5;
 
 
 GradientWidgetHue::GradientWidgetHue(QWidget *parent) :
@@ -214,10 +214,10 @@ void GradientWidgetHue::updateGradientImage()
 
     //hue gradient
     QLinearGradient hueGrad(-1.0f, .0f, (qreal)m_gradient_image.width()+1.0f, .0f);
-    hueGrad.setColorAt(0.00, QColor::fromHsvF(0.00, 1.0, 1.0, 1.0));
-    hueGrad.setColorAt(0.33, QColor::fromHsvF(0.33, 1.0, 1.0, 1.0));
-    hueGrad.setColorAt(0.66, QColor::fromHsvF(0.66, 1.0, 1.0, 1.0));
-    hueGrad.setColorAt(1.00, QColor::fromHsvF(1.00, 1.0, 1.0, 1.0));
+    hueGrad.setColorAt(0.00f, QColor::fromHsvF(0.00f, 1.0f, 1.0f, 1.0f));
+    hueGrad.setColorAt(0.33f, QColor::fromHsvF(0.33f, 1.0f, 1.0f, 1.0f));
+    hueGrad.setColorAt(0.66f, QColor::fromHsvF(0.66f, 1.0f, 1.0f, 1.0f));
+    hueGrad.setColorAt(1.00f, QColor::fromHsvF(1.00f, 1.0f, 1.0f, 1.0f));
     painter.setBrush(hueGrad);
     painter.drawRect(-1.0f, -1.0f, (qreal)m_gradient_image.width()+1.0f, (qreal)m_gradient_image.height()+1.0f);
 

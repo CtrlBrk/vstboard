@@ -202,7 +202,7 @@ void VstPlugin::Render()
         }
     }
 
-	ulong newbuffsize = 0;
+    qint32 newbuffsize = 0;
     if(!listAudioPinIn->listPins.isEmpty()) {
         AudioPin* p = static_cast<AudioPin*>(listAudioPinIn->listPins.first());
         newbuffsize = p->GetBuffer()->GetSize();

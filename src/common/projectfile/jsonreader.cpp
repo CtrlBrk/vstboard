@@ -2,7 +2,7 @@
 #include "mainhost.h"
 #include "mainwindow.h"
 
-bool JsonReader::readProjectFile(QIODevice *device, MainHost *host, MainWindow * window, bool binary)
+bool JsonReader::readProjectFile(QIODevice *device, MainHost *host, MainWindow * window, bool /*binary*/)
 {
 	QByteArray saveData = device->readAll();
 

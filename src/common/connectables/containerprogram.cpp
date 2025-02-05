@@ -360,7 +360,7 @@ void ContainerProgram::ReplaceObject(QSharedPointer<Object> newObjPtr, QSharedPo
 //    }
 //}
 
-bool ContainerProgram::AddCable(const ConnectionInfo &outputPin, const ConnectionInfo &inputPin, bool hidden)
+bool ContainerProgram::AddCable(const ConnectionInfo &outputPin, const ConnectionInfo &inputPin, bool /*hidden*/)
 {
     if(CableExists(outputPin,inputPin))
         return true;

@@ -24,6 +24,10 @@
 #include "vstbank.h"
 #include "vstprogram.h"
 
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning (disable: 4100)
+#endif
 
 using namespace vst;
 
@@ -388,3 +392,7 @@ QString CEffect::EffGetParamName(long index)
     return QString(txt);
 
 }
+
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif

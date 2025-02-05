@@ -21,9 +21,10 @@
 #ifndef MIDIDEVICES_PM_H
 #define MIDIDEVICES_PM_H
 
+
 #include "porttime.h"
-#include "portmidi.h"
-#include "models/listmidiinterfacesmodel.h"
+// #include "portmidi.h"
+// #include "models/listmidiinterfacesmodel.h"
 #include "connectables/mididevice_pm.h"
 
 class MainHostHost;

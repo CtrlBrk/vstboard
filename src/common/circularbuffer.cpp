@@ -93,9 +93,9 @@ void CircularBuffer::Clear()
     buffer[0]=.0f;
 }
 
-void CircularBuffer::Fit(ulong size) {
+void CircularBuffer::Fit(qint32 size) {
     if((buffSize-filledSize)<size) {
-        ulong newSize= filledSize + 2*size;
+        qint32 newSize= filledSize + 2*size;
 #ifdef DEBUG_BUFFERS
         LOG(QString("resize ring buf %1=>%2")
             .arg(buffSize)

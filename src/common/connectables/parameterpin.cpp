@@ -295,7 +295,7 @@ void ParameterPin::SetFixedName(QString fixedName)
     nameCanChange=false;
 }
 
-void ParameterPin::SetLimit(ObjType::Enum type, float newVal)
+void ParameterPin::SetLimit(ObjType::Enum /*type*/, float /*newVal*/)
 {
 //    switch(type) {
 //        case ObjType::limitInMin:
