@@ -42,7 +42,7 @@ namespace Connectables {
         VstPlugin(MainHost *myHost,int index, const ObjectInfo & info);
         ~VstPlugin();
         bool Open() override;
-        bool Close() override;
+        bool Close();
         void Render() override;
         VstIntPtr OnMasterCallback(long opcode, long index, long value, void *ptr, float opt, long currentReturnCode) override;
         void SetSleep(bool sleeping) override;
@@ -115,9 +115,9 @@ namespace Connectables {
         void OnShowEditor() override;
         void OnHideEditor() override;
         void OnEditorClosed();
-        void LoadBank();
-        bool LoadBank(const QString &filename);
-        void SaveBank(const QString &filename);
+        void _LoadBank();
+        bool _LoadBank(const QString &filename);
+        void _SaveBank(const QString &filename);
         bool LoadProgramFile(const QString &filename);
         void SaveProgramFile(const QString &filename);
 //        void TakeScreenshot();

@@ -43,7 +43,7 @@ public:
     AudioDevices *audioDevices;
     MidiDevices *midiDevices;
 protected:
-    void Close() override;
+    void Close();
 
 signals:
     void SendMsgSignal(const MsgObject &msg);

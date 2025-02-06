@@ -4,7 +4,7 @@ include(../config.pri)
 QT += core gui widgets
 
 TEMPLATE = app
-TARGET = "VstBoard"
+TARGET = "VstBoardHost"
 
 
 LIBS += -L$$VST3SDK_LIB -lbase

@@ -54,7 +54,7 @@ namespace Connectables {
           */
         void SetOptimizerFlag(bool opt) { optimizerFlag=opt; }
 
-        virtual bool Close() override;
+        bool Close();
         virtual void AddObject(QSharedPointer<Object> objPtr);
         virtual void ParkObject(QSharedPointer<Object> objPtr);
 

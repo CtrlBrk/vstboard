@@ -125,10 +125,8 @@ public:
     void SetRenderMap(const RenderMap &map);
 
 protected:
-    virtual void Close();
+    void Close();
     QElapsedTimer timeFromStart;
-    float sampleRate;
-    qint32 bufferSize;
     Renderer2 *renderer;
 
 private:
@@ -148,6 +146,8 @@ private:
     QMap<ConnectionInfo,Connectables::Pin*>listPins;
     QMutex solverMutex;
 
+    float sampleRate;
+    qint32 bufferSize;
     int currentTempo;
     int currentTimeSig1;
     int currentTimeSig2;

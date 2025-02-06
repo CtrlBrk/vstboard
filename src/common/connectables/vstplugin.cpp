@@ -413,7 +413,7 @@ void VstPlugin::ReceiveMsg(const MsgObject &msg)
             if ( filename.endsWith("fxp",Qt::CaseInsensitive) ) {
                 LoadProgramFile(filename);
             } else if ( filename.endsWith("fxb",Qt::CaseInsensitive) ) {
-                LoadBank(filename);
+                _LoadBank(filename);
             }
         }
         return;
@@ -424,7 +424,7 @@ void VstPlugin::ReceiveMsg(const MsgObject &msg)
         if( filename.endsWith("fxp",Qt::CaseInsensitive) ) {
             SaveProgramFile(filename);
         } else if ( filename.endsWith("fxb",Qt::CaseInsensitive) ) {
-            SaveBank(filename);
+            _SaveBank(filename);
         }
         return;
     }
@@ -557,7 +557,7 @@ bool VstPlugin::initPlugin()
     AddPluginToDatabase();
 
     if(!bankToLoad.isEmpty()) {
-        QTimer::singleShot(0,this,SLOT(LoadBank()));
+        QTimer::singleShot(0,this,SLOT(_LoadBank()));
     }
 
 //    if(wasEnabled) {
@@ -992,10 +992,10 @@ void VstPlugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
     }
 }
 
-void VstPlugin::LoadBank()
+void VstPlugin::_LoadBank()
 {
     if(bankToLoad.endsWith(VST_BANK_FILE_EXTENSION,Qt::CaseInsensitive))
-        LoadBank(bankToLoad);
+        _LoadBank(bankToLoad);
     if(bankToLoad.endsWith(VST_PROGRAM_FILE_EXTENSION,Qt::CaseInsensitive))
         LoadProgramFile(bankToLoad);
     bankToLoad.clear();
@@ -1006,7 +1006,7 @@ void VstPlugin::LoadBank()
   \param filename the file name
   \return true on success
   */
-bool VstPlugin::LoadBank(const QString &filename)
+bool VstPlugin::_LoadBank(const QString &filename)
 {
     std::string str = filename.toStdString();
     if(!CEffect::LoadBank(&str))
@@ -1028,7 +1028,7 @@ bool VstPlugin::LoadBank(const QString &filename)
   \param filename the file name
   \return true on success
   */
-void VstPlugin::SaveBank(const QString &filename)
+void VstPlugin::_SaveBank(const QString &filename)
 {
     std::string str = filename.toStdString();
     if(!CEffect::SaveBank(&str))

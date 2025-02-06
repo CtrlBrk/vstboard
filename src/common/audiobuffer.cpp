@@ -147,7 +147,7 @@ void AudioBuffer::SetDoublePrecision(bool dbl)
   */
 void AudioBuffer::AddToStack(const AudioBuffer * buff)
 {
-    debugbuf("addtostak other:"<<buff->GetDoublePrecision());
+    debugbuf("addtostack other:"<<buff->GetDoublePrecision());
 
     if(buff->GetSize()!=bufferSize) {
         if(stackSize==0) {

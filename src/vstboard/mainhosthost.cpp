@@ -64,9 +64,9 @@ void MainHostHost::Render()
 {
     #ifdef VSTSDK
 #ifdef VST24SDK
-        vstHost->UpdateTimeInfo(timeFromStart.elapsed(), bufferSize, sampleRate);
+        vstHost->UpdateTimeInfo(timeFromStart.elapsed(), GetBufferSize(), GetSampleRate());
 #endif
-        vst3Host->UpdateTime(bufferSize, sampleRate);
+        vst3Host->UpdateTime(GetBufferSize(), GetSampleRate());
     #endif
 
     MainHost::Render();

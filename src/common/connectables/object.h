@@ -133,7 +133,7 @@ namespace Connectables {
 
 
         virtual bool Open();
-        virtual bool Close();
+        bool Close();
 //        virtual void Hide();
         virtual Pin * GetPin(const ConnectionInfo &pinInfo);
         virtual void SetSleep(bool sleeping);

@@ -87,12 +87,12 @@ void MainHost::Close()
 
     if(updateViewTimer) {
         updateViewTimer->stop();
-		//is a child of mainhost : autodelete
+        //is a child of mainhost : autodelete
         //updateViewTimer->deleteLater();
         //updateViewTimer=0;
     }
 
-	//is a child of mainhost : autodelete
+    //is a child of mainhost : autodelete
     //if(renderer) {
     //    delete renderer;
     //    renderer=0;
@@ -104,7 +104,7 @@ void MainHost::Close()
     programContainer.clear();
     mainContainer.clear();
 
-	//is a child of mainhost : autodelete
+    //is a child of mainhost : autodelete
     //if(objFactory) {
     //    delete objFactory;
     //    objFactory=0;
@@ -125,7 +125,7 @@ void MainHost::Close()
     //    delete vst3Host;
 #endif
 
-	//is a child of mainhost : autodelete
+    //is a child of mainhost : autodelete
     //if(programManager) {
         //delete programManager;
         //programManager=0;
@@ -141,7 +141,7 @@ void MainHost::Init()
 {
     programManager =new ProgramManager(this);
     doublePrecision=settings->GetSetting("doublePrecision",false).toBool();
-	settings->SetSetting("currentDoublePrecision", doublePrecision);
+    settings->SetSetting("currentDoublePrecision", doublePrecision);
     setObjectName("MainHost");
 
 #ifdef SCRIPTENGINE
@@ -822,12 +822,15 @@ void MainHost::SetBufferSize(qint32 size)
         return;
 
 //    MsgObject msg(FixedObjId::mainWindow);
+    /*
     _MSGOBJ(msg,FixedObjId::mainWindow);
     msg.prop[MsgObject::ObjInfo]=QString("hostBudffer:%1").arg(size);
     SendMsg(msg);
-
+*/
     bufferSize = size;
-    emit BufferSizeChanged(bufferSize);
+
+    //buffers size should follow cable messages
+    // emit BufferSizeChanged(size);
 }
 
 void MainHost::SetSampleRate(float rate)
@@ -836,7 +839,7 @@ void MainHost::SetSampleRate(float rate)
         return;
 
     sampleRate = rate;
-    emit SampleRateChanged(sampleRate);
+    // emit SampleRateChanged(sampleRate);
 }
 
 void MainHost::Render()
@@ -1065,7 +1068,7 @@ bool MainHost::LoadProjectFile(const QString &filename)
             if(!name.endsWith(PROJECT_JSON_BINARY_FILE_EXTENSION, Qt::CaseInsensitive))
                 binary = false;
 
-			no_error = JsonReader::readProjectFile(&file, this, mainWindow, binary);
+            no_error = JsonReader::readProjectFile(&file, this, mainWindow, binary);
         }
     } else {
         no_error = false;

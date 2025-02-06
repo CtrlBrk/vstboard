@@ -9,8 +9,9 @@ include(../config.pri)
 QMAKE_LFLAGS+="/DEF:$${_PRO_FILE_PWD_}/vstboard.def"
 
 DEFINES -= AS_INSTRUMENT
-TARGET = VstBoardLoader
+TARGET = VstBoard
 TEMPLATE = lib
+QMAKE_EXTENSION_SHLIB = vst3
 
 QT       -= core gui
 LIBS += -ladvapi32

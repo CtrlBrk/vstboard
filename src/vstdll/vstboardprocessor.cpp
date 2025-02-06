@@ -254,12 +254,12 @@ tresult PLUGIN_API VstBoardProcessor::getState (IBStream* state)
 tresult PLUGIN_API VstBoardProcessor::setupProcessing (Vst::ProcessSetup& newSetup)
 {
     qint32 bSize = newSetup.maxSamplesPerBlock;
-    if(bufferSize != bSize) {
+    if(GetBufferSize() != bSize) {
         SetBufferSize(bSize);
     }
 
     float sRate = static_cast<float>(newSetup.sampleRate);
-    if(sampleRate != sRate) {
+    if(GetSampleRate() != sRate) {
         SetSampleRate(sRate);
     }
 
@@ -407,7 +407,7 @@ tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
     }
 
     int32 bSize = data.numSamples;
-    if(bSize>0 && bufferSize != bSize) {
+    if(bSize>0 && GetBufferSize() != bSize) {
         SetBufferSize(bSize);
     }
 

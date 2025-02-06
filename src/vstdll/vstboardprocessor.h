@@ -103,7 +103,7 @@ public:
 #endif
 protected:
         // QApplication *myApp;
-        void Close() override;
+        void Close();
 
         QList<Connectables::VstAudioDeviceIn*>lstAudioIn;
         QList<Connectables::VstAudioDeviceOut*>lstAudioOut;

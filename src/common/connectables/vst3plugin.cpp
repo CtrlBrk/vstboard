@@ -97,7 +97,7 @@ Vst3Plugin::~Vst3Plugin()
 #ifdef DEBUG_OBJECTS
     LOG("Close"<<objectName())
 #endif
-    _Close();
+    Close();
 }
 
 bool Vst3Plugin::Open()
@@ -923,7 +923,7 @@ void Vst3Plugin::SetSleep(bool sleeping)
     Object::SetSleep(sleeping);
 }
 
-bool Vst3Plugin::_Close()
+bool Vst3Plugin::Close()
 {
     SetSleep(true);
     Unload();
@@ -1043,6 +1043,9 @@ void Vst3Plugin::Unload()
 
 void Vst3Plugin::Render()
 {
+    //update buffer size before processing
+    SetBufferSize(myHost->GetBufferSize());
+
     if(bypass) {
         foreach(Pin *in, listAudioPinIn->listPins ) {
             AudioPin *audioIn = static_cast<AudioPin*>(in);
