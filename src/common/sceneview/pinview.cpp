@@ -83,8 +83,6 @@ PinView::~PinView()
     foreach(CableView *cab, connectedCables) {
         delete cab;
     }
-
-
 }
 
 void PinView::UpdateKeyBinding()

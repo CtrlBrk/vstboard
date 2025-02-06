@@ -59,6 +59,7 @@ namespace View {
         void ObjectDropped(QGraphicsSceneDragDropEvent *event, MsgObject msg);
         virtual void UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color);
 //        void SetBackground();
+        void UpdateLayout();
     };
 
 }

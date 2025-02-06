@@ -149,6 +149,7 @@ Pin* MidiToAutomation::CreatePin(const ConnectionInfo &info)
 
     pinConstructArgs args(info);
     args.parent = this;
+    args.isRemoveable=true;
 
     switch(info.direction) {
         case PinDirection::Input : {

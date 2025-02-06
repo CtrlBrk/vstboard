@@ -42,8 +42,6 @@ ConnectableObjectView::ConnectableObjectView(ViewConfig *config, MsgController *
     layout->setHorizontalSpacing(5);
     layout->setContentsMargins(0,15,0,0);
     setLayout(layout);
-
-//    setFlag(QGraphicsItem::ItemIsMovable, true);
     setFocusPolicy(Qt::StrongFocus);
 
     listAudioIn = new ListPinsView(config,msgCtrl,-1,this);
@@ -59,6 +57,11 @@ ConnectableObjectView::ConnectableObjectView(ViewConfig *config, MsgController *
     layout->addItem(listMidiOut,1,1,Qt::AlignRight | Qt::AlignTop);
     layout->addItem(listParametersIn,2,0,Qt::AlignLeft | Qt::AlignTop);
     layout->addItem(listParametersOut,2,1,Qt::AlignRight | Qt::AlignTop);
+
+    connect(listParametersIn,SIGNAL(Shrinklist()),
+            this,SLOT(UpdateLayout()));
+    connect(listParametersOut,SIGNAL(Shrinklist()),
+            this,SLOT(UpdateLayout()));
 
     dropReplace = new ObjectDropZone(msgCtrl,-1,this,parent->GetParking());
     connect(parent,SIGNAL(ParkingChanged(QWidget*)),
@@ -91,6 +94,12 @@ ConnectableObjectView::ConnectableObjectView(ViewConfig *config, MsgController *
     dropAttachRight->setPalette( pal );
 
     setGeometry(QRectF(0,0,105,15));
+}
+
+void ConnectableObjectView::UpdateLayout()
+{
+    //still not shrinking after a pin is removed
+    layout->invalidate();
 }
 
 void ConnectableObjectView::resizeEvent ( QGraphicsSceneResizeEvent * event )

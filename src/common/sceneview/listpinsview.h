@@ -28,6 +28,7 @@ namespace View {
     class PinView;
     class ListPinsView : public QGraphicsWidget, public MsgHandler
     {
+    Q_OBJECT
     public:
         ListPinsView(ViewConfig *config, MsgController *msgCtrl, int objId, QGraphicsItem * parent = 0);
         QGraphicsLinearLayout *layout;
@@ -37,6 +38,11 @@ namespace View {
         ViewConfig *config;
     private:
         void AddPin(const MsgObject &msg);
+
+    private slots:
+        void UpdateLayout();
+    signals:
+        void Shrinklist();
     };
 }
 

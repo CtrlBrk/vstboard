@@ -25,6 +25,8 @@
 #include "minmaxpinview.h"
 #include "bridgepinview.h"
 
+#include "connectableobjectview.h"
+
 using namespace View;
 
 ListPinsView::ListPinsView(ViewConfig *config, MsgController *msgCtrl, int objId, QGraphicsItem * parent) :
@@ -75,6 +77,16 @@ void ListPinsView::ReceiveMsg(const MsgObject &msg)
             break;
         }
     }
+
+    if(msg.prop.contains(MsgObject::Remove)) {
+        // emit Shrinklist();
+        QTimer::singleShot(100,this, SLOT(UpdateLayout()));
+    }
+}
+
+void ListPinsView::UpdateLayout()
+{
+    emit Shrinklist();
 }
 
 void ListPinsView::AddPin(const MsgObject &msg)

@@ -105,7 +105,7 @@ namespace Connectables {
 
         /// \return true if visible
         inline bool GetVisible() {return visible;}
-        virtual void SetVisible(bool vis);
+        void SetVisible(bool vis);
         void EnableVuUpdates(bool enab);
         void SetBridge(bool bridge);
         void Close();

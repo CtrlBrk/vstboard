@@ -230,7 +230,8 @@ void MainWindow::ReceiveMsg(const MsgObject &msg)
             return;
         }
         delete listObj[msg.prop[MsgObject::Remove].toInt()];
-        return;
+        //don't return, send message to parent anyway
+        //return;
     }
 
     listObj[msg.objIndex]->ReceiveMsg(msg);

@@ -59,7 +59,6 @@ namespace Connectables {
         void SetFixedName(QString fixedName);
         void SetNameCanChange(bool canChange) {nameCanChange = canChange;}
         void SetRemoveable();
-        void SetVisible(bool vis);
 
         void SetLimit(ObjType::Enum type, float newVal);
         void SetLimitsEnabled(bool enable) {limitsEnabled=enable;}
