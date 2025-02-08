@@ -58,7 +58,7 @@ namespace Connectables {
 
     protected:
         virtual Object *CreateOtherObjects(const ObjectInfo &info, int objId)=0;
-
+        WORD Check32bits(const ObjectInfo &info);
         hashObjects listObjects;
         MainHost *myHost;
 

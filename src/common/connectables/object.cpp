@@ -170,7 +170,7 @@ Object::Object(MainHost *host, qint32 index, const ObjectInfo &info) :
 Object::~Object()
 {
 #ifdef DEBUG_OBJECTS
-    LOG(" delObject:"<<objInfo.forcedObjId<<":"<<objInfo.name);
+    LOG(" delObject:"<<objInfo.forcedObjId<<":"<<objInfo.name<<":"<<(void*)this);
 #endif
     pinLists.clear();
 

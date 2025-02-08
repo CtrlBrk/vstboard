@@ -85,8 +85,9 @@ bool VstPlugin::Close()
 
 void VstPlugin::SetSleep(bool sleeping)
 {
-    if(closed)
+    if(closed) {
         return;
+    }
 
 	QMutexLocker objlock(&objMutex);
     
@@ -332,7 +333,7 @@ bool VstPlugin::Open()
                 return false;
             }
             if(!FilenameFromDatabase(i,objInfo.filename)) {
-                QMessageBox msg(QMessageBox::Critical,"Unknown Id",tr("Id %1 not in database, load the corresponding plugin first").arg(i));
+                QMessageBox msg(QMessageBox::Critical,"Unknown Id",tr("Id %1 not in database, load the corresponding plugin once to add it").arg(i));
                 msg.exec();
                 return false;
             }

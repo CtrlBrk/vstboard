@@ -240,13 +240,19 @@ void AddDllPath()
 bool LoadRequiredDlls()
 {
     std::list<std::wstring> dlls = {
-        L"Qt6Core",
-        /*	L"Qt5Gui",
-        L"Qt5Widgets",
-        L"Qt5Svg",
-        L"qwindows",
-        L"qsvgicon",
-    */
+       /* L"Qt6Core",
+        L"Qt6OpenGL",
+        L"Qt6Widgets",
+        L"Qt6Gui",
+        L"Qt6Charts",
+        L"Qt6Svg",
+        L"Qt6OpenGLWidgets",
+*/
+        // L"qsvgicon",
+        // L"qmodernwindowsstyle",
+        // L"qsvg",
+
+        //add a ref to prevent module unloading (avoid a crash)
         L"VstBoardPlugin"
     };
 

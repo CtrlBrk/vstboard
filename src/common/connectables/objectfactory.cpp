@@ -18,7 +18,7 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 
-
+#include <fstream>
 #include "objectfactory.h"
 #include "midisender.h"
 #include "miditoautomation.h"
@@ -151,9 +151,30 @@ QSharedPointer<Object> ObjectFactory::GetObj(const QModelIndex & index)
     return GetObjectFromId(index.data(UserRoles::value).toInt());
 }
 
+WORD ObjectFactory::Check32bits(const ObjectInfo &info) {
+    IMAGE_DOS_HEADER dosHead;
+    IMAGE_FILE_HEADER fileHead;
+
+    std::ifstream fsrteam(info.filename.toStdString(), std::ios_base::in | std::ios_base::binary);
+    fsrteam.read(PCHAR(&dosHead), sizeof(dosHead));
+    fsrteam.seekg(dosHead.e_lfanew + 4, std::ios_base::beg);
+    fsrteam.read(PCHAR(&fileHead), sizeof(fileHead));
+    fsrteam.close();
+    return fileHead.Machine;
+}
+
 QSharedPointer<Object> ObjectFactory::NewObject(const ObjectInfo &info, int containerId)
 {
     int objId = -1;
+
+    //check 32bits dll
+    if(info.nodeType == NodeType::object && info.objType==ObjType::VstPlugin) {
+        if(Check32bits(info)==IMAGE_FILE_MACHINE_I386) {
+            ObjectInfo i = info;
+            i.objType = ObjType::VstPlugin32;
+            return NewObject(i,containerId);
+        }
+    }
 
     if(info.forcedObjId!=0) {
         objId = info.forcedObjId;
@@ -219,6 +240,11 @@ QSharedPointer<Object> ObjectFactory::NewObject(const ObjectInfo &info, int cont
                 #endif
                     case ObjType::Vst3Plugin:
                         obj = new Vst3Plugin(myHost,objId, info);
+                        break;
+                    case ObjType::VstPlugin32:
+                        // obj = new VstPlugin32(myHost,objId, info);
+                        obj = new Object(myHost, objId, info);
+                        obj->SetErrorMessage("32bit not implemented");
                         break;
             #endif
 

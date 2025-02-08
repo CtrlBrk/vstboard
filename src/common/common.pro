@@ -46,6 +46,7 @@ SOURCES += \
     connectables/objectcontainerattribs.cpp \
     connectables/pinfactory.cpp \
     connectables/script.cpp \
+    connectables/vstplugin32.cpp \
     models/listobjectsmodel.cpp \
     msghandler.cpp \
     mainhost.cpp \
@@ -158,6 +159,7 @@ HEADERS += \
     connectables/objectcontainerattribs.h \
     connectables/pinfactory.h \
     connectables/script.h \
+    connectables/vstplugin32.h \
     globals.h \
     mainhost.h \
     audiobuffer.h \

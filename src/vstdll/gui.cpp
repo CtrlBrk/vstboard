@@ -32,7 +32,7 @@ Gui::Gui(Vst::EditController *ctrl, ViewRect *size) :
     resizeH(0),
     plugFrame(0)
 {
-
+   
 
     //reaper needs an offset.. can't find a good solution
 //    char str[64];
@@ -68,8 +68,8 @@ Gui::~Gui()
         myWindow->writeSettings();
 //        myWindow->deleteLater();
 //        myWindow->setParent(0);
-//        delete myWindow;
-//        myWindow=0;
+       delete myWindow;
+       myWindow=0;
     }
     if(widget) {
         //widget->deleteLater();

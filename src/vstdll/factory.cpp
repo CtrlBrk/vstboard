@@ -38,21 +38,10 @@ BEGIN_FACTORY_DEF ("CtrlBrk",
            kVstVersionString,
            VstBoardProcessor::createInstance)
 /*
-    DEF_CLASS2 (INLINE_UID_FROM_FUID(VstBoardInstControllerUID),
-           PClassInfo::kManyInstances,
-           kVstComponentControllerClass,
-           "VstBoard Instrument",
-           0,
-           "",
-           QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toLatin1(),
-           kVstVersionString,
-           VstBoardController::createInstance)
-*/
-    /*
     DEF_CLASS2 (INLINE_UID_FROM_FUID(VstBoardProcessorUID),
             PClassInfo::kManyInstances,
             kVstAudioEffectClass,
-            "VstBoard Effect",
+            "VstBoardFx",
             Vst::kDistributable,
             Vst::PlugType::kFx,
             QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toLatin1(),
@@ -100,7 +89,17 @@ IPluginFactory* PLUGIN_API GetPluginFactoryVst24() {
                    QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toLatin1(),
                    kVstVersionString,
                    VstBoardProcessor::createInstance)
-
+/*
+        DEF_CLASS2 (INLINE_UID_FROM_FUID(VstBoardProcessorUID),
+                   PClassInfo::kManyInstances,
+                   kVstAudioEffectClass,
+                   "VstBoardFx",
+                   Vst::kDistributable,
+                   Vst::PlugType::kFx,
+                   QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toLatin1(),
+                   kVstVersionString,
+                   VstBoardProcessor::createInstance)
+*/
         DEF_CLASS2 (INLINE_UID_FROM_FUID(VstBoardControllerUID),
                    PClassInfo::kManyInstances,
                    kVstComponentControllerClass,

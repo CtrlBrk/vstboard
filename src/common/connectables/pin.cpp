@@ -233,8 +233,9 @@ void Pin::updateView()
     if(!MsgEnabled())
         return;
 
-//    if(!valueChanged)
-//        return;
+    //TODO check if pins can rely on GetValue to precess something
+   if(!valueChanged)
+       return;
 
     QMutexLocker l(&objMutex);
 
