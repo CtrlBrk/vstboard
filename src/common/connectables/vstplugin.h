@@ -40,7 +40,7 @@ namespace Connectables {
 
     public:
         VstPlugin(MainHost *myHost,int index, const ObjectInfo & info);
-        ~VstPlugin();
+        virtual ~VstPlugin();
         bool Open() override;
         bool Close();
         void Render() override;
@@ -55,7 +55,7 @@ namespace Connectables {
         static QMap<AEffect*,VstPlugin*>mapPlugins;
         static VstPlugin *pluginLoading;
 
-        void CreateEditorWindow();
+        virtual void CreateEditorWindow();
 
 //        static View::VstShellSelect *shellSelectView;
 
@@ -76,7 +76,7 @@ namespace Connectables {
 
     protected:
         void SetId(int id) {objInfo.id = id;}
-        bool initPlugin();
+        virtual bool initPlugin();
         void processEvents(VstEvents* events);
         void onVstProgramChanged();
         bool FilenameFromDatabase(VstInt32 id, QString &filename);

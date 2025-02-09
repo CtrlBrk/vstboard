@@ -20,7 +20,7 @@
 
 #include "ceffect.h"
 #include "cvsthost.h"
-#include "../mainhost.h"
+// #include "../mainhost.h"
 #include "vstbank.h"
 #include "vstprogram.h"
 
@@ -65,20 +65,28 @@ CEffect::~CEffect()
 /* Load : loads the effect module                                            */
 /*****************************************************************************/
 
-bool CEffect::Load(const QString &name)
+bool CEffect::Load(const std::wstring &name)
 {
-    pluginLib = new QLibrary(name);
 
-    if(!pluginLib->load()) {
-        Unload();
+    // pluginLib = new QLibrary(name);
+    // if(!pluginLib->load()) {
+        // Unload();
+        // return false;
+    // }
+
+    pluginLib = LoadLibrary(name.c_str());
+    if(!pluginLib) {
         return false;
     }
 
     vstPluginFuncPtr entryPoint=0;
     try {
-        entryPoint = (vstPluginFuncPtr)pluginLib->resolve("VSTPluginMain");
-        if(!entryPoint)
-            entryPoint = (vstPluginFuncPtr)pluginLib->resolve("main");
+        entryPoint = (vstPluginFuncPtr)GetProcAddress(pluginLib, "VSTPluginMain");
+        // entryPoint = (vstPluginFuncPtr)pluginLib->resolve("VSTPluginMain");
+        if(!entryPoint) {
+            entryPoint = (vstPluginFuncPtr)GetProcAddress(pluginLib, "main");
+            // entryPoint = (vstPluginFuncPtr)pluginLib->resolve("main");
+        }
     }
     catch(...)
     {
@@ -122,11 +130,12 @@ bool CEffect::Unload()
     pEffect = NULL;
 
     if(pluginLib) {
-        if(pluginLib->isLoaded())
-            if(!pluginLib->unload()) {
-                LOG("can't unload plugin"<< sName);
-            }
-        delete pluginLib;
+        // if(pluginLib->isLoaded())
+            // if(!pluginLib->unload()) {
+                // LOG("can't unload plugin"<< sName);
+            // }
+        // delete pluginLib;
+        FreeLibrary(pluginLib);
         pluginLib=0;
     }
     return true;
@@ -156,7 +165,7 @@ bool CEffect::LoadBank(std::string *name)
             return false;
           }
 
-        EffBeginLoadBank(bank.GetPatchChunkInfo());
+        EffBeginLoadBank(bank.GetPatchChunkInfo(), bank.tLen);
 
         if(bank.IsChunk()) {
             if(!(pEffect->flags & effFlagsProgramChunks)) {
@@ -175,9 +184,9 @@ bool CEffect::LoadBank(std::string *name)
                 VstPatchChunkInfo info;
                 info = *bank.GetPatchChunkInfo();
                 info.numElements=prog->numParams;
-                EffBeginLoadProgram(&info);
+                EffBeginLoadProgram(&info,sizeof(VstPatchChunkInfo));
                 EffSetProgram(i);
-                EffSetProgramName(prog->prgName);
+                EffSetProgramName(prog->prgName,28);
                 for(int j=0; j< prog->numParams; j++) {
                     float val = bank.GetProgParm(i,j);
                     EffSetParameter(j,val);
@@ -214,7 +223,7 @@ bool CEffect::SaveBank(std::string * name)
         for(int i=0; i<pEffect->numPrograms; i++) {
             char prgName[24];
             EffSetProgram(i);
-            EffGetProgramName(prgName);
+            EffGetProgramName(prgName,24);
             bank.SetProgramName(i,prgName);
 
             for(int j=0; j<pEffect->numParams; j++) {
@@ -263,8 +272,8 @@ bool CEffect::LoadProgram(std::string *name)
             VstPatchChunkInfo info;
             info = *progFile.GetPatchChunkInfo();
             info.numElements=prog->numParams;
-            EffBeginLoadProgram(&info);
-            EffSetProgramName(prog->prgName);
+            EffBeginLoadProgram(&info,sizeof(VstPatchChunkInfo));
+            EffSetProgramName(prog->prgName,28);
             for(int i=0; i< prog->numParams; i++) {
                 float val = progFile.GetProgParm(i);
                 EffSetParameter(i,val);
@@ -297,7 +306,7 @@ bool CEffect::SaveProgram(std::string *name)
     }
 
     char prgName[24];
-    EffGetProgramName(prgName);
+    EffGetProgramName(prgName,24);
     progFile.SetProgramName(prgName);
 
     progFile.SetFxID(pEffect->uniqueID);
@@ -316,7 +325,7 @@ VstInt32 CEffect::PluginIdFromBankFile(std::string *name)
 /* EffDispatch : calls an effect's dispatcher                                */
 /*****************************************************************************/
 
-long CEffect::EffDispatch(VstInt32 opCode, VstInt32 index, VstIntPtr value, void *ptr, float opt)
+long CEffect::EffDispatch(VstInt32 opCode, VstInt32 index, VstIntPtr value, void *ptr, float opt, VstInt32 size)
 {
     if (!pEffect)
         return 0;
@@ -383,14 +392,6 @@ VstIntPtr CEffect::OnMasterCallback(long opcode, long index, long value, void *p
     }
 
     return currentReturnCode;
-}
-
-QString CEffect::EffGetParamName(long index)
-{
-    char txt[256] ={0};
-    EffDispatch(effGetParamName, index, 0, txt);
-    return QString(txt);
-
 }
 
 #ifdef _MSC_VER

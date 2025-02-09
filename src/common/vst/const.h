@@ -21,7 +21,7 @@
 #ifndef VSTCONST_H
 #define VSTCONST_H
 
-#include "../precomp.h"
+// #include "../precomp.h"
 
 #ifdef _MSC_VER
 #pragma warning( push )

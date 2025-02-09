@@ -76,6 +76,7 @@ namespace vst
         float GetProgParm(int nProgram, int nParm);
         bool SetProgParm(int nProgram, int nParm, float val = 0.0);
 
+        VstInt32 tLen;
     protected:
         std::string szFileName;
         unsigned char * bBank;

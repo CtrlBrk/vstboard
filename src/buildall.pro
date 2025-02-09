@@ -13,6 +13,7 @@ SUBDIRS += vstboard
 
 vstsdk {
     SUBDIRS += vstdll
+
     win32 {
         SUBDIRS += dllLoader
     }

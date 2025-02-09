@@ -199,7 +199,7 @@ void VstPlugin::Render()
                 cpt++;
             }
 
-            EffProcessEvents(listEvnts);
+            EffProcessEvents(listEvnts,sizeof(listEvnts));
         }
     }
 
@@ -342,7 +342,7 @@ bool VstPlugin::Open()
         QFileInfo inf(objInfo.filename);
         setObjectName(inf.baseName());
 
-        if(!Load(objInfo.filename )) {
+        if(!Load(objInfo.filename.toStdWString() )) {
             VstPlugin::pluginLoading = 0;
             SetErrorMessage( tr("Error while loading the plugin") );
             //return true to create a dummy object
@@ -361,7 +361,7 @@ bool VstPlugin::Open()
         msg.prop[MsgObject::ObjInfo] = QVariant::fromValue(objInfo);
         char szName[256];
         quint32 id;
-        while ((id = EffGetNextShellPlugin(szName))) {
+        while ((id = EffGetNextShellPlugin(szName,sizeof(szName)))) {
             if(ids.contains(id))
                 continue;
             ids << id;
@@ -460,12 +460,13 @@ bool VstPlugin::initPlugin()
         EffSetBlockSize(bufferSize);
 
         //long canSndMidiEvnt = EffCanDo(PlugCanDos::canDoSendVstMidiEvent);
-        bWantMidi = (EffCanDo("receiveVstMidiEvent") == 1);
+        const char* t="receiveVstMidiEvent";
+        bWantMidi = EffDispatch(effCanDo, 0, 0, (void *)t,strlen(t));
 //LOG("sendtime"<<EffCanDo("sendVstTimeInfo"));
 
      //   long midiPrgNames = EffCanDo("midiProgramNames");
         VstPinProperties pinProp;
-        EffGetInputProperties(0,&pinProp);
+        EffGetInputProperties(0,&pinProp,sizeof(VstPinProperties));
 
         //stereo input
         bool stereoIn = false;
@@ -474,7 +475,7 @@ bool VstPlugin::initPlugin()
         //speaker arrangement
         //pinProp->arrangementType
 
-        EffGetOutputProperties(0,&pinProp);
+        EffGetOutputProperties(0,&pinProp,sizeof(VstPinProperties));
         //stereo output
         bool stereoOut = false;
         if(pinProp.flags & kVstPinIsStereo)
@@ -488,13 +489,13 @@ bool VstPlugin::initPlugin()
 
         if(stereoIn)
         {
-                EffGetInputProperties(0,&pinProp);
-                EffGetInputProperties(1,&pinProp);
+                EffGetInputProperties(0,&pinProp,sizeof(VstPinProperties));
+                EffGetInputProperties(1,&pinProp,sizeof(VstPinProperties));
         }
         if(stereoOut)
         {
-                EffGetOutputProperties(0,&pinProp);
-                EffGetOutputProperties(1,&pinProp);
+                EffGetOutputProperties(0,&pinProp,sizeof(VstPinProperties));
+                EffGetOutputProperties(1,&pinProp,sizeof(VstPinProperties));
         }
 
         if(bWantMidi)
@@ -517,7 +518,7 @@ bool VstPlugin::initPlugin()
         EffSetProgram(0);
 
         char szBuf[256] = "";
-        if ((EffGetProductString(szBuf)) && (*szBuf)) {
+        if ((EffGetProductString(szBuf,sizeof(szBuf))) && (*szBuf)) {
             setObjectName( QString(szBuf) );
             objInfo.name=objectName();
         }
@@ -745,9 +746,13 @@ QString VstPlugin::GetParameterName(ConnectionInfo pinInfo)
         return "";
 
     if(pEffect && pinInfo.pinNumber < pEffect->numParams){
-        QString s(EffGetParamName(pinInfo.pinNumber));
+        char txt[256] ={0};
+        EffGetParamName(pinInfo.pinNumber,txt,256);
+        QString s(txt);
+
         char str[256]={0};
-        EffGetParamDisplay(pinInfo.pinNumber,str);
+        EffGetParamDisplay(pinInfo.pinNumber,str,256);
+
         s.append(":");
         s.append(str);
         return s;
@@ -918,7 +923,9 @@ VstIntPtr VstPlugin::OnMasterCallback(long opcode, long index, long value, void 
                 if(i.key()<pEffect->numParams) {
                     ParameterPin *pin = static_cast<ParameterPin*>(i.value());
                     pin->ChangeOutputValue( EffGetParameter(i.key()), true );
-                    pin->setObjectName( EffGetParamName(i.key()) );
+                    char txt[256] ={0};
+                    EffGetParamName(i.key(),txt,256);
+                    pin->setObjectName( txt );
                 }
                 ++i;
             }
@@ -1137,7 +1144,9 @@ Pin* VstPlugin::CreatePin(const ConnectionInfo &info)
 //                return new ParameterPinIn(this,info.pinNumber,"On",&listBypass);
             default :
                 if(!closed) {
-                    args.name = EffGetParamName(info.pinNumber);
+                    char txt[256] ={0};
+                    EffGetParamName(info.pinNumber,txt,256);
+                    args.name = QString::fromLatin1(txt);
                     args.value = EffGetParameter(info.pinNumber);
                 }
                 args.visible = !hasEditor;

@@ -631,7 +631,7 @@ void Object::UserAddPin(const ConnectionInfo &info)
             break;
     }
 }
-
+/*
 Pin* Object::CreatePin(pinConstructArgs &args)
 {
     if(args.direction == PinDirection::Input
@@ -649,8 +649,7 @@ Pin* Object::CreatePin(pinConstructArgs &args)
     args.bufferSize = myHost->GetBufferSize();
     args.doublePrecision = doublePrecision;
     return PinFactory::MakePin(args);
-}
-
+}*/
 /*!
   Called by PinsList to create a pin
   \param info ConnectionInfo defining the pin to be created
@@ -663,7 +662,7 @@ Pin* Object::CreatePin(const ConnectionInfo &info)
 
     switch(info.type) {
         case PinType::Parameter:
-            if(info.direction == PinDirection::Output &&
+            if(info.direction == PinDirection::Input &&
                 info.pinNumber == FixedPinNumber::editorVisible ) {
 
                 listEditorVisible << "hide";

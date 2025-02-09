@@ -230,12 +230,14 @@ void Pin::updateView()
         return;
     }
 
-    if(!MsgEnabled())
+    if(!MsgEnabled()) {
         return;
+    }
 
-    //TODO check if pins can rely on GetValue to precess something
-   if(!valueChanged)
-       return;
+    float newVu = GetValue();
+    if(!valueChanged) {
+        return;
+    }
 
     QMutexLocker l(&objMutex);
 
@@ -249,14 +251,8 @@ void Pin::updateView()
 #endif
     }
 
-    float newVu = GetValue();
-    if(valueChanged) {
-        valueChanged=false;
-        msg.prop[MsgObject::Value]=newVu;
-    } else {
-        //shouldn't need to update view...
-        return;
-    }
+    valueChanged=false;
+    msg.prop[MsgObject::Value]=newVu;
 
     if(msg.prop.count()>0) {
         msgCtrl->SendMsg(msg);

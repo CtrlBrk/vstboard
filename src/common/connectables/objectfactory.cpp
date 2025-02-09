@@ -30,7 +30,8 @@
 
 #ifdef VST24SDK
     #include "vstplugin.h"
-    #include "../vst/cvsthost.h"
+    // #include "../vst/cvsthost.h"
+    #include "vstplugin32.h"
 #endif
 #ifdef VSTSDK
     #include "vst3plugin.h"
@@ -242,9 +243,7 @@ QSharedPointer<Object> ObjectFactory::NewObject(const ObjectInfo &info, int cont
                         obj = new Vst3Plugin(myHost,objId, info);
                         break;
                     case ObjType::VstPlugin32:
-                        // obj = new VstPlugin32(myHost,objId, info);
-                        obj = new Object(myHost, objId, info);
-                        obj->SetErrorMessage("32bit not implemented");
+                        obj = new VstPlugin32(myHost,objId, info);
                         break;
             #endif
 

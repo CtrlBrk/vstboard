@@ -269,7 +269,7 @@ bool CFxBank::LoadBank(std::string *pszFile)
     try
     {
         fseek(fp, 0, SEEK_END);               /* get file size                     */
-        size_t tLen = (size_t)ftell(fp);
+        tLen = (size_t)ftell(fp);
         rewind(fp);
 
         nBank = new unsigned char[tLen];      /* allocate storage                  */

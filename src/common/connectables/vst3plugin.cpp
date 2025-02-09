@@ -1044,7 +1044,9 @@ void Vst3Plugin::Unload()
 void Vst3Plugin::Render()
 {
     //update buffer size before processing
-    SetBufferSize(myHost->GetBufferSize());
+    //not in this thread!
+    // SetBufferSize(myHost->GetBufferSize());
+    Object::SetBufferSize(myHost->GetBufferSize());
 
     if(bypass) {
         foreach(Pin *in, listAudioPinIn->listPins ) {
