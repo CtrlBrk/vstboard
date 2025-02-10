@@ -5,22 +5,22 @@ using namespace Connectables;
 
 HANDLE VstPlugin32::hMapFile = 0;
 HANDLE VstPlugin32::ipcMutex = 0;
+HANDLE VstPlugin32::ipcSemStart = 0;
+HANDLE VstPlugin32::ipcSemEnd = 0;
 unsigned char* VstPlugin32::mapFileBuffer = 0;
 // QByteArray VstPlugin32::ipcData;
 
 VstPlugin32::VstPlugin32(MainHost *myHost,int index, const ObjectInfo & info) :
     VstPlugin(myHost,index,info)
 {
-    ipcMutexStartProcess = CreateMutex(NULL, FALSE, L"vstboardLockStart");
-    if (!ipcMutexStartProcess) {
-        return ;
-    }
-    WaitForSingleObject(ipcMutexStartProcess, 10000);
+
 }
 
 VstPlugin32::~VstPlugin32()
 {
-    EffDispatch(effClose);
+    VstPlugin32::EffDispatch(effClose);
+    delete pEffect;
+    pEffect=0;
     Close();
 }
 
@@ -42,18 +42,35 @@ bool VstPlugin32::ProcessInit()
             return false;
         }
 
-        ipcMutex = CreateMutex(NULL, FALSE, L"vstboardLock");
         if (!ipcMutex) {
-            return false;
+            ipcMutex = CreateMutex(NULL, FALSE, L"vstboardLock");
+            if (!ipcMutex) {
+                return false;
+            }
+        }
+
+        if (!ipcSemStart) {
+            ipcSemStart = CreateSemaphore(NULL, 0,1, L"vstboardSemStart");
+            if (!ipcSemStart) {
+                return false;
+            }
+        }
+
+        if (!ipcSemEnd) {
+            ipcSemEnd = CreateSemaphore(NULL, 0,1, L"vstboardSemEnd");
+            if (!ipcSemEnd) {
+                return false;
+            }
         }
 
 
-        if(WaitForSingleObject(ipcMutex, 10000) == WAIT_TIMEOUT) {
-            return false;
-        }
+        Lock();
+
         ipc32* pf = (ipc32*)mapFileBuffer;
         pf->function=ipc32::Function::None;
-        ReleaseMutex(ipcMutex);
+
+        Process();
+
     }
 
     return true;
@@ -71,62 +88,65 @@ bool VstPlugin32::Open()
 
 bool VstPlugin32::Load(const std::wstring &name)
 {
-    if(WaitForSingleObject(ipcMutex, 10000) == WAIT_TIMEOUT) {
-        return false;
-    }
+    Lock();
+
     ipc32* pf = (ipc32*)mapFileBuffer;
 
     pf->function=ipc32::Function::LoadDll;
     name.copy(pf->name,name.length());
 
-    ReleaseMutex(ipcMutex);
+    Process();
+
     return true;
 }
 
 
 bool VstPlugin32::initPlugin()
 {
-    if(WaitForSingleObject(ipcMutex, 10000) == WAIT_TIMEOUT) {
-        return false;
-    }
+    Lock();
+
     ipc32* pf = (ipc32*)mapFileBuffer;
     pf->function=ipc32::Function::GetAEffect;
-    ReleaseMutex(ipcMutex);
 
-    if(WaitForSingleObject(ipcMutex, 10000) == WAIT_TIMEOUT) {
-        return false;
-    }
+    ProcessAndWaitResult();
+
     pEffect = new AEffect();
     pEffect->flags = pf->flags;
     pEffect->numInputs = pf->numInputs;
     pEffect->numOutputs = pf->numOutputs;
     pEffect->initialDelay = pf->initialDelay;
     pEffect->numParams = pf->numParams;
-    ReleaseMutex(ipcMutex);
+
+    //disable gui for now
+    pEffect->flags -= effFlagsHasEditor;
+
+    UnlockAfterResult();
+
     return VstPlugin::initPlugin();
 }
 
 bool VstPlugin32::Unload()
 {
-    if(WaitForSingleObject(ipcMutex, 10000) == WAIT_TIMEOUT) {
-        return false;
-    }
+    Lock();
+
     ipc32* pf = (ipc32*)mapFileBuffer;
 
     pf->function=ipc32::Function::UnloadDll;
 
-    ReleaseMutex(ipcMutex);
+    Process();
+
     return true;
 }
 
 long VstPlugin32::EffEditOpen(void *ptr)
 {
-    if(WaitForSingleObject(ipcMutex, 10000) == WAIT_TIMEOUT) {
-        return false;
-    }
+    Lock();
+
     ipc32* pf = (ipc32*)mapFileBuffer;
     pf->function=ipc32::Function::EditOpen;
-    ReleaseMutex(ipcMutex);
+
+    Process();
+
     return true;
 }
 
@@ -141,41 +161,39 @@ void VstPlugin32::CreateEditorWindow()
 
 float VstPlugin32::EffGetParameter(long index)
 {
-    if(WaitForSingleObject(ipcMutex, 10000) == WAIT_TIMEOUT) {
-        return 0;
-    }
+    Lock();
+
     ipc32* pf = (ipc32*)mapFileBuffer;
     pf->function=ipc32::Function::GetParam;
     pf->index=index;
-    ReleaseMutex(ipcMutex);
 
-    if(WaitForSingleObject(ipcMutex, 10000) == WAIT_TIMEOUT) {
-        return 0;
-    }
+    ProcessAndWaitResult();
+
     float ret = pf->opt;
-    ReleaseMutex(ipcMutex);
+
+    UnlockAfterResult();
+
     return ret;
 }
 
 void VstPlugin32::EffSetParameter(long index, float parameter)
 {
-    if(!WaitForSingleObject(ipcMutex, 10000)) {
-        return;
-    }
+    Lock();
+
     ipc32* pf = (ipc32*)mapFileBuffer;
     pf->function=ipc32::Function::SetParam;
     pf->index=index;
     pf->opt = parameter;
-    ReleaseMutex(ipcMutex);
+
+    Process();
+
 }
 
 
 void VstPlugin32::EffProcess(float **inputs, float **outputs, long sampleframes)
 {
-    // pEffect->process(pEffect, inputs, outputs, sampleframes);
-    if(WaitForSingleObject(ipcMutex, 10000) == WAIT_TIMEOUT) {
-        return;
-    }
+    Lock();
+
     ipc32* pf = (ipc32*)mapFileBuffer;
 
     pf->function=ipc32::Function::Process;
@@ -185,35 +203,53 @@ void VstPlugin32::EffProcess(float **inputs, float **outputs, long sampleframes)
     s = sizeof(float)*sampleframes*pEffect->numOutputs;
     memcpy(pf->buffersOut,outputs,s);
 
-    ReleaseMutex(ipcMutex);
+    Process();
 }
 
 void VstPlugin32::EffProcessReplacing(float **inputs, float **outputs, long sampleframes)
 {
 
-    // pEffect->processReplacing(pEffect, inputs, outputs, sampleframes);
-    if(WaitForSingleObject(ipcMutex, 10000) == WAIT_TIMEOUT) {
-        return;
-    }
+    Lock();
+
     ipc32* pf = (ipc32*)mapFileBuffer;
 
     pf->function=ipc32::Function::ProcessReplace;
     pf->dataSize = sampleframes;
-    size_t s = sizeof(float)*sampleframes*pEffect->numInputs;
-    memcpy(pf->buffersIn,*inputs,s);
-    s = sizeof(float)*sampleframes*pEffect->numOutputs;
-    memcpy(pf->buffersOut,*outputs,s);
 
-    ReleaseMutex(ipcMutex);
+    float* tmp = (float*)&pf->buffersIn;
+    for (int i = 0; i < pEffect->numInputs; i++) {
+        memcpy(tmp,inputs[i], sizeof(float) * sampleframes );
+        tmp += sizeof(float) * sampleframes;
+    }
+
+    //size_t s = sizeof(float)*sampleframes*pEffect->numInputs;
+    //memcpy(pf->buffersIn,*inputs,s);
+    //s = sizeof(float)*sampleframes*pEffect->numOutputs;
+    ProcessAndWaitResult();
+
+    //memcpy(*outputs,pf->buffersOut,s);
+
+    tmp = (float*)&pf->buffersOut;
+    for (int i = 0; i < pEffect->numOutputs; i++) {
+        memcpy(outputs[i],tmp, sizeof(float) * sampleframes );
+        tmp += sizeof(float) * sampleframes;
+    }
+/*
+    QString l="";
+    for(int a=0;a<sampleframes;a++) {
+        l.append( QString::number( outputs[0][a] ) );
+    }
+    LOG("out " << l)
+*/
+    UnlockAfterResult();
 }
 
 void VstPlugin32::EffProcessDoubleReplacing(double **inputs, double **outputs, long sampleframes)
 {
 #if defined(VST_2_4_EXTENSIONS)
-    // pEffect->processDoubleReplacing(pEffect, inputs, outputs, sampleFrames);
-    if(WaitForSingleObject(ipcMutex, 10000) == WAIT_TIMEOUT) {
-        return;
-    }
+
+    Lock();
+
     ipc32* pf = (ipc32*)mapFileBuffer;
 
     pf->function=ipc32::Function::ProcessDouble;
@@ -223,15 +259,15 @@ void VstPlugin32::EffProcessDoubleReplacing(double **inputs, double **outputs, l
     s = sizeof(double)*sampleframes*pEffect->numOutputs;
     memcpy(pf->buffersOut,outputs,s);
 
-    ReleaseMutex(ipcMutex);
+    Process();
+
 #endif
 }
 
 long VstPlugin32::EffDispatch(VstInt32 opCode, VstInt32 index, VstIntPtr value, void *ptr, float opt, VstInt32 size)
 {
-    if(WaitForSingleObject(ipcMutex, 10000) == WAIT_TIMEOUT) {
-        return 0;
-    }
+
+    Lock();
 
     ipc32* pf = (ipc32*)mapFileBuffer;
     pf->function = ipc32::Function::Dispatch;
@@ -248,27 +284,74 @@ long VstPlugin32::EffDispatch(VstInt32 opCode, VstInt32 index, VstIntPtr value, 
         //value is also a pointer
     }
 
-    ReleaseMutex(ipcMutex);
-    // ReleaseMutex(ipcMutexStartProcess);
+    ProcessAndWaitResult();
 
-    if(WaitForSingleObject(ipcMutex, 10000) == WAIT_TIMEOUT) {
-        return 0;
-    }
-    // if(WaitForSingleObject(ipcMutexStartProcess, 10000) == WAIT_TIMEOUT) {
-        // return 0;
-    // }
-
-    if(pf->function == ipc32::Function::Dispatch) {
-        ReleaseMutex(ipcMutex);
-        LOG("locked too soon?")
-        return -1;
-    }
     long disp = pf->dispatchReturn;
     size = pf->dataSize;
     if(ptr) {
         memcpy(ptr,&pf->data,size);
     }
-    ReleaseMutex(ipcMutex);
+
+    UnlockAfterResult();
 
     return disp;
+}
+
+void VstPlugin32::Lock()
+{
+    if(WaitForSingleObject(ipcMutex, 10000) == WAIT_TIMEOUT) {
+        LOG("ipcMutex timeout");
+        return;
+    }
+}
+
+void VstPlugin32::Process()
+{
+    ReleaseSemaphore(ipcSemStart, 1, NULL);
+    ReleaseMutex(ipcMutex);
+}
+
+void VstPlugin32::ProcessAndWaitResult()
+{
+    ReleaseSemaphore(ipcSemStart, 1, NULL);
+    ReleaseMutex(ipcMutex);
+
+    LONG val=0;
+    ReleaseSemaphore(ipcSemEnd, 0, &val);
+
+    //semaphore not locking without this?
+    // LOG("sema "<<val);
+
+
+    if(val>0) {
+        LOG("semaphore not locked?");
+    }
+
+    if(WaitForSingleObject(ipcSemEnd, 10000) == WAIT_TIMEOUT) {
+        LOG("ipcSemEnd timeout");
+        return;
+    }
+
+    //ipcSemEnd won't behave, really check if the process is finished :
+    //lock, read, unlock.. until the server reset the function to none
+    ipc32::Function currentF=ipc32::Function::Wait;
+    do {
+        if(WaitForSingleObject(ipcMutex, 10000) == WAIT_TIMEOUT) {
+            LOG("ipcMutex timeout");
+            return;
+        }
+        ipc32* pf = (ipc32*)mapFileBuffer;
+        currentF = pf->function;
+        ReleaseMutex(ipcMutex);
+    } while(currentF != ipc32::Function::None);
+
+    if(WaitForSingleObject(ipcMutex, 10000) == WAIT_TIMEOUT) {
+        LOG("ipcMutex timeout");
+        return;
+    }
+}
+
+void VstPlugin32::UnlockAfterResult()
+{
+    ReleaseMutex(ipcMutex);
 }

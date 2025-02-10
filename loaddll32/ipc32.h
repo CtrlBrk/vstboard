@@ -8,6 +8,7 @@ struct ipc32 {
     enum class Function
     {
         None,
+        Wait,
         LoadDll,
         UnloadDll,
         GetAEffect,

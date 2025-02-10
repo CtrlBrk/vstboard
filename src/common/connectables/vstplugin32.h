@@ -29,13 +29,19 @@ public:
 protected:
     bool initPlugin() override;
 
+    static void Lock();
+    static void Process();
+    static void ProcessAndWaitResult();
+    static void UnlockAfterResult();
+
 private:
 
     static bool ProcessInit();
     static HANDLE hMapFile;
     static unsigned char* mapFileBuffer;
     static HANDLE ipcMutex;
-    HANDLE ipcMutexStartProcess;
+    static HANDLE ipcSemStart;
+    static HANDLE ipcSemEnd;
     // static QByteArray ipcData;
 };
 

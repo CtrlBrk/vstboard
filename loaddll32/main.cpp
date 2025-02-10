@@ -28,8 +28,9 @@ bool DeinitModule()
 }
 
 
-HANDLE hMutex;
-HANDLE hMutexStart;
+HANDLE ipcMutex;
+HANDLE ipcSemStart;
+HANDLE ipcSemEnd;
 HANDLE hMapFile;
 unsigned char* mapFileBuffer;
 
@@ -54,14 +55,21 @@ void main() {
 		return;
 	}
 
-	hMutex = CreateMutex(NULL, FALSE, L"vstboardLock");
-	if (!hMutex) {
+	ipcMutex = CreateMutex(NULL, FALSE, L"vstboardLock");
+	if (!ipcMutex) {
 		return;
 	}
-	hMutexStart = CreateMutex(NULL, FALSE, L"vstboardLockStart");
-	if (!hMutexStart) {
+
+	ipcSemStart = CreateSemaphore(NULL, 0, 1, L"vstboardSemStart");
+	if (!ipcSemStart) {
 		return;
 	}
+	ipcSemEnd = CreateSemaphore(NULL, 0, 1, L"vstboardSemEnd");
+	//OpenSemaphore(SEMAPHORE_ALL_ACCESS, TRUE, L"vstboardLockBack");
+	if (!ipcSemEnd) {
+		return;
+	}
+
 
 	float** ins = 0;
 	float** outs = 0;
@@ -69,11 +77,9 @@ void main() {
 
 	while (true)
 	{
-		//if (WaitForSingleObject(hMutexStart, 10000) == WAIT_TIMEOUT) {
-		//	return;
-		//}
-		
-		if (WaitForSingleObject(hMutex, 10000) == WAIT_TIMEOUT) {
+		WaitForSingleObject(ipcSemStart, INFINITE);
+
+		if (WaitForSingleObject(ipcMutex, 10000) == WAIT_TIMEOUT) {
 			return;
 		}
 		
@@ -126,8 +132,20 @@ void main() {
 					outs[i] = tmp;
 					tmp += sizeof(float) * pf->dataSize;
 				}
-				plugin->pEffect->process(plugin->pEffect, ins, outs, pf->dataSize);
 
+				if (pf->function == ipc32::Function::Process) {
+					plugin->pEffect->process(plugin->pEffect, ins, outs, pf->dataSize);
+				}
+				if (pf->function == ipc32::Function::ProcessReplace) {
+					plugin->pEffect->processReplacing(plugin->pEffect, ins, outs, pf->dataSize);
+				}
+/*
+				cout << &outs[0][0] << ":";
+				for (int a = 0; a < pf->dataSize; a++) {
+					cout << outs[0][a];
+				}
+				cout << endl;
+	*/			
 				delete[] ins;
 				delete[] outs;
 				
@@ -143,8 +161,9 @@ void main() {
 			pf->function = ipc32::Function::None;
 			
 		}
-		//ReleaseMutex(hMutexStart);
-		ReleaseMutex(hMutex);
+		ReleaseMutex(ipcMutex);
+		ReleaseSemaphore(ipcSemEnd, 1, NULL);
+		
 	}
 	
 	UnmapViewOfFile(mapFileBuffer);
