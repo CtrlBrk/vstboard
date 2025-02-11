@@ -2,7 +2,10 @@
 #define IPC32_H
 
 #define VST_FORCE_DEPRECATED 0
+#define IPC_CHUNK_SIZE 2048
+#define IPC_BUFFER_SIZE 4096
 #include "pluginterfaces/vst2.x/aeffect.h"
+
 
 struct ipc32 {
     enum class Function
@@ -19,7 +22,13 @@ struct ipc32 {
         SetParam,
         Process,
         ProcessReplace,
-        ProcessDouble
+        ProcessDouble,
+        GetChunk,
+        GetChunkSegment,
+        SetChunk,
+        SetChunkSegment,
+        DeleteChunk
+
     };
 
     VstInt32 opCode;
@@ -32,8 +41,8 @@ struct ipc32 {
     Function function;
     wchar_t name[256];
    // int buffSize;
-    float buffersIn[10000];
-    float buffersOut[10000];
+    float buffersIn[IPC_BUFFER_SIZE];
+    float buffersOut[IPC_BUFFER_SIZE];
     // AEffect pEffect;
 
     VstInt32 flags=0;
@@ -41,7 +50,7 @@ struct ipc32 {
     VstInt32 numOutputs=0;
     VstInt32 initialDelay=0;
     VstInt32 numParams=0;
-    char data[1000];
+    char data[IPC_CHUNK_SIZE];
     VstInt32 dataSize=0;
 };
 

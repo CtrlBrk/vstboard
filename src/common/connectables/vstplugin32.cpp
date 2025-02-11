@@ -8,7 +8,7 @@ HANDLE VstPlugin32::ipcMutex = 0;
 HANDLE VstPlugin32::ipcSemStart = 0;
 HANDLE VstPlugin32::ipcSemEnd = 0;
 unsigned char* VstPlugin32::mapFileBuffer = 0;
-// QByteArray VstPlugin32::ipcData;
+char* VstPlugin32::chunkData = 0;
 
 VstPlugin32::VstPlugin32(MainHost *myHost,int index, const ObjectInfo & info) :
     VstPlugin(myHost,index,info)
@@ -18,10 +18,15 @@ VstPlugin32::VstPlugin32(MainHost *myHost,int index, const ObjectInfo & info) :
 
 VstPlugin32::~VstPlugin32()
 {
-    VstPlugin32::EffDispatch(effClose);
+    // VstPlugin32::EffDispatch(effClose);
     delete pEffect;
     pEffect=0;
     Close();
+    Unload();
+    if(chunkData) {
+   //     delete chunkData;
+        chunkData=0;
+    }
 }
 
 bool VstPlugin32::ProcessInit()
@@ -95,8 +100,8 @@ bool VstPlugin32::Load(const std::wstring &name)
     pf->function=ipc32::Function::LoadDll;
     name.copy(pf->name,name.length());
 
-    Process();
-
+    ProcessAndWaitResult();
+    UnlockAfterResult();
     return true;
 }
 
@@ -192,6 +197,11 @@ void VstPlugin32::EffSetParameter(long index, float parameter)
 
 void VstPlugin32::EffProcess(float **inputs, float **outputs, long sampleframes)
 {
+    if(sampleframes>IPC_BUFFER_SIZE) {
+        LOG("buffer too big");
+        return;
+    }
+
     Lock();
 
     ipc32* pf = (ipc32*)mapFileBuffer;
@@ -208,6 +218,11 @@ void VstPlugin32::EffProcess(float **inputs, float **outputs, long sampleframes)
 
 void VstPlugin32::EffProcessReplacing(float **inputs, float **outputs, long sampleframes)
 {
+
+    if(sampleframes>IPC_BUFFER_SIZE) {
+        LOG("buffer too big");
+        return;
+    }
 
     Lock();
 
@@ -248,6 +263,11 @@ void VstPlugin32::EffProcessDoubleReplacing(double **inputs, double **outputs, l
 {
 #if defined(VST_2_4_EXTENSIONS)
 
+    if(sampleframes>IPC_BUFFER_SIZE) {
+        LOG("buffer too big");
+        return;
+    }
+
     Lock();
 
     ipc32* pf = (ipc32*)mapFileBuffer;
@@ -264,8 +284,97 @@ void VstPlugin32::EffProcessDoubleReplacing(double **inputs, double **outputs, l
 #endif
 }
 
+long VstPlugin32::EffGetChunk(void **ptr, bool isPreset) const
+{
+    Lock();
+
+    ipc32* pf = (ipc32*)mapFileBuffer;
+    pf->function=ipc32::Function::GetChunk;
+
+    ProcessAndWaitResult();
+
+    VstInt32 chunkSize = pf->dataSize;
+    LOG("get chunk size:" << pf->dataSize);
+
+    if(chunkData) {
+        delete chunkData;
+        chunkData=0;
+    }
+    chunkData = new char[chunkSize];
+    *ptr=chunkData;
+
+    UnlockAfterResult();
+
+    GetChunkSegment(chunkData,chunkSize);
+
+    // Lock();
+    // pf->function = ipc32::Function::DeleteChunk;
+    // Process();
+
+    return chunkSize;
+}
+
+bool VstPlugin32::GetChunkSegment(char *ptr, VstInt32 chunkSize)
+{
+    VstInt32 start=0;
+
+    while(start<chunkSize) {
+
+        Lock();
+
+        ipc32* pf = (ipc32*)mapFileBuffer;
+        pf->function=ipc32::Function::GetChunkSegment;
+        pf->value=start;
+        pf->dataSize = std::min( chunkSize - start , IPC_CHUNK_SIZE);
+
+        ProcessAndWaitResult();
+
+        memcpy_s(ptr + pf->value,IPC_CHUNK_SIZE,pf->data, std::min( pf->dataSize , IPC_CHUNK_SIZE) );
+
+        UnlockAfterResult();
+
+        start+=IPC_CHUNK_SIZE;
+    }
+
+    return true;
+}
+
+bool VstPlugin32::SendChunkSegment(char *ptr, VstInt32 chunkSize)
+{
+    Lock();
+    ipc32* pf = (ipc32*)mapFileBuffer;
+    pf->function=ipc32::Function::SetChunk;
+    pf->dataSize = chunkSize;
+
+    ProcessAndWaitResult();
+    UnlockAfterResult();
+
+    VstInt32 start=0;
+
+    while(start<chunkSize) {
+
+        Lock();
+        ipc32* pf = (ipc32*)mapFileBuffer;
+        pf->function=ipc32::Function::SetChunkSegment;
+        pf->value = start;
+        pf->dataSize = std::min( chunkSize - start , IPC_CHUNK_SIZE);
+        memcpy_s(pf->data,IPC_CHUNK_SIZE,ptr+start,pf->dataSize);
+
+        ProcessAndWaitResult();
+        UnlockAfterResult();
+
+        start+=IPC_CHUNK_SIZE;
+    }
+    return true;
+}
+
 long VstPlugin32::EffDispatch(VstInt32 opCode, VstInt32 index, VstIntPtr value, void *ptr, float opt, VstInt32 size)
 {
+
+    if(size>IPC_CHUNK_SIZE) {
+        LOG("send segmented");
+        SendChunkSegment((char*)ptr,size);
+    }
 
     Lock();
 
@@ -275,10 +384,13 @@ long VstPlugin32::EffDispatch(VstInt32 opCode, VstInt32 index, VstIntPtr value, 
     pf->index = index;
     pf->value = (VstInt32)value;
     pf->opt = opt;
-    if(ptr) {
-        memcpy(&pf->data,ptr,size);
+    //if the data is not already sent segmented
+    if(ptr && size<=IPC_CHUNK_SIZE) {
+        memcpy_s(&pf->data,IPC_CHUNK_SIZE,ptr,size);
     }
     pf->dataSize=size;
+
+
 
     if(opCode==effSetSpeakerArrangement || opCode==effGetSpeakerArrangement) {
         //value is also a pointer
@@ -288,11 +400,21 @@ long VstPlugin32::EffDispatch(VstInt32 opCode, VstInt32 index, VstIntPtr value, 
 
     long disp = pf->dispatchReturn;
     size = pf->dataSize;
-    if(ptr) {
+    if(ptr && size<=IPC_CHUNK_SIZE) {
         memcpy(ptr,&pf->data,size);
     }
 
     UnlockAfterResult();
+
+
+    if(size>IPC_CHUNK_SIZE) {
+        LOG("get segmented");
+        GetChunkSegment((char*)ptr,size);
+    }
+
+    // Lock();
+    // pf->function = ipc32::Function::DeleteChunk;
+    // Process();
 
     return disp;
 }
@@ -318,11 +440,6 @@ void VstPlugin32::ProcessAndWaitResult()
 
     LONG val=0;
     ReleaseSemaphore(ipcSemEnd, 0, &val);
-
-    //semaphore not locking without this?
-    // LOG("sema "<<val);
-
-
     if(val>0) {
         LOG("semaphore not locked?");
     }

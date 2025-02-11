@@ -74,7 +74,7 @@ namespace vst
     #endif
 
         virtual bool Load(const std::wstring &name);
-        virtual bool Unload();
+        bool Unload();
 
         virtual bool LoadBank(std::string *name);
         virtual bool SaveBank(std::string *name);

@@ -166,8 +166,8 @@ void CVSTHost::UpdateTimeInfo(double timer, int addSamples, double sampleRate)
 /*****************************************************************************/
 VstIntPtr VSTCALLBACK CVSTHost::AudioMasterCallback(AEffect* effect, VstInt32 opcode, VstInt32  index, VstIntPtr  value, void* ptr, float opt)
 {
-    const char* vendor = "CtrlBrk";
-    const char* product = "VstBoard";
+    const char vendor[] = "CtrlBrk";
+    const char product[] = "VstBoard";
     long retValue = 0L;
     const char* str;
 
