@@ -727,7 +727,7 @@ void Object::fromJson(QJsonObject &json)
     }
 }
 
-void Object::toJson(QJsonObject &json) const
+void Object::toJson(QJsonObject &json)
 {
     QJsonObject jsonInfo;
     objInfo.toJson(jsonInfo);
@@ -753,7 +753,7 @@ void Object::toJson(QJsonObject &json) const
   \param[in] out a QDataStream
   \return the stream
   */
-QDataStream & Object::toStream(QDataStream & out) const
+QDataStream & Object::toStream(QDataStream & out)
 {
     out << (qint32)GetIndex();
     out << GetSleep();
@@ -869,7 +869,7 @@ void Object::ProgramFromStream (int progId, QDataStream &in)
 /*!
   overload stream out
   */
-QDataStream & operator<< (QDataStream & out, const Connectables::Object& value)
+QDataStream & operator<< (QDataStream & out,  Connectables::Object& value)
 {
     return value.toStream(out);
 }

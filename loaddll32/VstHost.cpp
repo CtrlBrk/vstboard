@@ -2,6 +2,7 @@
 #include "pluginterfaces/vst2.x/aeffectx.h"
 #include <cmath>
 #include "VstPlugin.h"
+
 /*===========================================================================*/
 /* CVSTHost class members                                                    */
 /*===========================================================================*/
@@ -251,7 +252,9 @@ VstIntPtr VSTCALLBACK CVSTHost::AudioMasterCallback(AEffect* effect, VstInt32 op
         //if (obj)
         //    return obj->OnMasterCallback(opcode, index, value, ptr, opt, retValue);
         VstPlugin* p = (VstPlugin*)effect->user;
-        p->OnMasterCallback(opcode, index, value, ptr, opt, retValue);
+        if (p) {
+            return p->OnMasterCallback(opcode, index, value, ptr, opt, retValue);
+        }
     }
 
     //unknown pointer, it must be the plugin currently loading

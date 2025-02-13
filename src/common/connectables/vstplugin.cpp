@@ -1189,7 +1189,7 @@ void VstPlugin::fromJson(QJsonObject &json)
 
 }
 
-void VstPlugin::toJson(QJsonObject &json) const
+void VstPlugin::toJson(QJsonObject &json)
 {
     Object::toJson(json);
 
@@ -1207,7 +1207,7 @@ void VstPlugin::toJson(QJsonObject &json) const
     }
 }
 
-QDataStream & VstPlugin::toStream(QDataStream & out) const
+QDataStream & VstPlugin::toStream(QDataStream & out)
 {
     Object::toStream(out);
 

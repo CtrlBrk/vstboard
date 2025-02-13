@@ -2,6 +2,8 @@
 
 #include <windows.h>
 #include <string>
+#include "ipc32.h"
+
 #define VST_FORCE_DEPRECATED 0
 #include "public.sdk/source/vst2.x/audioeffectx.h"
 //#include "pluginterfaces/vst2.x/aeffectx.h"
@@ -15,10 +17,11 @@ class IpcVst;
 class VstPlugin //: public vst::CEffect
 {
 public:
-    VstPlugin(IpcVst *ipc);
+    VstPlugin(IpcVst *ipc, int pluginId);
     ~VstPlugin();
 
 public:
+    HWND hWin;
     AEffect* pEffect;
     bool bEditOpen;
     bool bNeedIdle;
@@ -75,8 +78,14 @@ public:
     bool OnIoChanged() { return false; }
     long OnGetNumAutomatableParameters() { return (pEffect) ? pEffect->numParams : 0; }
 
+
+    void resizeEditor(const RECT& clientRc) const;
+    bool EditOpen();
+    bool EditClose();
+    void MsgLoop(ipc32* map);
 private:
     IpcVst* ipc;
+    int pluginId;
     HMODULE pluginLib;
 };
 

@@ -126,8 +126,8 @@ public:
     OptionParamChange midiToParameter (uint8_t status, uint8_t channel, uint8_t midiData1, uint8_t midiData2, const ToParameterIdFunc& toParamID);
 
     void fromJson(QJsonObject &json) override;
-    void toJson(QJsonObject &json) const override;
-    QDataStream & toStream (QDataStream &) const override;
+    void toJson(QJsonObject &json) override;
+    QDataStream & toStream (QDataStream &)  override;
     bool fromStream (QDataStream &) override;
 
     void SetContainerAttribs(const ObjectContainerAttribs &attr) override;

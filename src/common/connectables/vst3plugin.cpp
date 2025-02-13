@@ -1754,13 +1754,13 @@ void Vst3Plugin::fromJson(QJsonObject &json)
     Object::fromJson(json);
 }
 
-void Vst3Plugin::toJson(QJsonObject &json) const
+void Vst3Plugin::toJson(QJsonObject &json)
 {
     //the plugin state is saved in programs, not in the plugin itself
     Object::toJson(json);
 }
 
-QDataStream & Vst3Plugin::toStream(QDataStream & out) const
+QDataStream & Vst3Plugin::toStream(QDataStream & out)
 {
     Object::toStream(out);
 

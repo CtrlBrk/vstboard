@@ -3,8 +3,10 @@
 
 #include <windows.h>
 #include <string>
-#include <thread>
-#include "public.sdk/source/vst2.x/audioeffectx.h"
+//#include <thread>
+#include <map>
+//#include "public.sdk/source/vst2.x/audioeffectx.h"
+#include "ipc32.h"
 
 using namespace std;
 
@@ -17,22 +19,20 @@ class IpcVst {
 public:
 	IpcVst();
 	void Loop();
-	VstIntPtr onCallback(long opcode, long index, long value, void* ptr, float opt, long currentReturnCode);
-	HWND hWin;
+	VstIntPtr onCallback(int pluginId, long opcode, long index, long value, void* ptr, float opt, long currentReturnCode);
 	
 
 private:
-	HMODULE HpluginDll;
 
 	HANDLE ipcMutex;
 	HANDLE ipcSemStart;
 	HANDLE ipcSemEnd;
 	HANDLE hMapFile;
-	unsigned char* mapFileBuffer;
+	ipc32* map;
 
 	
-
-	VstPlugin* plugin;
+	std::map<int,VstPlugin*> plugins;
+	//VstPlugin* plugin;
 	//CVSTHost* host;
 
 

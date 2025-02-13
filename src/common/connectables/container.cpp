@@ -960,7 +960,7 @@ void Container::fromJson(QJsonObject &json)
 
 }
 
-void Container::toJson(QJsonObject &json) const
+void Container::toJson(QJsonObject &json)
 {
     Object::toJson(json);
 
@@ -990,7 +990,7 @@ void Container::toJson(QJsonObject &json) const
 /*!
   Put all the ContainerProgram and children Objects in a data stream
   */
-QDataStream & Container::toStream (QDataStream& out) const
+QDataStream & Container::toStream (QDataStream& out)
 {
 
     {

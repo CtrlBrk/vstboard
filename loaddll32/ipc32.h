@@ -20,8 +20,10 @@ struct ipc32 {
         UnloadDll,
         GetAEffect,
         Dispatch,
-        EditOpen,
+        EditorOpen,
         GetRect,
+        EditorShow,
+        EditorHide,
         GetParam,
         SetParam,
         Process,
@@ -35,6 +37,7 @@ struct ipc32 {
         
     };
 
+    VstInt32 pluginId=0;
     Function function;
     VstInt32 opCode=0;
     VstInt32 index=0;
@@ -43,6 +46,7 @@ struct ipc32 {
     long dispatchReturn=0L;
 
     //callback
+    VstInt32 cbPluginId = 0;
     Function callback;
     VstInt32 cbOpcode = 0;
     VstInt32 cbIndex = 0;

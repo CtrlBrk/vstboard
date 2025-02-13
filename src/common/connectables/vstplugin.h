@@ -66,8 +66,8 @@ namespace Connectables {
         bool DropFile(const QString &filename);
 
         void fromJson(QJsonObject &json) override;
-        void toJson(QJsonObject &json) const override;
-        QDataStream & toStream (QDataStream &) const override;
+        void toJson(QJsonObject &json)  override;
+        QDataStream & toStream (QDataStream &) override;
         bool fromStream (QDataStream &) override;
 
         void AddPluginToDatabase();

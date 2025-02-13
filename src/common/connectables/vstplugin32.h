@@ -2,9 +2,9 @@
 #define VSTPLUGIN32_H
 
 #include "vstplugin.h"
+#include "../../loaddll32/ipc32.h"
 
 namespace Connectables {
-
 
 class VstPlugin32 : public VstPlugin
 {
@@ -14,11 +14,11 @@ public:
     VstPlugin32(MainHost *myHost,int index, const ObjectInfo & info);
     virtual ~VstPlugin32();
     bool Open() override;
-
+    bool Close();
     bool Load(const std::wstring &name) override;
     bool Unload();
     long EffDispatch(VstInt32 opCode, VstInt32 index=0, VstIntPtr value=0, void *ptr=0, float opt=0., VstInt32 size=0) override;
-    long EffEditOpen(void *ptr) override;
+   // long EffEditOpen(void *ptr) override;
     void CreateEditorWindow() override;
     long EffEditGetRect(ERect **ptr) override;
     float EffGetParameter(long index) override;
@@ -26,28 +26,28 @@ public:
     void EffProcess(float **inputs, float **outputs, long sampleframes) override;
     void EffProcessReplacing(float **inputs, float **outputs, long sampleframes) override;
     void EffProcessDoubleReplacing(double **inputs, double **outputs, long sampleFrames) override;
-    long EffGetChunk(void **ptr, bool isPreset = false) const override;
+    long EffGetChunk(void **ptr, bool isPreset = false)  override;
 
 protected:
     bool initPlugin() override;
-    static bool GetChunkSegment(char *ptr, VstInt32 chunkSize);
-    static bool SendChunkSegment(char *ptr, VstInt32 chunkSize);
+    bool GetChunkSegment(char *ptr, VstInt32 chunkSize);
+    bool SendChunkSegment(char *ptr, VstInt32 chunkSize);
 
-    static void Lock();
-    static void Process();
-    static void ProcessAndWaitResult();
-    static void UnlockAfterResult();
+    void Lock();
+    void Process();
+    void ProcessAndWaitResult();
+    void UnlockAfterResult();
 
-    static char* chunkData;
+
 private:
-
-    static bool ProcessInit();
+    bool ProcessInit();
     static HANDLE hMapFile;
-    static unsigned char* mapFileBuffer;
+    static ipc32* map;
     static HANDLE ipcMutex;
     static HANDLE ipcSemStart;
     static HANDLE ipcSemEnd;
     // static QByteArray ipcData;
+    static char* chunkData;
 
 public slots:
     void OnShowEditor() override;

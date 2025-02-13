@@ -2,7 +2,7 @@
 #include "VstHost.h"
 #include "ipcvst.h"
 #include <iostream>
-VstPlugin::VstPlugin(IpcVst* i) :
+VstPlugin::VstPlugin(IpcVst* i, int id) :
     pEffect(0),
     bEditOpen(false),
     bNeedIdle(false),
@@ -11,7 +11,9 @@ VstPlugin::VstPlugin(IpcVst* i) :
     bInSetProgram(false),
     pMasterEffect(0),
     pluginLib(0),
-    ipc(i)
+    ipc(i),
+    hWin(nullptr),
+    pluginId(id)
 {
    // cout << "vstplugin " << this << " ipc " << &ipc << endl;
     sName.clear();
@@ -363,7 +365,7 @@ VstIntPtr VstPlugin::OnMasterCallback(long opcode, long index, long value, void*
         return true;
     }
 
-    return ipc->onCallback(opcode, index, value, ptr, opt, currentReturnCode);
+    return ipc->onCallback(pluginId, opcode, index, value, ptr, opt, currentReturnCode);
 }
 
 long VstPlugin::EffGetParamName(long index, char* txt)
@@ -371,3 +373,228 @@ long VstPlugin::EffGetParamName(long index, char* txt)
     return EffDispatch(effGetParamName, index, 0, txt);
 }
 
+
+void CrtVstWin(VstPlugin* vst) {
+    /*
+    win = new VstWin();
+    vst->hWin = win->CrtWindow();
+
+
+
+    //while (GetMessage(&msg, vst->hWin, 0, 0) != 0)
+    //{
+        //TranslateMessage(&msg);
+        //DispatchMessage(&msg);
+    //}
+    */
+    WNDCLASSEX wcex{ sizeof(wcex) };
+    wcex.lpfnWndProc = DefWindowProc;
+    wcex.hInstance = GetModuleHandle(0);
+    wcex.lpszClassName = L"from github.com/t-mat/";
+    RegisterClassEx(&wcex);
+    const auto style = WS_CAPTION | WS_THICKFRAME | WS_OVERLAPPEDWINDOW;
+    vst->hWin = CreateWindow(
+        wcex.lpszClassName, L"Vst32", style
+        , 0, 0, 0, 0, NULL, 0, 0, 0
+    );
+    /*
+    MSG msg;
+    while (BOOL b = GetMessage(&msg, 0, 0, 0)) {
+        if (b == -1) {
+            //run = false;
+            break;
+        }
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+    */
+}
+
+void VstPlugin::resizeEditor(const RECT& clientRc) const {
+    if (hWin) {
+        auto rc = clientRc;
+        const auto style = GetWindowLongPtr(hWin, GWL_STYLE);
+        const auto exStyle = GetWindowLongPtr(hWin, GWL_EXSTYLE);
+        const BOOL fMenu = GetMenu(hWin) != nullptr;
+        AdjustWindowRectEx(&rc, style, fMenu, exStyle);
+        MoveWindow(hWin, 0, 0, rc.right - rc.left, rc.bottom - rc.top, TRUE);
+    }
+}
+
+bool VstPlugin::EditOpen() {
+    //std::thread vstwin(CrtVstWin,this);
+    //vstwin.detach();
+    //while (hWin == 0) {};
+    CrtVstWin(this);
+
+    //return true;
+    //VstWin* win = new VstWin();
+    //HWND hWin = win->CrtWindow();
+
+    //bool windowOk = false;
+    //ERect* rect = 0;
+
+    //if (hWin) {
+    //	ShowWindow(hWin, SW_SHOW);
+    //}
+    if (!hWin) return false;
+
+    ERect* erc = nullptr;
+    EffDispatch(effEditGetRect, 0, 0, &erc);
+    if (EffDispatch(effEditOpen, 0, 0, hWin) == 1L) {
+        EffDispatch(effEditGetRect, 0, 0, &erc);
+        RECT rc{};
+        if (erc) {
+            rc.left = erc->left;
+            rc.top = erc->top;
+            rc.right = erc->right;
+            rc.bottom = erc->bottom;
+        }
+        resizeEditor(rc);
+
+    }
+    /*
+    if (plugin->EffEditGetRect(&rect) == 1L) windowOk = true;
+    if (plugin->EffEditOpen(hWin) == 1L) windowOk = true;
+    if (plugin->EffEditGetRect(&rect) == 1L) windowOk = true;	//try to get rect again
+    if (!windowOk) return false;
+    */
+    //SetWindowSize(rect->right, rect->bottom);
+    return true;
+}
+
+bool VstPlugin::EditClose() {
+    if (!hWin) return false;
+    DestroyWindow(hWin);
+    hWin = 0;
+    return true;
+}
+
+void VstPlugin::MsgLoop(ipc32* map)
+{
+    if (!map) return;
+
+    float** ins = 0;
+    float** outs = 0;
+    float* tmp = 0;
+
+    void* chunk = 0;
+
+    switch (map->function) {
+        case ipc32::Function::UnloadDll:
+            Unload();
+            break;
+        case ipc32::Function::GetAEffect:
+            if (pEffect) {
+                map->flags = pEffect->flags;
+                map->numInputs = pEffect->numInputs;
+                map->numOutputs = pEffect->numOutputs;
+                map->initialDelay = pEffect->initialDelay;
+                map->numParams = pEffect->numParams;
+            }
+            break;
+        //case ipc32::Function::EditorOpen:
+        //    EditOpen();
+        //    break;
+        case ipc32::Function::EditorShow:
+            if (hWin) {
+                ShowWindow(hWin, SW_SHOW);
+            }
+            break;
+        case ipc32::Function::EditorHide:
+            if (hWin) {
+                ShowWindow(hWin, SW_HIDE);
+            }
+            break;
+        case ipc32::Function::GetParam:
+            if (pEffect) {
+                map->opt = pEffect->getParameter(pEffect, map->index);
+            }
+            break;
+        case ipc32::Function::SetParam:
+            if (pEffect) {
+                pEffect->setParameter(pEffect, map->index, map->opt);
+            }
+            break;
+        case ipc32::Function::Process:
+        case ipc32::Function::ProcessReplace:
+            if (pEffect) {
+                ins = new float* [pEffect->numInputs];
+                outs = new float* [pEffect->numOutputs];
+
+                tmp = (float*)&map->buffersIn;
+                for (int i = 0; i < pEffect->numInputs; i++) {
+                    ins[i] = tmp;
+                    tmp += sizeof(float) * map->dataSize;
+                }
+                tmp = (float*)&map->buffersOut;
+                for (int i = 0; i < pEffect->numOutputs; i++) {
+                    outs[i] = tmp;
+                    tmp += sizeof(float) * map->dataSize;
+                }
+
+                if (map->function == ipc32::Function::Process) {
+                    pEffect->process(pEffect, ins, outs, map->dataSize);
+                }
+                if (map->function == ipc32::Function::ProcessReplace) {
+                    pEffect->processReplacing(pEffect, ins, outs, map->dataSize);
+                }
+
+                delete[] ins;
+                delete[] outs;
+            }
+            break;
+        case ipc32::Function::ProcessDouble:
+
+            break;
+
+        case ipc32::Function::GetChunk:
+            if (pEffect) {
+                map->dataSize = EffGetChunk(&chunk, false);
+                cout << "get chunk size:" << map->dataSize << endl;
+            }
+            break;
+        case ipc32::Function::GetChunkSegment:
+            cout << "get segment start:" << map->value << " size:" << map->dataSize << endl;
+            memcpy_s(map->data, IPC_CHUNK_SIZE, (char*)chunk + map->value, map->dataSize);
+
+            break;
+        case ipc32::Function::SetChunk:
+            cout << "set chunk size:" << map->dataSize << endl;
+            chunk = new char[map->dataSize];
+            break;
+        case ipc32::Function::SetChunkSegment:
+            cout << "set segment start:" << map->value << " size:" << map->dataSize << endl;
+            memcpy_s((char*)chunk + map->value, IPC_CHUNK_SIZE, map->data, min(map->dataSize, IPC_CHUNK_SIZE));
+            break;
+        case ipc32::Function::DeleteChunk:
+            if (chunk) {
+                delete chunk;
+                chunk = 0;
+            }
+            break;
+        case ipc32::Function::Dispatch:
+            
+            if (map->opCode == effEditOpen) {
+                EditOpen();
+                break;
+            }
+            if (map->opCode == effEditClose) {
+                EditClose();
+                break;
+            }
+            //	cout << "optcode " << map->opCode << endl;
+                //we have segemented data, use it
+            if (chunk) {
+                cout << "use chunk" << endl;
+                map->dispatchReturn = EffDispatch(map->opCode, map->index, map->value, chunk, map->opt);
+                //delete chunk;
+                //chunk = 0;
+            }
+            else {
+                map->dispatchReturn = EffDispatch(map->opCode, map->index, map->value, map->data, map->opt);
+            }
+          
+        }
+    
+}

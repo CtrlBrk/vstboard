@@ -122,7 +122,7 @@ namespace vst
         virtual long EffIdentify() { return EffDispatch(effIdentify); }
 
         //as const
-        virtual long EffGetChunk(void **ptr, bool isPreset = false) const
+        virtual long EffGetChunk(void **ptr, bool isPreset = false)
         {   if (!pEffect)
                 return 0;
 

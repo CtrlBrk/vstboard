@@ -139,8 +139,8 @@ namespace Connectables {
         virtual void SetSleep(bool sleeping);
 
         virtual void fromJson(QJsonObject &json);
-        virtual void toJson(QJsonObject &json) const;
-        virtual QDataStream & toStream (QDataStream &) const;
+        virtual void toJson(QJsonObject &json) ;
+        virtual QDataStream & toStream (QDataStream &) ;
         virtual bool fromStream (QDataStream &);
         virtual void SetContainerId(qint32 id);
 //        virtual void SetBridgePinsInVisible(bool visible);
