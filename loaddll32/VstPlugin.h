@@ -11,10 +11,11 @@ typedef VstIntPtr(*dispatcherFuncPtr)(AEffect* effect, VstInt32 opCode, VstInt32
 
 
 class CVSTHost;
+class IpcVst;
 class VstPlugin //: public vst::CEffect
 {
 public:
-    VstPlugin();
+    VstPlugin(IpcVst *ipc);
     ~VstPlugin();
 
 public:
@@ -46,7 +47,10 @@ public:
     void EffProcessDoubleReplacing(double** inputs, double** outputs, long sampleFrames);
     void EffSetParameter(long index, float parameter);
     float EffGetParameter(long index);
-
+    long EffEditGetRect(ERect** ptr) { return EffDispatch(effEditGetRect, 0, 0, ptr); }
+    long EffEditOpen(void* ptr) { long l = EffDispatch(effEditOpen, 0, 0, ptr); /* if (l > 0) */ bEditOpen = true; return l; }
+    void EffEditClose() { if (!bEditOpen) return; EffDispatch(effEditClose); bEditOpen = false; }
+    void EffEditIdle() { if (!bEditOpen || bInEditIdle) return; bInEditIdle = true; EffDispatch(effEditIdle); bInEditIdle = false; }
 
     long EffGetParamName(long index, char* txt);
 
@@ -72,6 +76,7 @@ public:
     long OnGetNumAutomatableParameters() { return (pEffect) ? pEffect->numParams : 0; }
 
 private:
+    IpcVst* ipc;
     HMODULE pluginLib;
 };
 

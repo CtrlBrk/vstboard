@@ -4,6 +4,10 @@
 #define VST_FORCE_DEPRECATED 0
 #define IPC_CHUNK_SIZE 2048
 #define IPC_BUFFER_SIZE 4096
+
+#define IPC_TIMEOUT INFINITE
+//#define IPC_TIMEOUT 10000
+
 #include "pluginterfaces/vst2.x/aeffect.h"
 
 
@@ -28,17 +32,24 @@ struct ipc32 {
         SetChunk,
         SetChunkSegment,
         DeleteChunk
-
+        
     };
 
-    VstInt32 opCode;
+    Function function;
+    VstInt32 opCode=0;
     VstInt32 index=0;
     VstInt32 value=0;
-    //void *ptr=0;
     float opt=0.;
     long dispatchReturn=0L;
 
-    Function function;
+    //callback
+    Function callback;
+    VstInt32 cbOpcode = 0;
+    VstInt32 cbIndex = 0;
+    VstInt32 cbValue = 0;
+    float cbOpt = 0.;
+
+    
     wchar_t name[256];
    // int buffSize;
     float buffersIn[IPC_BUFFER_SIZE];

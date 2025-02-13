@@ -48,6 +48,10 @@ private:
     static HANDLE ipcSemStart;
     static HANDLE ipcSemEnd;
     // static QByteArray ipcData;
+
+public slots:
+    void OnShowEditor() override;
+    void OnHideEditor() override;
 };
 
 }

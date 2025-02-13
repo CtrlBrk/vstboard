@@ -1,7 +1,8 @@
 #include "VstPlugin.h"
 #include "VstHost.h"
-
-VstPlugin::VstPlugin() :
+#include "ipcvst.h"
+#include <iostream>
+VstPlugin::VstPlugin(IpcVst* i) :
     pEffect(0),
     bEditOpen(false),
     bNeedIdle(false),
@@ -9,8 +10,10 @@ VstPlugin::VstPlugin() :
     bWantMidi(false),
     bInSetProgram(false),
     pMasterEffect(0),
-    pluginLib(0)
+    pluginLib(0),
+    ipc(i)
 {
+   // cout << "vstplugin " << this << " ipc " << &ipc << endl;
     sName.clear();
 }
 
@@ -71,6 +74,8 @@ bool VstPlugin::Load(const std::wstring& name)
         return false;
     }
     sName = name;
+    pEffect->user = this;
+  //  cout << "peffect " << &pEffect << endl;
     return true;
 }
 
@@ -351,13 +356,14 @@ float VstPlugin::EffGetParameter(long index)
 
 VstIntPtr VstPlugin::OnMasterCallback(long opcode, long index, long value, void* ptr, float opt, long currentReturnCode)
 {
+   // cout << "callback " << this << " ipc " << &ipc << endl;
     switch (opcode) {
     case audioMasterWantMidi: //6
         bWantMidi = true;
         return true;
     }
 
-    return currentReturnCode;
+    return ipc->onCallback(opcode, index, value, ptr, opt, currentReturnCode);
 }
 
 long VstPlugin::EffGetParamName(long index, char* txt)

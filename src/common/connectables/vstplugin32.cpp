@@ -123,7 +123,7 @@ bool VstPlugin32::initPlugin()
     pEffect->numParams = pf->numParams;
 
     //disable gui for now
-    pEffect->flags -= effFlagsHasEditor;
+    //pEffect->flags -= effFlagsHasEditor;
 
     UnlockAfterResult();
 
@@ -160,6 +160,15 @@ long VstPlugin32::EffEditGetRect(ERect **ptr)
     return true;
 }
 void VstPlugin32::CreateEditorWindow()
+{
+    EffEditOpen(NULL);
+}
+
+void VstPlugin32::OnShowEditor()
+{
+}
+
+void VstPlugin32::OnHideEditor()
 {
 
 }
@@ -213,6 +222,13 @@ void VstPlugin32::EffProcess(float **inputs, float **outputs, long sampleframes)
     s = sizeof(float)*sampleframes*pEffect->numOutputs;
     memcpy(pf->buffersOut,outputs,s);
 
+    if(pf->callback == ipc32::Function::SetParam) {
+        LOG("Process callback " << (int)pf->callback << " " << pf->cbOpcode << pf->cbIndex << pf->cbOpt )
+
+        OnMasterCallback(pf->cbOpcode,pf->cbIndex,pf->cbValue,nullptr,pf->cbOpt,0);
+        pf->callback = ipc32::Function::None;
+    }
+
     Process();
 }
 
@@ -249,6 +265,15 @@ void VstPlugin32::EffProcessReplacing(float **inputs, float **outputs, long samp
         memcpy(outputs[i],tmp, sizeof(float) * sampleframes );
         tmp += sizeof(float) * sampleframes;
     }
+
+
+    if(pf->callback == ipc32::Function::SetParam) {
+        LOG("callback " << (int)pf->callback << " " << pf->cbOpcode << pf->cbIndex << pf->cbOpt )
+
+        OnMasterCallback(pf->cbOpcode,pf->cbIndex,pf->cbValue,nullptr,pf->cbOpt,0);
+        pf->callback = ipc32::Function::None;
+    }
+
 /*
     QString l="";
     for(int a=0;a<sampleframes;a++) {
@@ -421,7 +446,7 @@ long VstPlugin32::EffDispatch(VstInt32 opCode, VstInt32 index, VstIntPtr value, 
 
 void VstPlugin32::Lock()
 {
-    if(WaitForSingleObject(ipcMutex, 10000) == WAIT_TIMEOUT) {
+    if(WaitForSingleObject(ipcMutex, IPC_TIMEOUT) == WAIT_TIMEOUT) {
         LOG("ipcMutex timeout");
         return;
     }
@@ -435,6 +460,9 @@ void VstPlugin32::Process()
 
 void VstPlugin32::ProcessAndWaitResult()
 {
+    //maybe try to flush ?
+    //FlushViewOfFile(mapFileBuffer,0);
+
     ReleaseSemaphore(ipcSemStart, 1, NULL);
     ReleaseMutex(ipcMutex);
 
@@ -444,7 +472,7 @@ void VstPlugin32::ProcessAndWaitResult()
         LOG("semaphore not locked?");
     }
 
-    if(WaitForSingleObject(ipcSemEnd, 10000) == WAIT_TIMEOUT) {
+    if(WaitForSingleObject(ipcSemEnd, IPC_TIMEOUT) == WAIT_TIMEOUT) {
         LOG("ipcSemEnd timeout");
         return;
     }
@@ -453,7 +481,7 @@ void VstPlugin32::ProcessAndWaitResult()
     //lock, read, unlock.. until the server reset the function to none
     ipc32::Function currentF=ipc32::Function::Wait;
     do {
-        if(WaitForSingleObject(ipcMutex, 10000) == WAIT_TIMEOUT) {
+        if(WaitForSingleObject(ipcMutex, IPC_TIMEOUT) == WAIT_TIMEOUT) {
             LOG("ipcMutex timeout");
             return;
         }
@@ -462,7 +490,7 @@ void VstPlugin32::ProcessAndWaitResult()
         ReleaseMutex(ipcMutex);
     } while(currentF != ipc32::Function::None);
 
-    if(WaitForSingleObject(ipcMutex, 10000) == WAIT_TIMEOUT) {
+    if(WaitForSingleObject(ipcMutex, IPC_TIMEOUT) == WAIT_TIMEOUT) {
         LOG("ipcMutex timeout");
         return;
     }

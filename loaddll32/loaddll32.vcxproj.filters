@@ -24,6 +24,15 @@
     <ClCompile Include="VstHost.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="vstwindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ipcvst.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ipcvst.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ipc32.h">
@@ -33,6 +42,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VstHost.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vstwindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -89,8 +89,8 @@ void VstPlugin::SetSleep(bool sleeping)
         return;
     }
 
-	QMutexLocker objlock(&objMutex);
-    
+    QMutexLocker objlock(&objMutex);
+
     if(sleeping) {
         EffStopProcess();
         EffSuspend();
@@ -213,13 +213,13 @@ void VstPlugin::Render()
         if(newbuffsize < p->GetBuffer()->GetSize()) {
             newbuffsize = p->GetBuffer()->GetSize();
         }
-	}
+    }
 
-	if (newbuffsize != 0) {
-		SetBufferSize(newbuffsize);
-	}
+    if (newbuffsize != 0) {
+        SetBufferSize(newbuffsize);
+    }
 
-	if(doublePrecision) {
+    if(doublePrecision) {
         if (pEffect->flags & effFlagsCanDoubleReplacing) {
             double **tmpBufOut = new double*[listAudioPinOut->listPins.size()];
 
@@ -261,13 +261,13 @@ void VstPlugin::Render()
 
         int cpt=0;
         foreach(Pin* pin,listAudioPinOut->listPins) {
-			if (pin) {
-				AudioPin *audioPin = static_cast<AudioPin*>(pin);
-				tmpBufOut[cpt] = (float*)audioPin->GetBuffer()->GetPointerWillBeFilled();
-			}
-			else {
-				LOG("no out pin");
-			}
+            if (pin) {
+                AudioPin *audioPin = static_cast<AudioPin*>(pin);
+                tmpBufOut[cpt] = (float*)audioPin->GetBuffer()->GetPointerWillBeFilled();
+            }
+            else {
+                LOG("no out pin");
+            }
             cpt++;
         }
 

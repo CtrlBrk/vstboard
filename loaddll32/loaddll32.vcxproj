@@ -148,13 +148,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ipcvst.cpp" />
     <ClCompile Include="VstHost.cpp" />
     <ClCompile Include="VstPlugin.cpp" />
+    <ClCompile Include="vstwindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ipc32.h" />
+	<ClInclude Include="ipcvst.h" />
     <ClInclude Include="VstHost.h" />
     <ClInclude Include="VstPlugin.h" />
+    <ClInclude Include="vstwindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
