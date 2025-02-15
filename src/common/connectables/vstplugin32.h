@@ -3,6 +3,7 @@
 
 #include "vstplugin.h"
 #include "../../loaddll32/ipc32.h"
+#include "../../loaddll32/ipc.h"
 
 namespace Connectables {
 
@@ -13,7 +14,7 @@ class VstPlugin32 : public VstPlugin
 public:
     VstPlugin32(MainHost *myHost,int index, const ObjectInfo & info);
     virtual ~VstPlugin32();
-    bool Open() override;
+
     bool Close();
     bool Load(const std::wstring &name) override;
     bool Unload();
@@ -32,17 +33,20 @@ protected:
     bool initPlugin() override;
     bool GetChunkSegment(char *ptr, VstInt32 chunkSize);
     bool SendChunkSegment(char *ptr, VstInt32 chunkSize);
-
+/*
     void Lock();
     void Process();
     void ProcessAndWaitResult();
     void UnlockAfterResult();
-
+*/
 
 private:
-    bool ProcessInit();
+    static Ipc ipcTo32;
+    static structTo32* dataTo32;
+    static Ipc ipcFrom32;
+    static structFrom32* dataFrom32;
+
     static HANDLE hMapFile;
-    static ipc32* map;
     static HANDLE ipcMutex;
     static HANDLE ipcSemStart;
     static HANDLE ipcSemEnd;

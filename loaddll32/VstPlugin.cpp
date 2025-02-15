@@ -470,7 +470,7 @@ bool VstPlugin::EditClose() {
     return true;
 }
 
-void VstPlugin::MsgLoop(ipc32* map)
+void VstPlugin::MsgLoop(structTo32* map)
 {
     if (!map) return;
 
@@ -481,10 +481,10 @@ void VstPlugin::MsgLoop(ipc32* map)
     void* chunk = 0;
 
     switch (map->function) {
-        case ipc32::Function::UnloadDll:
+        case IpcFunction::UnloadDll:
             Unload();
             break;
-        case ipc32::Function::GetAEffect:
+        case IpcFunction::GetAEffect:
             if (pEffect) {
                 map->flags = pEffect->flags;
                 map->numInputs = pEffect->numInputs;
@@ -493,31 +493,31 @@ void VstPlugin::MsgLoop(ipc32* map)
                 map->numParams = pEffect->numParams;
             }
             break;
-        //case ipc32::Function::EditorOpen:
+        //case IpcFunction::EditorOpen:
         //    EditOpen();
         //    break;
-        case ipc32::Function::EditorShow:
+        case IpcFunction::EditorShow:
             if (hWin) {
                 ShowWindow(hWin, SW_SHOW);
             }
             break;
-        case ipc32::Function::EditorHide:
+        case IpcFunction::EditorHide:
             if (hWin) {
                 ShowWindow(hWin, SW_HIDE);
             }
             break;
-        case ipc32::Function::GetParam:
+        case IpcFunction::GetParam:
             if (pEffect) {
                 map->opt = pEffect->getParameter(pEffect, map->index);
             }
             break;
-        case ipc32::Function::SetParam:
+        case IpcFunction::SetParam:
             if (pEffect) {
                 pEffect->setParameter(pEffect, map->index, map->opt);
             }
             break;
-        case ipc32::Function::Process:
-        case ipc32::Function::ProcessReplace:
+        case IpcFunction::Process:
+        case IpcFunction::ProcessReplace:
             if (pEffect) {
                 ins = new float* [pEffect->numInputs];
                 outs = new float* [pEffect->numOutputs];
@@ -533,10 +533,10 @@ void VstPlugin::MsgLoop(ipc32* map)
                     tmp += sizeof(float) * map->dataSize;
                 }
 
-                if (map->function == ipc32::Function::Process) {
+                if (map->function == IpcFunction::Process) {
                     pEffect->process(pEffect, ins, outs, map->dataSize);
                 }
-                if (map->function == ipc32::Function::ProcessReplace) {
+                if (map->function == IpcFunction::ProcessReplace) {
                     pEffect->processReplacing(pEffect, ins, outs, map->dataSize);
                 }
 
@@ -544,36 +544,36 @@ void VstPlugin::MsgLoop(ipc32* map)
                 delete[] outs;
             }
             break;
-        case ipc32::Function::ProcessDouble:
+        case IpcFunction::ProcessDouble:
 
             break;
 
-        case ipc32::Function::GetChunk:
+        case IpcFunction::GetChunk:
             if (pEffect) {
                 map->dataSize = EffGetChunk(&chunk, false);
                 cout << "get chunk size:" << map->dataSize << endl;
             }
             break;
-        case ipc32::Function::GetChunkSegment:
+        case IpcFunction::GetChunkSegment:
             cout << "get segment start:" << map->value << " size:" << map->dataSize << endl;
             memcpy_s(map->data, IPC_CHUNK_SIZE, (char*)chunk + map->value, map->dataSize);
 
             break;
-        case ipc32::Function::SetChunk:
+        case IpcFunction::SetChunk:
             cout << "set chunk size:" << map->dataSize << endl;
             chunk = new char[map->dataSize];
             break;
-        case ipc32::Function::SetChunkSegment:
+        case IpcFunction::SetChunkSegment:
             cout << "set segment start:" << map->value << " size:" << map->dataSize << endl;
             memcpy_s((char*)chunk + map->value, IPC_CHUNK_SIZE, map->data, min(map->dataSize, IPC_CHUNK_SIZE));
             break;
-        case ipc32::Function::DeleteChunk:
+        case IpcFunction::DeleteChunk:
             if (chunk) {
                 delete chunk;
                 chunk = 0;
             }
             break;
-        case ipc32::Function::Dispatch:
+        case IpcFunction::Dispatch:
             
             if (map->opCode == effEditOpen) {
                 EditOpen();

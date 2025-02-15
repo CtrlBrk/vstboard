@@ -82,7 +82,7 @@ public:
     void resizeEditor(const RECT& clientRc) const;
     bool EditOpen();
     bool EditClose();
-    void MsgLoop(ipc32* map);
+    void MsgLoop(structTo32* map);
 private:
     IpcVst* ipc;
     int pluginId;

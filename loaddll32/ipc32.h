@@ -9,56 +9,55 @@
 //#define IPC_TIMEOUT 10000
 
 #include "pluginterfaces/vst2.x/aeffect.h"
+enum class IpcFunction
+{
+    None,
+    Wait,
+    LoadDll,
+    UnloadDll,
+    GetAEffect,
+    Dispatch,
+    EditorOpen,
+    GetRect,
+    EditorShow,
+    EditorHide,
+    GetParam,
+    SetParam,
+    Process,
+    ProcessReplace,
+    ProcessDouble,
+    GetChunk,
+    GetChunkSegment,
+    SetChunk,
+    SetChunkSegment,
+    DeleteChunk
 
+};
 
-struct ipc32 {
-    enum class Function
-    {
-        None,
-        Wait,
-        LoadDll,
-        UnloadDll,
-        GetAEffect,
-        Dispatch,
-        EditorOpen,
-        GetRect,
-        EditorShow,
-        EditorHide,
-        GetParam,
-        SetParam,
-        Process,
-        ProcessReplace,
-        ProcessDouble,
-        GetChunk,
-        GetChunkSegment,
-        SetChunk,
-        SetChunkSegment,
-        DeleteChunk
-        
-    };
+struct structFrom32 {
+    VstInt32 cbPluginId = 0;
+    IpcFunction callback;
+    VstInt32 cbOpcode = 0;
+    VstInt32 cbIndex = 0;
+    VstInt32 cbValue = 0;
+    float cbOpt = 0.;
+};
+
+struct structTo32 {
+    
 
     VstInt32 pluginId=0;
-    Function function;
+    IpcFunction function;
     VstInt32 opCode=0;
     VstInt32 index=0;
     VstInt32 value=0;
     float opt=0.;
     long dispatchReturn=0L;
 
-    //callback
-    VstInt32 cbPluginId = 0;
-    Function callback;
-    VstInt32 cbOpcode = 0;
-    VstInt32 cbIndex = 0;
-    VstInt32 cbValue = 0;
-    float cbOpt = 0.;
-
     
     wchar_t name[256];
-   // int buffSize;
     float buffersIn[IPC_BUFFER_SIZE];
     float buffersOut[IPC_BUFFER_SIZE];
-    // AEffect pEffect;
 
     VstInt32 flags=0;
     VstInt32 numInputs=0;

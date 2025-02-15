@@ -121,7 +121,7 @@ void VstPlugin::SetBufferSize(qint32 size)
     if(!wasSleeping)
         SetSleep(true);
 
-//    debug("VstPlugin::SetBufferSize %d size %ld -> %ld",index,bufferSize,size)
+    LOG("VstPlugin::SetBufferSize " << GetIndex() << " " << bufferSize << "->" << size)
     Object::SetBufferSize(size);
 
     EffSetBlockSize((long)size);
@@ -175,6 +175,26 @@ void VstPlugin::Render()
     if(closed) // || GetSleep())
         return;
 
+    qint32 newbuffsize = 0;
+    {
+        QMutexLocker lock(&objMutex);
+        if(!listAudioPinIn->listPins.isEmpty()) {
+            AudioPin* p = static_cast<AudioPin*>(listAudioPinIn->listPins.first());
+            newbuffsize = p->GetBuffer()->GetSize();
+        }
+        if(!listAudioPinOut->listPins.isEmpty()) {
+            AudioPin* p = static_cast<AudioPin*>(listAudioPinOut->listPins.first());
+            if(newbuffsize < p->GetBuffer()->GetSize()) {
+                newbuffsize = p->GetBuffer()->GetSize();
+            }
+        }
+    }
+
+    if (newbuffsize != bufferSize) {
+        //mutex must be freed
+        SetBufferSize(newbuffsize);
+    }
+
     QMutexLocker lock(&objMutex);
 
     //midi events
@@ -203,21 +223,6 @@ void VstPlugin::Render()
         }
     }
 
-    qint32 newbuffsize = 0;
-    if(!listAudioPinIn->listPins.isEmpty()) {
-        AudioPin* p = static_cast<AudioPin*>(listAudioPinIn->listPins.first());
-        newbuffsize = p->GetBuffer()->GetSize();
-    }
-    if(!listAudioPinOut->listPins.isEmpty()) {
-        AudioPin* p = static_cast<AudioPin*>(listAudioPinOut->listPins.first());
-        if(newbuffsize < p->GetBuffer()->GetSize()) {
-            newbuffsize = p->GetBuffer()->GetSize();
-        }
-    }
-
-    if (newbuffsize != 0) {
-        SetBufferSize(newbuffsize);
-    }
 
     if(doublePrecision) {
         if (pEffect->flags & effFlagsCanDoubleReplacing) {

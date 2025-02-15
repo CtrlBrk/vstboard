@@ -3,55 +3,27 @@
 #include "VstHost.h"
 #include "vstwindow.h"
 #include "ipcvst.h"
+#include <thread>
 
 CVSTHost host;
 using namespace std;
 
 IpcVst::IpcVst() :
-	ipcMutex(0),
-	ipcSemStart(0),
-	ipcSemEnd(0),
-	hMapFile(0),
-	map(0)
+	dataIn(0),
+	dataOut(0),
+	ipcIn(L"to32", (void**)& dataIn, sizeof(structTo32)),
+	ipcOut(L"from32", (void**)& dataOut, sizeof(structFrom32))
 {
+
 }
 
+
+
 void IpcVst::Loop() {
-
-	TCHAR szName[] = TEXT("Local\\vstboard");
-	hMapFile = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, sizeof(ipc32), szName);
-	if (!hMapFile)
-	{
-		MessageBoxA(GetActiveWindow(), "CreateFileMapping failed", "VstBoard", MB_OK);
-		return;
-	}
-	map = (ipc32*)MapViewOfFile(hMapFile, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(ipc32));
-	if (!map)
-	{
-		MessageBoxA(GetActiveWindow(), "MapViewOfFile failed", "VstBoard", MB_OK);
-		return;
-	}
-
-	ipcMutex = CreateMutex(NULL, FALSE, L"vstboardLock");
-	if (!ipcMutex) {
-		return;
-	}
-
-	ipcSemStart = CreateSemaphore(NULL, 0, 1, L"vstboardSemStart");
-	if (!ipcSemStart) {
-		return;
-	}
-	ipcSemEnd = CreateSemaphore(NULL, 0, 1, L"vstboardSemEnd");
-	if (!ipcSemEnd) {
-		return;
-	}
-
-
-
+	
 	MSG msg;
 	while (1) {
 		
-		//if (PeekMessage(&msg, hWin, 0, 0, PM_REMOVE))
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			if (msg.message == WM_QUIT)
@@ -63,73 +35,65 @@ void IpcVst::Loop() {
 			DispatchMessage(&msg);
 		}
 
-		//WaitForSingleObject(ipcSemStart, INFINITE);
-
-		if (WaitForSingleObject(ipcMutex, IPC_TIMEOUT) == WAIT_TIMEOUT) {
-			return;
-		}
-
-		if (map) {
-			if (plugins.count(map->pluginId)) {
-				plugins[map->pluginId]->MsgLoop(map);
+		if (ipcIn.IfWaitingToStart()) {
+						
+			VstPlugin* p = 0;
+			if (plugins.count(dataIn->pluginId)) {
+				p = plugins[dataIn->pluginId];
 			}
 
-			switch (map->function) {
-			case ipc32::Function::None:
+			switch (dataIn->function) {
+			case IpcFunction::None:
 				break;
-			case ipc32::Function::LoadDll:
-				cout << "load " << map->pluginId << endl;
-				plugins[map->pluginId] = new VstPlugin(this, map->pluginId);
-				plugins[map->pluginId]->Load(map->name);
+			case IpcFunction::LoadDll:
+				cout << "load " << dataIn->pluginId << endl;
+				p = new VstPlugin(this, dataIn->pluginId);
+				p->Load(dataIn->name);
+				plugins[dataIn->pluginId] = p;
 				break;
-			case ipc32::Function::UnloadDll:
-				cout << "unload " << map->pluginId << endl;
-				if (plugins.count(map->pluginId)) {
-					delete plugins[map->pluginId];
-					plugins.erase(map->pluginId);
-					cout << "unload" << endl;
+			case IpcFunction::UnloadDll:
+				cout << "unload " << dataIn->pluginId << endl;
+				if (p) {
+					delete p;
+					plugins.erase(dataIn->pluginId);
+				}
+				break;
+			default:
+				if (p) {
+					p->MsgLoop(dataIn);
 				}
 				break;
 			}
+				
+			dataIn->function = IpcFunction::None;
 
-			map->function = ipc32::Function::None;
-
+			ipcIn.SignalResultReady();
 		}
-		//maybe try to flush ?
-		//FlushViewOfFile(mapFileBuffer, 0);
-
-		ReleaseMutex(ipcMutex);
-		ReleaseSemaphore(ipcSemEnd, 1, NULL);
-
 	}
 
-	UnmapViewOfFile(map);
-	CloseHandle(hMapFile);
 }
 
 VstIntPtr IpcVst::onCallback(int pluginId,long opcode, long index, long value, void* ptr, float opt, long currentReturnCode)
 {
 	switch (opcode) {
 	case audioMasterAutomate: //0
-		if (WaitForSingleObject(ipcMutex, IPC_TIMEOUT) == WAIT_TIMEOUT) {
-			return currentReturnCode;
-		}
-
-		if (map) {
-			map->cbPluginId = pluginId;
-			map->callback = ipc32::Function::SetParam;
-			map->cbOpcode = opcode;
-			map->cbIndex = index;
-			map->cbValue = value;
-			map->cbOpt = opt;
-		//	cout << "callback " << map->cbPluginId << " " << opcode << " " << map->cbOpcode << " " << map->cbIndex << " " << map->cbValue << " " << map->cbOpt << endl;
-		}
 		
-		ReleaseMutex(ipcMutex);
+		ipcOut.LockData();
+
+		if (dataOut) {
+			dataOut->cbPluginId = pluginId;
+			dataOut->callback = IpcFunction::SetParam;
+			dataOut->cbOpcode = opcode;
+			dataOut->cbIndex = index;
+			dataOut->cbValue = value;
+			dataOut->cbOpt = opt;
+		//	cout << "callback " << dataOut->cbPluginId << " " << opcode << " " << dataOut->cbOpcode << " " << dataOut->cbIndex << " " << dataOut->cbValue << " " << dataOut->cbOpt << endl;
+		}
+		ipcOut.Unlockdata();
+		
 		break;
 	
 	}
-
 
 	return currentReturnCode;
 }

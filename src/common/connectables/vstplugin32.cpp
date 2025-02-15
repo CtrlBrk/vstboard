@@ -7,8 +7,13 @@ HANDLE VstPlugin32::hMapFile = 0;
 HANDLE VstPlugin32::ipcMutex = 0;
 HANDLE VstPlugin32::ipcSemStart = 0;
 HANDLE VstPlugin32::ipcSemEnd = 0;
-ipc32* VstPlugin32::map = 0;
 char* VstPlugin32::chunkData = 0;
+
+structTo32* VstPlugin32::dataTo32 = 0;
+structFrom32* VstPlugin32::dataFrom32 = 0;
+Ipc VstPlugin32::ipcTo32(L"to32",(void**)&dataTo32,sizeof(structTo32)) ;
+Ipc VstPlugin32::ipcFrom32(L"from32",(void**)&dataFrom32,sizeof(structFrom32)) ;
+
 
 VstPlugin32::VstPlugin32(MainHost *myHost,int index, const ObjectInfo & info) :
     VstPlugin(myHost,index,info)
@@ -35,121 +40,64 @@ bool VstPlugin32::Close()
     return true;
 }
 
-bool VstPlugin32::ProcessInit()
-{
-    if(!hMapFile) {
-
-        TCHAR szName[] = TEXT("Local\\vstboard");
-        hMapFile = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, sizeof(ipc32), szName);
-        if (!hMapFile)
-        {
-            MessageBoxA(GetActiveWindow(), "CreateFileMapping failed", "VstBoard", MB_OK);
-            return false;
-        }
-        map = (ipc32*)MapViewOfFile(hMapFile, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(ipc32));
-        if (!map)
-        {
-            MessageBoxA(GetActiveWindow(), "MapViewOfFile failed", "VstBoard", MB_OK);
-            return false;
-        }
-
-        if (!ipcMutex) {
-            ipcMutex = CreateMutex(NULL, FALSE, L"vstboardLock");
-            if (!ipcMutex) {
-                return false;
-            }
-        }
-
-        if (!ipcSemStart) {
-            ipcSemStart = CreateSemaphore(NULL, 0,1, L"vstboardSemStart");
-            if (!ipcSemStart) {
-                return false;
-            }
-        }
-
-        if (!ipcSemEnd) {
-            ipcSemEnd = CreateSemaphore(NULL, 0,1, L"vstboardSemEnd");
-            if (!ipcSemEnd) {
-                return false;
-            }
-        }
-
-
-        Lock();
-
-        map->function=ipc32::Function::None;
-
-        Process();
-
-    }
-
-    return true;
-}
-
-bool VstPlugin32::Open()
-{
-    if(!ProcessInit()) {
-        SetErrorMessage("32bit IPC error");
-        return false;
-    }
-
-    return VstPlugin::Open();
-}
 
 bool VstPlugin32::Load(const std::wstring &name)
 {
-    Lock();
+    ipcTo32.LockData();
+    dataTo32->pluginId = GetIndex();
 
-    map->function=ipc32::Function::LoadDll;
-    name.copy(map->name,name.length());
+    dataTo32->function=IpcFunction::LoadDll;
+    name.copy(dataTo32->name,name.length());
 
-    ProcessAndWaitResult();
-    UnlockAfterResult();
+    ipcTo32.SignalStartAndRelease();
     return true;
 }
 
 
 bool VstPlugin32::initPlugin()
 {
-    Lock();
+    ipcTo32.LockData();
+    dataTo32->pluginId = GetIndex();
 
-    map->function=ipc32::Function::GetAEffect;
+    dataTo32->function=IpcFunction::GetAEffect;
 
-    ProcessAndWaitResult();
+    ipcTo32.SignalStart();
 
     pEffect = new AEffect();
-    pEffect->flags = map->flags;
-    pEffect->numInputs = map->numInputs;
-    pEffect->numOutputs = map->numOutputs;
-    pEffect->initialDelay = map->initialDelay;
-    pEffect->numParams = map->numParams;
+    pEffect->flags = dataTo32->flags;
+    pEffect->numInputs = dataTo32->numInputs;
+    pEffect->numOutputs = dataTo32->numOutputs;
+    pEffect->initialDelay = dataTo32->initialDelay;
+    pEffect->numParams = dataTo32->numParams;
 
     //disable gui for now
     //pEffect->flags -= effFlagsHasEditor;
 
-    UnlockAfterResult();
+    ipcTo32.Unlockdata();
 
     return VstPlugin::initPlugin();
 }
 
 bool VstPlugin32::Unload()
 {
-    Lock();
+    ipcTo32.LockData();
+    dataTo32->pluginId = GetIndex();
 
-    map->function=ipc32::Function::UnloadDll;
+    dataTo32->function=IpcFunction::UnloadDll;
 
-    Process();
+    ipcTo32.SignalStartAndRelease();
 
     return true;
 }
 /*
 long VstPlugin32::EffEditOpen(void *ptr)
 {
-    Lock();
+    ipcTo32.LockData();
+    dataTo32->pluginId = GetIndex();
 
-    map->function=ipc32::Function::EditorOpen;
+    dataTo32->function=IpcFunction::EditorOpen;
 
-    Process();
+    ipcTo32.SignalStartAndRelease();
 
     return true;
 }
@@ -165,48 +113,53 @@ void VstPlugin32::CreateEditorWindow()
 
 void VstPlugin32::OnShowEditor()
 {
-    Lock();
+    ipcTo32.LockData();
+    dataTo32->pluginId = GetIndex();
 
-    map->function=ipc32::Function::EditorShow;
+    dataTo32->function=IpcFunction::EditorShow;
 
-    Process();
+    ipcTo32.SignalStartAndRelease();
 
 }
 
 void VstPlugin32::OnHideEditor()
 {
-    Lock();
+    ipcTo32.LockData();
+    dataTo32->pluginId = GetIndex();
 
-    map->function=ipc32::Function::EditorHide;
+    dataTo32->function=IpcFunction::EditorHide;
 
-    Process();
+    ipcTo32.SignalStartAndRelease();
 }
 
 float VstPlugin32::EffGetParameter(long index)
 {
-    Lock();
 
-    map->function=ipc32::Function::GetParam;
-    map->index=index;
+    ipcTo32.LockData();
+    dataTo32->pluginId = GetIndex();
 
-    ProcessAndWaitResult();
+    dataTo32->function=IpcFunction::GetParam;
+    dataTo32->index=index;
 
-    float ret = map->opt;
+    ipcTo32.SignalStart();
 
-    UnlockAfterResult();
+    float ret = dataTo32->opt;
+
+    ipcTo32.Unlockdata();
 
     return ret;
 }
 
 void VstPlugin32::EffSetParameter(long index, float parameter)
 {
-    Lock();
+    ipcTo32.LockData();
+    dataTo32->pluginId = GetIndex();
 
-    map->function=ipc32::Function::SetParam;
-    map->index=index;
-    map->opt = parameter;
+    dataTo32->function=IpcFunction::SetParam;
+    dataTo32->index=index;
+    dataTo32->opt = parameter;
 
-    Process();
+    ipcTo32.SignalStartAndRelease();
 
 }
 
@@ -218,45 +171,58 @@ void VstPlugin32::EffProcess(float **inputs, float **outputs, long sampleframes)
         return;
     }
 
-    Lock();
+    ipcTo32.LockData();
+    dataTo32->pluginId = GetIndex();
 
-    map->function=ipc32::Function::Process;
-    map->dataSize = sampleframes;
+    dataTo32->function=IpcFunction::Process;
+    dataTo32->dataSize = sampleframes;
     size_t s = sizeof(float)*sampleframes*pEffect->numInputs;
-    memcpy(map->buffersIn,inputs,s);
+    memcpy(dataTo32->buffersIn,inputs,s);
     s = sizeof(float)*sampleframes*pEffect->numOutputs;
-    memcpy(map->buffersOut,outputs,s);
+    memcpy(dataTo32->buffersOut,outputs,s);
 
-    Process();
+    ipcTo32.SignalStartAndRelease();
 }
 
 void VstPlugin32::EffProcessReplacing(float **inputs, float **outputs, long sampleframes)
 {
+    ipcFrom32.LockData();
+    dataTo32->pluginId = GetIndex();
+
+    if(dataFrom32->callback == IpcFunction::SetParam) {
+        if(dataFrom32->cbPluginId == GetIndex()) {
+            // LOG("callback " << dataFrom32->cbPluginId << " " << (int)dataFrom32->callback << " " << dataFrom32->cbOpcode << dataFrom32->cbIndex << dataFrom32->cbOpt )
+            OnMasterCallback(dataFrom32->cbOpcode,dataFrom32->cbIndex,dataFrom32->cbValue,nullptr,dataFrom32->cbOpt,0);
+            dataFrom32->callback = IpcFunction::None;
+        }
+    }
+    ipcFrom32.Unlockdata();
 
     if(sampleframes>IPC_BUFFER_SIZE) {
         LOG("buffer too big");
         return;
     }
 
-    Lock();
+    ipcTo32.LockData();
+    dataTo32->pluginId = GetIndex();
 
-    map->function=ipc32::Function::ProcessReplace;
-    map->dataSize = sampleframes;
+    dataTo32->function=IpcFunction::ProcessReplace;
+    dataTo32->dataSize = sampleframes;
 
-    float* tmp = (float*)&map->buffersIn;
+    float* tmp = (float*)&dataTo32->buffersIn;
     for (int i = 0; i < pEffect->numInputs; i++) {
         memcpy(tmp,inputs[i], sizeof(float) * sampleframes );
         tmp += sizeof(float) * sampleframes;
     }
 
     //size_t s = sizeof(float)*sampleframes*pEffect->numInputs;
-    //memcpy(map->buffersIn,*inputs,s);
+    //memcpy(dataTo32->buffersIn,*inputs,s);
     //s = sizeof(float)*sampleframes*pEffect->numOutputs;
-    ProcessAndWaitResult();
+    ipcTo32.SignalStart();
 
-    //memcpy(*outputs,map->buffersOut,s);
+    //memcpy(*outputs,dataTo32->buffersOut,s);
 
-    tmp = (float*)&map->buffersOut;
+    tmp = (float*)&dataTo32->buffersOut;
     for (int i = 0; i < pEffect->numOutputs; i++) {
         memcpy(outputs[i],tmp, sizeof(float) * sampleframes );
         tmp += sizeof(float) * sampleframes;
@@ -265,7 +231,7 @@ void VstPlugin32::EffProcessReplacing(float **inputs, float **outputs, long samp
 
 
 
-    map->callback = ipc32::Function::None;
+   // dataTo32->callback = IpcFunction::None;
 
 /*
     QString l="";
@@ -274,7 +240,7 @@ void VstPlugin32::EffProcessReplacing(float **inputs, float **outputs, long samp
     }
     LOG("out " << l)
 */
-    UnlockAfterResult();
+    ipcTo32.Unlockdata();
 }
 
 void VstPlugin32::EffProcessDoubleReplacing(double **inputs, double **outputs, long sampleframes)
@@ -286,30 +252,32 @@ void VstPlugin32::EffProcessDoubleReplacing(double **inputs, double **outputs, l
         return;
     }
 
-    Lock();
+    ipcTo32.LockData();
+    dataTo32->pluginId = GetIndex();
 
-    map->function=ipc32::Function::ProcessDouble;
-    map->dataSize = sampleframes;
+    dataTo32->function=IpcFunction::ProcessDouble;
+    dataTo32->dataSize = sampleframes;
     size_t s = sizeof(double)*sampleframes*pEffect->numInputs;
-    memcpy(map->buffersIn,inputs,s);
+    memcpy(dataTo32->buffersIn,inputs,s);
     s = sizeof(double)*sampleframes*pEffect->numOutputs;
-    memcpy(map->buffersOut,outputs,s);
+    memcpy(dataTo32->buffersOut,outputs,s);
 
-    Process();
+    ipcTo32.SignalStartAndRelease();
 
 #endif
 }
 
 long VstPlugin32::EffGetChunk(void **ptr, bool isPreset)
 {
-    Lock();
+    ipcTo32.LockData();
+    dataTo32->pluginId = GetIndex();
 
-    map->function=ipc32::Function::GetChunk;
+    dataTo32->function=IpcFunction::GetChunk;
 
-    ProcessAndWaitResult();
+    ipcTo32.SignalStart();
 
-    VstInt32 chunkSize = map->dataSize;
-    LOG("get chunk size:" << map->dataSize);
+    VstInt32 chunkSize = dataTo32->dataSize;
+    LOG("get chunk size:" << dataTo32->dataSize);
 
     if(chunkData) {
         delete chunkData;
@@ -318,12 +286,12 @@ long VstPlugin32::EffGetChunk(void **ptr, bool isPreset)
     chunkData = new char[chunkSize];
     *ptr=chunkData;
 
-    UnlockAfterResult();
+    ipcTo32.Unlockdata();
 
     GetChunkSegment(chunkData,chunkSize);
 
     // Lock();
-    // map->function = ipc32::Function::DeleteChunk;
+    // dataTo32->function = IpcFunction::DeleteChunk;
     // Process();
 
     return chunkSize;
@@ -335,17 +303,18 @@ bool VstPlugin32::GetChunkSegment(char *ptr, VstInt32 chunkSize)
 
     while(start<chunkSize) {
 
-        Lock();
+        ipcTo32.LockData();
+        dataTo32->pluginId = GetIndex();
 
-        map->function=ipc32::Function::GetChunkSegment;
-        map->value=start;
-        map->dataSize = std::min( chunkSize - start , IPC_CHUNK_SIZE);
+        dataTo32->function=IpcFunction::GetChunkSegment;
+        dataTo32->value=start;
+        dataTo32->dataSize = std::min( chunkSize - start , IPC_CHUNK_SIZE);
 
-        ProcessAndWaitResult();
+        ipcTo32.SignalStart();
 
-        memcpy_s(ptr + map->value,IPC_CHUNK_SIZE,map->data, std::min( map->dataSize , IPC_CHUNK_SIZE) );
+        memcpy_s(ptr + dataTo32->value,IPC_CHUNK_SIZE,dataTo32->data, std::min( dataTo32->dataSize , IPC_CHUNK_SIZE) );
 
-        UnlockAfterResult();
+        ipcTo32.Unlockdata();
 
         start+=IPC_CHUNK_SIZE;
     }
@@ -355,27 +324,26 @@ bool VstPlugin32::GetChunkSegment(char *ptr, VstInt32 chunkSize)
 
 bool VstPlugin32::SendChunkSegment(char *ptr, VstInt32 chunkSize)
 {
-    Lock();
+    ipcTo32.LockData();
+    dataTo32->pluginId = GetIndex();
 
-    map->function=ipc32::Function::SetChunk;
-    map->dataSize = chunkSize;
+    dataTo32->function=IpcFunction::SetChunk;
+    dataTo32->dataSize = chunkSize;
 
-    ProcessAndWaitResult();
-    UnlockAfterResult();
+    ipcTo32.SignalStartAndRelease();
 
     VstInt32 start=0;
 
     while(start<chunkSize) {
 
-        Lock();
+        ipcTo32.LockData();
 
-        map->function=ipc32::Function::SetChunkSegment;
-        map->value = start;
-        map->dataSize = std::min( chunkSize - start , IPC_CHUNK_SIZE);
-        memcpy_s(map->data,IPC_CHUNK_SIZE,ptr+start,map->dataSize);
+        dataTo32->function=IpcFunction::SetChunkSegment;
+        dataTo32->value = start;
+        dataTo32->dataSize = std::min( chunkSize - start , IPC_CHUNK_SIZE);
+        memcpy_s(dataTo32->data,IPC_CHUNK_SIZE,ptr+start,dataTo32->dataSize);
 
-        ProcessAndWaitResult();
-        UnlockAfterResult();
+        ipcTo32.SignalStartAndRelease();
 
         start+=IPC_CHUNK_SIZE;
     }
@@ -390,18 +358,19 @@ long VstPlugin32::EffDispatch(VstInt32 opCode, VstInt32 index, VstIntPtr value, 
         SendChunkSegment((char*)ptr,size);
     }
 
-    Lock();
+    ipcTo32.LockData();
+    dataTo32->pluginId = GetIndex();
 
-    map->function = ipc32::Function::Dispatch;
-    map->opCode = opCode;
-    map->index = index;
-    map->value = (VstInt32)value;
-    map->opt = opt;
+    dataTo32->function = IpcFunction::Dispatch;
+    dataTo32->opCode = opCode;
+    dataTo32->index = index;
+    dataTo32->value = (VstInt32)value;
+    dataTo32->opt = opt;
     //if the data is not already sent segmented
     if(ptr && size<=IPC_CHUNK_SIZE) {
-        memcpy_s(&map->data,IPC_CHUNK_SIZE,ptr,size);
+        memcpy_s(&dataTo32->data,IPC_CHUNK_SIZE,ptr,size);
     }
-    map->dataSize=size;
+    dataTo32->dataSize=size;
 
 
 
@@ -409,15 +378,15 @@ long VstPlugin32::EffDispatch(VstInt32 opCode, VstInt32 index, VstIntPtr value, 
         //value is also a pointer
     }
 
-    ProcessAndWaitResult();
+    ipcTo32.SignalStart();
 
-    long disp = map->dispatchReturn;
-    size = map->dataSize;
+    long disp = dataTo32->dispatchReturn;
+    size = dataTo32->dataSize;
     if(ptr && size<=IPC_CHUNK_SIZE) {
-        memcpy(ptr,&map->data,size);
+        memcpy(ptr,&dataTo32->data,size);
     }
 
-    UnlockAfterResult();
+    ipcTo32.Unlockdata();
 
 
     if(size>IPC_CHUNK_SIZE) {
@@ -426,40 +395,55 @@ long VstPlugin32::EffDispatch(VstInt32 opCode, VstInt32 index, VstIntPtr value, 
     }
 
     // Lock();
-    // map->function = ipc32::Function::DeleteChunk;
+    // dataTo32->function = IpcFunction::DeleteChunk;
     // Process();
 
     return disp;
 }
 
+/*
+int ltest=0;
 void VstPlugin32::Lock()
 {
+   // LOG(QThread::currentThread())
+
+
     if(WaitForSingleObject(ipcMutex, IPC_TIMEOUT) == WAIT_TIMEOUT) {
         LOG("ipcMutex timeout");
         return;
     }
-    map->pluginId = GetIndex();
+
+    if(ltest!=0) {
+        LOG("lock")
+    }
+    ltest++;
+
+    dataTo32->pluginId = GetIndex();
 }
 
 void VstPlugin32::Process()
 {
+    if(ltest!=1) {
+        LOG("lockProc")
+    }
+    ltest=0;
+
     ReleaseSemaphore(ipcSemStart, 1, NULL);
     ReleaseMutex(ipcMutex);
 }
 
 void VstPlugin32::ProcessAndWaitResult()
 {
+    if(ltest!=1) {
+        LOG("lockProcWait")
+    }
+    ltest++;
+
     //maybe try to flush ?
     //FlushViewOfFile(map,0);
 
     ReleaseSemaphore(ipcSemStart, 1, NULL);
     ReleaseMutex(ipcMutex);
-
-    LONG val=0;
-    ReleaseSemaphore(ipcSemEnd, 0, &val);
-    if(val>0) {
-        LOG("semaphore not locked?");
-    }
 
     if(WaitForSingleObject(ipcSemEnd, IPC_TIMEOUT) == WAIT_TIMEOUT) {
         LOG("ipcSemEnd timeout");
@@ -468,32 +452,38 @@ void VstPlugin32::ProcessAndWaitResult()
 
     //ipcSemEnd won't behave, really check if the process is finished :
     //lock, read, unlock.. until the server reset the function to none
-    ipc32::Function currentF=ipc32::Function::Wait;
+    IpcFunction currentF=IpcFunction::Wait;
     do {
         if(WaitForSingleObject(ipcMutex, IPC_TIMEOUT) == WAIT_TIMEOUT) {
             LOG("ipcMutex timeout");
             return;
         }
 
-        currentF = map->function;
+        currentF = dataTo32->function;
         ReleaseMutex(ipcMutex);
-    } while(currentF != ipc32::Function::None);
+    } while(currentF != IpcFunction::None);
 
     if(WaitForSingleObject(ipcMutex, IPC_TIMEOUT) == WAIT_TIMEOUT) {
         LOG("ipcMutex timeout");
         return;
     }
 
-    if(map->callback == ipc32::Function::SetParam) {
-        if(map->cbPluginId == GetIndex()) {
-           // LOG("callback " << map->cbPluginId << " " << (int)map->callback << " " << map->cbOpcode << map->cbIndex << map->cbOpt )
-            OnMasterCallback(map->cbOpcode,map->cbIndex,map->cbValue,nullptr,map->cbOpt,0);
-            map->callback = ipc32::Function::None;
+    if(dataTo32->callback == IpcFunction::SetParam) {
+        if(dataTo32->cbPluginId == GetIndex()) {
+           // LOG("callback " << dataTo32->cbPluginId << " " << (int)dataTo32->callback << " " << dataTo32->cbOpcode << dataTo32->cbIndex << dataTo32->cbOpt )
+            OnMasterCallback(dataTo32->cbOpcode,dataTo32->cbIndex,dataTo32->cbValue,nullptr,dataTo32->cbOpt,0);
+            dataTo32->callback = IpcFunction::None;
         }
     }
 }
 
 void VstPlugin32::UnlockAfterResult()
 {
+    if(ltest!=2) {
+        LOG("unlock")
+    }
+    ltest=0;
+
     ReleaseMutex(ipcMutex);
 }
+*/

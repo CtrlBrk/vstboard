@@ -9,6 +9,8 @@ CONFIG += staticlib
 CONFIG += precompile_header
 PRECOMPILED_HEADER = precomp.h
 
+INCLUDEPATH += ../../loaddll32
+
 vstsdk {
     HEADERS += vst/vst3host.h \
         connectables/vst3plugin.h \
@@ -43,6 +45,7 @@ vst24sdk {
 }
 
 SOURCES += \
+    ../../loaddll32/ipc.cpp \
     connectables/objectcontainerattribs.cpp \
     connectables/pinfactory.cpp \
     connectables/script.cpp \
