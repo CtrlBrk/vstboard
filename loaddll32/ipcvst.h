@@ -18,13 +18,11 @@ public:
 	void Loop();
 	VstIntPtr onCallback(int pluginId, long opcode, long index, long value, void* ptr, float opt, long currentReturnCode);
 	
-
-
-	structTo32* dataIn;
+	structPilot* dataIn;
 	structFrom32* dataOut;
 	Ipc ipcIn;
 	Ipc ipcOut;
-private:
+
 
 	std::map<int,VstPlugin*> plugins;
 	

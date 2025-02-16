@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <string>
 #include "ipc32.h"
+#include "ipc.h"
 
 #define VST_FORCE_DEPRECATED 0
 #include "public.sdk/source/vst2.x/audioeffectx.h"
@@ -11,7 +12,7 @@
 typedef AEffect* (*vstPluginFuncPtr)(audioMasterCallback host);
 typedef VstIntPtr(*dispatcherFuncPtr)(AEffect* effect, VstInt32 opCode, VstInt32 index, VstInt32 value, void* ptr, float opt);
 
-
+class VstWin;
 class CVSTHost;
 class IpcVst;
 class VstPlugin //: public vst::CEffect
@@ -21,7 +22,7 @@ public:
     ~VstPlugin();
 
 public:
-    HWND hWin;
+    VstWin* win;
     AEffect* pEffect;
     bool bEditOpen;
     bool bNeedIdle;
@@ -31,7 +32,7 @@ public:
     VstPlugin* pMasterEffect;             /* for Shell-type plugins            */
     std::wstring sName;
 
-    bool Load(const std::wstring& name);
+    bool Load(const std::wstring& name, float sampleRate, VstInt32 blocksize);
     bool Unload();
 
     bool LoadBank(std::string* name);
@@ -42,7 +43,7 @@ public:
 
     static VstInt32 PluginIdFromBankFile(std::string* name);
 
-    long EffDispatch(VstInt32 opCode, VstInt32 index = 0, VstIntPtr value = 0, void* ptr = 0, float opt = 0.);
+    long EffDispatch(VstInt32 opCode, VstInt32 index = 0, VstIntPtr value = 0, void* ptr = nullptr, float opt = .0f);
     VstIntPtr OnMasterCallback(long opcode, long index, long value, void* ptr, float opt, long currentReturnCode);
 
     void EffProcess(float** inputs, float** outputs, long sampleframes);
@@ -56,7 +57,7 @@ public:
     void EffEditIdle() { if (!bEditOpen || bInEditIdle) return; bInEditIdle = true; EffDispatch(effEditIdle); bInEditIdle = false; }
 
     long EffGetParamName(long index, char* txt);
-
+    bool getFlags(int32_t m) const { if (!pEffect) return 0; return (pEffect->flags & m) == m; }
     //as const
     long EffGetChunk(void** ptr, bool isPreset = false) const
     {
@@ -70,7 +71,11 @@ public:
     }
 
     // overridables
+
+    static void RunPlugin(VstPlugin* p);
+
 public:
+    
     void OnSizeEditorWindow(long width, long height) { }
     bool OnUpdateDisplay() { return false; }
     void* OnOpenWindow(VstWindow* window) { return 0; }
@@ -78,15 +83,23 @@ public:
     bool OnIoChanged() { return false; }
     long OnGetNumAutomatableParameters() { return (pEffect) ? pEffect->numParams : 0; }
 
-
-    void resizeEditor(const RECT& clientRc) const;
     bool EditOpen();
     bool EditClose();
-    void MsgLoop(structTo32* map);
+    void MsgLoop();
+
+    structTo32* dataIn;
+    Ipc ipcIn;
+
 private:
+    void TranslateMidiEvents(structTo32* map, void* data, int datasize);
+
+    VstEvents* listEvnts;
     IpcVst* ipc;
     int pluginId;
     HMODULE pluginLib;
+    void* chunk;
+    void* chunkIn;
+    int chunkInSize;
 };
 
 

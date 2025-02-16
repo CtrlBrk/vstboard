@@ -75,6 +75,8 @@ namespace Connectables {
         void GetInfos(MsgObject &msg) override;
 
     protected:
+        virtual void ProcessMidi();
+
         void SetId(int id) {objInfo.id = id;}
         virtual bool initPlugin();
         void processEvents(VstEvents* events);

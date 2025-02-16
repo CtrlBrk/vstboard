@@ -1,49 +1,71 @@
 #include "vstwindow.h"
+#include "VstPlugin.h"
 
+#define TIMERMOVE 1001
 
-VstWin::VstWin() {
+VstWin::VstWin(VstPlugin* vst) :
+	hWin(0) ,
+	plugin(vst)
+{
 
 }
 
+VstWin::~VstWin() {
+	if (hWin) {
+		DestroyWindow(hWin);
+	}
+}
 HWND VstWin::CrtWindow() {
+/*
 	const wchar_t CLASS_NAME[] = L"Vst32";
-
 	WNDCLASS wc = { };
-
 	wc.lpfnWndProc = DefWindowProc;// WindowProc;
 	wc.hInstance = NULL;
 	wc.lpszClassName = CLASS_NAME;
-
 	RegisterClass(&wc);
-
-	HWND hwnd = CreateWindowEx(
-		0,                              // Optional window styles.
-		CLASS_NAME,                     // Window class
-		L"Learn to Program Windows",    // Window text
-		WS_OVERLAPPEDWINDOW,            // Window style
-
-		// Size and position
+	const auto style = WS_OVERLAPPEDWINDOW;
+	hWin = CreateWindowEx(
+		0,                              
+		CLASS_NAME,                    
+		L"Vst32",   
+		style,
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-
-		NULL,       // Parent window    
-		NULL,       // Menu
-		wc.hInstance,  // Instance handle
-		NULL        // Additional application data
+		NULL,  
+		NULL,  
+		wc.hInstance, 
+		NULL 
 	);
 
-	if (hwnd == NULL)
-	{
-		return 0;
-	}
+*/
+	
 
-	ShowWindow(hwnd, SW_SHOWDEFAULT);
 
-	return hwnd;
+	WNDCLASSEX wcex{ sizeof(wcex) };
+	wcex.lpfnWndProc = WindowProc;
+	wcex.hInstance = GetModuleHandle(0);
+	wcex.lpszClassName = L"Vst32";
+	RegisterClassEx(&wcex);
+
+	const auto style = WS_DLGFRAME;// WS_CAPTION | WS_BORDER | WS_OVERLAPPEDWINDOW;
+	hWin = CreateWindow(
+		wcex.lpszClassName, wcex.lpszClassName, style
+		, 0, 0, 0, 0, NULL, 0, 0, 0
+	);
+
+	return hWin;
+
+
 }
 
-void VstWin::OnSize(HWND hwnd, UINT flag, int width, int height)
-{
-	// Handle resizing
+void VstWin::resizeEditor(const RECT& clientRc) const {
+	if (hWin) {
+		auto rc = clientRc;
+		const auto style = GetWindowLongPtr(hWin, GWL_STYLE);
+		const auto exStyle = GetWindowLongPtr(hWin, GWL_EXSTYLE);
+		const BOOL fMenu = GetMenu(hWin) != nullptr;
+		AdjustWindowRectEx(&rc, style, fMenu, exStyle);
+		MoveWindow(hWin, 0, 0, rc.right - rc.left, rc.bottom - rc.top, TRUE);
+	}
 }
 
 LRESULT CALLBACK VstWin::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -61,25 +83,34 @@ LRESULT CALLBACK VstWin::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 
 LRESULT VstWin::_WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	
+	UINT_PTR IDT_TIMER1=0;
+
 	switch (uMsg)
 	{
+	case WM_CLOSE:
+		DestroyWindow(hwnd);
+		return 0;
+
 	case WM_DESTROY:
-		PostQuitMessage(S_OK);
+		PostQuitMessage(0);
+		return 0;
+
+	case WM_ENTERSIZEMOVE:
+		SetTimer(hwnd,           
+			TIMERMOVE,
+			10,              
+			(TIMERPROC)NULL);
 		break;
-	case WM_SIZE:
-	{
-		int width = LOWORD(lParam); 
-		int height = HIWORD(lParam);
+	case WM_EXITSIZEMOVE:
+		KillTimer(hwnd, TIMERMOVE);
+		break;
+	case WM_TIMER:
+		if (wParam == TIMERMOVE) {
+			//crash...
+			//plugin->MsgLoop();
+		}
+		break;
 
-		// Respond to the message:
-		OnSize(hwnd, (UINT)wParam, width, height);
 	}
-	break;
-	default:
-		return DefWindowProc(hwnd, uMsg, wParam, lParam);
-	}
-
-
-	return 0;
+	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }

@@ -147,6 +147,39 @@ void VstPlugin::SetSampleRate(float rate)
     SetSleep(wasSleeping);
 }
 
+void VstPlugin::ProcessMidi()
+{
+    if(bWantMidi) {
+        midiEventsMutex.lock();
+
+        if(listVstMidiEvents.size()!=0) {
+            int nbEvents = listVstMidiEvents.size();
+
+            if(listEvnts) {
+                free(listEvnts);
+                listEvnts = 0;
+            }
+
+            size_t size = sizeof(VstEvents) + sizeof(VstEvent)*(nbEvents-2);
+            listEvnts = (VstEvents*)malloc(size);
+            listEvnts->numEvents = nbEvents;
+            listEvnts->reserved = 0;
+
+            int cpt=0;
+            foreach(VstMidiEvent *evnt, listVstMidiEvents) {
+                listEvnts->events[cpt] = (VstEvent*)evnt;
+                cpt++;
+            }
+
+            VstInt32 sizeF = sizeof(VstEvents) + sizeof(VstEvent*)*(nbEvents-2) + sizeof(VstEvent)*nbEvents;
+            EffProcessEvents(listEvnts,sizeF );
+
+            listVstMidiEvents.clear();
+            midiEventsMutex.unlock();
+        }
+    }
+}
+
 void VstPlugin::Render()
 {
     if(bypass) {
@@ -197,31 +230,8 @@ void VstPlugin::Render()
 
     QMutexLocker lock(&objMutex);
 
-    //midi events
-    //=========================
-    if(bWantMidi) {
-        midiEventsMutex.lock();
+    ProcessMidi();
 
-        if(listVstMidiEvents.size()!=0) {
-            int nbEvents = listVstMidiEvents.size();
-
-            if(listEvnts) {
-                free(listEvnts);
-                listEvnts = 0;
-            }
-
-            listEvnts = (VstEvents*)malloc(sizeof(VstEvents) + sizeof(VstEvents*)*(nbEvents-2));
-            listEvnts->numEvents = nbEvents;
-
-            int cpt=0;
-            foreach(VstMidiEvent *evnt, listVstMidiEvents) {
-                listEvnts->events[cpt] = (VstEvent*)evnt;
-                cpt++;
-            }
-
-            EffProcessEvents(listEvnts,sizeof(listEvnts));
-        }
-    }
 
 
     if(doublePrecision) {
@@ -305,13 +315,6 @@ void VstPlugin::Render()
             delete[] tmpBufIn;
 
         delete[] tmpBufOut;
-    }
-
-    //clear midi events
-    //=========================
-    if (bWantMidi) {
-        listVstMidiEvents.clear();
-        midiEventsMutex.unlock();
     }
 
     //send result

@@ -30,6 +30,7 @@ public:
     long EffGetChunk(void **ptr, bool isPreset = false)  override;
 
 protected:
+    void ProcessMidi() override;
     bool initPlugin() override;
     bool GetChunkSegment(char *ptr, VstInt32 chunkSize);
     bool SendChunkSegment(char *ptr, VstInt32 chunkSize);
@@ -41,8 +42,12 @@ protected:
 */
 
 private:
-    static Ipc ipcTo32;
-    static structTo32* dataTo32;
+    structTo32* dataTo32;
+    Ipc ipcTo32;
+
+
+    static Ipc st_ipcTo32;
+    static structPilot* st_dataTo32;
     static Ipc ipcFrom32;
     static structFrom32* dataFrom32;
 

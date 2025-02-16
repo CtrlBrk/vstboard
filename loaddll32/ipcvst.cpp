@@ -11,19 +11,17 @@ using namespace std;
 IpcVst::IpcVst() :
 	dataIn(0),
 	dataOut(0),
-	ipcIn(L"to32", (void**)& dataIn, sizeof(structTo32)),
+	ipcIn(L"to32", (void**)& dataIn, sizeof(structPilot)),
 	ipcOut(L"from32", (void**)& dataOut, sizeof(structFrom32))
 {
 
 }
 
-
-
 void IpcVst::Loop() {
 	
-	MSG msg;
+	//MSG msg;
 	while (1) {
-		
+		/*
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			if (msg.message == WM_QUIT)
@@ -34,23 +32,25 @@ void IpcVst::Loop() {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-
+		*/
 		if (ipcIn.IfWaitingToStart()) {
-						
-			VstPlugin* p = 0;
-			if (plugins.count(dataIn->pluginId)) {
-				p = plugins[dataIn->pluginId];
-			}
 
+			VstPlugin* p = 0;
+
+			auto search = plugins.find(dataIn->pluginId);
+			if(search != plugins.end()) {
+				p = search->second;
+			}
+			
 			switch (dataIn->function) {
-			case IpcFunction::None:
-				break;
+
 			case IpcFunction::LoadDll:
 				cout << "load " << dataIn->pluginId << endl;
 				p = new VstPlugin(this, dataIn->pluginId);
-				p->Load(dataIn->name);
-				plugins[dataIn->pluginId] = p;
+				p->Load(dataIn->name,dataIn->value,dataIn->index);
+				plugins.insert({ dataIn->pluginId, p });
 				break;
+
 			case IpcFunction::UnloadDll:
 				cout << "unload " << dataIn->pluginId << endl;
 				if (p) {
@@ -58,15 +58,10 @@ void IpcVst::Loop() {
 					plugins.erase(dataIn->pluginId);
 				}
 				break;
-			default:
-				if (p) {
-					p->MsgLoop(dataIn);
-				}
-				break;
+			
 			}
 				
 			dataIn->function = IpcFunction::None;
-
 			ipcIn.SignalResultReady();
 		}
 	}

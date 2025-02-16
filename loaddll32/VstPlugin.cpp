@@ -2,6 +2,9 @@
 #include "VstHost.h"
 #include "ipcvst.h"
 #include <iostream>
+#include <thread>
+#include "vstwindow.h"
+
 VstPlugin::VstPlugin(IpcVst* i, int id) :
     pEffect(0),
     bEditOpen(false),
@@ -12,8 +15,14 @@ VstPlugin::VstPlugin(IpcVst* i, int id) :
     pMasterEffect(0),
     pluginLib(0),
     ipc(i),
-    hWin(nullptr),
-    pluginId(id)
+    pluginId(id),
+    chunk(0),
+    chunkIn(0),
+    win(0),
+    listEvnts(0),
+    chunkInSize(0),
+    dataIn(0),
+    ipcIn(L"to32" + to_wstring(id), (void**)&dataIn, sizeof(structTo32))
 {
    // cout << "vstplugin " << this << " ipc " << &ipc << endl;
     sName.clear();
@@ -25,6 +34,18 @@ VstPlugin::VstPlugin(IpcVst* i, int id) :
 
 VstPlugin::~VstPlugin()
 {
+    if (listEvnts) {
+        free(listEvnts);
+        listEvnts = 0;
+    }
+
+    if (chunkIn) {
+        delete chunkIn;
+    }
+
+    if (win) {
+        delete win;
+    }
     Unload();
 }
 
@@ -32,8 +53,10 @@ VstPlugin::~VstPlugin()
 /* Load : loads the effect module                                            */
 /*****************************************************************************/
 
-bool VstPlugin::Load(const std::wstring& name)
+bool VstPlugin::Load(const std::wstring& name,float sampleRate, VstInt32 blocksize)
 {
+    const wchar_t* buf = name.c_str();
+
     pluginLib = LoadLibrary(name.c_str());
     if (!pluginLib) {
         return false;
@@ -78,7 +101,55 @@ bool VstPlugin::Load(const std::wstring& name)
     sName = name;
     pEffect->user = this;
   //  cout << "peffect " << &pEffect << endl;
+   
+    
+    EffDispatch(effOpen);
+    EffDispatch(effSetSampleRate, 0, 0, 0, sampleRate);
+    EffDispatch(effSetBlockSize, 0, blocksize);
+    EffDispatch(effSetProcessPrecision, 0, kVstProcessPrecision32);
+    EffDispatch(effMainsChanged, 0, 1);
+    EffDispatch(effStartProcess);
+    /*
+    if (getFlags(effFlagsHasEditor)) {
+        EditOpen();
+
+        EffDispatch(effEditOpen, 0, 0, win->hWin);
+        RECT rc{};
+        ERect* erc = nullptr;
+        EffDispatch(effEditGetRect, 0, 0, &erc);
+        rc.left = erc->left;
+        rc.top = erc->top;
+        rc.right = erc->right;
+        rc.bottom = erc->bottom;
+        win->resizeEditor(rc);
+       // ShowWindow(win->hWin, SW_SHOW);
+    }
+    */
+    std::thread t(RunPlugin, this);
+    t.detach();
     return true;
+}
+
+void VstPlugin::RunPlugin(VstPlugin* p) {
+    
+    MSG msg;
+
+    while (1) {
+        
+        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+        {
+            if (msg.message == WM_QUIT)
+            {
+                break;
+            }
+
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+        
+        p->MsgLoop();
+        
+    }
 }
 
 /*****************************************************************************/
@@ -306,6 +377,11 @@ long VstPlugin::EffDispatch(VstInt32 opCode, VstInt32 index, VstIntPtr value, vo
     long disp = 0L;
     disp = pEffect->dispatcher(pEffect, opCode, index, value, ptr, opt);
 
+    //that's odd
+    if (opCode == effCanDo) {
+        return bWantMidi;
+    }
+
     return disp;
 }
 
@@ -375,74 +451,16 @@ long VstPlugin::EffGetParamName(long index, char* txt)
 
 
 void CrtVstWin(VstPlugin* vst) {
-    /*
-    win = new VstWin();
-    vst->hWin = win->CrtWindow();
-
-
-
-    //while (GetMessage(&msg, vst->hWin, 0, 0) != 0)
-    //{
-        //TranslateMessage(&msg);
-        //DispatchMessage(&msg);
-    //}
-    */
-    WNDCLASSEX wcex{ sizeof(wcex) };
-    wcex.lpfnWndProc = DefWindowProc;
-    wcex.hInstance = GetModuleHandle(0);
-    wcex.lpszClassName = L"from github.com/t-mat/";
-    RegisterClassEx(&wcex);
-    const auto style = WS_CAPTION | WS_THICKFRAME | WS_OVERLAPPEDWINDOW;
-    vst->hWin = CreateWindow(
-        wcex.lpszClassName, L"Vst32", style
-        , 0, 0, 0, 0, NULL, 0, 0, 0
-    );
-    /*
-    MSG msg;
-    while (BOOL b = GetMessage(&msg, 0, 0, 0)) {
-        if (b == -1) {
-            //run = false;
-            break;
-        }
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+    if (vst->win) {
+        return;
     }
-    */
-}
-
-void VstPlugin::resizeEditor(const RECT& clientRc) const {
-    if (hWin) {
-        auto rc = clientRc;
-        const auto style = GetWindowLongPtr(hWin, GWL_STYLE);
-        const auto exStyle = GetWindowLongPtr(hWin, GWL_EXSTYLE);
-        const BOOL fMenu = GetMenu(hWin) != nullptr;
-        AdjustWindowRectEx(&rc, style, fMenu, exStyle);
-        MoveWindow(hWin, 0, 0, rc.right - rc.left, rc.bottom - rc.top, TRUE);
-    }
-}
-
-bool VstPlugin::EditOpen() {
-    //std::thread vstwin(CrtVstWin,this);
-    //vstwin.detach();
-    //while (hWin == 0) {};
-    CrtVstWin(this);
-
-    //return true;
-    //VstWin* win = new VstWin();
-    //HWND hWin = win->CrtWindow();
-
-    //bool windowOk = false;
-    //ERect* rect = 0;
-
-    //if (hWin) {
-    //	ShowWindow(hWin, SW_SHOW);
-    //}
-    if (!hWin) return false;
-
+    vst->win = new VstWin(vst);
+    vst->win->hWin = vst->win->CrtWindow();
+   // ShowWindow(vst->win->hWin, SW_SHOW);
     ERect* erc = nullptr;
-    EffDispatch(effEditGetRect, 0, 0, &erc);
-    if (EffDispatch(effEditOpen, 0, 0, hWin) == 1L) {
-        EffDispatch(effEditGetRect, 0, 0, &erc);
+    vst->EffDispatch(effEditGetRect, 0, 0, &erc);
+    if (vst->EffDispatch(effEditOpen, 0, 0, vst->win->hWin) == 1L) {
+        vst->EffDispatch(effEditGetRect, 0, 0, &erc);
         RECT rc{};
         if (erc) {
             rc.left = erc->left;
@@ -450,70 +468,73 @@ bool VstPlugin::EditOpen() {
             rc.right = erc->right;
             rc.bottom = erc->bottom;
         }
-        resizeEditor(rc);
+        vst->win->resizeEditor(rc);
 
     }
-    /*
-    if (plugin->EffEditGetRect(&rect) == 1L) windowOk = true;
-    if (plugin->EffEditOpen(hWin) == 1L) windowOk = true;
-    if (plugin->EffEditGetRect(&rect) == 1L) windowOk = true;	//try to get rect again
-    if (!windowOk) return false;
-    */
-    //SetWindowSize(rect->right, rect->bottom);
+
+}
+
+bool VstPlugin::EditOpen() {
+    //std::thread vstwin(CrtVstWin,this);
+    //vstwin.detach();
+        
+    CrtVstWin(this);
     return true;
 }
 
 bool VstPlugin::EditClose() {
-    if (!hWin) return false;
-    DestroyWindow(hWin);
-    hWin = 0;
+    if (!win) return false;
+    delete(win);
+    win = 0;
     return true;
 }
 
-void VstPlugin::MsgLoop(structTo32* map)
+void VstPlugin::MsgLoop()
 {
-    if (!map) return;
+    if (!ipcIn.IfWaitingToStart()) {
+        return;
+    }
+
+    //if (!map) return;
 
     float** ins = 0;
     float** outs = 0;
     float* tmp = 0;
 
-    void* chunk = 0;
-
-    switch (map->function) {
+    switch (dataIn->function) {
         case IpcFunction::UnloadDll:
             Unload();
             break;
         case IpcFunction::GetAEffect:
             if (pEffect) {
-                map->flags = pEffect->flags;
-                map->numInputs = pEffect->numInputs;
-                map->numOutputs = pEffect->numOutputs;
-                map->initialDelay = pEffect->initialDelay;
-                map->numParams = pEffect->numParams;
+                dataIn->flags = pEffect->flags;
+                dataIn->numInputs = pEffect->numInputs;
+                dataIn->numOutputs = pEffect->numOutputs;
+                dataIn->initialDelay = pEffect->initialDelay;
+                dataIn->numParams = pEffect->numParams;
             }
             break;
-        //case IpcFunction::EditorOpen:
-        //    EditOpen();
-        //    break;
+        case IpcFunction::EditorOpen:
+            EditOpen();
+            break;
         case IpcFunction::EditorShow:
-            if (hWin) {
-                ShowWindow(hWin, SW_SHOW);
+            if (win) {
+                ShowWindow(win->hWin, SW_SHOW);
             }
             break;
         case IpcFunction::EditorHide:
-            if (hWin) {
-                ShowWindow(hWin, SW_HIDE);
+            if (win) {
+                ShowWindow(win->hWin, SW_HIDE);
             }
             break;
         case IpcFunction::GetParam:
             if (pEffect) {
-                map->opt = pEffect->getParameter(pEffect, map->index);
+                dataIn->opt = pEffect->getParameter(pEffect, dataIn->index);
             }
             break;
         case IpcFunction::SetParam:
             if (pEffect) {
-                pEffect->setParameter(pEffect, map->index, map->opt);
+                pEffect->setParameter(pEffect, dataIn->index, dataIn->opt);
             }
             break;
         case IpcFunction::Process:
@@ -522,22 +543,22 @@ void VstPlugin::MsgLoop(structTo32* map)
                 ins = new float* [pEffect->numInputs];
                 outs = new float* [pEffect->numOutputs];
 
-                tmp = (float*)&map->buffersIn;
+                tmp = (float*)&dataIn->buffersIn;
                 for (int i = 0; i < pEffect->numInputs; i++) {
                     ins[i] = tmp;
-                    tmp += sizeof(float) * map->dataSize;
+                    tmp += sizeof(float) * dataIn->dataSize;
                 }
-                tmp = (float*)&map->buffersOut;
+                tmp = (float*)&dataIn->buffersOut;
                 for (int i = 0; i < pEffect->numOutputs; i++) {
                     outs[i] = tmp;
-                    tmp += sizeof(float) * map->dataSize;
+                    tmp += sizeof(float) * dataIn->dataSize;
                 }
 
-                if (map->function == IpcFunction::Process) {
-                    pEffect->process(pEffect, ins, outs, map->dataSize);
+                if (dataIn->function == IpcFunction::Process) {
+                    pEffect->process(pEffect, ins, outs, dataIn->dataSize);
                 }
-                if (map->function == IpcFunction::ProcessReplace) {
-                    pEffect->processReplacing(pEffect, ins, outs, map->dataSize);
+                if (dataIn->function == IpcFunction::ProcessReplace) {
+                    pEffect->processReplacing(pEffect, ins, outs, dataIn->dataSize);
                 }
 
                 delete[] ins;
@@ -550,51 +571,99 @@ void VstPlugin::MsgLoop(structTo32* map)
 
         case IpcFunction::GetChunk:
             if (pEffect) {
-                map->dataSize = EffGetChunk(&chunk, false);
-                cout << "get chunk size:" << map->dataSize << endl;
+                dataIn->dataSize = EffGetChunk(&chunk, false);
+                cout << "get chunk size:" << dataIn->dataSize << endl;
             }
             break;
         case IpcFunction::GetChunkSegment:
-            cout << "get segment start:" << map->value << " size:" << map->dataSize << endl;
-            memcpy_s(map->data, IPC_CHUNK_SIZE, (char*)chunk + map->value, map->dataSize);
+            cout << "get segment start:" << dataIn->value << " size:" << dataIn->dataSize << endl;
+            memcpy_s(dataIn->data, IPC_CHUNK_SIZE, (char*)chunk + dataIn->value, dataIn->dataSize);
 
             break;
         case IpcFunction::SetChunk:
-            cout << "set chunk size:" << map->dataSize << endl;
-            chunk = new char[map->dataSize];
+            cout << "set chunk size:" << dataIn->dataSize << endl;
+            if (chunkIn) {
+                delete chunkIn;
+                chunkIn = 0;
+            }
+            chunkIn = new char[dataIn->dataSize];
+            chunkInSize = dataIn->dataSize;
             break;
         case IpcFunction::SetChunkSegment:
-            cout << "set segment start:" << map->value << " size:" << map->dataSize << endl;
-            memcpy_s((char*)chunk + map->value, IPC_CHUNK_SIZE, map->data, min(map->dataSize, IPC_CHUNK_SIZE));
+            cout << "set segment start:" << dataIn->value << " size:" << dataIn->dataSize << endl;
+            memcpy_s((char*)chunkIn + dataIn->value, IPC_CHUNK_SIZE, dataIn->data, min(dataIn->dataSize, IPC_CHUNK_SIZE));
             break;
         case IpcFunction::DeleteChunk:
             if (chunk) {
-                delete chunk;
+                delete[] chunk;
                 chunk = 0;
             }
             break;
         case IpcFunction::Dispatch:
             
-            if (map->opCode == effEditOpen) {
+            if (dataIn->opCode == effEditOpen) {
                 EditOpen();
                 break;
             }
-            if (map->opCode == effEditClose) {
+            if (dataIn->opCode == effEditClose) {
                 EditClose();
                 break;
             }
-            //	cout << "optcode " << map->opCode << endl;
-                //we have segemented data, use it
-            if (chunk) {
-                cout << "use chunk" << endl;
-                map->dispatchReturn = EffDispatch(map->opCode, map->index, map->value, chunk, map->opt);
-                //delete chunk;
-                //chunk = 0;
+                           
+            if (dataIn->opCode == effProcessEvents) {
+                if (chunkIn) {
+                    TranslateMidiEvents(dataIn, chunkIn, chunkInSize);
+                }
+                else {
+                    TranslateMidiEvents(dataIn, dataIn->data, dataIn->dataSize);
+                }
+            }
+
+            //	cout << "optcode " << dataIn->opCode << endl;
+            if (chunkIn) {
+                
+                //cout << "use chunk" << endl;
+                dataIn->dispatchReturn = EffDispatch(dataIn->opCode, dataIn->index, dataIn->value, chunkIn, dataIn->opt);
+                delete[] chunkIn;
+                chunkIn = 0;
             }
             else {
-                map->dispatchReturn = EffDispatch(map->opCode, map->index, map->value, map->data, map->opt);
+
+                
+                dataIn->dispatchReturn = EffDispatch(dataIn->opCode, dataIn->index, dataIn->value, dataIn->data, dataIn->opt);
             }
-          
-        }
+
+            dataIn->dataSize = 0;
+    }
+    dataIn->function = IpcFunction::None;
+
+    ipcIn.SignalResultReady();
+}
+
+void VstPlugin::TranslateMidiEvents(structTo32* map, void* data, int datasize)
+{
+    /*
+       //probably memory leaks, each event should be deleted ?
+
+        */
+    size_t size = sizeof(VstEvents) + datasize;
+    listEvnts = (VstEvents*)malloc(size);
+    listEvnts->numEvents = map->index;
+    listEvnts->reserved = 0;
+
+    int cpt = 0;
+    int ptr = 0;
+    while (ptr < map->dataSize) {
+        VstEvent* e = new VstEvent();
+        memcpy_s(e, sizeof(VstEvent), (char*)data + ptr, sizeof(VstEvent));
+        listEvnts->events[cpt] = e;
+
+        cpt++;
+        ptr += sizeof(VstMidiEvent);
+    }
+
+    delete chunkIn;
+    chunkIn = listEvnts;
+    listEvnts = 0;
     
 }

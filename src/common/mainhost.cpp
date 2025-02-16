@@ -864,7 +864,7 @@ void MainHost::Render()
 
     if(renderer)
         if(!renderer->StartRender()) {
-            LOG("render error");
+    //        LOG("render error");
         }
 
     if(solverNeedAnUpdate && solverUpdateEnabled)

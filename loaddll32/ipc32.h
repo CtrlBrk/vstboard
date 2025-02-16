@@ -26,12 +26,22 @@ enum class IpcFunction
     Process,
     ProcessReplace,
     ProcessDouble,
+    ProcessMidi,
     GetChunk,
     GetChunkSegment,
     SetChunk,
     SetChunkSegment,
     DeleteChunk
 
+};
+
+
+struct structPilot {
+    VstInt32 pluginId = 0;
+    IpcFunction function;
+    wchar_t name[256];
+    VstInt32 value = 0;
+    VstInt32 index = 0;
 };
 
 struct structFrom32 {

@@ -1,6 +1,5 @@
 #include "vstplugin32.h"
-
-
+#include "mainhost.h"
 using namespace Connectables;
 
 HANDLE VstPlugin32::hMapFile = 0;
@@ -9,14 +8,16 @@ HANDLE VstPlugin32::ipcSemStart = 0;
 HANDLE VstPlugin32::ipcSemEnd = 0;
 char* VstPlugin32::chunkData = 0;
 
-structTo32* VstPlugin32::dataTo32 = 0;
+structPilot* VstPlugin32::st_dataTo32 = 0;
 structFrom32* VstPlugin32::dataFrom32 = 0;
-Ipc VstPlugin32::ipcTo32(L"to32",(void**)&dataTo32,sizeof(structTo32)) ;
+Ipc VstPlugin32::st_ipcTo32(L"to32",(void**)&st_dataTo32,sizeof(structPilot)) ;
 Ipc VstPlugin32::ipcFrom32(L"from32",(void**)&dataFrom32,sizeof(structFrom32)) ;
 
 
 VstPlugin32::VstPlugin32(MainHost *myHost,int index, const ObjectInfo & info) :
-    VstPlugin(myHost,index,info)
+    VstPlugin(myHost,index,info),
+    dataTo32(0),
+    ipcTo32(L"to32" + std::to_wstring(GetIndex()), (void**)&dataTo32, sizeof(structTo32))
 {
 
 }
@@ -43,16 +44,17 @@ bool VstPlugin32::Close()
 
 bool VstPlugin32::Load(const std::wstring &name)
 {
-    ipcTo32.LockData();
-    dataTo32->pluginId = GetIndex();
+    st_ipcTo32.LockData();
+    st_dataTo32->pluginId = GetIndex();
 
-    dataTo32->function=IpcFunction::LoadDll;
-    name.copy(dataTo32->name,name.length());
+    st_dataTo32->index = myHost->GetBufferSize();
+    st_dataTo32->value = myHost->GetSampleRate();
 
-    ipcTo32.SignalStartAndRelease();
+    st_dataTo32->function=IpcFunction::LoadDll;
+    wcscpy(st_dataTo32->name,name.c_str());
+    st_ipcTo32.SignalStartAndRelease();
     return true;
 }
-
 
 bool VstPlugin32::initPlugin()
 {
@@ -78,14 +80,15 @@ bool VstPlugin32::initPlugin()
     return VstPlugin::initPlugin();
 }
 
+
 bool VstPlugin32::Unload()
 {
-    ipcTo32.LockData();
-    dataTo32->pluginId = GetIndex();
+    st_ipcTo32.LockData();
+    st_dataTo32->pluginId = GetIndex();
 
-    dataTo32->function=IpcFunction::UnloadDll;
+    st_dataTo32->function=IpcFunction::UnloadDll;
 
-    ipcTo32.SignalStartAndRelease();
+    st_ipcTo32.SignalStartAndRelease();
 
     return true;
 }
@@ -163,6 +166,29 @@ void VstPlugin32::EffSetParameter(long index, float parameter)
 
 }
 
+void VstPlugin32::ProcessMidi()
+{
+    QMutexLocker lock(&midiEventsMutex);
+
+
+    if(!bWantMidi) return;
+    if(listVstMidiEvents.size()==0) return;
+
+    size_t size = listVstMidiEvents.size()*sizeof(VstMidiEvent);
+
+    VstMidiEvent* evt=0;
+    char* data = (char*)malloc( size );
+    char* dataPtr = data;
+    foreach(evt, listVstMidiEvents) {
+        memcpy_s(dataPtr,sizeof(VstMidiEvent), evt,sizeof(VstMidiEvent));
+        dataPtr+=sizeof(VstMidiEvent);
+    }
+
+    EffDispatch(effProcessEvents, listVstMidiEvents.size(), 0, data,0, (VstInt32)size);
+
+    free(data);
+    listVstMidiEvents.clear();
+}
 
 void VstPlugin32::EffProcess(float **inputs, float **outputs, long sampleframes)
 {
@@ -354,7 +380,7 @@ long VstPlugin32::EffDispatch(VstInt32 opCode, VstInt32 index, VstIntPtr value, 
 {
 
     if(size>IPC_CHUNK_SIZE) {
-        LOG("send segmented");
+        LOG("send segmented " << size << " for opcode " << opCode);
         SendChunkSegment((char*)ptr,size);
     }
 
