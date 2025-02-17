@@ -53,6 +53,14 @@ struct structFrom32 {
     float cbOpt = 0.;
 };
 
+struct structBuffers {
+    VstInt32 pluginId = 0;
+    IpcFunction function;
+    VstInt32 dataSize = 0;
+    float buffersIn[IPC_BUFFER_SIZE];
+    float buffersOut[IPC_BUFFER_SIZE];
+};
+
 struct structTo32 {
     
 
@@ -63,12 +71,9 @@ struct structTo32 {
     VstInt32 value=0;
     float opt=0.;
     long dispatchReturn=0L;
-
-    
+        
     wchar_t name[256];
-    float buffersIn[IPC_BUFFER_SIZE];
-    float buffersOut[IPC_BUFFER_SIZE];
-
+    
     VstInt32 flags=0;
     VstInt32 numInputs=0;
     VstInt32 numOutputs=0;

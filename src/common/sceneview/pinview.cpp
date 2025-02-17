@@ -147,7 +147,7 @@ void PinView::mousePressEvent ( QGraphicsSceneMouseEvent * event )
         return;
     }
 
-#ifdef DEBUG_BUFFERS
+//#ifdef DEBUG_BUFFERS
     if(event->buttons() == Qt::MiddleButton) {
 
 
@@ -157,7 +157,7 @@ void PinView::mousePressEvent ( QGraphicsSceneMouseEvent * event )
         msgCtrl->SendMsg(msg);
 
     }
-#endif
+//#endif
     event->ignore();
 }
 

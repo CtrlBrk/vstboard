@@ -73,6 +73,7 @@ public:
     // overridables
 
     static void RunPlugin(VstPlugin* p);
+    static void RunPluginBuffer(VstPlugin* p);
 
 public:
     
@@ -85,10 +86,14 @@ public:
 
     bool EditOpen();
     bool EditClose();
+    void BuffersLoop();
     void MsgLoop();
 
     structTo32* dataIn;
     Ipc ipcIn;
+
+    structBuffers* dataBuffers;
+    Ipc ipcBuffers;
 
 private:
     void TranslateMidiEvents(structTo32* map, void* data, int datasize);

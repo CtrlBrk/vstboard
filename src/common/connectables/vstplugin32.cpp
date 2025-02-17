@@ -17,7 +17,9 @@ Ipc VstPlugin32::ipcFrom32(L"from32",(void**)&dataFrom32,sizeof(structFrom32)) ;
 VstPlugin32::VstPlugin32(MainHost *myHost,int index, const ObjectInfo & info) :
     VstPlugin(myHost,index,info),
     dataTo32(0),
-    ipcTo32(L"to32" + std::to_wstring(GetIndex()), (void**)&dataTo32, sizeof(structTo32))
+    ipcTo32(L"to32" + std::to_wstring(GetIndex()), (void**)&dataTo32, sizeof(structTo32)),
+    dataBuffers(0),
+    ipcBuffers(L"buff" + std::to_wstring(GetIndex()), (void**)&dataBuffers, sizeof(structBuffers))
 {
 
 }
@@ -197,17 +199,17 @@ void VstPlugin32::EffProcess(float **inputs, float **outputs, long sampleframes)
         return;
     }
 
-    ipcTo32.LockData();
-    dataTo32->pluginId = GetIndex();
+    ipcBuffers.LockData();
+    dataBuffers->pluginId = GetIndex();
 
-    dataTo32->function=IpcFunction::Process;
-    dataTo32->dataSize = sampleframes;
+    dataBuffers->function=IpcFunction::Process;
+    dataBuffers->dataSize = sampleframes;
     size_t s = sizeof(float)*sampleframes*pEffect->numInputs;
-    memcpy(dataTo32->buffersIn,inputs,s);
+    memcpy(dataBuffers->buffersIn,inputs,s);
     s = sizeof(float)*sampleframes*pEffect->numOutputs;
-    memcpy(dataTo32->buffersOut,outputs,s);
+    memcpy(dataBuffers->buffersOut,outputs,s);
 
-    ipcTo32.SignalStartAndRelease();
+    ipcBuffers.SignalStartAndRelease();
 }
 
 void VstPlugin32::EffProcessReplacing(float **inputs, float **outputs, long sampleframes)
@@ -229,26 +231,26 @@ void VstPlugin32::EffProcessReplacing(float **inputs, float **outputs, long samp
         return;
     }
 
-    ipcTo32.LockData();
-    dataTo32->pluginId = GetIndex();
+    ipcBuffers.LockData();
+    dataBuffers->pluginId = GetIndex();
 
-    dataTo32->function=IpcFunction::ProcessReplace;
-    dataTo32->dataSize = sampleframes;
+    dataBuffers->function=IpcFunction::ProcessReplace;
+    dataBuffers->dataSize = sampleframes;
 
-    float* tmp = (float*)&dataTo32->buffersIn;
+    float* tmp = (float*)&dataBuffers->buffersIn;
     for (int i = 0; i < pEffect->numInputs; i++) {
         memcpy(tmp,inputs[i], sizeof(float) * sampleframes );
         tmp += sizeof(float) * sampleframes;
     }
 
     //size_t s = sizeof(float)*sampleframes*pEffect->numInputs;
-    //memcpy(dataTo32->buffersIn,*inputs,s);
+    //memcpy(dataBuffers->buffersIn,*inputs,s);
     //s = sizeof(float)*sampleframes*pEffect->numOutputs;
-    ipcTo32.SignalStart();
+    ipcBuffers.SignalStart();
 
-    //memcpy(*outputs,dataTo32->buffersOut,s);
+    //memcpy(*outputs,dataBuffers->buffersOut,s);
 
-    tmp = (float*)&dataTo32->buffersOut;
+    tmp = (float*)&dataBuffers->buffersOut;
     for (int i = 0; i < pEffect->numOutputs; i++) {
         memcpy(outputs[i],tmp, sizeof(float) * sampleframes );
         tmp += sizeof(float) * sampleframes;
@@ -257,7 +259,7 @@ void VstPlugin32::EffProcessReplacing(float **inputs, float **outputs, long samp
 
 
 
-   // dataTo32->callback = IpcFunction::None;
+   // dataBuffers->callback = IpcFunction::None;
 
 /*
     QString l="";
@@ -266,7 +268,7 @@ void VstPlugin32::EffProcessReplacing(float **inputs, float **outputs, long samp
     }
     LOG("out " << l)
 */
-    ipcTo32.Unlockdata();
+    ipcBuffers.Unlockdata();
 }
 
 void VstPlugin32::EffProcessDoubleReplacing(double **inputs, double **outputs, long sampleframes)
@@ -278,17 +280,17 @@ void VstPlugin32::EffProcessDoubleReplacing(double **inputs, double **outputs, l
         return;
     }
 
-    ipcTo32.LockData();
-    dataTo32->pluginId = GetIndex();
+    ipcBuffers.LockData();
+    dataBuffers->pluginId = GetIndex();
 
-    dataTo32->function=IpcFunction::ProcessDouble;
-    dataTo32->dataSize = sampleframes;
+    dataBuffers->function=IpcFunction::ProcessDouble;
+    dataBuffers->dataSize = sampleframes;
     size_t s = sizeof(double)*sampleframes*pEffect->numInputs;
-    memcpy(dataTo32->buffersIn,inputs,s);
+    memcpy(dataBuffers->buffersIn,inputs,s);
     s = sizeof(double)*sampleframes*pEffect->numOutputs;
-    memcpy(dataTo32->buffersOut,outputs,s);
+    memcpy(dataBuffers->buffersOut,outputs,s);
 
-    ipcTo32.SignalStartAndRelease();
+    ipcBuffers.SignalStartAndRelease();
 
 #endif
 }

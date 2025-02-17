@@ -22,7 +22,9 @@ VstPlugin::VstPlugin(IpcVst* i, int id) :
     listEvnts(0),
     chunkInSize(0),
     dataIn(0),
-    ipcIn(L"to32" + to_wstring(id), (void**)&dataIn, sizeof(structTo32))
+    ipcIn(L"to32" + to_wstring(id), (void**)&dataIn, sizeof(structTo32)),
+    dataBuffers(0),
+    ipcBuffers(L"buff" + to_wstring(id), (void**)&dataBuffers, sizeof(structBuffers))
 {
    // cout << "vstplugin " << this << " ipc " << &ipc << endl;
     sName.clear();
@@ -65,10 +67,8 @@ bool VstPlugin::Load(const std::wstring& name,float sampleRate, VstInt32 blocksi
     vstPluginFuncPtr entryPoint = 0;
     try {
         entryPoint = (vstPluginFuncPtr)GetProcAddress(pluginLib, "VSTPluginMain");
-        // entryPoint = (vstPluginFuncPtr)pluginLib->resolve("VSTPluginMain");
         if (!entryPoint) {
             entryPoint = (vstPluginFuncPtr)GetProcAddress(pluginLib, "main");
-            // entryPoint = (vstPluginFuncPtr)pluginLib->resolve("main");
         }
     }
     catch (...)
@@ -127,11 +127,24 @@ bool VstPlugin::Load(const std::wstring& name,float sampleRate, VstInt32 blocksi
     */
     std::thread t(RunPlugin, this);
     t.detach();
+
+    std::thread u(RunPluginBuffer, this);
+    u.detach();
+
     return true;
+}
+
+
+void VstPlugin::RunPluginBuffer(VstPlugin* p) {
+    while (1) {
+        p->BuffersLoop();
+    }
 }
 
 void VstPlugin::RunPlugin(VstPlugin* p) {
     
+    
+
     MSG msg;
 
     while (1) {
@@ -489,17 +502,60 @@ bool VstPlugin::EditClose() {
     return true;
 }
 
+void VstPlugin::BuffersLoop() {
+    
+    if (!ipcBuffers.IfWaitingToStart()) {
+        return;
+    }
+
+
+    float** ins = 0;
+    float** outs = 0;
+    float* tmp = 0;
+
+    switch (dataBuffers->function) {
+    case IpcFunction::Process:
+    case IpcFunction::ProcessReplace:
+        if (pEffect) {
+            ins = new float* [pEffect->numInputs];
+            outs = new float* [pEffect->numOutputs];
+
+            tmp = (float*)&dataBuffers->buffersIn;
+            for (int i = 0; i < pEffect->numInputs; i++) {
+                ins[i] = tmp;
+                tmp += sizeof(float) * dataBuffers->dataSize;
+            }
+            tmp = (float*)&dataBuffers->buffersOut;
+            for (int i = 0; i < pEffect->numOutputs; i++) {
+                outs[i] = tmp;
+                tmp += sizeof(float) * dataBuffers->dataSize;
+            }
+
+            if (dataBuffers->function == IpcFunction::Process) {
+                pEffect->process(pEffect, ins, outs, dataBuffers->dataSize);
+            }
+            if (dataBuffers->function == IpcFunction::ProcessReplace) {
+                pEffect->processReplacing(pEffect, ins, outs, dataBuffers->dataSize);
+            }
+
+            delete[] ins;
+            delete[] outs;
+        }
+        break;
+    case IpcFunction::ProcessDouble:
+
+        break;
+    }
+
+    ipcBuffers.SignalResultReady();
+
+}
+
 void VstPlugin::MsgLoop()
 {
     if (!ipcIn.IfWaitingToStart()) {
         return;
     }
-
-    //if (!map) return;
-
-    float** ins = 0;
-    float** outs = 0;
-    float* tmp = 0;
 
     switch (dataIn->function) {
         case IpcFunction::UnloadDll:
@@ -537,37 +593,7 @@ void VstPlugin::MsgLoop()
                 pEffect->setParameter(pEffect, dataIn->index, dataIn->opt);
             }
             break;
-        case IpcFunction::Process:
-        case IpcFunction::ProcessReplace:
-            if (pEffect) {
-                ins = new float* [pEffect->numInputs];
-                outs = new float* [pEffect->numOutputs];
-
-                tmp = (float*)&dataIn->buffersIn;
-                for (int i = 0; i < pEffect->numInputs; i++) {
-                    ins[i] = tmp;
-                    tmp += sizeof(float) * dataIn->dataSize;
-                }
-                tmp = (float*)&dataIn->buffersOut;
-                for (int i = 0; i < pEffect->numOutputs; i++) {
-                    outs[i] = tmp;
-                    tmp += sizeof(float) * dataIn->dataSize;
-                }
-
-                if (dataIn->function == IpcFunction::Process) {
-                    pEffect->process(pEffect, ins, outs, dataIn->dataSize);
-                }
-                if (dataIn->function == IpcFunction::ProcessReplace) {
-                    pEffect->processReplacing(pEffect, ins, outs, dataIn->dataSize);
-                }
-
-                delete[] ins;
-                delete[] outs;
-            }
-            break;
-        case IpcFunction::ProcessDouble:
-
-            break;
+        
 
         case IpcFunction::GetChunk:
             if (pEffect) {

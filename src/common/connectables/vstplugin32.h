@@ -44,12 +44,14 @@ protected:
 private:
     structTo32* dataTo32;
     Ipc ipcTo32;
-
+    structBuffers* dataBuffers;
+    Ipc ipcBuffers;
 
     static Ipc st_ipcTo32;
     static structPilot* st_dataTo32;
     static Ipc ipcFrom32;
     static structFrom32* dataFrom32;
+
 
     static HANDLE hMapFile;
     static HANDLE ipcMutex;

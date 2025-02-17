@@ -51,10 +51,7 @@ HWND VstWin::CrtWindow() {
 		wcex.lpszClassName, wcex.lpszClassName, style
 		, 0, 0, 0, 0, NULL, 0, 0, 0
 	);
-
 	return hWin;
-
-
 }
 
 void VstWin::resizeEditor(const RECT& clientRc) const {
