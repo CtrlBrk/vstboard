@@ -1,9 +1,7 @@
 #pragma once
 #include <windows.h>
 #include <string>
-
-#define IPC_TIMEOUT INFINITE
-//#define IPC_TIMEOUT 10000
+#include "ipc32.h"
 
 class Ipc
 {

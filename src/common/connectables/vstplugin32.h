@@ -1,6 +1,7 @@
 #ifndef VSTPLUGIN32_H
 #define VSTPLUGIN32_H
 
+#include <QProcess>
 #include "vstplugin.h"
 #include "../../loaddll32/ipc32.h"
 #include "../../loaddll32/ipc.h"
@@ -60,7 +61,12 @@ private:
     // static QByteArray ipcData;
     static char* chunkData;
 
+    static QProcess *vst32Process;
+
 public slots:
+    void Vst32Error(QProcess::ProcessError error);
+    void Vst32Finished(int exitCode, QProcess::ExitStatus exitStatus);
+
     void OnShowEditor() override;
     void OnHideEditor() override;
 };

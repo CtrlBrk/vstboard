@@ -5,8 +5,8 @@
 #define IPC_CHUNK_SIZE 2048
 #define IPC_BUFFER_SIZE 4096
 
-#define IPC_TIMEOUT INFINITE
-//#define IPC_TIMEOUT 10000
+//#define IPC_TIMEOUT INFINITE
+#define IPC_TIMEOUT 5000
 
 #include "pluginterfaces/vst2.x/aeffect.h"
 enum class IpcFunction

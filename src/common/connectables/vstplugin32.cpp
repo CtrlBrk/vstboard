@@ -8,6 +8,8 @@ HANDLE VstPlugin32::ipcSemStart = 0;
 HANDLE VstPlugin32::ipcSemEnd = 0;
 char* VstPlugin32::chunkData = 0;
 
+QProcess *VstPlugin32::vst32Process = 0;
+
 structPilot* VstPlugin32::st_dataTo32 = 0;
 structFrom32* VstPlugin32::dataFrom32 = 0;
 Ipc VstPlugin32::st_ipcTo32(L"to32",(void**)&st_dataTo32,sizeof(structPilot)) ;
@@ -46,6 +48,19 @@ bool VstPlugin32::Close()
 
 bool VstPlugin32::Load(const std::wstring &name)
 {
+    if(!vst32Process) {
+        vst32Process = new QProcess(myHost);
+        connect(vst32Process, SIGNAL(errorOccurred(QProcess::ProcessError)),
+                this,SLOT(Vst32Error(QProcess::ProcessError)));
+
+        connect(vst32Process, SIGNAL(finished(int,QProcess::ExitStatus)),
+                this, SLOT(Vst32Finished(int,QProcess::ExitStatus)) );
+
+        vst32Process->start("loaddll32.exe");
+    }
+
+
+
     st_ipcTo32.LockData();
     st_dataTo32->pluginId = GetIndex();
 
@@ -56,6 +71,18 @@ bool VstPlugin32::Load(const std::wstring &name)
     wcscpy(st_dataTo32->name,name.c_str());
     st_ipcTo32.SignalStartAndRelease();
     return true;
+}
+
+void VstPlugin32::Vst32Error(QProcess::ProcessError error)
+{
+    SetErrorMessage( tr("Error while launching the 32bit host")  );
+    vst32Process=0;
+}
+
+void VstPlugin32::Vst32Finished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    SetErrorMessage( tr("32bit hsot process ended")  );
+    vst32Process=0;
 }
 
 bool VstPlugin32::initPlugin()
