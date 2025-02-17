@@ -821,6 +821,8 @@ void MainHost::SetBufferSize(qint32 size)
     if(bufferSize == size)
         return;
 
+    LOG("buffer:" << size)
+
 //    MsgObject msg(FixedObjId::mainWindow);
     /*
     _MSGOBJ(msg,FixedObjId::mainWindow);
@@ -828,9 +830,7 @@ void MainHost::SetBufferSize(qint32 size)
     SendMsg(msg);
 */
     bufferSize = size;
-
-    //buffers size should follow cable messages
-    // emit BufferSizeChanged(size);
+    emit BufferSizeChanged(size);
 }
 
 void MainHost::SetSampleRate(float rate)

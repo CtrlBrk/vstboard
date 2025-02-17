@@ -88,7 +88,6 @@ namespace Connectables {
         QString currentBankFile;
         float sampleRate;
         qint32 bufferSize;
-        VstEvents *listEvnts;
 
         /// list of values used by the learn pin (off, learn, unlearn)
         QList<QVariant>listIsLearning;

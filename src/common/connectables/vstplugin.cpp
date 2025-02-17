@@ -42,7 +42,6 @@ VstPlugin::VstPlugin(MainHost *myHost,int index, const ObjectInfo & info) :
     editorWnd(0),
     sampleRate(44100.0),
     bufferSize(1024),
-    listEvnts(0),
     savedChunk(0),
     savedChunkSize(0),
     bypass(false),
@@ -76,10 +75,6 @@ bool VstPlugin::Close()
     }
     mapPlugins.remove(pEffect);
 
-    if(listEvnts) {
-        free(listEvnts);
-        listEvnts = 0;
-    }
     return true;
 }
 
@@ -149,34 +144,29 @@ void VstPlugin::SetSampleRate(float rate)
 
 void VstPlugin::ProcessMidi()
 {
-    if(bWantMidi) {
-        midiEventsMutex.lock();
+    if(!bWantMidi) return;
 
-        if(listVstMidiEvents.size()!=0) {
-            int nbEvents = listVstMidiEvents.size();
+    QMutexLocker lock(&midiEventsMutex);
 
-            if(listEvnts) {
-                free(listEvnts);
-                listEvnts = 0;
-            }
+    if(listVstMidiEvents.size()!=0) {
+        int nbEvents = listVstMidiEvents.size();
 
-            size_t size = sizeof(VstEvents) + sizeof(VstEvent)*(nbEvents-2);
-            listEvnts = (VstEvents*)malloc(size);
-            listEvnts->numEvents = nbEvents;
-            listEvnts->reserved = 0;
+        size_t size = sizeof(VstEvents) + sizeof(VstEvent*)*(nbEvents-2);
+        VstEvents *listEvnts = (VstEvents*)malloc(size);
+        listEvnts->numEvents = nbEvents;
+        listEvnts->reserved = 0;
 
-            int cpt=0;
-            foreach(VstMidiEvent *evnt, listVstMidiEvents) {
-                listEvnts->events[cpt] = (VstEvent*)evnt;
-                cpt++;
-            }
-
-            VstInt32 sizeF = sizeof(VstEvents) + sizeof(VstEvent*)*(nbEvents-2) + sizeof(VstEvent)*nbEvents;
-            EffProcessEvents(listEvnts,sizeF );
-
-            listVstMidiEvents.clear();
-            midiEventsMutex.unlock();
+        int cpt=0;
+        foreach(VstMidiEvent *evnt, listVstMidiEvents) {
+            listEvnts->events[cpt] = (VstEvent*)evnt;
+            cpt++;
         }
+
+        VstInt32 sizeF = sizeof(VstEvents) + sizeof(VstEvent*)*(nbEvents-2) + sizeof(VstEvent)*nbEvents;
+        EffProcessEvents(listEvnts,sizeF );
+
+        free(listEvnts);
+        listVstMidiEvents.clear();
     }
 }
 
@@ -224,7 +214,6 @@ void VstPlugin::Render()
     }
 
     if (newbuffsize != bufferSize) {
-        //mutex must be freed
         SetBufferSize(newbuffsize);
     }
 
