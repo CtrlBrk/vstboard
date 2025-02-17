@@ -659,7 +659,12 @@ void VstPlugin::MsgLoop()
                 dataIn->dispatchReturn = EffDispatch(dataIn->opCode, dataIn->index, dataIn->value, dataIn->data, dataIn->opt);
             }
 
-            dataIn->dataSize = 0;
+            //TODO : set size to 0 when the returned data is not used
+            switch (dataIn->opCode) {
+            case effSetChunk:
+                dataIn->dataSize = 0;
+            }
+            
     }
     dataIn->function = IpcFunction::None;
 
