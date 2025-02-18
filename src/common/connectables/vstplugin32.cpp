@@ -1,5 +1,7 @@
 #include "vstplugin32.h"
 #include "mainhost.h"
+#include "mainwindow.h"
+
 using namespace Connectables;
 
 HANDLE VstPlugin32::hMapFile = 0;
@@ -49,7 +51,7 @@ bool VstPlugin32::Close()
 bool VstPlugin32::Load(const std::wstring &name)
 {
     if(!vst32Process) {
-        vst32Process = new QProcess(myHost);
+        vst32Process = new QProcess(myHost->mainWindow);
         connect(vst32Process, SIGNAL(errorOccurred(QProcess::ProcessError)),
                 this,SLOT(Vst32Error(QProcess::ProcessError)));
 
@@ -89,7 +91,7 @@ bool VstPlugin32::initPlugin()
 {
     ipcTo32.LockData();
     dataTo32->pluginId = GetIndex();
-
+    dataTo32->mainWin = (VstInt32)myHost->mainWindow->winId();
     dataTo32->function=IpcFunction::GetAEffect;
 
     ipcTo32.SignalStart();

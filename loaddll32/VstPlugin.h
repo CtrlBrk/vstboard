@@ -84,6 +84,7 @@ public:
     bool OnIoChanged() { return false; }
     long OnGetNumAutomatableParameters() { return (pEffect) ? pEffect->numParams : 0; }
 
+    void CrtVstWin();
     bool EditOpen();
     bool EditClose();
     void BuffersLoop();
@@ -105,6 +106,7 @@ private:
     void* chunk;
     void* chunkIn;
     int chunkInSize;
+    HWND parentWindow;
 };
 
 

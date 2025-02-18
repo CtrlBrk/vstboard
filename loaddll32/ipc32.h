@@ -62,7 +62,7 @@ struct structBuffers {
 };
 
 struct structTo32 {
-    
+    VstInt32 mainWin=0;
 
     VstInt32 pluginId=0;
     IpcFunction function;

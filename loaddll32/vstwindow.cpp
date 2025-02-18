@@ -15,7 +15,7 @@ VstWin::~VstWin() {
 		DestroyWindow(hWin);
 	}
 }
-HWND VstWin::CrtWindow() {
+HWND VstWin::CrtWindow(HWND parent) {
 /*
 	const wchar_t CLASS_NAME[] = L"Vst32";
 	WNDCLASS wc = { };
@@ -49,7 +49,7 @@ HWND VstWin::CrtWindow() {
 	const auto style = WS_DLGFRAME;// WS_CAPTION | WS_BORDER | WS_OVERLAPPEDWINDOW;
 	hWin = CreateWindow(
 		wcex.lpszClassName, wcex.lpszClassName, style
-		, 0, 0, 0, 0, NULL, 0, 0, 0
+		, 0, 0, 0, 0, parent, 0, 0, 0
 	);
 	return hWin;
 }

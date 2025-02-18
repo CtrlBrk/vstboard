@@ -10,7 +10,7 @@ public:
 	~VstWin();
 
 public:
-	HWND CrtWindow();
+	HWND CrtWindow(HWND parent=nullptr);
 	void resizeEditor(const RECT& clientRc) const;
 
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

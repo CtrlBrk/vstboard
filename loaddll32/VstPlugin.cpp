@@ -24,7 +24,8 @@ VstPlugin::VstPlugin(IpcVst* i, int id) :
     dataIn(0),
     ipcIn(L"to32" + to_wstring(id), (void**)&dataIn, sizeof(structTo32)),
     dataBuffers(0),
-    ipcBuffers(L"buff" + to_wstring(id), (void**)&dataBuffers, sizeof(structBuffers))
+    ipcBuffers(L"buff" + to_wstring(id), (void**)&dataBuffers, sizeof(structBuffers)),
+    parentWindow(0)
 {
    // cout << "vstplugin " << this << " ipc " << &ipc << endl;
     sName.clear();
@@ -463,17 +464,17 @@ long VstPlugin::EffGetParamName(long index, char* txt)
 }
 
 
-void CrtVstWin(VstPlugin* vst) {
-    if (vst->win) {
+void VstPlugin::CrtVstWin() {
+    if (win) {
         return;
     }
-    vst->win = new VstWin(vst);
-    vst->win->hWin = vst->win->CrtWindow();
+    win = new VstWin(this);
+    win->hWin = win->CrtWindow(parentWindow);
    // ShowWindow(vst->win->hWin, SW_SHOW);
     ERect* erc = nullptr;
-    vst->EffDispatch(effEditGetRect, 0, 0, &erc);
-    if (vst->EffDispatch(effEditOpen, 0, 0, vst->win->hWin) == 1L) {
-        vst->EffDispatch(effEditGetRect, 0, 0, &erc);
+    EffDispatch(effEditGetRect, 0, 0, &erc);
+    if (EffDispatch(effEditOpen, 0, 0, win->hWin) == 1L) {
+        EffDispatch(effEditGetRect, 0, 0, &erc);
         RECT rc{};
         if (erc) {
             rc.left = erc->left;
@@ -481,17 +482,19 @@ void CrtVstWin(VstPlugin* vst) {
             rc.right = erc->right;
             rc.bottom = erc->bottom;
         }
-        vst->win->resizeEditor(rc);
-
+        win->resizeEditor(rc);
     }
-
 }
+
+//void CrtVstWin(VstPlugin* vst) {
+//    vst->CrtVstWin();
+//}
 
 bool VstPlugin::EditOpen() {
     //std::thread vstwin(CrtVstWin,this);
     //vstwin.detach();
         
-    CrtVstWin(this);
+    CrtVstWin();
     return true;
 }
 
@@ -562,6 +565,7 @@ void VstPlugin::MsgLoop()
             Unload();
             break;
         case IpcFunction::GetAEffect:
+            parentWindow = (HWND)dataIn->mainWin;
             if (pEffect) {
                 dataIn->flags = pEffect->flags;
                 dataIn->numInputs = pEffect->numInputs;
@@ -576,6 +580,8 @@ void VstPlugin::MsgLoop()
         case IpcFunction::EditorShow:
             if (win) {
                 ShowWindow(win->hWin, SW_SHOW);
+                //BringWindowToTop(win->hWin);
+                //SetForegroundWindow(win->hWin);
             }
             break;
         case IpcFunction::EditorHide:
@@ -659,7 +665,7 @@ void VstPlugin::MsgLoop()
                 dataIn->dispatchReturn = EffDispatch(dataIn->opCode, dataIn->index, dataIn->value, dataIn->data, dataIn->opt);
             }
 
-            //TODO : set size to 0 when the returned data is not used
+            //set size to 0 when the returned data is not used
             switch (dataIn->opCode) {
             case effSetChunk:
                 dataIn->dataSize = 0;
