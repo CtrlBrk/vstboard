@@ -26,10 +26,10 @@
 
 // #pragma warning ( push, 1 )
 // #include "pluginterfaces/base/ftypes.h"
-//#ifdef VST24SDK
-    // #include "public.sdk/source/vst/vst2wrapper/vst2wrapper.h"
-//    #include "vst2shell.h"
-//#endif
+#ifdef VST24SDK
+    #include "public.sdk/source/vst/vst2wrapper/vst2wrapper.h"
+   // #include "vst2shell.h"
+#endif
 // #pragma warning ( pop )
 
 #include "ids.h"
@@ -40,28 +40,28 @@ using namespace Steinberg;
 extern bool InitModule();
 extern bool DeinitModule();
 
-//#ifdef VST24SDK
+#ifdef VST24SDK
     //the vst2.4 factory creates kFx & kInstrument classes, vst3 creates kFxInstrument
-    // extern IPluginFactory* PLUGIN_API GetPluginFactoryVst24();
+    extern IPluginFactory* PLUGIN_API GetPluginFactoryVst24();
 
 
-    // AudioEffect *createShell(audioMasterCallback audioMaster);
+    AudioEffect *createShell(audioMasterCallback audioMaster);
 
-    // ::AudioEffect* createEffectInstance(audioMasterCallback audioMaster)
-    // {
-    //     long id = audioMaster(0,audioMasterCurrentId,0,0,0,0);
+    ::AudioEffect* createEffectInstance(audioMasterCallback audioMaster)
+    {
+        long id = audioMaster(0,audioMasterCurrentId,0,0,0,0);
 
-    //     switch(id) {
-    //     case uniqueIDEffect:
-    //         return Vst::Vst2Wrapper::create(GetPluginFactoryVst24(), VstBoardProcessorUID, uniqueIDEffect, audioMaster);
-    //     case uniqueIDInstrument:
-    //         return Vst::Vst2Wrapper::create(GetPluginFactoryVst24(), VstBoardInstProcessorUID, uniqueIDInstrument, audioMaster);
-    //     default:
-    //         return createShell(audioMaster);
-    //     }
-    // }
+        switch(id) {
+        case uniqueIDEffect:
+            return Vst::Vst2Wrapper::create(GetPluginFactoryVst24(), VstBoardProcessorUID, uniqueIDEffect, audioMaster);
+        case uniqueIDInstrument:
+            return Vst::Vst2Wrapper::create(GetPluginFactoryVst24(), VstBoardInstProcessorUID, uniqueIDInstrument, audioMaster);
+        default:
+            return createShell(audioMaster);
+        }
+    }
 
-//#endif
+#endif
 
 
 //#if defined (_MSC_VER) && defined (DEVELOPMENT)
@@ -130,7 +130,7 @@ BOOL WINAPI DllMain (HINSTANCE /*hInst*/, DWORD dwReason, LPVOID /*lpvReserved*/
 		if(QtAppCreated && qApp) {
 		        qApp->exit(0);
 		}
-	}*/
+    }*/
     return TRUE;
 }
 #endif

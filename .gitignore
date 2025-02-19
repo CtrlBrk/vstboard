@@ -16,7 +16,6 @@ qrc_*.cpp
 ui_*.h
 *.log
 *.tlog
-libs/port*
 libs/VST*
 libs/vst*
 libs/qtwinmigrate/examples/
