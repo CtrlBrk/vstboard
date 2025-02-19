@@ -2,6 +2,8 @@
 
 #include <windows.h>
 #include <string>
+#include <thread>
+#include <atomic>
 #include "ipc32.h"
 #include "ipc.h"
 
@@ -95,6 +97,11 @@ public:
 
     structBuffers* dataBuffers;
     Ipc ipcBuffers;
+
+    std::atomic_bool closing;
+
+ //   std::thread* guiThread;
+    std::thread* processThread;
 
 private:
     void TranslateMidiEvents(structTo32* map, void* data, int datasize);

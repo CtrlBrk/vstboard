@@ -19,9 +19,9 @@ IpcVst::IpcVst() :
 
 void IpcVst::Loop() {
 	
-	//MSG msg;
+	MSG msg;
 	while (1) {
-		/*
+		
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			if (msg.message == WM_QUIT)
@@ -32,7 +32,13 @@ void IpcVst::Loop() {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		*/
+		
+		map<int, VstPlugin*>::iterator it;
+		for (it = plugins.begin(); it != plugins.end(); it++) {
+			it->second->MsgLoop();
+		}
+				
+
 		if (ipcIn.IfWaitingToStart()) {
 
 			VstPlugin* p = 0;

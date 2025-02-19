@@ -2,7 +2,6 @@
 #include "VstHost.h"
 #include "ipcvst.h"
 #include <iostream>
-#include <thread>
 #include "vstwindow.h"
 
 VstPlugin::VstPlugin(IpcVst* i, int id) :
@@ -25,7 +24,8 @@ VstPlugin::VstPlugin(IpcVst* i, int id) :
     ipcIn(L"to32" + to_wstring(id), (void**)&dataIn, sizeof(structTo32)),
     dataBuffers(0),
     ipcBuffers(L"buff" + to_wstring(id), (void**)&dataBuffers, sizeof(structBuffers)),
-    parentWindow(0)
+    parentWindow(0),
+    closing(false)
 {
    // cout << "vstplugin " << this << " ipc " << &ipc << endl;
     sName.clear();
@@ -37,6 +37,11 @@ VstPlugin::VstPlugin(IpcVst* i, int id) :
 
 VstPlugin::~VstPlugin()
 {
+    closing = true;
+
+    processThread->join();
+ //   guiThread->join();
+
     if (listEvnts) {
         free(listEvnts);
         listEvnts = 0;
@@ -50,6 +55,9 @@ VstPlugin::~VstPlugin()
         delete win;
     }
     Unload();
+
+    delete processThread;
+   // delete guiThread;
 }
 
 /*****************************************************************************/
@@ -126,18 +134,19 @@ bool VstPlugin::Load(const std::wstring& name,float sampleRate, VstInt32 blocksi
        // ShowWindow(win->hWin, SW_SHOW);
     }
     */
-    std::thread t(RunPlugin, this);
-    t.detach();
+    //running in a separate thread locks some gui (guitar rig)
+   // guiThread = new std::thread(RunPlugin, this);
+   // guiThread->detach();
 
-    std::thread u(RunPluginBuffer, this);
-    u.detach();
+    processThread = new std::thread(RunPluginBuffer, this);
+    processThread->detach();
 
     return true;
 }
 
 
 void VstPlugin::RunPluginBuffer(VstPlugin* p) {
-    while (1) {
+    while (!p->closing) {
         p->BuffersLoop();
     }
 }
@@ -148,7 +157,7 @@ void VstPlugin::RunPlugin(VstPlugin* p) {
 
     MSG msg;
 
-    while (1) {
+    while (!p->closing) {
         
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
         {
@@ -470,7 +479,7 @@ void VstPlugin::CrtVstWin() {
     }
     win = new VstWin(this);
     win->hWin = win->CrtWindow(parentWindow);
-   // ShowWindow(vst->win->hWin, SW_SHOW);
+    //ShowWindow(win->hWin, SW_SHOW);
     ERect* erc = nullptr;
     EffDispatch(effEditGetRect, 0, 0, &erc);
     if (EffDispatch(effEditOpen, 0, 0, win->hWin) == 1L) {
