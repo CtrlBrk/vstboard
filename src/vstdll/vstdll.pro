@@ -2,6 +2,9 @@ include(../config.pri)
 #include(../vstsdk.pri)
 
 QT += core gui widgets
+//for winmigrate
+QT += gui-private
+
 win32 {
 QMAKE_LFLAGS+="/DEF:$${_PRO_FILE_PWD_}/vstboard.def"
 OTHER_FILES += vstboard.def
@@ -83,7 +86,7 @@ HEADERS  += \
     vstboardprocessor.h \
     vsttest.h \
     vst2shell.h \
-    myvst2wrapper.h
+ #   myvst2wrapper.h
 
 RESOURCES += ../resources/resources.qrc
 
@@ -103,8 +106,8 @@ for(a, LIBDEPS) {
     SOURCES += $$VST3SDK_PATH/public.sdk/source/vst2.x/audioeffectx.cpp
 
 
-#SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/basewrapper/basewrapper.cpp
-#SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/vst2wrapper/vst2wrapper.cpp
+SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/basewrapper/basewrapper.cpp
+SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/vst2wrapper/vst2wrapper.cpp
 
 # SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/eventlist.cpp
 # SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/parameterchanges.cpp

@@ -73,7 +73,10 @@ bool VstPlugin::Close()
         EffEditClose();
         objMutex.unlock();
     }
-    mapPlugins.remove(pEffect);
+
+    if(pEffect) {
+        mapPlugins.remove(pEffect);
+    }
 
     return true;
 }

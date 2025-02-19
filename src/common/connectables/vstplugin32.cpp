@@ -61,8 +61,6 @@ bool VstPlugin32::Load(const std::wstring &name)
         vst32Process->start("loaddll32.exe");
     }
 
-
-
     st_ipcTo32.LockData();
     st_dataTo32->pluginId = GetIndex();
 
@@ -446,7 +444,7 @@ long VstPlugin32::EffDispatch(VstInt32 opCode, VstInt32 index, VstIntPtr value, 
     ipcTo32.Unlockdata();
 
 
-    if(size>IPC_CHUNK_SIZE) {
+    if(ptr && size>IPC_CHUNK_SIZE) {
         LOG("get segmented");
         GetChunkSegment((char*)ptr,size);
     }

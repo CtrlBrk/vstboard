@@ -169,22 +169,31 @@ Object::Object(MainHost *host, qint32 index, const ObjectInfo &info) :
   */
 Object::~Object()
 {
+    //useless ?
+    QMutexLocker lock(&objMutex);
+
 #ifdef DEBUG_OBJECTS
     LOG(" delObject:"<<objInfo.forcedObjId<<":"<<objInfo.name<<":"<<(void*)this);
 #endif
     pinLists.clear();
 
+    //crash, but should be deleted by smartpointer anyway, to be checked...
+/*
     if(containerId!=FixedObjId::noContainer) {
-        QSharedPointer<Container>cntPtr = myHost->objFactory->GetObjectFromId( containerId ).staticCast<Container>();
-        QSharedPointer<Object>objPtr = myHost->objFactory->GetObjectFromId( GetIndex() );
+        Connectables::ObjectFactory *f = myHost->objFactory;
+        QSharedPointer<Object> cntObj = f->GetObjectFromId( containerId );
+        QSharedPointer<Container>cntPtr = cntObj.staticCast<Container>();
+        QSharedPointer<Object>objPtr = f->GetObjectFromId( GetIndex() );
         if(cntPtr && objPtr) {
             cntPtr->OnChildDeleted(objPtr);
         }
     }
+*/
     Close();
 
-    if(myHost && myHost->objFactory)
-        myHost->objFactory->RemoveObject(GetIndex());
+    //crash, but should be deleted by smartpointer anyway, to be checked...
+//    if(myHost && myHost->objFactory)
+//        myHost->objFactory->RemoveObject(GetIndex());
 }
 
 /*!
