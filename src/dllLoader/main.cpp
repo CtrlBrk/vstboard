@@ -93,13 +93,20 @@ bool InitModule()
 		}
 		
 	}
-	
+
 	//load the plugin dll
-	HpluginDll = LoadDll( L"VstBoardPlugin");
-	if (!HpluginDll) {
-		MessageBox(NULL, L"VstBoardPlugin.dll : not loaded", L"VstBoard", MB_OK | MB_ICONERROR);
+    //HpluginDll = LoadDll( L"VstBlib");
+    HpluginDll = LoadLibrary( L"VstBlib.dll" );
+    if (HpluginDll==NULL) {
+        auto err = GetLastError();
+        MessageBox(NULL, std::to_wstring(err).c_str(), L"VstBoard", MB_OK | MB_ICONERROR);
+        return false;
+    }
+
+    if (!HpluginDll) {
+        MessageBox(NULL, L"VstBlib.dll : not loaded", L"VstBoard", MB_OK | MB_ICONERROR);
 		return false;
-	}
+    }
 
 	return true;
 }
@@ -150,7 +157,7 @@ EXPORT_FACTORY IPluginFactory* PLUGIN_API GetPluginFactory ()
     GetFactoryProc entryPoint = (GetFactoryProc)::GetProcAddress (HpluginDll, "GetPluginFactory");
 
     if(!entryPoint) {
-        MessageBox(NULL,L"VstBoardPlugin.dll is not valid",L"VstBoard", MB_OK | MB_ICONERROR);
+        MessageBox(NULL,L"VstBlib.dll is not valid",L"VstBoard", MB_OK | MB_ICONERROR);
         //DeinitModule();
         return 0;
     }
@@ -176,9 +183,11 @@ extern "C" {
         if(!InitModule()) {
             return 0;
         }
+
         vstPluginFuncPtr entryPoint = (vstPluginFuncPtr)GetProcAddress(HpluginDll, "VSTPluginMain");
+
         if(!entryPoint) {
-            MessageBox(NULL,L"VstBoardPlugin.dll is not valid",L"VstBoard", MB_OK | MB_ICONERROR);
+            MessageBox(NULL,L"VstBlib.dll is not valid",L"VstBoard", MB_OK | MB_ICONERROR);
             return 0;
         }
         return entryPoint(audioMaster);

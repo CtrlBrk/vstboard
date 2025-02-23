@@ -492,7 +492,7 @@ void AudioDevices::ConfigDevice(const ObjectInfo &info)
 
            PaError err = paNoError;
 #if WIN32
-           err = PaAsio_ShowControlPanel( configDevId, (void*)myHost->mainWindow );
+           err = PaAsio_ShowControlPanel( configDevId, (void*)myHost->GetMainWindow() );
 #endif
 #ifdef __APPLE__
            err = PaAsio_ShowControlPanel( configDevId, (void*)0 );
@@ -503,7 +503,7 @@ void AudioDevices::ConfigDevice(const ObjectInfo &info)
                                tr("Error"),
                                Pa_GetErrorText( err ),
                                QMessageBox::Ok,
-                               myHost->mainWindow);
+                               myHost->GetMainWindow());
                msg.exec();
            }
            break;
@@ -511,7 +511,7 @@ void AudioDevices::ConfigDevice(const ObjectInfo &info)
 
        case paMME: {
 #ifdef WIN32
-           MmeConfigDialog dlg( myHost, myHost->mainWindow );
+           MmeConfigDialog dlg( myHost, myHost->GetMainWindow() );
            dlg.exec();
 #endif
            break;
@@ -519,7 +519,7 @@ void AudioDevices::ConfigDevice(const ObjectInfo &info)
 
        case paWASAPI: {
 #ifdef WIN32
-           WasapiConfigDialog dlg( myHost, myHost->mainWindow );
+           WasapiConfigDialog dlg( myHost, myHost->GetMainWindow() );
            dlg.exec();
 #endif
            break;
@@ -527,7 +527,7 @@ void AudioDevices::ConfigDevice(const ObjectInfo &info)
 
        case paDirectSound: {
 #ifdef WIN32
-           DirectxConfigDialog dlg( myHost, myHost->mainWindow );
+           DirectxConfigDialog dlg( myHost, myHost->GetMainWindow() );
            dlg.exec();
 #endif
            break;
@@ -538,7 +538,7 @@ void AudioDevices::ConfigDevice(const ObjectInfo &info)
                tr("No config"),
                tr("No config dialog for this device"),
                QMessageBox::Ok,
-               myHost->mainWindow);
+               myHost->GetMainWindow());
            msg.exec();
            break;
        }

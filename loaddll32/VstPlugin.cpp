@@ -150,11 +150,9 @@ void VstPlugin::RunPluginBuffer(VstPlugin* p) {
         p->BuffersLoop();
     }
 }
-
+/*
 void VstPlugin::RunPlugin(VstPlugin* p) {
     
-    
-
     MSG msg;
 
     while (!p->closing) {
@@ -174,7 +172,7 @@ void VstPlugin::RunPlugin(VstPlugin* p) {
         
     }
 }
-
+*/
 /*****************************************************************************/
 /* Unload : unloads effect module                                            */
 /*****************************************************************************/
@@ -478,7 +476,12 @@ void VstPlugin::CrtVstWin() {
         return;
     }
     win = new VstWin(this);
-    win->hWin = win->CrtWindow(parentWindow);
+
+    //win->hWin = win->CrtWindow(parentWindow);
+    win->hWin = win->CrtWindow();
+    SetParent(win->hWin, parentWindow);
+    
+    
     //ShowWindow(win->hWin, SW_SHOW);
     ERect* erc = nullptr;
     EffDispatch(effEditGetRect, 0, 0, &erc);

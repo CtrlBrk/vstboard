@@ -28,7 +28,7 @@
 // #include "pluginterfaces/base/ftypes.h"
 #ifdef VST24SDK
     #include "public.sdk/source/vst/vst2wrapper/vst2wrapper.h"
-   // #include "vst2shell.h"
+    #include "vst2shell.h"
 #endif
 // #pragma warning ( pop )
 
@@ -40,15 +40,21 @@ using namespace Steinberg;
 extern bool InitModule();
 extern bool DeinitModule();
 
+int typeVst = 1;
+
 #ifdef VST24SDK
+
     //the vst2.4 factory creates kFx & kInstrument classes, vst3 creates kFxInstrument
     extern IPluginFactory* PLUGIN_API GetPluginFactoryVst24();
 
-
-    AudioEffect *createShell(audioMasterCallback audioMaster);
-
     ::AudioEffect* createEffectInstance(audioMasterCallback audioMaster)
     {
+        if(typeVst==2) {
+            return Vst::Vst2Wrapper::create(GetPluginFactoryVst24(), VstBoardInstProcessorUID, uniqueIDInstrument, audioMaster);
+        } else {
+            return Vst::Vst2Wrapper::create(GetPluginFactoryVst24(), VstBoardProcessorUID, uniqueIDEffect, audioMaster);
+        }
+/*
         long id = audioMaster(0,audioMasterCurrentId,0,0,0,0);
 
         switch(id) {
@@ -59,6 +65,7 @@ extern bool DeinitModule();
         default:
             return createShell(audioMaster);
         }
+*/
     }
 
 #endif

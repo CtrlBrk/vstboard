@@ -119,7 +119,7 @@ void VstPlugin::SetBufferSize(qint32 size)
     if(!wasSleeping)
         SetSleep(true);
 
-    LOG("VstPlugin::SetBufferSize " << GetIndex() << " " << bufferSize << "->" << size)
+    // LOG("VstPlugin::SetBufferSize " << GetIndex() << " " << bufferSize << "->" << size)
     Object::SetBufferSize(size);
 
     EffSetBlockSize((long)size);
@@ -219,6 +219,9 @@ void VstPlugin::Render()
     if (newbuffsize != bufferSize) {
         SetBufferSize(newbuffsize);
     }
+     if (newbuffsize != bufferSize) {
+         LOG("buffer not set " << newbuffsize << " " << bufferSize)
+     }
 
     QMutexLocker lock(&objMutex);
 
@@ -614,7 +617,8 @@ void VstPlugin::CreateEditorWindow()
     if((pEffect->flags & effFlagsHasEditor) == 0)
         return;
 
-    editorWnd = new View::VstPluginWindow(myHost->mainWindow);
+    // editorWnd = new View::VstPluginWindow(myHost->GetMainWindow());
+    editorWnd = new View::VstPluginWindow();
     editorWnd->setWindowTitle(objectName());
 
     if(!editorWnd->SetPlugin(this)) {

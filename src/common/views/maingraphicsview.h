@@ -23,7 +23,6 @@
 
 //#include "../precomp.h"
 
-
 namespace View {
     class ViewConfig;
 }

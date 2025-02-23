@@ -61,8 +61,6 @@ public:
 
     Settings *settings;
 
-
-
 protected:
     void showEvent(QShowEvent *event);
     void hideEvent(QHideEvent *event);
@@ -105,6 +103,8 @@ protected:
     QGraphicsScene *debugScene;
     QGraphicsPixmapItem* debugPixmap;
     QPixmap debugPix;
+
+    QWindow *testwin;
 signals:
     void PauseOutput(bool);
 

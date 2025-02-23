@@ -36,7 +36,7 @@ MainWindowHost::MainWindowHost(Settings *settings, MainHostHost * myHost, QWidge
 	listAudioDevModel(0),
 	listMidiDevModel(0)
 {
-    myHost->mainWindow=this;
+  //  myHost->mainWindow=this;
 
     setWindowTitle("VstBoard");
 }

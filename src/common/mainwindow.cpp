@@ -32,6 +32,8 @@
 #include "views/keybindingdialog.h"
 #include "msgobject.h"
 
+#include <QWindow>
+
 MainWindow::MainWindow(Settings *settings, MainHost * myHost, QWidget *parent) :
     QMainWindow(parent),
     mySceneView(0),
@@ -53,6 +55,7 @@ MainWindow::MainWindow(Settings *settings, MainHost * myHost, QWidget *parent) :
     debugScene(new QGraphicsScene(this)),
     debugPixmap(0)
 {
+    LOG("mainwindow " << this)
 }
 
 void MainWindow::UpdateDebugGraph(QVector<float> grph)  {
@@ -156,6 +159,17 @@ void MainWindow::Init()
 
     connect( updateObjTree, SIGNAL(triggered()),
              this, SLOT(BuildObjectsTree()));
+
+    //send window id to host
+    _MSGOBJ(msg,FixedObjId::mainHost);
+    msg.prop[MsgObject::Object]=FixedObjId::mainWindow;
+    msg.prop[MsgObject::Id]=winId();
+    SendMsg(msg);
+    LOG("mainwindow id " << winId())
+
+
+
+
 }
 
 #ifdef DEBUG_MESSAGES
@@ -176,6 +190,8 @@ void MainWindow::updateLog()
 }
 #endif
 
+
+
 void MainWindow::ReceiveMsg(const MsgObject &msg)
 {
 #ifdef DEBUG_MESSAGES
@@ -184,6 +200,27 @@ void MainWindow::ReceiveMsg(const MsgObject &msg)
     nobj = p[0];
     msgcounter[nobj] ++;
 #endif
+
+    if(msg.objIndex==FixedObjId::hostContainer) {
+        if(msg.prop.contains(MsgObject::Clear)) {
+            ui->hostView->ClearViewPrograms();
+        }
+    }
+    if(msg.objIndex==FixedObjId::projectContainer) {
+        if(msg.prop.contains(MsgObject::Clear)) {
+            ui->projectView->ClearViewPrograms();
+        }
+    }
+    if(msg.objIndex==FixedObjId::programContainer) {
+        if(msg.prop.contains(MsgObject::Clear)) {
+            ui->programView->ClearViewPrograms();
+        }
+    }
+    if(msg.objIndex==FixedObjId::groupContainer) {
+        if(msg.prop.contains(MsgObject::Clear)) {
+            ui->groupView->ClearViewPrograms();
+        }
+    }
 
     if(msg.objIndex==FixedObjId::mainWindow) {
         if(msg.prop.contains(MsgObject::Setup) && msg.prop.contains(MsgObject::Project)) {
@@ -351,6 +388,12 @@ void MainWindow::SetupBrowsersModels(const QString &vstPath, const QString &brow
 
 MainWindow::~MainWindow()
 {
+    LOG("mainwindowclose " << this)
+    _MSGOBJ(msg,FixedObjId::mainHost);
+    msg.prop[MsgObject::Object]=FixedObjId::mainWindow;
+    msg.prop[MsgObject::Id]=0;
+    SendMsg(msg);
+
     if(mySceneView) {
         delete mySceneView;
         mySceneView=0;
@@ -363,6 +406,8 @@ MainWindow::~MainWindow()
         delete groupParking;
     if(programParking)
         delete programParking;
+
+
 }
 
 void MainWindow::UpdateStylesheet()

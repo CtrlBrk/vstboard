@@ -55,7 +55,11 @@ MainHost::MainHost(Settings *settings, QObject *parent) :
     ,undoProgramChangesEnabled(false)
     ,globalDelay(0L)
     ,nbThreads(1)
+    ,winId(0)
+    ,vst32Process(0)
+    ,cptHost32try(0)
 {
+    LOG("mainhost " << this)
     qRegisterMetaType<ConnectionInfo>("ConnectionInfo");
     qRegisterMetaType<ObjectInfo>("ObjectInfo");
     qRegisterMetaType<ObjectContainerAttribs>("ObjectContainerAttribs");
@@ -67,11 +71,61 @@ MainHost::MainHost(Settings *settings, QObject *parent) :
     qRegisterMetaType<QVector<float> >("QVector<float>");
     //qRegisterMetaTypeStreamOperators<ObjectInfo>("ObjectInfo");
     //qRegisterMetaTypeStreamOperators<ObjectContainerAttribs>("ObjectContainerAttribs");
+
+    Lauch32bitHost();
 }
 
 MainHost::~MainHost()
 {
+    LOG("mainhost close " << this)
     Close();
+
+    if(vst32Process) {
+        vst32Process->close();
+        vst32Process=0;
+    }
+}
+
+void MainHost::Lauch32bitHost()
+{
+    if(!vst32Process) {
+        vst32Process = new QProcess(this);
+        if(vst32Process) {
+            connect(vst32Process, SIGNAL(errorOccurred(QProcess::ProcessError)),
+                    this,SLOT(Vst32Error(QProcess::ProcessError)));
+
+            connect(vst32Process, SIGNAL(finished(int,QProcess::ExitStatus)),
+                    this, SLOT(Vst32Finished(int,QProcess::ExitStatus)) );
+
+            vst32Process->start("loaddll32.exe");
+        }
+    }
+}
+
+void MainHost::Vst32Error(QProcess::ProcessError error)
+{
+    LOG("Error while launching the 32bit host")
+    vst32Process=0;
+    cptHost32try++;
+    if(cptHost32try>5) {
+        // QMessageBox msg( QMessageBox::Information, tr("vst32"), tr("Error while launching the 32bit host") );
+        // msg.exec();
+        return;
+    }
+    Lauch32bitHost();
+}
+
+void MainHost::Vst32Finished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    LOG("32bit hsot process ended");
+    vst32Process=0;
+    cptHost32try++;
+    if(cptHost32try>5) {
+        // QMessageBox msg( QMessageBox::Information, tr("vst32"), tr("32bit hsot process ended"));
+        // msg.exec();
+        return;
+    }
+    Lauch32bitHost();
 }
 
 void MainHost::Close()
@@ -139,6 +193,15 @@ void MainHost::Kill()
 
 void MainHost::Init()
 {
+/*
+    foreach(QWidget *widget, qApp->topLevelWidgets()) {
+        if(widget->inherits("QMainWindow")) {
+            mainWindow = (MainWindow*)widget;
+            LOG("mainhost found mainwindow " << mainWindow->winId())
+            break;
+        }
+    }
+*/
     programManager =new ProgramManager(this);
     doublePrecision=settings->GetSetting("doublePrecision",false).toBool();
     settings->SetSetting("currentDoublePrecision", doublePrecision);
@@ -239,8 +302,13 @@ void MainHost::SetupHostContainer()
         mainContainer->ParkObject( hostContainer );
         hostContainer.clear();
         UpdateSolver(true);
-        if(mainWindow)
-            mainWindow->mySceneView->viewHost->ClearViewPrograms();
+
+        _MSGOBJ(msg,FixedObjId::hostContainer);
+        msg.prop[MsgObject::Clear]=1;
+        SendMsg(msg);
+
+        // if(mainWindow)
+           // mainWindow->mySceneView->viewHost->ClearViewPrograms();
     }
 
     ObjectInfo info;
@@ -351,8 +419,13 @@ void MainHost::SetupProjectContainer()
         mainContainer->ParkObject( projectContainer );
         projectContainer.clear();
         UpdateSolver(true);
-        if(mainWindow)
-            mainWindow->mySceneView->viewProject->ClearViewPrograms();
+
+        _MSGOBJ(msg,FixedObjId::projectContainer);
+        msg.prop[MsgObject::Clear]=1;
+        SendMsg(msg);
+
+        // if(mainWindow)
+            // mainWindow->mySceneView->viewProject->ClearViewPrograms();
     }
 
     timeFromStart.restart();
@@ -475,8 +548,13 @@ void MainHost::SetupProgramContainer()
         mainContainer->ParkObject( programContainer );
         programContainer.clear();
         UpdateSolver(true);
-        if(mainWindow)
-            mainWindow->mySceneView->viewProgram->ClearViewPrograms();
+
+        _MSGOBJ(msg,FixedObjId::programContainer);
+        msg.prop[MsgObject::Clear]=1;
+        SendMsg(msg);
+
+        // if(mainWindow)
+            // mainWindow->mySceneView->viewProgram->ClearViewPrograms();
     }
 
     ObjectInfo info;
@@ -597,8 +675,12 @@ void MainHost::SetupGroupContainer()
         mainContainer->ParkObject( groupContainer );
         groupContainer.clear();
         UpdateSolver(true);
-        if(mainWindow)
-            mainWindow->mySceneView->viewGroup->ClearViewPrograms();
+
+        _MSGOBJ(msg,FixedObjId::groupContainer);
+        msg.prop[MsgObject::Clear]=1;
+        SendMsg(msg);
+        // if(mainWindow)
+            // mainWindow->mySceneView->viewGroup->ClearViewPrograms();
     }
 
     ObjectInfo info;
@@ -821,7 +903,7 @@ void MainHost::SetBufferSize(qint32 size)
     if(bufferSize == size)
         return;
 
-    LOG("buffer:" << size)
+    // LOG("buffer:" << size)
 
 //    MsgObject msg(FixedObjId::mainWindow);
     /*
@@ -830,7 +912,19 @@ void MainHost::SetBufferSize(qint32 size)
     SendMsg(msg);
 */
     bufferSize = size;
-    emit BufferSizeChanged(size);
+
+    // emit BufferSizeChanged(size);
+
+    if(mainContainer)
+        mainContainer->SetBufferSize(size);
+    if(hostContainer)
+        hostContainer->SetBufferSize(size);
+    if(projectContainer)
+        projectContainer->SetBufferSize(size);
+    if(groupContainer)
+        groupContainer->SetBufferSize(size);
+    if(programContainer)
+        programContainer->SetBufferSize(size);
 }
 
 void MainHost::SetSampleRate(float rate)
@@ -839,6 +933,18 @@ void MainHost::SetSampleRate(float rate)
         return;
 
     sampleRate = rate;
+
+    if(mainContainer)
+        mainContainer->SetSampleRate(rate);
+    if(hostContainer)
+        hostContainer->SetSampleRate(rate);
+    if(projectContainer)
+        projectContainer->SetSampleRate(rate);
+    if(groupContainer)
+        groupContainer->SetSampleRate(rate);
+    if(programContainer)
+        programContainer->SetSampleRate(rate);
+
     // emit SampleRateChanged(sampleRate);
 }
 
@@ -1282,8 +1388,16 @@ void MainHost::currentFileChanged()
 
 void MainHost::ReceiveMsg(const MsgObject &msg)
 {
-
     if(msg.objIndex == FixedObjId::mainHost) {
+        if(msg.prop.contains(MsgObject::Object) && FixedObjId::mainWindow == msg.prop[MsgObject::Object].toInt()) {
+            if(msg.prop.contains(MsgObject::Id)) {
+                winId = msg.prop[MsgObject::Id].toInt();
+                QWidget * w = QWidget::find(winId);
+                mainWindow = (MainWindow*)w;
+                LOG("mainhost set mainwindow " << winId)
+                return;
+            }
+        }
 
         if(msg.prop.contains(MsgObject::Type) && msg.prop[MsgObject::Type]=="sampleRate") {
             SetSampleRate( msg.prop[MsgObject::Value].toFloat() );

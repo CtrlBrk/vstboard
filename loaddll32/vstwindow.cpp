@@ -1,5 +1,6 @@
 #include "vstwindow.h"
 #include "VstPlugin.h"
+#include <iostream>
 
 #define TIMERMOVE 1001
 
@@ -81,33 +82,48 @@ LRESULT CALLBACK VstWin::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 LRESULT VstWin::_WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	UINT_PTR IDT_TIMER1=0;
-
+//	std::cout << "winmsg " << uMsg << std::endl;
 	switch (uMsg)
 	{
-	case WM_CLOSE:
+	case WM_CLOSE: //16
 		DestroyWindow(hwnd);
 		return 0;
 
-	case WM_DESTROY:
+	case WM_DESTROY: //2
 		PostQuitMessage(0);
 		return 0;
-
-	case WM_ENTERSIZEMOVE:
+	case WM_SIZE: //5
+		break;
+	case WM_ENTERSIZEMOVE: //561
 		SetTimer(hwnd,           
 			TIMERMOVE,
 			10,              
 			(TIMERPROC)NULL);
 		break;
-	case WM_EXITSIZEMOVE:
+	case WM_EXITSIZEMOVE: //562
 		KillTimer(hwnd, TIMERMOVE);
 		break;
-	case WM_TIMER:
+	case WM_TIMER: //275
 		if (wParam == TIMERMOVE) {
 			//crash...
 			//plugin->MsgLoop();
 		}
 		break;
-
+	case WM_GETMINMAXINFO: //36
+		return 0;
+		break;
+	case WM_PARENTNOTIFY: //528
+		break;
+	case WM_WINDOWPOSCHANGING: //70
+		return 0;
+		break;
+	case WM_WINDOWPOSCHANGED: //71
+		return 0;
+		break;
+	case WM_NCCALCSIZE: //131
+		break;
+	case WM_DWMNCRENDERINGCHANGED: //799
+		break;
 	}
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }

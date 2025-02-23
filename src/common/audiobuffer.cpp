@@ -40,7 +40,9 @@ float const AudioBuffer::blankBuffer[] = {.0f};
   \todo check if the externalAllocation is still in use
   */
 AudioBuffer::AudioBuffer(bool doublePrecision, bool externAlloc) :
+#ifdef VUCHARTS
     audiograph(0),
+#endif
     stackSize(0),
     pBuffer(0),
     bufferSize(0),
@@ -60,10 +62,12 @@ AudioBuffer::~AudioBuffer()
 {
     debugbuf("delete");
 
+#ifdef VUCHARTS
     if(audiograph ) {
         delete audiograph;
         audiograph = 0;
     }
+#endif
 
     if(pBuffer && !externAlloc) {
         if(doublePrecision) {
@@ -270,10 +274,11 @@ void *AudioBuffer::ConsumeStack()
 {
     //debugbuf("consume");
 
+#ifdef VUCHARTS
     if(audiograph) {
         audiograph->UpdateGraph((float*)pBuffer,bufferSize,0);
     }
-
+#endif
 
     if(!doublePrecision) {
         float ma = .0f;
@@ -491,10 +496,12 @@ void AudioBuffer::DumpToBuffer(double *buff, qint32 count)
 
 void AudioBuffer::AddGraph()
 {
+#ifdef VUCHARTS
     if(!audiograph) {
         audiograph = new View::AudioGraph();
         audiograph ->resize(800, 600);
     }
     audiograph ->show();
+#endif
 }
 

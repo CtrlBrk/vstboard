@@ -40,10 +40,10 @@ VstInt32 Vst2Shell::getNextShellPlugin(char *name)
 {
     switch(currentShellPlugin++) {
     case 0:
-        strcpy(name,"VstBoard Effect");
+        strcpy_s(name,256,"VstBoard Effect");
         return uniqueIDEffect;
     case 1:
-        strcpy(name,"VstBoard Instrument");
+        strcpy_s(name,256,"VstBoard Instrument");
         return uniqueIDInstrument;
     }
     return 0;

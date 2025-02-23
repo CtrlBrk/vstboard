@@ -74,7 +74,7 @@ public:
 
     // overridables
 
-    static void RunPlugin(VstPlugin* p);
+//    static void RunPlugin(VstPlugin* p);
     static void RunPluginBuffer(VstPlugin* p);
 
 public:

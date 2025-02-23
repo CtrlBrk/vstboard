@@ -702,7 +702,8 @@ bool Vst3Plugin::CreateEditorWindow()
         #endif
 #endif
 
-    editorWnd = new View::VstPluginWindow(myHost->mainWindow);
+    // editorWnd = new View::VstPluginWindow(myHost->GetMainWindow());
+    editorWnd = new View::VstPluginWindow();
     editorWnd->SetPlugin(this);
     editorWnd->setWindowTitle(objectName());
 
@@ -744,6 +745,8 @@ bool Vst3Plugin::CreateEditorWindow()
 
     return true;
 }
+
+
 
 void Vst3Plugin::OnShowEditor()
 {

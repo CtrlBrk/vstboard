@@ -64,8 +64,8 @@ private:
     static QProcess *vst32Process;
 
 public slots:
-    void Vst32Error(QProcess::ProcessError error);
-    void Vst32Finished(int exitCode, QProcess::ExitStatus exitStatus);
+ //   void Vst32Error(QProcess::ProcessError error);
+ //   void Vst32Finished(int exitCode, QProcess::ExitStatus exitStatus);
 
     void OnShowEditor() override;
     void OnHideEditor() override;

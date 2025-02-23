@@ -44,6 +44,11 @@ vst24sdk {
         connectables/vstplugin.cpp \
 }
 
+vucharts {
+    HEADERS += views/audiograph.h
+    SOURCES += views/audiograph.cpp
+}
+
 SOURCES += \
     ../../loaddll32/ipc.cpp \
     connectables/objectcontainerattribs.cpp \
@@ -116,11 +121,12 @@ SOURCES += \
     models/groupsprogramsmodel.cpp \
     models/parkingmodel.cpp \
     renderer/pathsolver.cpp \
-    views/audiograph.cpp \
     views/filebrowsertree.cpp \
     views/keypressedwidget.cpp \
     views/scripteditor.cpp \
     views/vst3contextmenu.cpp
+
+
 
 SOURCES += \
     views/filebrowser.cpp \
@@ -232,7 +238,6 @@ HEADERS += \
     commands/comaddpin.h \
     commands/comprogramstate.h \
     renderer/pathsolver.h \
-    views/audiograph.h \
     views/filebrowsertree.h \
     views/keypressedwidget.h \
     views/scripteditor.h \

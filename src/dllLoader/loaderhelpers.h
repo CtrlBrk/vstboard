@@ -235,6 +235,7 @@ void AddDllPath()
 
     ::SetEnvironmentVariable(L"Path", path.c_str());
     //::SetEnvironmentVariable(L"QT_QPA_PLATFORM_PLUGIN_PATH", GetPathFromRegistry().c_str());
+
 }
 
 bool LoadRequiredDlls()
@@ -251,9 +252,9 @@ bool LoadRequiredDlls()
         // L"qsvgicon",
         // L"qmodernwindowsstyle",
         // L"qsvg",
-
+        L"QtSolutions_MFCMigrationFramework-head",
         //add a ref to prevent module unloading (avoid a crash)
-        L"VstBoardPlugin"
+        L"VstBlib"
     };
 
     for (auto const& dllName : dlls) {

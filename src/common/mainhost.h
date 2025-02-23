@@ -21,6 +21,7 @@
 #ifndef MAINHOST_H
 #define MAINHOST_H
 
+#include <QProcess>
 #include "connectables/objectfactory.h"
 #include "connectables/object.h"
 #include "connectables/container.h"
@@ -95,7 +96,7 @@ public:
     QTimer *updateViewTimer;
     ProgramManager *programManager;
     Connectables::ObjectFactory *objFactory;
-    MainWindow *mainWindow;
+
 
 #ifdef VSTSDK
     #ifdef VST24SDK
@@ -124,12 +125,24 @@ public:
     void GetRenderMap(RenderMap &map);
     void SetRenderMap(const RenderMap &map);
 
+    WId GetMainWindowId() {return winId;}
+    MainWindow* GetMainWindow() {
+        if(!mainWindow) {
+            LOG("no mainwindow")
+        }
+        return mainWindow;
+    }
+
 protected:
     void Close();
     QElapsedTimer timeFromStart;
     Renderer2 *renderer;
+    MainWindow *mainWindow;
+    WId winId;
+    QProcess *vst32Process;
 
 private:
+    void Lauch32bitHost();
     void SetupMainContainer();
     void SetupHostContainer();
     void SetupProjectContainer();
@@ -152,6 +165,8 @@ private:
     int currentTimeSig1;
     int currentTimeSig2;
 
+    int cptHost32try;
+
     bool undoProgramChangesEnabled;
 
     Solver *solver;
@@ -162,8 +177,8 @@ private:
     QTimer updateRendererViewTimer;
 
 signals:
-    void SampleRateChanged(float rate);
-    void BufferSizeChanged(qint32 size);
+    // void SampleRateChanged(float rate);
+    // void BufferSizeChanged(qint32 size);
     void ObjectRemoved(int contrainerId, int obj);
     void SolverToUpdate();
     void Rendered();
@@ -193,6 +208,8 @@ public slots:
     void OnRenderTimeout();
 
 private slots:
+    void Vst32Error(QProcess::ProcessError error);
+    void Vst32Finished(int exitCode, QProcess::ExitStatus exitStatus);
     void UpdateSolver(bool forceUpdate=false);
 
     friend class SetupFile;

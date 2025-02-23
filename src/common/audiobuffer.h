@@ -24,8 +24,9 @@
 #define BLANK_BUFFER_SIZE 44100
 
 //#include "precomp.h"
+#ifdef VUCHARTS
 #include "views/audiograph.h"
-
+#endif
 
 class AudioBuffer
 {
@@ -67,9 +68,9 @@ public:
         static float const blankBuffer[BLANK_BUFFER_SIZE];
 
 protected:
-
+#ifdef VUCHARTS
         View::AudioGraph *audiograph;
-
+#endif
         /// the stack size
         qint32 stackSize;
 

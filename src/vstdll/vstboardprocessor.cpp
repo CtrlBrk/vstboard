@@ -257,11 +257,12 @@ tresult PLUGIN_API VstBoardProcessor::setupProcessing (Vst::ProcessSetup& newSet
     if(GetBufferSize() != bSize) {
         SetBufferSize(bSize);
     }
-
     float sRate = static_cast<float>(newSetup.sampleRate);
     if(GetSampleRate() != sRate) {
         SetSampleRate(sRate);
     }
+
+    QCoreApplication::processEvents();
 
     //newSetup.processMode;
 
@@ -405,14 +406,14 @@ tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
             }
         }
     }
-
+/*
     int32 bSize = data.numSamples;
     if(bSize>0 && GetBufferSize() != bSize) {
         SetBufferSize(bSize);
     }
+*/
 
-
-    uint32 sampleFramesSize = getSampleFramesSizeInBytes (processSetup, data.numSamples);
+ //   uint32 sampleFramesSize = getSampleFramesSizeInBytes (processSetup, data.numSamples);
 
 
     if (currentBypass)
@@ -438,7 +439,7 @@ tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
             {
                 if (in[i] != out[i])
                 {
-                    memcpy (out[i], in[i], sampleFramesSize );
+                    memcpy (out[i], in[i], data.numSamples );
                 }
             }
         }

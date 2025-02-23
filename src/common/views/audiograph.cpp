@@ -6,7 +6,7 @@ namespace View {
 
 AudioGraph::AudioGraph(QWidget *parent) :
     QWidget(parent),
-    m_chart(new QChart),
+   // m_chart(new QChart),
     m_series(new QLineSeries),
     m_series2(new QLineSeries)
 {

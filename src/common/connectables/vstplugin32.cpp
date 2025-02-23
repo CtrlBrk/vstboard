@@ -50,8 +50,10 @@ bool VstPlugin32::Close()
 
 bool VstPlugin32::Load(const std::wstring &name)
 {
+    /*
     if(!vst32Process) {
-        vst32Process = new QProcess(myHost->mainWindow);
+        //TODO: mainwindow is not set when loaded as a plugin
+        vst32Process = new QProcess(myHost->GetMainWindow());
         connect(vst32Process, SIGNAL(errorOccurred(QProcess::ProcessError)),
                 this,SLOT(Vst32Error(QProcess::ProcessError)));
 
@@ -60,7 +62,7 @@ bool VstPlugin32::Load(const std::wstring &name)
 
         vst32Process->start("loaddll32.exe");
     }
-
+*/
     st_ipcTo32.LockData();
     st_dataTo32->pluginId = GetIndex();
 
@@ -73,6 +75,7 @@ bool VstPlugin32::Load(const std::wstring &name)
     return true;
 }
 
+/*
 void VstPlugin32::Vst32Error(QProcess::ProcessError error)
 {
     SetErrorMessage( tr("Error while launching the 32bit host")  );
@@ -84,12 +87,14 @@ void VstPlugin32::Vst32Finished(int exitCode, QProcess::ExitStatus exitStatus)
     SetErrorMessage( tr("32bit hsot process ended")  );
     vst32Process=0;
 }
+*/
 
 bool VstPlugin32::initPlugin()
 {
     ipcTo32.LockData();
     dataTo32->pluginId = GetIndex();
-    dataTo32->mainWin = (VstInt32)myHost->mainWindow->winId();
+    //set plugin window as a child window. very slow to open
+    dataTo32->mainWin = (VstInt32)myHost->GetMainWindowId();
     dataTo32->function=IpcFunction::GetAEffect;
 
     ipcTo32.SignalStart();

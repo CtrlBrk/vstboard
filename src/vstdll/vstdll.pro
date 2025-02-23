@@ -2,15 +2,16 @@ include(../config.pri)
 #include(../vstsdk.pri)
 
 QT += core gui widgets
-//for winmigrate
 QT += gui-private
 
 win32 {
 QMAKE_LFLAGS+="/DEF:$${_PRO_FILE_PWD_}/vstboard.def"
 OTHER_FILES += vstboard.def
 }
-TARGET = "VstBoardPlugin"
+TARGET = "VstBlib"
 TEMPLATE = lib
+
+CONFIG += dll
 
 CONFIG += precompile_header
 PRECOMPILED_HEADER = ../common/precomp.h
@@ -27,7 +28,7 @@ LIBS += -L$$VST3SDK_LIB -lsdk_hosting
 #}
 
 win32 {
-#    CONFIG += qtwinmigrate-uselib
+    CONFIG += qtwinmigrate-uselib
 include($${_PRO_FILE_PWD_}/../../libs/qtwinmigrate/src/qtwinmigrate.pri)
 }
 

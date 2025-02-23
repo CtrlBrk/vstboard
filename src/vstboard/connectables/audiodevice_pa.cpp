@@ -78,11 +78,12 @@ AudioDevice::AudioDevice(MainHostHost *myHost,const ObjectInfo &info,QObject *pa
 
     connect(this,SIGNAL(InUseChanged(PaHostApiIndex,PaDeviceIndex,bool,PaTime,PaTime,double)),
            myHost->audioDevices,SLOT(OnToggleDeviceInUse(PaHostApiIndex,PaDeviceIndex,bool,PaTime,PaTime,double)));
-
+/*
     connect(this,SIGNAL(DebugGraphUpdated(QVector<float>)),
-            myHost->mainWindow,SLOT(UpdateDebugGraph(QVector<float>)));
-    connect(myHost->mainWindow,SIGNAL(PauseOutput(bool)),
+            myHost->GetMainWindow(),SLOT(UpdateDebugGraph(QVector<float>)));
+    connect(myHost->GetMainWindow(),SIGNAL(PauseOutput(bool)),
             this,SLOT(PauseOutput(bool)));
+*/
 }
 
 

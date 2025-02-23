@@ -16,6 +16,7 @@ vstsdk {
 
     win32 {
         SUBDIRS += dllLoader
+        SUBDIRS += dllLoaderInst
     }
 }
 
