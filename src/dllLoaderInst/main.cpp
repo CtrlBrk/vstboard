@@ -22,7 +22,7 @@
 #include <string>
 // #include <list>
 
-#include "loaderhelpers.h"
+#include "../dllLoader/loaderhelpers.h"
 
 #ifndef __ipluginbase__
 #include "pluginterfaces/base/ipluginbase.h"

@@ -129,6 +129,15 @@ HMODULE LoadDll(const std::wstring &dll) {
 
 #endif
     h = LoadLibrary((dll + L".dll").c_str());
+    if (h == NULL) {
+        auto err = GetLastError();
+        LPSTR messageBuffer = nullptr;
+        size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                                     NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
+        std::string message(messageBuffer, size);
+        LocalFree(messageBuffer);
+
+    }
     if (h) return h;
 
     return 0;
@@ -219,19 +228,19 @@ void AddDllPath()
         path += GetCurrentDllPath();
         path += L";";
     }
-    catch (FileError & /*e*/) {}
+    catch (FileError & ) {}
 
     try {
         path += RegGetString(HKEY_LOCAL_MACHINE, regBaseKey, installKey);
         path += L";";
     }
-    catch (RegistryError & /*e*/) {}
+    catch (RegistryError & ) {}
 
     try {
         path += RegGetString(HKEY_CURRENT_USER, regBaseKey, installKey);
         path += L";";
     }
-    catch (RegistryError & /*e*/) {}
+    catch (RegistryError & ) {}
 
     ::SetEnvironmentVariable(L"Path", path.c_str());
     //::SetEnvironmentVariable(L"QT_QPA_PLATFORM_PLUGIN_PATH", GetPathFromRegistry().c_str());
@@ -252,7 +261,7 @@ bool LoadRequiredDlls()
         // L"qsvgicon",
         // L"qmodernwindowsstyle",
         // L"qsvg",
-        L"QtSolutions_MFCMigrationFramework-head",
+        // L"QtSolutions_MFCMigrationFramework-head",
         //add a ref to prevent module unloading (avoid a crash)
         L"VstBlib"
     };

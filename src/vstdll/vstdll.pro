@@ -2,7 +2,7 @@ include(../config.pri)
 #include(../vstsdk.pri)
 
 QT += core gui widgets
-QT += gui-private
+# QT += gui-private
 
 win32 {
 QMAKE_LFLAGS+="/DEF:$${_PRO_FILE_PWD_}/vstboard.def"
@@ -16,6 +16,8 @@ CONFIG += dll
 CONFIG += precompile_header
 PRECOMPILED_HEADER = ../common/precomp.h
 
+
+
 LIBS += -L$$VST3SDK_LIB -lbase
 LIBS += -L$$VST3SDK_LIB -lpluginterfaces
 LIBS += -L$$VST3SDK_LIB -lsdk
@@ -28,11 +30,20 @@ LIBS += -L$$VST3SDK_LIB -lsdk_hosting
 #}
 
 win32 {
-    CONFIG += qtwinmigrate-uselib
-include($${_PRO_FILE_PWD_}/../../libs/qtwinmigrate/src/qtwinmigrate.pri)
+    DEFINES += QT_QTWINMIGRATE_IMPORT
+    INCLUDEPATH += ../../libs/qtwinmigrate/src
+
+    CONFIG(debug, debug|release) {
+        LIBS += -L$${_PRO_FILE_PWD_}/../../libs/qtwinmigrate/lib -lQtSolutions_MFCMigrationFramework-headd
+    } else {
+        LIBS += -L$${_PRO_FILE_PWD_}/../../libs/qtwinmigrate/lib -lQtSolutions_MFCMigrationFramework-head
+    }
+#    CONFIG += qtwinmigrate-uselib
+#    include($${_PRO_FILE_PWD_}/../../libs/qtwinmigrate/src/qtwinmigrate.pri)
 }
 
 win32 {
+    LIBS += -lUser32
     LIBS += -lwinmm
     LIBS += -ladvapi32
     LIBS += -lws2_32
@@ -68,8 +79,8 @@ SOURCES += \
     vstboardcontroller.cpp \
     vstboardprocessor.cpp \
     vsttest.cpp \
-    vst2shell.cpp \
     myvst2wrapper.cpp
+    # vst2shell.cpp \
 
 HEADERS  += \
     gui.h \
@@ -86,7 +97,7 @@ HEADERS  += \
     vstboardcontroller.h \
     vstboardprocessor.h \
     vsttest.h \
-    vst2shell.h \
+    # vst2shell.h \
  #   myvst2wrapper.h
 
 RESOURCES += ../resources/resources.qrc
@@ -103,8 +114,8 @@ for(a, LIBDEPS) {
 }
 
 
-    SOURCES += $$VST3SDK_PATH/public.sdk/source/vst2.x/audioeffect.cpp
-    SOURCES += $$VST3SDK_PATH/public.sdk/source/vst2.x/audioeffectx.cpp
+     SOURCES += $$VST3SDK_PATH/public.sdk/source/vst2.x/audioeffect.cpp
+     SOURCES += $$VST3SDK_PATH/public.sdk/source/vst2.x/audioeffectx.cpp
 
 
 SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/basewrapper/basewrapper.cpp
