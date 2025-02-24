@@ -21,8 +21,8 @@
 #include "ceffect.h"
 #include "cvsthost.h"
 // #include "../mainhost.h"
-#include "vstbank.h"
-#include "vstprogram.h"
+//#include "vstbank.h"
+//#include "vstprogram.h"
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -141,6 +141,7 @@ bool CEffect::Unload()
     return true;
 }
 
+#ifdef VST24SDK
 /*****************************************************************************/
 /* LoadBank : loads a .fxb file ... IF it's for this effect                  */
 /*****************************************************************************/
@@ -316,16 +317,16 @@ bool CEffect::SaveVstProgram(std::string *name)
     return false;
 }
 
-VstInt32 CEffect::PluginIdFromBankFile(std::string *name)
+int CEffect::PluginIdFromBankFile(std::string *name)
 {
     return CFxBank::PluginIdFromBank(name);
 }
-
+#endif
 /*****************************************************************************/
 /* EffDispatch : calls an effect's dispatcher                                */
 /*****************************************************************************/
 
-long CEffect::EffDispatch(VstInt32 opCode, VstInt32 index, VstIntPtr value, void *ptr, float opt, VstInt32 size)
+long CEffect::EffDispatch(int opCode, int index, intptr_t value, void *ptr, float opt, int size)
 {
     if (!pEffect)
         return 0;
@@ -383,7 +384,7 @@ float CEffect::EffGetParameter(long index)
     return pEffect->getParameter(pEffect, index);
 }
 
-VstIntPtr CEffect::OnMasterCallback(long opcode, long index, long value, void *ptr, float opt,long currentReturnCode)
+intptr_t CEffect::OnMasterCallback(long opcode, long index, long value, void *ptr, float opt,long currentReturnCode)
 {
     switch(opcode) {
         case audioMasterWantMidi : //6

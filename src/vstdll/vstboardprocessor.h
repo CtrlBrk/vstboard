@@ -21,6 +21,7 @@
 #ifndef VSTBOARDPROCESSOR_H
 #define VSTBOARDPROCESSOR_H
 
+#ifdef VSTSDK
 #ifdef _MSC_VER
 #pragma warning( push )
 #pragma warning (disable: 4100)
@@ -28,6 +29,7 @@
 #include "public.sdk/source/vst/vstaudioeffect.h"
 #ifdef _MSC_VER
 #pragma warning( pop )
+#endif
 #endif
 
 #include <QObject>
@@ -96,8 +98,8 @@ public:
         void removeVstAutomation(Connectables::VstAutomation *dev);
 
 
-#ifdef VST24SDK
-        VstInt32 processEvents(VstEvents* events);
+#ifdef VST2PLUGIN
+        int processEvents(VstEvents* events);
         bool processOutputEvents();
         VstEvents * getEvents() {return listEvnts;}
 #endif
@@ -112,7 +114,7 @@ protected:
         QList<Connectables::VstAutomation*>lstVstAutomation;
 
         QMutex mutexDevices;
-#ifdef VST24SDK
+#ifdef VST2PLUGIN
         VstEvents *listEvnts;
 #endif
         quint16 currentProg;

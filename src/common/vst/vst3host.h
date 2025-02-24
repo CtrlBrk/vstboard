@@ -1,10 +1,6 @@
 #ifndef VST3HOST_H
 #define VST3HOST_H
 
-//#include "../precomp.h"
-//#include "const.h"
-
-
 #ifdef _MSC_VER
 #pragma warning( push, 1 )
 #endif
@@ -15,6 +11,7 @@
 #include "pluginterfaces/vst/ivstprocesscontext.h"
 #include "pluginterfaces/vst/vsttypes.h"
 //#include "pluginterfaces/vst/ivsteditcontroller.h"
+
 #ifdef VST24SDK
     #include "pluginterfaces/vst2.x/aeffectx.h"
 #endif

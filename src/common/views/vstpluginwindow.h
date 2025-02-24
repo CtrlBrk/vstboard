@@ -65,7 +65,7 @@ namespace View {
         ~VstPluginWindow();
 
         bool SetPlugin(Connectables::Vst3Plugin *plugin);
-#ifdef VST24SDK
+#ifdef VST2PLUGIN
         bool SetPlugin(Connectables::VstPlugin *plugin);
 #endif
         void UnsetPlugin();

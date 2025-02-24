@@ -45,17 +45,6 @@
 		( ( (int) c ) << 8 ) |     \
 		( ( (int) d ) << 0 ) )
 
-class VstRect {
-
-
-public:
-	short top;
-	short left;
-	short bottom;
-	short right;
-};
-
-
 const int audioMasterAutomate = 0;
 const int audioMasterVersion = 1;
 const int audioMasterCurrentId = 2;
@@ -345,6 +334,14 @@ public:
 	char empty3[4 + 4 + 4];
 	// 54
 	int flags;
+};
+
+class VstRect {
+public:
+    short top;
+    short left;
+    short bottom;
+    short right;
 };
 
 // from http://www.asseca.org/vst-24-specs/efGetParameterProperties.html

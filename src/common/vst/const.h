@@ -23,29 +23,25 @@
 
 // #include "../precomp.h"
 
+#ifdef VST24SDK
 #ifdef _MSC_VER
 #pragma warning( push )
 #pragma warning (disable: 4100)
 #endif
-//#include "pluginterfaces/vst2.x/aeffect.h"
 #include "public.sdk/source/vst2.x/audioeffectx.h"
 #ifdef _MSC_VER
 #pragma warning( pop )
+#endif
+#else
+#include "../vestige.h"
 #endif
 
 namespace vst
 {
     typedef AEffect *(*vstPluginFuncPtr)(audioMasterCallback host);
-    typedef VstIntPtr (*dispatcherFuncPtr)(AEffect *effect, VstInt32 opCode, VstInt32 index, VstInt32 value, void *ptr, float opt);
+    typedef int (*dispatcherFuncPtr)(AEffect *effect, int opCode, int index, int value, void *ptr, float opt);
 
-
-    #if defined(VST_2_4_EXTENSIONS)
-    #else
-    typedef int VstInt32;                   /* this one's heavily used in V2.4++ */
-    // ... and Steinberg goofed big time by making this 'typedef int VstInt32' in
-    // the original VST SDK 2.4, which is architecture-dependent...
-    #endif
-
+/*
 
     #if !defined(VST_2_1_EXTENSIONS)
     struct VstFileSelect;
@@ -60,7 +56,7 @@ namespace vst
     struct MidiProgramCategory;
     struct MidiKeyName;
     #endif
-
+*/
 
 }
 

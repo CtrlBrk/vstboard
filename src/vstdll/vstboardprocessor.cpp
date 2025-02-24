@@ -47,7 +47,7 @@
 VstBoardProcessor::VstBoardProcessor () :
     MainHost(0,0),
     Vst::AudioEffect(),
-#ifdef VST24SDK
+#ifdef VST2PLUGIN
     listEvnts(0),
 #endif
     currentProg(0),
@@ -69,7 +69,7 @@ VstBoardProcessor::VstBoardProcessor () :
 VstBoardProcessor::~VstBoardProcessor()
 {
     Close();
-#ifdef VST24SDK
+#ifdef VST2PLUGIN
     if(listEvnts) {
         free(listEvnts);
         listEvnts = 0;
@@ -638,8 +638,8 @@ void VstBoardProcessor::removeVstAutomation(Connectables::VstAutomation *dev)
     lstVstAutomation.removeAll(dev);
 }
 
-#ifdef VST24SDK
-VstInt32 VstBoardProcessor::processEvents(VstEvents* events)
+#ifdef VST2PLUGIN
+int VstBoardProcessor::processEvents(VstEvents* events)
 {
     if(!events)
         return 0;
@@ -648,7 +648,7 @@ VstInt32 VstBoardProcessor::processEvents(VstEvents* events)
 
     for(int i=0; i<events->numEvents; i++) {
         evnt=events->events[i];
-        if( evnt->type==kVstMidiType) {
+      //  if( evnt->type==kVstMidiType) {
             VstMidiEvent *midiEvnt = (VstMidiEvent*)evnt;
 
             Q_FOREACH(Connectables::VstMidiDevice *dev, lstMidiIn) {
@@ -656,9 +656,9 @@ VstInt32 VstBoardProcessor::processEvents(VstEvents* events)
                 memcpy(&msg, midiEvnt->midiData, sizeof(midiEvnt->midiData));
                 dev->midiQueue << msg;
             }
-        } else {
+       /* } else {
             LOG("other vst event");
-        }
+        }*/
     }
 
     return 1;
@@ -686,7 +686,7 @@ bool VstBoardProcessor::processOutputEvents()
             VstMidiEvent *evnt = new VstMidiEvent;
             memset(evnt, 0, sizeof(VstMidiEvent));
             evnt->type = kVstMidiType;
-            evnt->flags = kVstMidiEventIsRealtime;
+            evnt->flags = 1 << 0;
             evnt->byteSize = sizeof(VstMidiEvent);
             //memcpy(evnt->midiData, &msg.message, sizeof(evnt->midiData));
             memcpy(evnt->midiData, &msg, sizeof(evnt->midiData));

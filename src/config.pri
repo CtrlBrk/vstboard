@@ -19,8 +19,11 @@ UI_DIR = $${DESTDIR}/ui
 
 #trying to get it to compile, disable vst2.4 on linux for now
 win32 |macx{
-    CONFIG += vst24sdk
-    DEFINES += VST24SDK
+   # CONFIG += vst24sdk
+   # DEFINES += VST24SDK
+
+    CONFIG += vst2plugin
+    DEFINES += VST2PLUGIN
 }
 
 #CONFIG += rtaudio

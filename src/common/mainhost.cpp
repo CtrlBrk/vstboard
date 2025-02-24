@@ -22,7 +22,7 @@
 //#include "models/programsmodel.h"
 #include "connectables/container.h"
 
-#ifdef VST24SDK
+#ifdef VST2PLUGIN
     #include "connectables/vstplugin.h"
     int MainHost::vstUsersCounter=0;
 #endif
@@ -43,7 +43,7 @@ MainHost::MainHost(Settings *settings, QObject *parent) :
     ,programManager(0)
     ,objFactory(0)
     ,mainWindow(0)
-#ifdef VST24SDK
+#ifdef VST2PLUGIN
         , vstHost(0)
 #endif
 #ifdef VSTSDK
@@ -169,7 +169,7 @@ void MainHost::Close()
         solver=0;
     }
 
-#ifdef VST24SDK
+#ifdef VST2PLUGIN
     vstUsersCounter--;
     if(vstUsersCounter==0)
         delete vstHost;
@@ -213,7 +213,7 @@ void MainHost::Init()
 //    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
 #endif
 
-#ifdef VST24SDK
+#ifdef VST2PLUGIN
     if(!vst::CVSTHost::Get()) {
         vstHost = new vst::CVSTHost();
     } else {
@@ -984,7 +984,7 @@ void MainHost::OnRenderTimeout() {
     SetSolverUpdateNeeded();
 }
 
-#ifdef VST24SDK
+#ifdef VST2PLUGIN
 void MainHost::SetTimeInfo(const VstTimeInfo *info)
 {
     vstHost->SetTimeInfo(info);
@@ -993,7 +993,7 @@ void MainHost::SetTimeInfo(const VstTimeInfo *info)
 
 void MainHost::SetTempo(int tempo, int sign1, int sign2)
 {
-#ifdef VST24SDK
+#ifdef VST2PLUGIN
     vstHost->SetTempo(tempo,sign1,sign2);
 #endif
 #ifdef VSTSDK
@@ -1024,7 +1024,7 @@ void MainHost::CheckTempo()
 void MainHost::GetTempo(int &tempo, int &sign1, int &sign2)
 {
 // #ifdef VSTSDK
-#ifdef VST24SDK
+#ifdef VST2PLUGIN
     vstHost->GetTempo(tempo,sign1,sign2);
 #else
     tempo=120;

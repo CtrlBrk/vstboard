@@ -63,6 +63,19 @@ win32-msvc* {
 INCLUDEPATH += ../common
 
 
+vst24sdk {
+    SOURCES += $$VST3SDK_PATH/public.sdk/source/vst2.x/audioeffect.cpp
+    SOURCES += $$VST3SDK_PATH/public.sdk/source/vst2.x/audioeffectx.cpp
+
+    SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/basewrapper/basewrapper.cpp
+    SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/vst2wrapper/vst2wrapper.cpp
+        # vst2shell.cpp \
+
+} else {
+    SOURCES += myvst2wrapper.cpp \
+
+}
+
 SOURCES += \
     main.cpp \
     gui.cpp \
@@ -78,9 +91,7 @@ SOURCES += \
     factory.cpp \
     vstboardcontroller.cpp \
     vstboardprocessor.cpp \
-    vsttest.cpp \
-    myvst2wrapper.cpp
-    # vst2shell.cpp \
+    vsttest.cpp
 
 HEADERS  += \
     gui.h \
@@ -97,8 +108,7 @@ HEADERS  += \
     vstboardcontroller.h \
     vstboardprocessor.h \
     vsttest.h \
-    # vst2shell.h \
- #   myvst2wrapper.h
+
 
 RESOURCES += ../resources/resources.qrc
 
@@ -114,12 +124,9 @@ for(a, LIBDEPS) {
 }
 
 
-     SOURCES += $$VST3SDK_PATH/public.sdk/source/vst2.x/audioeffect.cpp
-     SOURCES += $$VST3SDK_PATH/public.sdk/source/vst2.x/audioeffectx.cpp
 
 
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/basewrapper/basewrapper.cpp
-SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/vst2wrapper/vst2wrapper.cpp
+
 
 # SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/eventlist.cpp
 # SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/hosting/parameterchanges.cpp

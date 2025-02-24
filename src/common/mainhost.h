@@ -32,7 +32,7 @@
 #include "msgcontroller.h"
 #include "programmanager.h"
 
-#ifdef VST24SDK
+#ifdef VST2PLUGIN
     #include "vst/cvsthost.h"
 #endif
 #ifdef VSTSDK
@@ -61,7 +61,7 @@ public:
     void Open();
 
 #ifdef VSTSDK
-    #ifdef VST24SDK
+    #ifdef VST2PLUGIN
         void SetTimeInfo(const VstTimeInfo *info);
     #endif
 #endif
@@ -99,7 +99,7 @@ public:
 
 
 #ifdef VSTSDK
-    #ifdef VST24SDK
+    #ifdef VST2PLUGIN
         vst::CVSTHost *vstHost;
     #endif
     static int vstUsersCounter;

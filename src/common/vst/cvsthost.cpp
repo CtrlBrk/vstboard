@@ -52,9 +52,9 @@ CVSTHost::CVSTHost() :
     vstTimeInfo.cycleEndPos = 0.0;
     vstTimeInfo.timeSigNumerator = 4;
     vstTimeInfo.timeSigDenominator = 4;
-    vstTimeInfo.smpteOffset = 0;
-    vstTimeInfo.smpteFrameRate = 1;
-    vstTimeInfo.samplesToNextClock = 0;
+    // vstTimeInfo.smpteOffset = 0;
+    // vstTimeInfo.smpteFrameRate = 1;
+    // vstTimeInfo.samplesToNextClock = 0;
     vstTimeInfo.flags = 0;
 
     vstTimeInfo.flags |= kVstTransportChanged;//     = 1,		///< indicates that play, cycle or record state has changed
@@ -62,7 +62,7 @@ CVSTHost::CVSTHost() :
     vstTimeInfo.flags |= kVstTransportCycleActive;// = 1 << 2,	///< set if Host sequencer is in cycle mode
     //vstTimeInfo.flags |= kVstTransportRecording;//   = 1 << 3,	///< set if Host sequencer is in record mode
     //vstTimeInfo.flags |= kVstAutomationWriting;//    = 1 << 6,	///< set if automation write mode active (record parameter changes)
-    vstTimeInfo.flags |= kVstAutomationReading;//    = 1 << 7,	///< set if automation read mode active (play parameter changes)
+    // vstTimeInfo.flags |= kVstAutomationReading;//    = 1 << 7,	///< set if automation read mode active (play parameter changes)
     vstTimeInfo.flags |= kVstNanosValid;//           = 1 << 8,	///< VstTimeInfo::nanoSeconds valid
     vstTimeInfo.flags |= kVstPpqPosValid;//          = 1 << 9,	///< VstTimeInfo::ppqPos valid
     vstTimeInfo.flags |= kVstTempoValid;//           = 1 << 10,	///< VstTimeInfo::tempo valid
@@ -107,12 +107,16 @@ void CVSTHost::SetTimeInfo(const VstTimeInfo *info) {
         vstTimeInfo.timeSigNumerator = info->timeSigNumerator;
         vstTimeInfo.timeSigDenominator = info->timeSigDenominator;
     }
+    /*
     if(info->flags & kVstSmpteValid) {
         vstTimeInfo.smpteOffset = info->smpteOffset;
         vstTimeInfo.smpteFrameRate = info->smpteFrameRate;
     }
+*/
+    /*
     if(info->flags & kVstClockValid)
         vstTimeInfo.samplesToNextClock = info->samplesToNextClock;
+*/
 }
 
 void CVSTHost::SetTempo(int tempo, int sign1, int sign2)
@@ -170,14 +174,14 @@ void CVSTHost::UpdateTimeInfo(double timer, int addSamples, double sampleRate)
         vstTimeInfo.ppqPos -= vstTimeInfo.cycleEndPos;
         dPos = vstTimeInfo.ppqPos / vstTimeInfo.tempo * 60.L;
         vstTimeInfo.samplePos = dPos * vstTimeInfo.sampleRate;
-        double dOffsetInSecond = dPos - floor(dPos);
-        vstTimeInfo.smpteOffset = (VstInt32)(dOffsetInSecond * fSmpteDiv[vstTimeInfo.smpteFrameRate] * 80.L);
+       // double dOffsetInSecond = dPos - floor(dPos);
+       // vstTimeInfo.smpteOffset = (VstInt32)(dOffsetInSecond * fSmpteDiv[vstTimeInfo.smpteFrameRate] * 80.L);
 
     }
 
     /* offset in fractions of a second   */
-    double dOffsetInSecond = dPos - floor(dPos);
-    vstTimeInfo.smpteOffset = (VstInt32)(dOffsetInSecond * fSmpteDiv[vstTimeInfo.smpteFrameRate] * 80.L);
+    // double dOffsetInSecond = dPos - floor(dPos);
+    // vstTimeInfo.smpteOffset = (VstInt32)(dOffsetInSecond * fSmpteDiv[vstTimeInfo.smpteFrameRate] * 80.L);
 
     //start of last bar
     currentBar = floor(vstTimeInfo.ppqPos/barLengthq);
@@ -187,7 +191,7 @@ void CVSTHost::UpdateTimeInfo(double timer, int addSamples, double sampleRate)
 /*****************************************************************************/
 /* AudioMasterCallback : callback to be called by plugins                    */
 /*****************************************************************************/
-VstIntPtr VSTCALLBACK CVSTHost::AudioMasterCallback(AEffect *effect, VstInt32 opcode, VstInt32  index, VstIntPtr  value, void *ptr, float opt)
+__int64 __cdecl CVSTHost::AudioMasterCallback(AEffect *effect, int opcode, int index, __int64 value, void *ptr, float opt)
 {
     long retValue = 0L;
     const char* str;
@@ -197,7 +201,7 @@ VstIntPtr VSTCALLBACK CVSTHost::AudioMasterCallback(AEffect *effect, VstInt32 op
             return 2400L;
 
         case audioMasterGetTime : //7
-            return (VstIntPtr)&pHost->vstTimeInfo;
+            return (__int64)&pHost->vstTimeInfo;
 
         case audioMasterSetTime : //9
             pHost->SetTimeInfo((VstTimeInfo*)ptr);

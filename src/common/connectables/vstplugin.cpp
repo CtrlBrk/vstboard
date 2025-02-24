@@ -18,8 +18,6 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 
-//#ifdef VST24SDK
-
 #include <cstring>
 #include "vstplugin.h"
 #include "globals.h"
@@ -165,7 +163,7 @@ void VstPlugin::ProcessMidi()
             cpt++;
         }
 
-        VstInt32 sizeF = sizeof(VstEvents) + sizeof(VstEvent*)*(nbEvents-2) + sizeof(VstEvent)*nbEvents;
+        int sizeF = sizeof(VstEvents) + sizeof(VstEvent*)*(nbEvents-2) + sizeof(VstEvent)*nbEvents;
         EffProcessEvents(listEvnts,sizeF );
 
         free(listEvnts);
@@ -227,7 +225,7 @@ void VstPlugin::Render()
 
     ProcessMidi();
 
-
+/*
 
     if(doublePrecision) {
         if (pEffect->flags & effFlagsCanDoubleReplacing) {
@@ -267,6 +265,7 @@ void VstPlugin::Render()
             LOG("DoubleReplacing not supported");
         }
     } else {
+*/
         float **tmpBufOut = new float*[listAudioPinOut->listPins.size()];
 
         int cpt=0;
@@ -310,7 +309,7 @@ void VstPlugin::Render()
             delete[] tmpBufIn;
 
         delete[] tmpBufOut;
-    }
+//    }
 
     //send result
     //=========================
@@ -330,11 +329,12 @@ bool VstPlugin::Open()
 
         if(objInfo.filename.endsWith(VST_BANK_FILE_EXTENSION,Qt::CaseInsensitive) || objInfo.filename.endsWith(VST_PROGRAM_FILE_EXTENSION,Qt::CaseInsensitive)) {
             bankToLoad=objInfo.filename;
-            VstInt32 i = IdFromFxb(bankToLoad);
+            int i = IdFromFxb(bankToLoad);
             if(i==0) {
                 LOG("plugin id not found");
                 return false;
             }
+
             if(!FilenameFromDatabase(i,objInfo.filename)) {
                 QMessageBox msg(QMessageBox::Critical,"Unknown Id",tr("Id %1 not in database, load the corresponding plugin once to add it").arg(i));
                 msg.exec();
@@ -450,8 +450,8 @@ bool VstPlugin::initPlugin()
         bufferSize = myHost->GetBufferSize();
         sampleRate = myHost->GetSampleRate();
 
-        if(!(pEffect->flags & effFlagsCanDoubleReplacing))
-            doublePrecision=false;
+        // if(!(pEffect->flags & effFlagsCanDoubleReplacing))
+            // doublePrecision=false;
 
         listAudioPinIn->ChangeNumberOfPins(pEffect->numInputs);
         listAudioPinOut->ChangeNumberOfPins(pEffect->numOutputs);
@@ -467,7 +467,7 @@ bool VstPlugin::initPlugin()
         bWantMidi = EffDispatch(effCanDo, 0, 0, (void *)t,strlen(t));
 //LOG("sendtime"<<EffCanDo("sendVstTimeInfo"));
 
-     //   long midiPrgNames = EffCanDo("midiProgramNames");
+#ifdef VST24SDK
         VstPinProperties pinProp;
         EffGetInputProperties(0,&pinProp,sizeof(VstPinProperties));
 
@@ -475,8 +475,6 @@ bool VstPlugin::initPlugin()
         bool stereoIn = false;
         if(pinProp.flags & kVstPinIsStereo)
                 stereoIn = true;
-        //speaker arrangement
-        //pinProp->arrangementType
 
         EffGetOutputProperties(0,&pinProp,sizeof(VstPinProperties));
         //stereo output
@@ -484,12 +482,13 @@ bool VstPlugin::initPlugin()
         if(pinProp.flags & kVstPinIsStereo)
                 stereoOut = true;
 
-        //speaker arrangement
-        //pinProp->arrangementType
 
+        stereoIn=true;
+        stereoOut=true;
+#endif
         EffResume();
         EffSuspend();
-
+#ifdef VST24SDK
         if(stereoIn)
         {
                 EffGetInputProperties(0,&pinProp,sizeof(VstPinProperties));
@@ -517,7 +516,7 @@ bool VstPlugin::initPlugin()
                 if(stereoOut)
                         EffConnectOutput(1,1);
         }
-
+#endif
         EffSetProgram(0);
 
         char szBuf[256] = "";
@@ -577,7 +576,7 @@ void VstPlugin::AddPluginToDatabase()
    myHost->settings->SetSetting(QString("pluginsDb/%1").arg(pEffect->uniqueID),objInfo.filename);
 }
 
-bool VstPlugin::FilenameFromDatabase(VstInt32 id, QString &filename)
+bool VstPlugin::FilenameFromDatabase(int id, QString &filename)
 {
     filename=myHost->settings->GetSetting(QString("pluginsDb/%1").arg(id),"").toString();
     if(filename.isEmpty())
@@ -586,10 +585,11 @@ bool VstPlugin::FilenameFromDatabase(VstInt32 id, QString &filename)
     return true;
 }
 
-VstInt32 VstPlugin::IdFromFxb(const QString &fxbFile)
+int VstPlugin::IdFromFxb(const QString &fxbFile)
 {
     std::string str = fxbFile.toStdString();
-    return CEffect::PluginIdFromBankFile(&str);
+    //return CEffect::PluginIdFromBankFile(&str);
+    return 0;
 }
 
 void VstPlugin::RaiseEditor()
@@ -775,7 +775,7 @@ void VstPlugin::MidiMsgFromInput(long msg)
     evnt->type = kVstMidiType;
     evnt->byteSize = sizeof(VstMidiEvent);
     memcpy(evnt->midiData, &msg, sizeof(evnt->midiData));
-    evnt->flags = kVstMidiEventIsRealtime;
+ //   evnt->flags = kVstMidiEventIsRealtime;
 
     midiEventsMutex.lock();
     listVstMidiEvents << evnt;
@@ -791,8 +791,8 @@ void VstPlugin::processEvents(VstEvents* events)
 
     for(int i=0; i<events->numEvents; i++) {
         evnt=events->events[i];
-        if( evnt->type==kVstMidiType) {
-            VstMidiEvent *midiEvnt = (VstMidiEvent*)evnt;
+        VstMidiEvent *midiEvnt = (VstMidiEvent*)evnt;
+        if( midiEvnt->type==kVstMidiType) {
 
             long msg;
             memcpy(&msg, midiEvnt->midiData, sizeof(midiEvnt->midiData));
@@ -833,7 +833,7 @@ void VstPlugin::UserAddPin(const ConnectionInfo &info)
     OnProgramDirty();
 }
 
-VstIntPtr VstPlugin::OnMasterCallback(long opcode, long index, long value, void *ptr, float opt, long /*currentReturnCode*/)
+intptr_t VstPlugin::OnMasterCallback(long opcode, long index, long value, void *ptr, float opt, long /*currentReturnCode*/)
 {
     switch(opcode) {
         case audioMasterAutomate : //0
@@ -1028,6 +1028,7 @@ void VstPlugin::_LoadBank()
   */
 bool VstPlugin::_LoadBank(const QString &filename)
 {
+#ifdef VST24SDK
     std::string str = filename.toStdString();
     if(!CEffect::LoadBank(&str))
         return false;
@@ -1038,7 +1039,7 @@ bool VstPlugin::_LoadBank(const QString &filename)
     MSGOBJ();
     msg.prop[MsgObject::Load] = currentBankFile;
     msgCtrl->SendMsg(msg);
-
+#endif
     return true;
 }
 
@@ -1050,6 +1051,7 @@ bool VstPlugin::_LoadBank(const QString &filename)
   */
 void VstPlugin::_SaveBank(const QString &filename)
 {
+#ifdef VST24SDK
     std::string str = filename.toStdString();
     if(!CEffect::SaveBank(&str))
         return;
@@ -1059,6 +1061,7 @@ void VstPlugin::_SaveBank(const QString &filename)
     MSGOBJ();
     msg.prop[MsgObject::Load] = currentBankFile;
     msgCtrl->SendMsg(msg);
+#endif
 }
 
 /**
@@ -1068,6 +1071,7 @@ void VstPlugin::_SaveBank(const QString &filename)
   */
 bool VstPlugin::LoadProgramFile(const QString &filename)
 {
+#ifdef VST24SDK
     std::string str = filename.toStdString();
     if(!CEffect::LoadVstProgram(&str))
         return false;
@@ -1078,7 +1082,7 @@ bool VstPlugin::LoadProgramFile(const QString &filename)
     MSGOBJ();
     msg.prop[MsgObject::Load] = currentBankFile;
     msgCtrl->SendMsg(msg);
-
+#endif
     return true;
 }
 
@@ -1090,6 +1094,7 @@ bool VstPlugin::LoadProgramFile(const QString &filename)
   */
 void VstPlugin::SaveProgramFile(const QString &filename)
 {
+#ifdef VST24SDK
     std::string str = filename.toStdString();
     if(!CEffect::SaveVstProgram(&str))
         return;
@@ -1099,6 +1104,7 @@ void VstPlugin::SaveProgramFile(const QString &filename)
     MSGOBJ();
     msg.prop[MsgObject::Load] = currentBankFile;
     msgCtrl->SendMsg(msg);
+#endif
 }
 
 /**

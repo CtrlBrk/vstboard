@@ -29,6 +29,9 @@
 #ifdef VST24SDK
     #include "public.sdk/source/vst/vst2wrapper/vst2wrapper.h"
     #include "vst2shell.h"
+#else
+    #include "../vestige.h"
+    #include "myvst2wrapper.h"
 #endif
 // #pragma warning ( pop )
 
@@ -54,22 +57,20 @@ int typeVst = 1;
         } else {
             return Vst::Vst2Wrapper::create(GetPluginFactoryVst24(), VstBoardProcessorUID, uniqueIDEffect, audioMaster);
         }
-/*
-        long id = audioMaster(0,audioMasterCurrentId,0,0,0,0);
 
-        switch(id) {
-        case uniqueIDEffect:
-            return Vst::Vst2Wrapper::create(GetPluginFactoryVst24(), VstBoardProcessorUID, uniqueIDEffect, audioMaster);
-        case uniqueIDInstrument:
-            return Vst::Vst2Wrapper::create(GetPluginFactoryVst24(), VstBoardInstProcessorUID, uniqueIDInstrument, audioMaster);
-        default:
-            return createShell(audioMaster);
-        }
-*/
     }
+#else
+
+
+MyVst2Wrapper *vst2wrap = new MyVst2Wrapper();
+
+VST_EXPORT AEffect* VSTPluginMain (audioMasterCallback audioMaster)
+{
+    return vst2wrap;
+}
+
 
 #endif
-
 
 //#if defined (_MSC_VER) && defined (DEVELOPMENT)
 //	#define _CRTDBG_MAP_ALLOC

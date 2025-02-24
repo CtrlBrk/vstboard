@@ -44,7 +44,7 @@ namespace Connectables {
         bool Open() override;
         bool Close();
         void Render() override;
-        VstIntPtr OnMasterCallback(long opcode, long index, long value, void *ptr, float opt, long currentReturnCode) override;
+        intptr_t OnMasterCallback(long opcode, long index, long value, void *ptr, float opt, long currentReturnCode) override;
         void SetSleep(bool sleeping) override;
         void MidiMsgFromInput(long msg) override;
         QString GetParameterName(ConnectionInfo pinInfo) override;
@@ -81,8 +81,9 @@ namespace Connectables {
         virtual bool initPlugin();
         void processEvents(VstEvents* events);
         void onVstProgramChanged();
-        bool FilenameFromDatabase(VstInt32 id, QString &filename);
-        VstInt32 IdFromFxb(const QString &fxbFile);
+        bool FilenameFromDatabase(int id, QString &filename);
+
+        int IdFromFxb(const QString &fxbFile);
 
         QString bankToLoad;
         QString currentBankFile;

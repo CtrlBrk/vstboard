@@ -165,8 +165,11 @@ EXPORT_FACTORY IPluginFactory* PLUGIN_API GetPluginFactory ()
     return entryPoint();
 }
 }
-
+#ifdef VST24SDK
 #include "pluginterfaces/vst2.x/aeffect.h"
+#else
+#include "../vestige.h"
+#endif
 
 typedef AEffect *(*vstPluginFuncPtr)(audioMasterCallback host);
 

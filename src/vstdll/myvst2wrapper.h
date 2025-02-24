@@ -22,24 +22,23 @@
 //#include "public.sdk/source/vst/vst2wrapper/vst2wrapper.h"
 //#pragma warning ( pop )
 
-//#ifndef MYVST2WRAPPER_H
-//#define MYVST2WRAPPER_H
+#include "../vestige.h"
+
+#ifndef MYVST2WRAPPER_H
+#define MYVST2WRAPPER_H
 
 //using namespace Steinberg;
 
-//class MyVst2Wrapper : public Vst::Vst2Wrapper
-//{
-//public:
-////    static AudioEffect* crt (IPluginFactory* factory, const TUID vst3ComponentID, VstInt32 vst2ID, audioMasterCallback audioMaster);
-//    MyVst2Wrapper (BaseWrapper::SVST3Config& config, audioMasterCallback audioMaster, VstInt32 vst2ID);
-//    VstInt32 processEvents (VstEvents* events);
-//    void processReplacing (float** inputs, float** outputs, VstInt32 sampleFrames);
-//    void processDoubleReplacing (double** inputs, double** outputs, VstInt32 sampleFrames);
-//    void onTimer (Timer* timer);
+class MyVst2Wrapper : public AEffect
+{
+public:
+   MyVst2Wrapper ();
 
-//private:
-//    void doProcess (VstInt32 sampleFrames);
-//    void processOutputEvents ();
-//};
+    intptr_t dispatcher(AEffect*, int, int, intptr_t, void*, float);
+    void setParameter(AEffect*, int, float);
+    float getParameter(AEffect*, int);
+    void process(AEffect*, float**, float**, int) ;
+    void processReplacing(AEffect*, float**, float**, int);
+};
 
-//#endif // MYVST2WRAPPER_H
+#endif // MYVST2WRAPPER_H

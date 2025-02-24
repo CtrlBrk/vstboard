@@ -94,7 +94,7 @@ bool VstPlugin32::initPlugin()
     ipcTo32.LockData();
     dataTo32->pluginId = GetIndex();
     //set plugin window as a child window. very slow to open
-    dataTo32->mainWin = (VstInt32)myHost->GetMainWindowId();
+    dataTo32->mainWin = (int)myHost->GetMainWindowId();
     dataTo32->function=IpcFunction::GetAEffect;
 
     ipcTo32.SignalStart();
@@ -139,7 +139,7 @@ long VstPlugin32::EffEditOpen(void *ptr)
     return true;
 }
 */
-long VstPlugin32::EffEditGetRect(ERect **ptr)
+long VstPlugin32::EffEditGetRect(VstRect **ptr)
 {
     return true;
 }
@@ -218,7 +218,7 @@ void VstPlugin32::ProcessMidi()
         dataPtr+=sizeof(VstMidiEvent);
     }
 
-    EffDispatch(effProcessEvents, listVstMidiEvents.size(), 0, data,0, (VstInt32)size);
+    EffDispatch(effProcessEvents, listVstMidiEvents.size(), 0, data,0, (int)size);
 
     free(data);
     listVstMidiEvents.clear();
@@ -336,7 +336,7 @@ long VstPlugin32::EffGetChunk(void **ptr, bool isPreset)
 
     ipcTo32.SignalStart();
 
-    VstInt32 chunkSize = dataTo32->dataSize;
+    int chunkSize = dataTo32->dataSize;
     LOG("get chunk size:" << dataTo32->dataSize);
 
     if(chunkData) {
@@ -357,9 +357,9 @@ long VstPlugin32::EffGetChunk(void **ptr, bool isPreset)
     return chunkSize;
 }
 
-bool VstPlugin32::GetChunkSegment(char *ptr, VstInt32 chunkSize)
+bool VstPlugin32::GetChunkSegment(char *ptr, int chunkSize)
 {
-    VstInt32 start=0;
+    int start=0;
 
     while(start<chunkSize) {
 
@@ -382,7 +382,7 @@ bool VstPlugin32::GetChunkSegment(char *ptr, VstInt32 chunkSize)
     return true;
 }
 
-bool VstPlugin32::SendChunkSegment(char *ptr, VstInt32 chunkSize)
+bool VstPlugin32::SendChunkSegment(char *ptr, int chunkSize)
 {
     ipcTo32.LockData();
     dataTo32->pluginId = GetIndex();
@@ -392,7 +392,7 @@ bool VstPlugin32::SendChunkSegment(char *ptr, VstInt32 chunkSize)
 
     ipcTo32.SignalStartAndRelease();
 
-    VstInt32 start=0;
+    int start=0;
 
     while(start<chunkSize) {
 
@@ -410,7 +410,7 @@ bool VstPlugin32::SendChunkSegment(char *ptr, VstInt32 chunkSize)
     return true;
 }
 
-long VstPlugin32::EffDispatch(VstInt32 opCode, VstInt32 index, VstIntPtr value, void *ptr, float opt, VstInt32 size)
+long VstPlugin32::EffDispatch(int opCode, int index, intptr_t value, void *ptr, float opt, int size)
 {
 
     if(size>IPC_CHUNK_SIZE) {
@@ -424,7 +424,7 @@ long VstPlugin32::EffDispatch(VstInt32 opCode, VstInt32 index, VstIntPtr value, 
     dataTo32->function = IpcFunction::Dispatch;
     dataTo32->opCode = opCode;
     dataTo32->index = index;
-    dataTo32->value = (VstInt32)value;
+    dataTo32->value = (int)value;
     dataTo32->opt = opt;
     //if the data is not already sent segmented
     if(ptr && size<=IPC_CHUNK_SIZE) {
@@ -433,11 +433,11 @@ long VstPlugin32::EffDispatch(VstInt32 opCode, VstInt32 index, VstIntPtr value, 
     dataTo32->dataSize=size;
 
 
-
+/*
     if(opCode==effSetSpeakerArrangement || opCode==effGetSpeakerArrangement) {
         //value is also a pointer
     }
-
+*/
     ipcTo32.SignalStart();
 
     long disp = dataTo32->dispatchReturn;

@@ -28,19 +28,25 @@ vstsdk {
 }
 
 vst24sdk {
+    HEADERS += vst/vstbank.h \
+        vst/vstbankbase.h \
+        vst/vstprogram.h \
+
+
+    SOURCES += vst/vstbank.cpp \
+        vst/vstbankbase.cpp \
+        vst/vstprogram.cpp \
+
+}
+
+vst2plugin {
     HEADERS += vst/cvsthost.h \
         vst/ceffect.h \
         vst/const.h \
-        vst/vstbank.h \
-        vst/vstbankbase.h \
-        vst/vstprogram.h \
         connectables/vstplugin.h \
 
     SOURCES += vst/cvsthost.cpp \
         vst/ceffect.cpp \
-        vst/vstbank.cpp \
-        vst/vstbankbase.cpp \
-        vst/vstprogram.cpp \
         connectables/vstplugin.cpp \
 }
 

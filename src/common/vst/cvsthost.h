@@ -31,8 +31,9 @@
 
 
 //#include "../precomp.h"
-#include "const.h"
+// #include "const.h"
 //#include "vstbank.h"
+#include "../vestige.h"
 
 namespace vst
 {
@@ -61,7 +62,7 @@ namespace vst
 
     protected:
         static CVSTHost * pHost;
-        static VstIntPtr VSTCALLBACK AudioMasterCallback(AEffect *effect, VstInt32 opcode, VstInt32  index, VstIntPtr  value, void *ptr, float opt);
+        static __int64 __cdecl AudioMasterCallback(AEffect *effect, int opcode, int index, __int64  value, void *ptr, float opt);
     };
 
 }

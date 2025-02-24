@@ -18,173 +18,200 @@
 //#    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 //**************************************************************************/
 
-//#include "myvst2wrapper.h"
-//#include "vstboardprocessor.h"
+#include "myvst2wrapper.h"
+#include "vstboardprocessor.h"
 
-//MyVst2Wrapper::MyVst2Wrapper(BaseWrapper::SVST3Config& config, audioMasterCallback audioMaster, VstInt32 vst2ID) :
-//    Vst2Wrapper(config,audioMaster,vst2ID)
+MyVst2Wrapper::MyVst2Wrapper()
+{
+    magic=0;
+    numPrograms=0;
+    numParams=0;
+    numInputs=2;
+    numOutputs=2;
+    flags=0;
+    ptr1=0;
+    ptr2=0;
+    initialDelay=0;
+    empty3a=0;
+    empty3b=0;
+    unkown_float=.0f;
+    ptr3=0;
+    user=0;
+    uniqueID=0;
+    version=0;
+}
+
+intptr_t MyVst2Wrapper::dispatcher(AEffect*, int, int, intptr_t, void*, float)
+{
+    return 0;
+}
+/*
+int MyVst2Wrapper::processEvents(VstEvents* events)
+{
+   VstBoardProcessor* proc = 0; //static_cast<VstBoardProcessor*>(mProcessor);
+   if(!proc)
+       return 0;
+
+   return proc->processEvents(events);
+}
+*/
+//AudioEffect* MyVst2Wrapper::crt (IPluginFactory* factory, const TUID vst3ComponentID, VstInt32 vst2ID, audioMasterCallback audioMaster)
 //{
-
-//}
-
-//VstInt32 MyVst2Wrapper::processEvents(VstEvents* events)
-//{
-//    VstBoardProcessor* proc = 0; //static_cast<VstBoardProcessor*>(mProcessor);
-//    if(!proc)
+//    if (!factory)
 //        return 0;
 
-//    return proc->processEvents(events);
-//}
+//    SVST3Config conf;
+//    conf.factory = factory;
+//    conf.processor = nullptr;
+//    conf.controller = nullptr;
+//    conf.vst3ComponentID = vst3ComponentID;
 
-////AudioEffect* MyVst2Wrapper::crt (IPluginFactory* factory, const TUID vst3ComponentID, VstInt32 vst2ID, audioMasterCallback audioMaster)
-////{
-////    if (!factory)
-////        return 0;
+//    Vst::IAudioProcessor* processor = 0;
+//    FReleaser factoryReleaser (factory);
 
-////    SVST3Config conf;
-////    conf.factory = factory;
-////    conf.processor = nullptr;
-////    conf.controller = nullptr;
-////    conf.vst3ComponentID = vst3ComponentID;
-
-////    Vst::IAudioProcessor* processor = 0;
-////    FReleaser factoryReleaser (factory);
-
-////    factory->createInstance (vst3ComponentID, Vst::IAudioProcessor::iid, (void**)&processor);
-////    if (processor)
-////    {
-////        Vst::IEditController* controller = 0;
-////        if (processor->queryInterface (Vst::IEditController::iid, (void**)&controller) != kResultTrue)
-////        {
-////            FUnknownPtr<Vst::IComponent> component (processor);
-////            if (component)
-////            {
-////                FUID editorCID;
-////                if (component->getControllerClassId (editorCID) == kResultTrue)
-////                {
-////                    factory->createInstance (editorCID, Vst::IEditController::iid, (void**)&controller);
-////                }
-////            }
-////        }
-
-////        MyVst2Wrapper* wrapper = new MyVst2Wrapper (conf, audioMaster, vst2ID);
-////        if (wrapper->init () == false)
-////        {
-////            delete wrapper;
-////            return 0;
-////        }
-
-////        FUnknownPtr<IPluginFactory2> factory2 (factory);
-////        if (factory2)
-////        {
-////            PFactoryInfo factoryInfo;
-////            if (factory2->getFactoryInfo (&factoryInfo) == kResultTrue)
-////                wrapper->setVendorName (factoryInfo.vendor);
-
-////            for (int32 i = 0; i < factory2->countClasses (); i++)
-////            {
-////                Steinberg::PClassInfo2 classInfo2;
-////                if (factory2->getClassInfo2 (i, &classInfo2) == Steinberg::kResultTrue)
-////                {
-////                    if (memcmp (classInfo2.cid, vst3ComponentID, sizeof (TUID)) == 0)
-////                    {
-////                        wrapper->setSubCategories (classInfo2.subCategories);
-////                        wrapper->setEffectName (classInfo2.name);
-
-////                        if (classInfo2.vendor[0] != 0)
-////                            wrapper->setVendorName (classInfo2.vendor);
-
-////                        break;
-////                    }
-////                }
-////            }
-////        }
-
-////        return wrapper;
-////    }
-
-////    return 0;
-////}
-
-//void MyVst2Wrapper::processReplacing (float** inputs, float** outputs, VstInt32 sampleFrames)
-//{
-//    if (mProcessData.symbolicSampleSize != Vst::kSample32)
-//        return;
-
-//    setProcessingBuffers<float> (inputs, outputs);
-//    doProcess (sampleFrames);
-//}
-
-////-------------------------------------------------------------------------------------------------------
-//void MyVst2Wrapper::processDoubleReplacing (double** inputs, double** outputs, VstInt32 sampleFrames)
-//{
-//    if (mProcessData.symbolicSampleSize != Vst::kSample64)
-//        return;
-
-//    setProcessingBuffers<double> (inputs, outputs);
-//    doProcess (sampleFrames);
-//}
-
-//inline void MyVst2Wrapper::doProcess (VstInt32 sampleFrames)
-//{
-//    if (mProcessor)
+//    factory->createInstance (vst3ComponentID, Vst::IAudioProcessor::iid, (void**)&processor);
+//    if (processor)
 //    {
-//        mProcessData.numSamples = sampleFrames;
-
-////        if (processing == false)
-////            startProcess ();
-
-//        mProcessData.inputEvents = mInputEvents;
-//        mProcessData.outputEvents = mOutputEvents;
-
-//        setupProcessTimeInfo ();
-//        setEventPPQPositions ();
-
-//        mInputTransfer.transferChangesTo (mInputChanges);
-
-//        mProcessData.inputParameterChanges = &mInputChanges;
-//        mProcessData.outputParameterChanges = &mOutputChanges;
-//        mOutputChanges.clearQueue ();
-
-//        // vst 3 process call
-//        mProcessor->process (mProcessData);
-
-//        mOutputTransfer.transferChangesFrom (mOutputChanges);
-//        processOutputEvents ();
-
-//        // clear input parameters and events
-//        mInputChanges.clearQueue ();
-//        if (mInputEvents)
-//            mInputEvents->clear ();
-//    }
-//}
-
-//inline void MyVst2Wrapper::processOutputEvents ()
-//{
-//    VstBoardProcessor* proc = 0;//static_cast<VstBoardProcessor*>(mProcessor);
-//    if(!proc)
-//        return;
-
-//    if(proc->processOutputEvents())
-//        sendVstEventsToHost(proc->getEvents());
-//}
-
-//void MyVst2Wrapper::onTimer (Timer* timer)
-//{
-//    if (mController)
-//    {
-//        Vst::ParamID id;
-//        Vst::ParamValue value;
-//        int32 sampleOffset;
-
-//        while (mOutputTransfer.getNextChange (id, value, sampleOffset))
+//        Vst::IEditController* controller = 0;
+//        if (processor->queryInterface (Vst::IEditController::iid, (void**)&controller) != kResultTrue)
 //        {
-//            setParameterAutomated(id,value);
-//            mController->setParamNormalized (id, value);
+//            FUnknownPtr<Vst::IComponent> component (processor);
+//            if (component)
+//            {
+//                FUID editorCID;
+//                if (component->getControllerClassId (editorCID) == kResultTrue)
+//                {
+//                    factory->createInstance (editorCID, Vst::IEditController::iid, (void**)&controller);
+//                }
+//            }
 //        }
-//        while (mGuiTransfer.getNextChange (id, value, sampleOffset))
+
+//        MyVst2Wrapper* wrapper = new MyVst2Wrapper (conf, audioMaster, vst2ID);
+//        if (wrapper->init () == false)
 //        {
-//            mController->setParamNormalized (id, value);
+//            delete wrapper;
+//            return 0;
 //        }
+
+//        FUnknownPtr<IPluginFactory2> factory2 (factory);
+//        if (factory2)
+//        {
+//            PFactoryInfo factoryInfo;
+//            if (factory2->getFactoryInfo (&factoryInfo) == kResultTrue)
+//                wrapper->setVendorName (factoryInfo.vendor);
+
+//            for (int32 i = 0; i < factory2->countClasses (); i++)
+//            {
+//                Steinberg::PClassInfo2 classInfo2;
+//                if (factory2->getClassInfo2 (i, &classInfo2) == Steinberg::kResultTrue)
+//                {
+//                    if (memcmp (classInfo2.cid, vst3ComponentID, sizeof (TUID)) == 0)
+//                    {
+//                        wrapper->setSubCategories (classInfo2.subCategories);
+//                        wrapper->setEffectName (classInfo2.name);
+
+//                        if (classInfo2.vendor[0] != 0)
+//                            wrapper->setVendorName (classInfo2.vendor);
+
+//                        break;
+//                    }
+//                }
+//            }
+//        }
+
+//        return wrapper;
 //    }
+
+//    return 0;
 //}
+
+void MyVst2Wrapper::setParameter(AEffect*, int, float)
+{
+
+}
+
+float MyVst2Wrapper::getParameter(AEffect*, int)
+{
+    return 0;
+}
+
+void MyVst2Wrapper::processReplacing (AEffect* a, float** inputs, float** outputs, int sampleFrames)
+{
+    /*
+   if (mProcessData.symbolicSampleSize != Vst::kSample32)
+       return;
+
+   setProcessingBuffers<float> (inputs, outputs);
+   doProcess (sampleFrames);
+*/
+}
+void MyVst2Wrapper::process(AEffect*, float**, float**, int)
+{
+
+}
+/*
+
+inline void MyVst2Wrapper::doProcess (int sampleFrames)
+{
+   if (mProcessor)
+   {
+       mProcessData.numSamples = sampleFrames;
+
+//        if (processing == false)
+//            startProcess ();
+
+       mProcessData.inputEvents = mInputEvents;
+       mProcessData.outputEvents = mOutputEvents;
+
+       setupProcessTimeInfo ();
+       setEventPPQPositions ();
+
+       mInputTransfer.transferChangesTo (mInputChanges);
+
+       mProcessData.inputParameterChanges = &mInputChanges;
+       mProcessData.outputParameterChanges = &mOutputChanges;
+       mOutputChanges.clearQueue ();
+
+       // vst 3 process call
+       mProcessor->process (mProcessData);
+
+       mOutputTransfer.transferChangesFrom (mOutputChanges);
+       processOutputEvents ();
+
+       // clear input parameters and events
+       mInputChanges.clearQueue ();
+       if (mInputEvents)
+           mInputEvents->clear ();
+   }
+}
+
+void MyVst2Wrapper::processOutputEvents ()
+{
+   VstBoardProcessor* proc = 0;//static_cast<VstBoardProcessor*>(mProcessor);
+   if(!proc)
+       return;
+
+   if(proc->processOutputEvents())
+       sendVstEventsToHost(proc->getEvents());
+}
+
+void MyVst2Wrapper::onTimer (Timer* timer)
+{
+   if (mController)
+   {
+       Vst::ParamID id;
+       Vst::ParamValue value;
+       int32 sampleOffset;
+
+       while (mOutputTransfer.getNextChange (id, value, sampleOffset))
+       {
+           setParameterAutomated(id,value);
+           mController->setParamNormalized (id, value);
+       }
+       while (mGuiTransfer.getNextChange (id, value, sampleOffset))
+       {
+           mController->setParamNormalized (id, value);
+       }
+   }
+}
+*/

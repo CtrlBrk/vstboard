@@ -22,7 +22,7 @@
 
 #include "vstpluginwindow.h"
 #include "ui_vstpluginwindow.h"
-#ifdef VST24SDK
+#ifdef VST2PLUGIN
     #include "connectables/vstplugin.h"
 #endif
 #include "connectables/vst3plugin.h"
@@ -108,7 +108,7 @@ bool VstPluginWindow::SetPlugin(Connectables::Vst3Plugin *plug)
 
     return true;
 }
-#ifdef VST24SDK
+#ifdef VST2PLUGIN
 bool VstPluginWindow::SetPlugin(Connectables::VstPlugin *plugin)
 {
     bool windowOk = false;
@@ -120,7 +120,7 @@ bool VstPluginWindow::SetPlugin(Connectables::VstPlugin *plugin)
     setWindowFlags(Qt::Tool);
 
     long res;
-    ERect *rect = 0;
+    VstRect *rect = 0;
 
     //try to get rect (some plugins wants it before editopen)
     res = plugin->EffEditGetRect(&rect);

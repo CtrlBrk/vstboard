@@ -153,35 +153,6 @@
         #define LOG(...); {qDebug()<<__VA_ARGS__<<"("<<__FUNCTION__<<":"<< __LINE__<<" )";}
     #endif
 
-// #ifdef _MSC_VER
-// #pragma warning( push, 1 )
-// #endif
-//	#include "./public.sdk/source/vst2.x/audioeffectx.h"
-//	#include "./public.sdk/source/vst2.x/aeffeditor.h"
-
-//	#include "./public.sdk/source/vst/hosting/hostclasses.h"
-//	#include "./pluginterfaces/vst/ivstprocesscontext.h"
-//	#include "./pluginterfaces/vst2.x/aeffectx.h"
-//	#include "./pluginterfaces/vst/vsttypes.h"
-
-//	#include "./public.sdk/source/common/memorystream.h"
-//	#include "./public.sdk/source/vst/hosting/processdata.h"
-//	#include "./public.sdk/source/vst/hosting/parameterchanges.h"
-//	#include "./pluginterfaces/base/ipluginbase.h"
-//	#include "./pluginterfaces/vst/ivstcomponent.h"
-//	#include "./pluginterfaces/vst/ivsteditcontroller.h"
-//	#include "./pluginterfaces/vst/ivstaudioprocessor.h"
-//	#include "./pluginterfaces/vst/ivsthostapplication.h"
-//	//#include "./pluginterfaces/gui/iplugview.h"
-//	#include "./pluginterfaces/vst/ivstevents.h"
-//	#include "./pluginterfaces/vst/ivstcontextmenu.h"
-//	//#include "./public.sdk/source/vst/hosting/pluginterfacesupport.h"
-
-//    #include "base/source/fobject.h"
-//	#include "pluginterfaces/gui/iplugview.h"
-// #ifdef _MSC_VER
-// #pragma warning( pop )
-// #endif
 
 
 #endif

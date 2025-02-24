@@ -19,10 +19,10 @@ public:
     bool Close();
     bool Load(const std::wstring &name) override;
     bool Unload();
-    long EffDispatch(VstInt32 opCode, VstInt32 index=0, VstIntPtr value=0, void *ptr=0, float opt=0., VstInt32 size=0) override;
+    long EffDispatch(int opCode, int index=0, intptr_t value=0, void *ptr=0, float opt=0., int size=0) override;
    // long EffEditOpen(void *ptr) override;
     void CreateEditorWindow() override;
-    long EffEditGetRect(ERect **ptr) override;
+    long EffEditGetRect(VstRect **ptr) override;
     float EffGetParameter(long index) override;
     void EffSetParameter(long index, float parameter) override;
     void EffProcess(float **inputs, float **outputs, long sampleframes) override;
@@ -33,8 +33,8 @@ public:
 protected:
     void ProcessMidi() override;
     bool initPlugin() override;
-    bool GetChunkSegment(char *ptr, VstInt32 chunkSize);
-    bool SendChunkSegment(char *ptr, VstInt32 chunkSize);
+    bool GetChunkSegment(char *ptr, int chunkSize);
+    bool SendChunkSegment(char *ptr, int chunkSize);
 /*
     void Lock();
     void Process();
