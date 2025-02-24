@@ -64,7 +64,7 @@ VstPlugin::~VstPlugin()
 /* Load : loads the effect module                                            */
 /*****************************************************************************/
 
-bool VstPlugin::Load(const std::wstring& name,float sampleRate, VstInt32 blocksize)
+bool VstPlugin::Load(const std::wstring& name,float sampleRate, int blocksize)
 {
     const wchar_t* buf = name.c_str();
 
@@ -115,7 +115,9 @@ bool VstPlugin::Load(const std::wstring& name,float sampleRate, VstInt32 blocksi
     EffDispatch(effOpen);
     EffDispatch(effSetSampleRate, 0, 0, 0, sampleRate);
     EffDispatch(effSetBlockSize, 0, blocksize);
+#ifdef VSTSDK
     EffDispatch(effSetProcessPrecision, 0, kVstProcessPrecision32);
+#endif
     EffDispatch(effMainsChanged, 0, 1);
     EffDispatch(effStartProcess);
     /*
@@ -378,7 +380,7 @@ bool VstPlugin::SaveProgram(std::string* name)
     return false;
 }
 
-VstInt32 VstPlugin::PluginIdFromBankFile(std::string* name)
+int VstPlugin::PluginIdFromBankFile(std::string* name)
 {
     /*
     return CFxBank::PluginIdFromBank(name);
@@ -390,7 +392,7 @@ VstInt32 VstPlugin::PluginIdFromBankFile(std::string* name)
 /* EffDispatch : calls an effect's dispatcher                                */
 /*****************************************************************************/
 
-long VstPlugin::EffDispatch(VstInt32 opCode, VstInt32 index, VstIntPtr value, void* ptr, float opt)
+long VstPlugin::EffDispatch(int opCode, int index, int value, void* ptr, float opt)
 {
     if (!pEffect)
         return 0;
@@ -453,7 +455,7 @@ float VstPlugin::EffGetParameter(long index)
     return pEffect->getParameter(pEffect, index);
 }
 
-VstIntPtr VstPlugin::OnMasterCallback(long opcode, long index, long value, void* ptr, float opt, long currentReturnCode)
+int VstPlugin::OnMasterCallback(long opcode, long index, long value, void* ptr, float opt, long currentReturnCode)
 {
    // cout << "callback " << this << " ipc " << &ipc << endl;
     switch (opcode) {
@@ -483,16 +485,16 @@ void VstPlugin::CrtVstWin() {
     
     
     //ShowWindow(win->hWin, SW_SHOW);
-    ERect* erc = nullptr;
-    EffDispatch(effEditGetRect, 0, 0, &erc);
+    VstRect* vstRect = nullptr;
+    EffDispatch(effEditGetRect, 0, 0, &vstRect);
     if (EffDispatch(effEditOpen, 0, 0, win->hWin) == 1L) {
-        EffDispatch(effEditGetRect, 0, 0, &erc);
+        EffDispatch(effEditGetRect, 0, 0, &vstRect);
         RECT rc{};
-        if (erc) {
-            rc.left = erc->left;
-            rc.top = erc->top;
-            rc.right = erc->right;
-            rc.bottom = erc->bottom;
+        if (vstRect) {
+            rc.left = vstRect->left;
+            rc.top = vstRect->top;
+            rc.right = vstRect->right;
+            rc.bottom = vstRect->bottom;
         }
         win->resizeEditor(rc);
     }
@@ -616,7 +618,7 @@ void VstPlugin::MsgLoop()
         case IpcFunction::GetChunk:
             if (pEffect) {
                 dataIn->dataSize = EffGetChunk(&chunk, false);
-                cout << "get chunk size:" << dataIn->dataSize << endl;
+               // cout << "get chunk size:" << dataIn->dataSize << endl;
             }
             break;
         case IpcFunction::GetChunkSegment:
@@ -679,8 +681,10 @@ void VstPlugin::MsgLoop()
 
             //set size to 0 when the returned data is not used
             switch (dataIn->opCode) {
+#ifdef VSTSDK
             case effSetChunk:
                 dataIn->dataSize = 0;
+#endif
             }
             
     }

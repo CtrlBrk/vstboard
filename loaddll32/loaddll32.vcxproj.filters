@@ -53,5 +53,8 @@
     <ClInclude Include="ipc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="vestige.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

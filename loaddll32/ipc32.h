@@ -8,7 +8,9 @@
 //#define IPC_TIMEOUT INFINITE
 #define IPC_TIMEOUT 5000
 
-#include "pluginterfaces/vst2.x/aeffect.h"
+
+#include "vestige.h"
+
 enum class IpcFunction
 {
     None,
@@ -37,50 +39,50 @@ enum class IpcFunction
 
 
 struct structPilot {
-    VstInt32 pluginId = 0;
+    int pluginId = 0;
     IpcFunction function;
     wchar_t name[256];
-    VstInt32 value = 0;
-    VstInt32 index = 0;
+    int value = 0;
+    int index = 0;
 };
 
 struct structFrom32 {
-    VstInt32 cbPluginId = 0;
+    int cbPluginId = 0;
     IpcFunction callback;
-    VstInt32 cbOpcode = 0;
-    VstInt32 cbIndex = 0;
-    VstInt32 cbValue = 0;
+    int cbOpcode = 0;
+    int cbIndex = 0;
+    int cbValue = 0;
     float cbOpt = 0.;
 };
 
 struct structBuffers {
-    VstInt32 pluginId = 0;
+    int pluginId = 0;
     IpcFunction function;
-    VstInt32 dataSize = 0;
+    int dataSize = 0;
     float buffersIn[IPC_BUFFER_SIZE];
     float buffersOut[IPC_BUFFER_SIZE];
 };
 
 struct structTo32 {
-    VstInt32 mainWin=0;
+    int mainWin=0;
 
-    VstInt32 pluginId=0;
+    int pluginId=0;
     IpcFunction function;
-    VstInt32 opCode=0;
-    VstInt32 index=0;
-    VstInt32 value=0;
+    int opCode=0;
+    int index=0;
+    int value=0;
     float opt=0.;
     long dispatchReturn=0L;
         
     wchar_t name[256];
     
-    VstInt32 flags=0;
-    VstInt32 numInputs=0;
-    VstInt32 numOutputs=0;
-    VstInt32 initialDelay=0;
-    VstInt32 numParams=0;
+    int flags=0;
+    int numInputs=0;
+    int numOutputs=0;
+    int initialDelay=0;
+    int numParams=0;
     char data[IPC_CHUNK_SIZE];
-    VstInt32 dataSize=0;
+    int dataSize=0;
 };
 
 #endif // IPC32_H

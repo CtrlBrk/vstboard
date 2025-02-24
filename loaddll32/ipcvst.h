@@ -16,7 +16,7 @@ class IpcVst {
 public:
 	IpcVst();
 	void Loop();
-	VstIntPtr onCallback(int pluginId, long opcode, long index, long value, void* ptr, float opt, long currentReturnCode);
+	int onCallback(int pluginId, long opcode, long index, long value, void* ptr, float opt, long currentReturnCode);
 	
 	structPilot* dataIn;
 	structFrom32* dataOut;

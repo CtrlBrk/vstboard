@@ -8,16 +8,15 @@
 #include "ipc.h"
 
 #define VST_FORCE_DEPRECATED 0
-#include "public.sdk/source/vst2.x/audioeffectx.h"
-//#include "pluginterfaces/vst2.x/aeffectx.h"
+#include "vestige.h"
 
 typedef AEffect* (*vstPluginFuncPtr)(audioMasterCallback host);
-typedef VstIntPtr(*dispatcherFuncPtr)(AEffect* effect, VstInt32 opCode, VstInt32 index, VstInt32 value, void* ptr, float opt);
+typedef int (*dispatcherFuncPtr)(AEffect* effect, int  opCode, int  index, int  value, void* ptr, float opt);
 
 class VstWin;
 class CVSTHost;
 class IpcVst;
-class VstPlugin //: public vst::CEffect
+class VstPlugin
 {
 public:
     VstPlugin(IpcVst *ipc, int pluginId);
@@ -34,7 +33,7 @@ public:
     VstPlugin* pMasterEffect;             /* for Shell-type plugins            */
     std::wstring sName;
 
-    bool Load(const std::wstring& name, float sampleRate, VstInt32 blocksize);
+    bool Load(const std::wstring& name, float sampleRate, int  blocksize);
     bool Unload();
 
     bool LoadBank(std::string* name);
@@ -43,23 +42,22 @@ public:
     bool LoadProgram(std::string* name);
     bool SaveProgram(std::string* name);
 
-    static VstInt32 PluginIdFromBankFile(std::string* name);
+    static int  PluginIdFromBankFile(std::string* name);
 
-    long EffDispatch(VstInt32 opCode, VstInt32 index = 0, VstIntPtr value = 0, void* ptr = nullptr, float opt = .0f);
-    VstIntPtr OnMasterCallback(long opcode, long index, long value, void* ptr, float opt, long currentReturnCode);
+    long EffDispatch(int  opCode, int  index = 0, int  value = 0, void* ptr = nullptr, float opt = .0f);
+    int  OnMasterCallback(long opcode, long index, long value, void* ptr, float opt, long currentReturnCode);
 
     void EffProcess(float** inputs, float** outputs, long sampleframes);
     void EffProcessReplacing(float** inputs, float** outputs, long sampleframes);
     void EffProcessDoubleReplacing(double** inputs, double** outputs, long sampleFrames);
     void EffSetParameter(long index, float parameter);
     float EffGetParameter(long index);
-    long EffEditGetRect(ERect** ptr) { return EffDispatch(effEditGetRect, 0, 0, ptr); }
     long EffEditOpen(void* ptr) { long l = EffDispatch(effEditOpen, 0, 0, ptr); /* if (l > 0) */ bEditOpen = true; return l; }
     void EffEditClose() { if (!bEditOpen) return; EffDispatch(effEditClose); bEditOpen = false; }
     void EffEditIdle() { if (!bEditOpen || bInEditIdle) return; bInEditIdle = true; EffDispatch(effEditIdle); bInEditIdle = false; }
 
     long EffGetParamName(long index, char* txt);
-    bool getFlags(int32_t m) const { if (!pEffect) return 0; return (pEffect->flags & m) == m; }
+    bool getFlags(int  m) const { if (!pEffect) return 0; return (pEffect->flags & m) == m; }
     //as const
     long EffGetChunk(void** ptr, bool isPreset = false) const
     {
@@ -81,8 +79,6 @@ public:
     
     void OnSizeEditorWindow(long width, long height) { }
     bool OnUpdateDisplay() { return false; }
-    void* OnOpenWindow(VstWindow* window) { return 0; }
-    bool OnCloseWindow(VstWindow* window) { return false; }
     bool OnIoChanged() { return false; }
     long OnGetNumAutomatableParameters() { return (pEffect) ? pEffect->numParams : 0; }
 

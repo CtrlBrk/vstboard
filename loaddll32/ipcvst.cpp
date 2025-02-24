@@ -74,7 +74,7 @@ void IpcVst::Loop() {
 
 }
 
-VstIntPtr IpcVst::onCallback(int pluginId,long opcode, long index, long value, void* ptr, float opt, long currentReturnCode)
+int IpcVst::onCallback(int pluginId,long opcode, long index, long value, void* ptr, float opt, long currentReturnCode)
 {
 	switch (opcode) {
 	case audioMasterAutomate: //0

@@ -160,6 +160,7 @@
     <ClInclude Include="ipc.h" />
     <ClInclude Include="ipc32.h" />
     <ClInclude Include="ipcvst.h" />
+    <ClInclude Include="vestige.h" />
     <ClInclude Include="VstHost.h" />
     <ClInclude Include="VstPlugin.h" />
     <ClInclude Include="vstwindow.h" />

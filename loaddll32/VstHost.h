@@ -1,7 +1,8 @@
 #pragma once
 #define VST_FORCE_DEPRECATED 0
 
-#include "public.sdk/source/vst2.x/audioeffectx.h"
+//#include "public.sdk/source/vst2.x/audioeffectx.h"
+#include "vestige.h"
 
 /*****************************************************************************/
 /* CVSTHost class declaration                                                */
@@ -27,5 +28,5 @@ public:
 
 protected:
     static CVSTHost* pHost;
-    static VstIntPtr VSTCALLBACK AudioMasterCallback(AEffect* effect, VstInt32 opcode, VstInt32  index, VstIntPtr  value, void* ptr, float opt);
+    static int __cdecl AudioMasterCallback(AEffect* effect, int opcode, int index, int value, void* ptr, float opt);
 };
