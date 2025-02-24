@@ -124,6 +124,7 @@ namespace Connectables {
 //        void TakeScreenshot();
         void UserRemovePin(const ConnectionInfo &info) override;
         void UserAddPin(const ConnectionInfo &info) override;
+        void SaveProgram() override;
 
         friend class View::VstPluginWindow;
 //        friend class View::VstShellSelect;

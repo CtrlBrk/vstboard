@@ -1004,6 +1004,14 @@ void VstPlugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
     }
 }
 
+void VstPlugin::SaveProgram()
+{
+    //get all param values from plugin
+    onVstProgramChanged();
+    Object::SaveProgram();
+}
+
+
 void VstPlugin::_LoadBank()
 {
     if(bankToLoad.endsWith(VST_BANK_FILE_EXTENSION,Qt::CaseInsensitive))
@@ -1061,7 +1069,7 @@ void VstPlugin::_SaveBank(const QString &filename)
 bool VstPlugin::LoadProgramFile(const QString &filename)
 {
     std::string str = filename.toStdString();
-    if(!CEffect::LoadProgram(&str))
+    if(!CEffect::LoadVstProgram(&str))
         return false;
     onVstProgramChanged();
 
@@ -1083,7 +1091,7 @@ bool VstPlugin::LoadProgramFile(const QString &filename)
 void VstPlugin::SaveProgramFile(const QString &filename)
 {
     std::string str = filename.toStdString();
-    if(!CEffect::SaveProgram(&str))
+    if(!CEffect::SaveVstProgram(&str))
         return;
 
     currentBankFile=filename;

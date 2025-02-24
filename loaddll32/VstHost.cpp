@@ -180,7 +180,7 @@ int __cdecl CVSTHost::AudioMasterCallback(AEffect* effect, int opcode, int  inde
         return 2400L;
 
     case audioMasterGetTime: //7
-        return (int)&pHost->vstTimeInfo;
+        return (int32_t)&pHost->vstTimeInfo;
 
     case audioMasterSetTime: //9
         pHost->SetTimeInfo((VstTimeInfo*)ptr);

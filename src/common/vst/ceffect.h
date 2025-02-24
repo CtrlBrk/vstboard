@@ -79,8 +79,8 @@ namespace vst
         virtual bool LoadBank(std::string *name);
         virtual bool SaveBank(std::string *name);
 
-        virtual bool LoadProgram(std::string *name);
-        virtual bool SaveProgram(std::string *name);
+        virtual bool LoadVstProgram(std::string *name);
+        virtual bool SaveVstProgram(std::string *name);
 
         static VstInt32 PluginIdFromBankFile(std::string *name);
 

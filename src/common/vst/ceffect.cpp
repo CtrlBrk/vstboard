@@ -240,7 +240,7 @@ bool CEffect::SaveBank(std::string * name)
     return false;
 }
 
-bool CEffect::LoadProgram(std::string *name)
+bool CEffect::LoadVstProgram(std::string *name)
 {
     try
     {
@@ -289,7 +289,7 @@ bool CEffect::LoadProgram(std::string *name)
     return true;
 }
 
-bool CEffect::SaveProgram(std::string *name)
+bool CEffect::SaveVstProgram(std::string *name)
 {
     CFxProgram progFile;
 

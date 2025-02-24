@@ -437,23 +437,6 @@ void VstPlugin::EffProcessDoubleReplacing(double** inputs, double** outputs, lon
 #endif
 }
 
-/*****************************************************************************/
-/* EffSetParameter : calls an effect's setParameter() function               */
-/*****************************************************************************/
-
-void VstPlugin::EffSetParameter(long index, float parameter)
-{
-    pEffect->setParameter(pEffect, index, parameter);
-}
-
-/*****************************************************************************/
-/* EffGetParameter : calls an effect's getParameter() function               */
-/*****************************************************************************/
-
-float VstPlugin::EffGetParameter(long index)
-{
-    return pEffect->getParameter(pEffect, index);
-}
 
 int VstPlugin::OnMasterCallback(long opcode, long index, long value, void* ptr, float opt, long currentReturnCode)
 {

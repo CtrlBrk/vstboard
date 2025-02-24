@@ -50,8 +50,6 @@ public:
     void EffProcess(float** inputs, float** outputs, long sampleframes);
     void EffProcessReplacing(float** inputs, float** outputs, long sampleframes);
     void EffProcessDoubleReplacing(double** inputs, double** outputs, long sampleFrames);
-    void EffSetParameter(long index, float parameter);
-    float EffGetParameter(long index);
     long EffEditOpen(void* ptr) { long l = EffDispatch(effEditOpen, 0, 0, ptr); /* if (l > 0) */ bEditOpen = true; return l; }
     void EffEditClose() { if (!bEditOpen) return; EffDispatch(effEditClose); bEditOpen = false; }
     void EffEditIdle() { if (!bEditOpen || bInEditIdle) return; bInEditIdle = true; EffDispatch(effEditIdle); bInEditIdle = false; }
