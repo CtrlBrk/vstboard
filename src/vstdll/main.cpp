@@ -62,13 +62,21 @@ int typeVst = 1;
 #else
 
 
-MyVst2Wrapper *vst2wrap = new MyVst2Wrapper();
+extern IPluginFactory* PLUGIN_API GetPluginFactoryVst24();
 
+extern "C" {
 VST_EXPORT AEffect* VSTPluginMain (audioMasterCallback audioMaster)
 {
-    return vst2wrap;
-}
+    if (!audioMaster (nullptr, audioMasterVersion, 0, 0, nullptr, 0))
+        return nullptr; // old version
 
+    if (InitModule () == false)
+        return nullptr;
+
+    MyVst2Wrapper * myWrap = MyVst2Wrapper::create(GetPluginFactoryVst24(), VstBoardProcessorUID, uniqueIDEffect, audioMaster);
+    return &myWrap->Effect;
+}
+}
 
 #endif
 

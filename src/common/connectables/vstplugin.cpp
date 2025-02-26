@@ -166,8 +166,8 @@ void VstPlugin::ProcessMidi()
         int sizeF = sizeof(VstEvents) + sizeof(VstEvent*)*(nbEvents-2) + sizeof(VstEvent)*nbEvents;
         EffProcessEvents(listEvnts,sizeF );
 
-        free(listEvnts);
         listVstMidiEvents.clear();
+        // free(listEvnts);
     }
 }
 
@@ -313,7 +313,7 @@ void VstPlugin::Render()
 
     //send result
     //=========================
-    foreach(Pin* pin,listAudioPinOut->listPins) {
+     foreach(Pin* pin,listAudioPinOut->listPins) {
         static_cast<AudioPin*>(pin)->GetBuffer()->ConsumeStack();
         static_cast<AudioPin*>(pin)->SendAudioBuffer();
     }

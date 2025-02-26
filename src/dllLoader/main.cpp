@@ -175,12 +175,6 @@ typedef AEffect *(*vstPluginFuncPtr)(audioMasterCallback host);
 
 extern "C" {
 
-//#if defined (__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
-//#define VST_EXPORT	__attribute__ ((visibility ("default")))
-//#else
-#define VST_EXPORT _declspec(dllexport)
-//#endif
-
     VST_EXPORT AEffect* VSTPluginMain (audioMasterCallback audioMaster)
     {
         if(!InitModule()) {

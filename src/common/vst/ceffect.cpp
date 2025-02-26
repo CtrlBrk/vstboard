@@ -112,7 +112,10 @@ bool CEffect::Load(const std::wstring &name)
     }
 
     if (pEffect->magic != kEffectMagic) {
-        Unload();
+        if(pluginLib) {
+            FreeLibrary(pluginLib);
+            pluginLib=0;
+        }
         return false;
     }
     sName = name;

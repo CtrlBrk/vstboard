@@ -62,12 +62,13 @@ win32-msvc* {
 
 INCLUDEPATH += ../common
 
+SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/basewrapper/basewrapper.cpp
 
 vst24sdk {
     SOURCES += $$VST3SDK_PATH/public.sdk/source/vst2.x/audioeffect.cpp
     SOURCES += $$VST3SDK_PATH/public.sdk/source/vst2.x/audioeffectx.cpp
 
-    SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/basewrapper/basewrapper.cpp
+
     SOURCES += $$VST3SDK_PATH/public.sdk/source/vst/vst2wrapper/vst2wrapper.cpp
         # vst2shell.cpp \
 

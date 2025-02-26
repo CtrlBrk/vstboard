@@ -362,10 +362,10 @@ tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
                 int32 numPoints = paramQueue->getPointCount ();
 
                 if (paramQueue->getPoint (numPoints - 1,  offsetSamples, value) == kResultTrue) {
-//                    LOG(paramQueue->getParameterId () << value)
                     bool bypass=false;
+                    ParamID id = paramQueue->getParameterId ();
 
-                    switch (paramQueue->getParameterId ())
+                    switch (id)
                     {
                         case paramByPass:
                         // LOG("bypass"<<value)
@@ -381,7 +381,7 @@ tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
                             break;
                         default:
                             Q_FOREACH(Connectables::VstAutomation *dev, lstVstAutomation) {
-                                dev->ValueFromHost(paramQueue->getParameterId(),value);
+                                dev->ValueFromHost(id,value);
                             }
                             break;
                     }
