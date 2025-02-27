@@ -102,6 +102,8 @@ Vst3Plugin::~Vst3Plugin()
 
 bool Vst3Plugin::Open()
 {
+    QMutexLocker lock(&objMutex);
+
     std::string error;
     module = VST3::Hosting::Module::create (objInfo.filename.toStdString(), error);
     if (!module)
@@ -662,7 +664,7 @@ void Vst3Plugin::LoadProgram(int prog)
 
 bool Vst3Plugin::CreateEditorWindow()
 {
-    QMutexLocker l(&objMutex);
+    // QMutexLocker l(&objMutex);
 
     //already done
     if(editorWnd)
