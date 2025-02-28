@@ -224,8 +224,8 @@ void MainHost::Init()
 #ifdef VSTSDK
     vst3Host = new Vst3Host(this);
     //PluginContextFactory::instance ().setPluginContext (vst3Host);
-    connect(this,SIGNAL(SampleRateChanged(float)),
-            vst3Host,SLOT(SetSampleRate(float)));
+    // connect(this,SIGNAL(SampleRateChanged(float)),
+            // vst3Host,SLOT(SetSampleRate(float)));
 #endif
 
     solver = new Solver();
@@ -323,12 +323,12 @@ void MainHost::SetupHostContainer()
 
     hostContainer->SetLoadingMode(true);
     mainContainer->AddObject(hostContainer);
-
+/*
     connect(this,SIGNAL(BufferSizeChanged(qint32)),
             hostContainer.get(),SLOT(SetBufferSize(qint32)));
     connect(this,SIGNAL(SampleRateChanged(float)),
             hostContainer.get(),SLOT(SetSampleRate(float)));
-
+*/
     QSharedPointer<Connectables::Object> bridge;
 
 
@@ -442,12 +442,12 @@ void MainHost::SetupProjectContainer()
 
     projectContainer->SetLoadingMode(true);
     mainContainer->AddObject(projectContainer);
-
+/*
     connect(this,SIGNAL(BufferSizeChanged(qint32)),
             projectContainer.get(),SLOT(SetBufferSize(qint32)));
     connect(this,SIGNAL(SampleRateChanged(float)),
             projectContainer.get(),SLOT(SetSampleRate(float)));
-
+*/
     QSharedPointer<Connectables::Object> bridge;
 
     //bridge in
@@ -572,12 +572,12 @@ void MainHost::SetupProgramContainer()
 
     programContainer->SetOptimizerFlag(true);
     mainContainer->AddObject(programContainer);
-
+/*
     connect(this,SIGNAL(BufferSizeChanged(qint32)),
             programContainer.get(),SLOT(SetBufferSize(qint32)));
     connect(this,SIGNAL(SampleRateChanged(float)),
             programContainer.get(),SLOT(SetSampleRate(float)));
-
+*/
     QSharedPointer<Connectables::Object> bridge;
 
     //bridge in
@@ -697,12 +697,12 @@ void MainHost::SetupGroupContainer()
     groupContainer->SetLoadingMode(true);
 
     mainContainer->AddObject(groupContainer);
-
+/*
     connect(this,SIGNAL(BufferSizeChanged(qint32)),
             groupContainer.get(),SLOT(SetBufferSize(qint32)));
     connect(this,SIGNAL(SampleRateChanged(float)),
             groupContainer.get(),SLOT(SetSampleRate(float)));
-
+*/
     QSharedPointer<Connectables::Object> bridge;
 
     //bridge in
@@ -1108,7 +1108,11 @@ bool MainHost::LoadSetupFile(const QString &filename)
             if(!name.endsWith(SETUP_JSON_BINARY_FILE_EXTENSION, Qt::CaseInsensitive))
                 binary = false;
 
-            no_error = JsonReader::readProjectFile(&file,this,mainWindow,binary);
+            no_error = JsonReader::readProjectFile(&file,this,nullptr,binary);
+
+            _MSGOBJ(msg,FixedObjId::mainWindow);
+            msg.prop[MsgObject::FilesToLoad]=name;
+            SendMsg(msg);
         }
     } else {
         no_error = false;
@@ -1174,7 +1178,11 @@ bool MainHost::LoadProjectFile(const QString &filename)
             if(!name.endsWith(PROJECT_JSON_BINARY_FILE_EXTENSION, Qt::CaseInsensitive))
                 binary = false;
 
-            no_error = JsonReader::readProjectFile(&file, this, mainWindow, binary);
+            no_error = JsonReader::readProjectFile(&file, this, nullptr, binary);
+
+            _MSGOBJ(msg,FixedObjId::mainWindow);
+            msg.prop[MsgObject::FilesToLoad]=name;
+            SendMsg(msg);
         }
     } else {
         no_error = false;
@@ -1414,6 +1422,10 @@ void MainHost::ReceiveMsg(const MsgObject &msg)
         }
 
         if(msg.prop.contains(MsgObject::Project)) {
+            if(msg.prop.contains(MsgObject::FilesToLoad)) {
+                LoadProjectFile( msg.prop[MsgObject::FilesToLoad].toString() );
+                return;
+            }
             switch(msg.prop[MsgObject::Project].toInt()) {
                 case MsgObject::Load :
                     LoadProjectFile();
@@ -1432,6 +1444,10 @@ void MainHost::ReceiveMsg(const MsgObject &msg)
         }
 
         if(msg.prop.contains(MsgObject::Setup)) {
+            if(msg.prop.contains(MsgObject::FilesToLoad)) {
+                LoadSetupFile( msg.prop[MsgObject::FilesToLoad].toString() );
+                return;
+            }
             switch(msg.prop[MsgObject::Setup].toInt()) {
                 case MsgObject::Load :
                     LoadSetupFile();
@@ -1448,6 +1464,7 @@ void MainHost::ReceiveMsg(const MsgObject &msg)
             }
             return;
         }
+
 
 
         return;

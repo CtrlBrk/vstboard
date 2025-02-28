@@ -79,7 +79,6 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
 
-
 #ifdef QT_NO_DEBUG
     QTranslator qtTranslator;
     if(qtTranslator.load("qt_" + QLocale::system().name(), ":/translations/"))

@@ -116,8 +116,14 @@ namespace Connectables {
            */
         virtual void NewRenderLoop() {}
 
-        void AddCable(const QWeakPointer<Cable>&c) {cablesMutex.lock(); listCables << c; cablesMutex.unlock();}
-        void RemoveCable(const QWeakPointer<Cable>&c) {cablesMutex.lock(); listCables.removeAll(c); cablesMutex.unlock();}
+        void AddCable(const QWeakPointer<Cable>&c) {
+            cablesMutex.lock(); listCables << c; cablesMutex.unlock();
+            SendMsg(PinMessage::FadeIn);
+        }
+        void RemoveCable(const QWeakPointer<Cable>&c) {
+            SendMsg(PinMessage::FadeOut);
+            cablesMutex.lock(); listCables.removeAll(c); cablesMutex.unlock();
+        }
 
     protected:
 

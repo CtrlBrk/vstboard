@@ -50,7 +50,9 @@ AudioBuffer::AudioBuffer(bool doublePrecision, bool externAlloc) :
     _maxVal(.0f),
     currentVu(.0f),
     externAlloc(externAlloc),
-    doublePrecision(doublePrecision)
+    doublePrecision(doublePrecision),
+    fadeIn(false),
+    fadeOut(false)
 {
     debugbuf("new double:"<<doublePrecision<<"extern:"<<externAlloc);
 }
@@ -264,6 +266,44 @@ void * AudioBuffer::GetPointerWillBeFilled()
     return pBuffer;
 }
 
+void AudioBuffer::FadeIn()
+{
+    float fade = .0f;
+    float incr = 1.0f/bufferSize;
+
+    float *buf = (float*)pBuffer;
+    long i=bufferSize;
+    while(i>0) {
+        *buf*=fade;
+
+        ++buf;
+        --i;
+
+        fade+=incr;
+    }
+
+    fadeIn=false;
+}
+
+void AudioBuffer::FadeOut()
+{
+    float fade = 1.0f;
+    float incr = 1.0f/bufferSize;
+
+    float *buf = (float*)pBuffer;
+    long i=bufferSize;
+    while(i>0) {
+        *buf*=fade;
+
+        ++buf;
+        --i;
+
+        fade-=incr;
+    }
+
+    fadeOut=false;
+}
+
 /*!
   Flatten the stack and return the resulting pointer.
   All the stacks are mixed together in one resulting buffer
@@ -368,6 +408,10 @@ void *AudioBuffer::ConsumeStack()
         }
 #endif
     }
+
+    //TODO not working, this is not enough
+    if(fadeIn) FadeIn();
+    if(fadeOut) FadeOut();
 
     return pBuffer;
 }

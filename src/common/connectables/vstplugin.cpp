@@ -445,7 +445,7 @@ bool VstPlugin::initPlugin()
     {
         QMutexLocker lock(&objMutex);
 
-        long ver = EffGetVstVersion();
+        /*long ver =*/ EffGetVstVersion();
 
         bufferSize = myHost->GetBufferSize();
         sampleRate = myHost->GetSampleRate();

@@ -14,11 +14,11 @@ bool JsonReader::readProjectFile(QIODevice *device, MainHost *host, MainWindow *
 
 	QJsonObject json = loadDoc.object();
 	
-	if (json.contains("proc")) {
+    if (json.contains("proc") && host) {
 		readProjectProcess(json["proc"].toObject(), host);
 	}
-	if (json.contains("view")) {
-		readProjectView(json["view"].toObject(), window, host);
+    if (json.contains("view") && window) {
+        readProjectView(json["view"].toObject(), window, host);
 	}
 
 	return true;

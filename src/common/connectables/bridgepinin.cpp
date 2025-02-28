@@ -65,7 +65,8 @@ void BridgePinIn::SendMsgToOutput()
     for(unsigned int i=0; i<msgCount; i++) {
         parent->GetPin(info)->SendMsg(messagesType[i],messagesData[i]);
     }
-
+/*
+ //is valueType used ?
     switch(messagesType[msgCount-1]) {
         case PinMessage::AudioBuffer :
         if(static_cast<AudioBuffer*>(messagesData[msgCount-1])->GetCurrentVu() < 0.01)
@@ -81,6 +82,7 @@ void BridgePinIn::SendMsgToOutput()
         default :
             valueType=PinType::ND;
     }
+*/
 }
 
 float BridgePinIn::GetValue()

@@ -31,6 +31,7 @@
 //#include "models/programsmodel.h"
 #include "views/keybindingdialog.h"
 #include "msgobject.h"
+#include "projectfile/jsonreader.h"
 
 #include <QWindow>
 
@@ -223,6 +224,12 @@ void MainWindow::ReceiveMsg(const MsgObject &msg)
     }
 
     if(msg.objIndex==FixedObjId::mainWindow) {
+        if(msg.prop.contains(MsgObject::FilesToLoad)) {
+            QFile file(msg.prop[MsgObject::FilesToLoad].toString());
+            JsonReader::readProjectFile(&file,nullptr,this,false);
+            return;
+        }
+
         if(msg.prop.contains(MsgObject::Setup) && msg.prop.contains(MsgObject::Project)) {
             currentFileChanged(msg);
             return;
@@ -888,6 +895,7 @@ void MainWindow::openRecentSetup()
         return;
 
     _MSGOBJ(msg,FixedObjId::mainHost);
+    msg.prop[MsgObject::Setup]=999;
     msg.prop[MsgObject::FilesToLoad]=action->data().toString();
     SendMsg(msg);
     // myHost->LoadSetupFile( action->data().toString() );
@@ -900,6 +908,7 @@ void MainWindow::openRecentProject()
         return;
 
     _MSGOBJ(msg,FixedObjId::mainHost);
+    msg.prop[MsgObject::Project]=999;
     msg.prop[MsgObject::FilesToLoad]=action->data().toString();
     SendMsg(msg);
     // myHost->LoadProjectFile( action->data().toString() );

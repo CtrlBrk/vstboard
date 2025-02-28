@@ -190,7 +190,9 @@ namespace PinMessage {
         AudioBuffer,
         MidiMsg,
         ParameterValue,
-		VstEvent
+        VstEvent,
+        FadeIn,
+        FadeOut
     };
 }
 

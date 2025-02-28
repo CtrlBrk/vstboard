@@ -72,10 +72,10 @@ AudioDevice::AudioDevice(MainHostHost *myHost,const ObjectInfo &info,QObject *pa
 
     devOutClosing=false;
     setObjectName(objInfo.name);
-
+/*
     connect(myHost,SIGNAL(SampleRateChanged(float)),
             this,SLOT(SetSampleRate(float)));
-
+*/
     connect(this,SIGNAL(InUseChanged(PaHostApiIndex,PaDeviceIndex,bool,PaTime,PaTime,double)),
            myHost->audioDevices,SLOT(OnToggleDeviceInUse(PaHostApiIndex,PaDeviceIndex,bool,PaTime,PaTime,double)));
 /*

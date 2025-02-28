@@ -21,10 +21,10 @@
 #ifndef AUDIOPIN_H
 #define AUDIOPIN_H
 
-#ifdef _MSC_VER
-#pragma warning( push )
-#pragma warning( disable : 4100 )
-#endif
+// #ifdef _MSC_VER
+// #pragma warning( push )
+// #pragma warning( disable : 4100 )
+// #endif
 
 #include "pin.h"
 #include "../audiobuffer.h"
@@ -51,13 +51,13 @@ namespace Connectables {
         AudioBuffer * GetBuffer() {return buffer;}
         void SetBuffer(AudioBuffer *buf) { buffer->AddToStack(buf); }
 
-        float GetValue();
-        void NewRenderLoop();
+        float GetValue() override;
+        void NewRenderLoop() override;
 
-        void ReceivePinMsg(const PinMessage::Enum msgType,void *data=0);
+        void ReceivePinMsg(const PinMessage::Enum msgType,void *data=0) override;
         void SendAudioBuffer();
 
-        void ReceiveMsg(const MsgObject &);
+        void ReceiveMsg(const MsgObject &) override;
 
     protected:
 
@@ -70,8 +70,8 @@ namespace Connectables {
     };
 }
 
-#ifdef _MSC_VER
-#pragma warning( pop )
-#endif
+// #ifdef _MSC_VER
+// #pragma warning( pop )
+// #endif
 
 #endif // AUDIOPIN_H

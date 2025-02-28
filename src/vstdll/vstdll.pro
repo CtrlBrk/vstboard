@@ -73,8 +73,8 @@ vst24sdk {
         # vst2shell.cpp \
 
 } else {
-    SOURCES += myvst2wrapper.cpp \
-
+    SOURCES += vestigewrapper.cpp
+    HEADERS += vestigewrapper.h
 }
 
 SOURCES += \

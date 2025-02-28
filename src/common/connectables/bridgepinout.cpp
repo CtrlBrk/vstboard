@@ -35,6 +35,8 @@ void BridgePinOut::SendMsg(const PinMessage::Enum msgType,void *data)
 {
     Pin::SendMsg(msgType,data);
 
+    /*
+     //is valueType used ?
     switch(msgType) {
         case PinMessage::AudioBuffer :
             if(static_cast<AudioBuffer*>(data)->GetCurrentVu() < 0.01)
@@ -50,7 +52,7 @@ void BridgePinOut::SendMsg(const PinMessage::Enum msgType,void *data)
         default :
             valueType=PinType::ND;
     }
-
+*/
     valueChanged=true;
 }
 

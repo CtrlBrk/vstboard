@@ -31,7 +31,7 @@
     #include "vst2shell.h"
 #else
     #include "../vestige.h"
-    #include "myvst2wrapper.h"
+    #include "vestigewrapper.h"
 #endif
 // #pragma warning ( pop )
 
@@ -73,7 +73,7 @@ VST_EXPORT AEffect* VSTPluginMain (audioMasterCallback audioMaster)
     if (InitModule () == false)
         return nullptr;
 
-    MyVst2Wrapper * myWrap = MyVst2Wrapper::create(GetPluginFactoryVst24(), VstBoardProcessorUID, uniqueIDEffect, audioMaster);
+    VestigeWrapper * myWrap = VestigeWrapper::create(GetPluginFactoryVst24(), VstBoardProcessorUID, audioMaster);
     return &myWrap->Effect;
 }
 }

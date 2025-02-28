@@ -48,7 +48,14 @@ public:
         inline bool GetDoublePrecision() const {return doublePrecision;}
         float GetVu();
 
+
         void AddGraph();
+
+        void SetFadeOut() {fadeOut=true;}
+        void SetFadeIn() {fadeIn=true;}
+
+        void FadeOut();
+        void FadeIn();
 
         /// \return the current buffer size
         inline qint32 GetSize() const {return bufferSize;}
@@ -71,6 +78,7 @@ protected:
 #ifdef VUCHARTS
         View::AudioGraph *audiograph;
 #endif
+
         /// the stack size
         qint32 stackSize;
 
@@ -93,6 +101,9 @@ protected:
         bool externAlloc;
 
         bool doublePrecision;
+
+        bool fadeIn;
+        bool fadeOut;
 };
 
 

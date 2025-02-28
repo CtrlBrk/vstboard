@@ -39,7 +39,7 @@ Pin::Pin(const pinConstructArgs &conf) :
     visible(conf.visible),
 	closed(false),
 	valueChanged(false),
-	pinList(conf.pinList)
+    pinList(conf.pinList)
 {
 	connectInfo.container = parent->GetContainerId();
 }
