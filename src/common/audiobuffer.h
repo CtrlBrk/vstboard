@@ -51,12 +51,6 @@ public:
 
         void AddGraph();
 
-        void SetFadeOut() {fadeOut=true;}
-        void SetFadeIn() {fadeIn=true;}
-
-        void FadeOut();
-        void FadeIn();
-
         /// \return the current buffer size
         inline qint32 GetSize() const {return bufferSize;}
 
@@ -102,8 +96,7 @@ protected:
 
         bool doublePrecision;
 
-        bool fadeIn;
-        bool fadeOut;
+
 };
 
 

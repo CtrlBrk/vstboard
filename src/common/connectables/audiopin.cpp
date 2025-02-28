@@ -140,12 +140,8 @@ void AudioPin::ReceivePinMsg(const PinMessage::Enum msgType,void *data)
         buffer->AddToStack(buf);
     }
 
-    if(msgType==PinMessage::FadeIn) {
-        buffer->SetFadeIn();
-    }
-
     if(msgType==PinMessage::FadeOut) {
-        buffer->SetFadeOut();
+       // LOG("fade")
     }
 }
 

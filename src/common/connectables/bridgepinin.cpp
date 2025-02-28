@@ -39,6 +39,7 @@ void BridgePinIn::ReceivePinMsg(const PinMessage::Enum msgType,void *data)
 {
     if(msgCount>=50) {
         LOG("drop msg");
+        msgCount=0;
         return;
     }
 

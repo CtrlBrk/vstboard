@@ -27,7 +27,6 @@
 #include "msghandler.h"
 #include "pinslist.h"
 
-
 namespace Connectables {
 	class Object;
 	class Cable;
@@ -118,11 +117,11 @@ namespace Connectables {
 
         void AddCable(const QWeakPointer<Cable>&c) {
             cablesMutex.lock(); listCables << c; cablesMutex.unlock();
-            SendMsg(PinMessage::FadeIn);
+            // SendMsg(PinMessage::FadeIn);
         }
         void RemoveCable(const QWeakPointer<Cable>&c) {
-            SendMsg(PinMessage::FadeOut);
-            cablesMutex.lock(); listCables.removeAll(c); cablesMutex.unlock();
+            // SendMsg(PinMessage::FadeOut);
+            cablesMutex.lock();listCables.removeAll(c);cablesMutex.unlock();
         }
 
     protected:
