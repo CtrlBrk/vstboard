@@ -31,6 +31,18 @@
 #include <QObject>
 #include <mainhost.h>
 
+#include "connectables/clapaudiodevicein.h"
+#include "connectables/clapaudiodeviceout.h"
+// #include "connectables/clapmididevice.h"
+// #include "connectables/clapautomation.h"
+
+#define NB_MAIN_BUSES_IN 4
+#define NB_MAIN_BUSES_OUT 4
+// #define NB_AUX_BUSES_IN 1
+// #define NB_AUX_BUSES_OUT 1
+#define NB_MIDI_BUSES_IN 1
+#define NB_MIDI_BUSES_OUT 1
+
 class Gui;
 
 class ClapMainHost :
@@ -93,6 +105,12 @@ public:
     bool startProcessing() noexcept override;
     void stopProcessing() noexcept override;
 
+
+    bool addAudioIn(Connectables::ClapAudioDeviceIn *dev);
+    bool addAudioOut(Connectables::ClapAudioDeviceOut *dev);
+    bool removeAudioIn(Connectables::ClapAudioDeviceIn *dev);
+    bool removeAudioOut(Connectables::ClapAudioDeviceOut *dev);
+
 protected:
     bool implementsGui() const noexcept override { return true; }
     bool guiIsApiSupported(const char *api, bool isFloating) noexcept override;
@@ -107,7 +125,15 @@ protected:
     bool guiSetSize(uint32_t width, uint32_t height) noexcept override;
     bool guiGetSize(uint32_t *width, uint32_t *height) noexcept override;
 
+    QList<Connectables::ClapAudioDeviceIn*>lstAudioIn;
+    QList<Connectables::ClapAudioDeviceOut*>lstAudioOut;
+    // QList<Connectables::ClapMidiDevice*>lstMidiIn;
+    // QList<Connectables::ClapMidiDevice*>lstMidiOut;
+    // QList<Connectables::ClapAutomation*>lstVstAutomation;
+
     Gui* guiWindow;
+    QMutex mutexDevices;
+
 private:
     double paramTest1{1}, paramTest2{1};
     std::unordered_map<clap_id, double *> paramToValue;

@@ -52,6 +52,8 @@ INCLUDEPATH += ../common
 
 SOURCES += \
     clapmainhost.cpp \
+    connectables/clapaudiodevicein.cpp \
+    connectables/clapaudiodeviceout.cpp \
     connectables/objectfactoryclap.cpp \
     main.cpp \
     gui.cpp \
@@ -59,6 +61,8 @@ SOURCES += \
 
 HEADERS  += \
     clapmainhost.h \
+    connectables/clapaudiodevicein.h \
+    connectables/clapaudiodeviceout.h \
     connectables/objectfactoryclap.h \
     gui.h \
     mainwindowclap.h

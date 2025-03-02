@@ -188,8 +188,50 @@ bool ClapMainHost::stateLoad(const clap_istream *stream) noexcept
 
 clap_process_status ClapMainHost::process(const clap_process *process) noexcept
 {
+    SetBufferSize( process->frames_count );
+
     if (process->audio_outputs_count <= 0)
         return CLAP_PROCESS_SLEEP;
+
+    //get audio from input
+    if (process->frames_count > 0) {
+
+        uint32_t bufCpt=0;
+
+        Q_FOREACH(Connectables::ClapAudioDeviceIn* dev, lstAudioIn) {
+
+            if(bufCpt < process->audio_inputs_count) {
+                if(doublePrecision) {
+                    dev->SetBuffersD(process->audio_inputs[bufCpt].data64, process->frames_count);
+                } else {
+                    dev->SetBuffers(process->audio_inputs[bufCpt].data32, process->frames_count);
+                }
+                bufCpt++;
+            }
+
+        }
+    }
+
+    Render();
+
+
+    //put audio to outputs
+    if (process->frames_count > 0) {
+
+        uint32_t bufCpt=0;
+
+        Q_FOREACH(Connectables::ClapAudioDeviceOut* dev, lstAudioOut) {
+
+            if(bufCpt < process->audio_outputs_count) {
+                if(doublePrecision) {
+                    dev->GetBuffersD(process->audio_outputs[bufCpt].data64, process->frames_count);
+                } else {
+                    dev->GetBuffers(process->audio_outputs[bufCpt].data32, process->frames_count);
+                }
+            }
+            bufCpt++;
+        }
+    }
 
     return CLAP_PROCESS_CONTINUE;
 }
@@ -265,5 +307,50 @@ bool ClapMainHost::guiSetSize(uint32_t width, uint32_t height) noexcept
 }
 bool ClapMainHost::guiGetSize(uint32_t *width, uint32_t *height) noexcept
 {
+    return true;
+}
+
+
+bool ClapMainHost::addAudioIn(Connectables::ClapAudioDeviceIn *dev)
+{
+    QMutexLocker l(&mutexDevices);
+
+    if(lstAudioIn.contains(dev))
+        return false;
+
+    if(lstAudioIn.count() == NB_MAIN_BUSES_IN)
+        return false;
+
+    dev->setObjectName( QString("Audio in %1").arg( lstAudioIn.count()+1 ) );
+    lstAudioIn << dev;
+    return true;
+}
+
+bool ClapMainHost::addAudioOut(Connectables::ClapAudioDeviceOut *dev)
+{
+    QMutexLocker l(&mutexDevices);
+
+    if(lstAudioOut.contains(dev))
+        return false;
+
+    if(lstAudioOut.count() == NB_MAIN_BUSES_OUT)
+        return false;
+
+    dev->setObjectName( QString("Audio out %1").arg( lstAudioOut.count()+1 ) );
+    lstAudioOut << dev;
+    return true;
+}
+
+bool ClapMainHost::removeAudioIn(Connectables::ClapAudioDeviceIn *dev)
+{
+    QMutexLocker l(&mutexDevices);
+    lstAudioIn.removeAll(dev);
+    return true;
+}
+
+bool ClapMainHost::removeAudioOut(Connectables::ClapAudioDeviceOut *dev)
+{
+    QMutexLocker l(&mutexDevices);
+    lstAudioOut.removeAll(dev);
     return true;
 }

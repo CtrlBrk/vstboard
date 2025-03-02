@@ -1,5 +1,9 @@
 #include "objectfactoryclap.h"
 
+#include "connectables/clapaudiodevicein.h"
+#include "connectables/clapaudiodeviceout.h"
+// #include "connectables/clapautomation.h"
+// #include "connectables/clapmididevice.h"
 
 using namespace Connectables;
 
@@ -18,11 +22,11 @@ Object *ObjectFactoryClap::CreateOtherObjects(const ObjectInfo &info, int objId)
 
         switch(info.objType) {
         case ObjType::AudioInterfaceIn:
-            // obj = new VstAudioDeviceIn(myHost,objId, info);
+             obj = new ClapAudioDeviceIn(myHost,objId, info);
             break;
 
         case ObjType::AudioInterfaceOut:
-            // obj = new VstAudioDeviceOut(myHost,objId, info);
+            obj = new ClapAudioDeviceOut(myHost,objId, info);
             break;
 
         case ObjType::VstAutomation:
