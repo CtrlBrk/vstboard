@@ -3,7 +3,7 @@
 #include "connectables/clapaudiodevicein.h"
 #include "connectables/clapaudiodeviceout.h"
 // #include "connectables/clapautomation.h"
-// #include "connectables/clapmididevice.h"
+#include "connectables/clapmididevice.h"
 
 using namespace Connectables;
 
@@ -34,7 +34,7 @@ Object *ObjectFactoryClap::CreateOtherObjects(const ObjectInfo &info, int objId)
             break;
 
         case ObjType::MidiInterface:
-            // obj = new VstMidiDevice(myHost,objId, info);
+            obj = new ClapMidiDevice(myHost,objId, info);
             break;
 
         default:

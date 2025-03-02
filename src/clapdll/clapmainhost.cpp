@@ -193,6 +193,11 @@ clap_process_status ClapMainHost::process(const clap_process *process) noexcept
     if (process->audio_outputs_count <= 0)
         return CLAP_PROCESS_SLEEP;
 
+    //input events
+    Q_FOREACH(Connectables::ClapMidiDevice* dev, lstMidiIn) {
+        dev->EventFromInput( process->in_events );
+    }
+
     //get audio from input
     if (process->frames_count > 0) {
 
@@ -352,5 +357,30 @@ bool ClapMainHost::removeAudioOut(Connectables::ClapAudioDeviceOut *dev)
 {
     QMutexLocker l(&mutexDevices);
     lstAudioOut.removeAll(dev);
+    return true;
+}
+
+
+bool ClapMainHost::addMidiIn(Connectables::ClapMidiDevice *dev)
+{
+    lstMidiIn << dev;
+    return true;
+}
+
+bool ClapMainHost::addMidiOut(Connectables::ClapMidiDevice *dev)
+{
+    lstMidiOut << dev;
+    return true;
+}
+
+bool ClapMainHost::removeMidiIn(Connectables::ClapMidiDevice *dev)
+{
+    lstMidiIn.removeAll(dev);
+    return true;
+}
+
+bool ClapMainHost::removeMidiOut(Connectables::ClapMidiDevice *dev)
+{
+    lstMidiOut.removeAll(dev);
     return true;
 }

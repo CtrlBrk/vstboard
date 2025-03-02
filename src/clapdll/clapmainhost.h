@@ -33,7 +33,7 @@
 
 #include "connectables/clapaudiodevicein.h"
 #include "connectables/clapaudiodeviceout.h"
-// #include "connectables/clapmididevice.h"
+#include "connectables/clapmididevice.h"
 // #include "connectables/clapautomation.h"
 
 #define NB_MAIN_BUSES_IN 4
@@ -111,6 +111,11 @@ public:
     bool removeAudioIn(Connectables::ClapAudioDeviceIn *dev);
     bool removeAudioOut(Connectables::ClapAudioDeviceOut *dev);
 
+    bool addMidiIn(Connectables::ClapMidiDevice *dev);
+    bool addMidiOut(Connectables::ClapMidiDevice *dev);
+    bool removeMidiIn(Connectables::ClapMidiDevice *dev);
+    bool removeMidiOut(Connectables::ClapMidiDevice *dev);
+
 protected:
     bool implementsGui() const noexcept override { return true; }
     bool guiIsApiSupported(const char *api, bool isFloating) noexcept override;
@@ -127,8 +132,8 @@ protected:
 
     QList<Connectables::ClapAudioDeviceIn*>lstAudioIn;
     QList<Connectables::ClapAudioDeviceOut*>lstAudioOut;
-    // QList<Connectables::ClapMidiDevice*>lstMidiIn;
-    // QList<Connectables::ClapMidiDevice*>lstMidiOut;
+    QList<Connectables::ClapMidiDevice*>lstMidiIn;
+    QList<Connectables::ClapMidiDevice*>lstMidiOut;
     // QList<Connectables::ClapAutomation*>lstVstAutomation;
 
     Gui* guiWindow;

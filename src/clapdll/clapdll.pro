@@ -54,6 +54,7 @@ SOURCES += \
     clapmainhost.cpp \
     connectables/clapaudiodevicein.cpp \
     connectables/clapaudiodeviceout.cpp \
+    connectables/clapmididevice.cpp \
     connectables/objectfactoryclap.cpp \
     main.cpp \
     gui.cpp \
@@ -63,6 +64,7 @@ HEADERS  += \
     clapmainhost.h \
     connectables/clapaudiodevicein.h \
     connectables/clapaudiodeviceout.h \
+    connectables/clapmididevice.h \
     connectables/objectfactoryclap.h \
     gui.h \
     mainwindowclap.h
