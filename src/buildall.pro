@@ -20,4 +20,7 @@ vstsdk {
     }
 }
 
+SUBDIRS += clapLoader
+SUBDIRS += clapdll
+
 CONFIG += ordered

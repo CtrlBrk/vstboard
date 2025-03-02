@@ -60,6 +60,9 @@ MainHost::MainHost(Settings *settings, QObject *parent) :
     ,cptHost32try(0)
 {
     LOG("mainhost " << this)
+    QCoreApplication::setOrganizationName("CtrlBrk");
+    QCoreApplication::setApplicationName("VstBoard");
+
     qRegisterMetaType<ConnectionInfo>("ConnectionInfo");
     qRegisterMetaType<ObjectInfo>("ObjectInfo");
     qRegisterMetaType<ObjectContainerAttribs>("ObjectContainerAttribs");

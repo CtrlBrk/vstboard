@@ -53,7 +53,7 @@ std::wstring regBaseKey(L"Software\\CtrlBrk\\VstBoard\\x86");
 #endif
 
 
-std::wstring RegGetString(HKEY hKey, const std::wstring& subKey, const std::wstring& value) {
+ bool RegGetString(HKEY hKey, const std::wstring& subKey, const std::wstring& value, std::wstring& data) {
     DWORD dataSize{};
     LONG retCode = ::RegGetValue(
         hKey,
@@ -66,10 +66,11 @@ std::wstring RegGetString(HKEY hKey, const std::wstring& subKey, const std::wstr
     );
     if (retCode != ERROR_SUCCESS)
     {
-        throw RegistryError{ L"Cannot read string from registry", retCode };
+        // throw RegistryError{ L"Cannot read string from registry", retCode };
+        return false;
     }
 
-    std::wstring data;
+    // std::wstring data;
     data.resize(dataSize / sizeof(wchar_t));
 
     retCode = ::RegGetValue(
@@ -84,21 +85,23 @@ std::wstring RegGetString(HKEY hKey, const std::wstring& subKey, const std::wstr
 
     if (retCode != ERROR_SUCCESS)
     {
-        throw RegistryError{ L"Cannot read string from registry", retCode };
+        return false;
+        // throw RegistryError{ L"Cannot read string from registry", retCode };
     }
 
     DWORD stringLengthInWchars = dataSize / sizeof(wchar_t);
     stringLengthInWchars--; // Exclude the NUL written by the Win32 API
     data.resize(stringLengthInWchars);
-    return data;
+    return true;
 }
 
-void RegSetString(HKEY hKey, const std::wstring& subKey, std::wstring& value, const std::wstring& data)
+bool RegSetString(HKEY hKey, const std::wstring& subKey, std::wstring& value, const std::wstring& data)
 {
     HKEY  handle;
     LONG retCode = ::RegOpenKeyEx(hKey, subKey.c_str(), 0, KEY_SET_VALUE, &handle);
     if (retCode != ERROR_SUCCESS) {
-        throw RegistryError{ L"Cannot open registry key", retCode };
+        // throw RegistryError{ L"Cannot open registry key", retCode };
+        return false;
     }
 
     DWORD dataSize = (DWORD)data.length() * sizeof(WCHAR);
@@ -114,8 +117,11 @@ void RegSetString(HKEY hKey, const std::wstring& subKey, std::wstring& value, co
 
     if (retCode != ERROR_SUCCESS)
     {
-        throw RegistryError{ L"Cannot set string in registry", retCode };
+        // throw RegistryError{ L"Cannot set string in registry", retCode };
+        return false;
     }
+
+    return true;
 }
 
 HMODULE LoadDll(const std::wstring &dll) {
@@ -164,22 +170,22 @@ std::wstring TestInstallPath(const std::wstring &currentPath) {
 
     std::list<std::wstring> instPaths = { currentPath };
 
-    try {
-        instPaths.push_back(RegGetString(HKEY_CURRENT_USER, regBaseKey, installKey));
+    std::wstring pathFromReg;
+    if(RegGetString(HKEY_CURRENT_USER, regBaseKey, installKey, pathFromReg)) {
+        instPaths.push_back(pathFromReg);
     }
-    catch (RegistryError & /*e*/) {}
-
-    try {
-        instPaths.push_back( RegGetString(HKEY_LOCAL_MACHINE, regBaseKey, installKey) );
+    if(RegGetString(HKEY_LOCAL_MACHINE, regBaseKey, installKey, pathFromReg)) {
+        instPaths.push_back(pathFromReg);
     }
-    catch (RegistryError & /*e*/) {}
 
+ #ifndef QT_NO_DEBUG
     for (auto const& p : instPaths) {
         struct __stat64 buffer;
         if (_wstat64((p + L"\\Qt6Cored.dll").c_str(), &buffer) == 0) {
             return p;
         }
     }
+#endif
 
     for (auto const& p : instPaths) {
         struct __stat64 buffer;
@@ -191,18 +197,20 @@ std::wstring TestInstallPath(const std::wstring &currentPath) {
     return L"";
 }
 
-const std::wstring GetCurrentDllPath()
+bool GetCurrentDllPath(std::wstring& currentpath)
 {
     WCHAR buffer[MAX_PATH];
     HMODULE hm = NULL;
 
     if (GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCWSTR)&__dummyLoaderLocation, &hm) == 0)
     {
-        throw FileError{ L"Can't get module handle", 1, L"" };
+        // throw FileError{ L"Can't get module handle", 1, L"" };
+        return false;
     }
     if (GetModuleFileName(hm, buffer, sizeof(buffer)) == 0)
     {
-        throw FileError{ L"Can't get module filename", 1, L"" };
+        return false;
+        // throw FileError{ L"Can't get module filename", 1, L"" };
     }
 
     std::wstring path(buffer);
@@ -211,7 +219,8 @@ const std::wstring GetCurrentDllPath()
     {
         path = path.substr(0, last_slash_idx);
     }
-    return path;
+    currentpath = path;
+    return true;
 }
 
 
@@ -222,25 +231,19 @@ void AddDllPath()
     std::wstring path(newSearchPath);
     path += L";";
 
-    try {
-        path += GetCurrentDllPath();
-        path += L"\\Qt;";
-        path += GetCurrentDllPath();
-        path += L";";
+    std::wstring curPath;
+    if(GetCurrentDllPath(curPath)) {
+        path += curPath + L"\\Qt;";
+        path += curPath + L";";
     }
-    catch (FileError & ) {}
 
-    try {
-        path += RegGetString(HKEY_LOCAL_MACHINE, regBaseKey, installKey);
-        path += L";";
+    std::wstring pathFromReg;
+    if(RegGetString(HKEY_LOCAL_MACHINE, regBaseKey, installKey, pathFromReg)) {
+        path += pathFromReg;
     }
-    catch (RegistryError & ) {}
-
-    try {
-        path += RegGetString(HKEY_CURRENT_USER, regBaseKey, installKey);
-        path += L";";
+    if(RegGetString(HKEY_CURRENT_USER, regBaseKey, installKey, pathFromReg)) {
+        path += pathFromReg;
     }
-    catch (RegistryError & ) {}
 
     ::SetEnvironmentVariable(L"Path", path.c_str());
     //::SetEnvironmentVariable(L"QT_QPA_PLATFORM_PLUGIN_PATH", GetPathFromRegistry().c_str());
@@ -268,7 +271,8 @@ bool LoadRequiredDlls()
 
     for (auto const& dllName : dlls) {
         if (!LoadDll(dllName)) {
-            throw FileError{ L"File not found : ", 1, dllName };
+            return false;
+            // throw FileError{ L"File not found : ", 1, dllName };
         }
     }
 

@@ -30,6 +30,7 @@ Settings::Settings(const QString & settingsGroup, QObject *parent) :
 void Settings::SetSetting(QString name, QVariant value)
 {
     settings.setValue(settingsGroup + name,value);
+    LOG( settings.value(settingsGroup + name) )
 }
 
 QVariant Settings::GetSetting(QString name, QVariant defaultVal)

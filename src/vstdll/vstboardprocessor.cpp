@@ -171,8 +171,8 @@ tresult PLUGIN_API VstBoardProcessor::initialize (FUnknown* context)
 //    qRegisterMetaTypeStreamOperators<ObjectInfo>("ObjectInfo");
 //    qRegisterMetaTypeStreamOperators<ObjectContainerAttribs>("ObjectContainerAttribs");
 
-    QCoreApplication::setOrganizationName("CtrlBrk");
-    QCoreApplication::setApplicationName("VstBoard");
+    // QCoreApplication::setOrganizationName("CtrlBrk");
+    // QCoreApplication::setApplicationName("VstBoard");
 
 
     Open();
