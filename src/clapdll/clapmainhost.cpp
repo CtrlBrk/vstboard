@@ -33,6 +33,9 @@
 
 #include "gui.h"
 
+#include "projectfile/jsonwriter.h"
+#include "projectfile/jsonreader.h"
+
 ClapMainHost::ClapMainHost(const clap_host *host) :
     MainHost(0,0),
     clap::helpers::Plugin<clap::helpers::MisbehaviourHandler::Terminate, clap::helpers::CheckingLevel::Maximal>(&desc, host),
@@ -178,11 +181,41 @@ bool ClapMainHost::notePortsInfo(uint32_t index, bool isInput, clap_note_port_in
 
 bool ClapMainHost::stateSave(const clap_ostream *stream) noexcept
 {
+    QJsonObject jsonObj;
+    jsonObj["proc"] = JsonWriter::writeProjectProcess(this, true, true);
+    QJsonDocument saveDoc(jsonObj);
+    // QByteArray bArray = qCompress(saveDoc.toBinaryData());
+    QByteArray bArray = saveDoc.toJson(QJsonDocument::Indented);
+
+    int s = bArray.size();
+    auto r = stream->write(stream, &s, sizeof(int));
+    if (r < 0)
+        return false;
+    r = stream->write(stream, bArray.data(), bArray.size());
+    if (r < 0)
+        return false;
+
     return true;
 }
 
 bool ClapMainHost::stateLoad(const clap_istream *stream) noexcept
 {
+    int size = 0;
+    stream->read(stream, &size, sizeof(int));
+
+    //don't know how to write directly to a bytearray
+    char* buf = new char[size];
+    stream->read(stream, buf, size);
+
+    QByteArray bArray(QByteArray::fromRawData(buf, size));
+
+    // QJsonDocument loadDoc(QJsonDocument::fromBinaryData(qUncompress(bArray)));
+    QJsonDocument loadDoc(QJsonDocument::fromJson(bArray));
+    QJsonObject json = loadDoc.object();
+    if (json.contains("proc")) {
+        JsonReader::readProjectProcess(json["proc"].toObject(), this);
+    }
+
     return true;
 }
 
@@ -243,7 +276,10 @@ clap_process_status ClapMainHost::process(const clap_process *process) noexcept
 
 void ClapMainHost::paramsFlush(const clap_input_events *in, const clap_output_events *out) noexcept
 {
-
+    //input events
+    Q_FOREACH(Connectables::ClapMidiDevice* dev, lstMidiIn) {
+        dev->EventFromInput( in );
+    }
 }
 
 bool ClapMainHost::startProcessing() noexcept
@@ -294,6 +330,7 @@ void ClapMainHost::guiDestroy() noexcept
 
 bool ClapMainHost::guiSetParent(const clap_window *window) noexcept
 {
+    if(!guiWindow) return false;
     return guiWindow->attached((void*)window->ptr);
 }
 
@@ -308,10 +345,14 @@ bool ClapMainHost::guiAdjustSize(uint32_t *width, uint32_t *height) noexcept
 }
 bool ClapMainHost::guiSetSize(uint32_t width, uint32_t height) noexcept
 {
+    if(!guiWindow) return false;
+    QPoint pt(width,height);
+    guiWindow->OnResizeHandleMove(pt);
     return true;
 }
 bool ClapMainHost::guiGetSize(uint32_t *width, uint32_t *height) noexcept
 {
+
     return true;
 }
 

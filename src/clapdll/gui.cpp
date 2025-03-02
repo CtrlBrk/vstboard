@@ -73,7 +73,8 @@ void Gui::ReceiveMsg(const MsgObject &msg)
 
 void Gui::OnResizeHandleMove(const QPoint &pt)
 {
-    widget->resize( pt.x(), pt.y() );
+    if(widget)
+        widget->resize( pt.x(), pt.y() );
 
     if(myWindow)
         myWindow->resize(pt.x(), pt.y());

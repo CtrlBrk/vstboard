@@ -136,13 +136,13 @@ void ClapMidiDevice::HandleEvent(const clap_event_header_t *evt)
     case CLAP_EVENT_NOTE_ON:
     {
         auto nevt = reinterpret_cast<const clap_event_note *>(evt);
-        midiQueue << MidiMsg(nevt->channel | MidiConst::noteOn, nevt->key, (int)(256.0*nevt->velocity) );
+        midiQueue << MidiMsg(nevt->channel | MidiConst::noteOn, nevt->key, (int)(127.f*nevt->velocity) );
     }
     break;
     case CLAP_EVENT_NOTE_OFF:
     {
         auto nevt = reinterpret_cast<const clap_event_note *>(evt);
-        midiQueue << MidiMsg(nevt->channel | MidiConst::noteOff, nevt->key, (int)(256.0*nevt->velocity) );
+        midiQueue << MidiMsg(nevt->channel | MidiConst::noteOff, nevt->key, (int)(127.f*nevt->velocity) );
     }
     break;
     case CLAP_EVENT_PARAM_VALUE:
