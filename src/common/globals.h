@@ -123,6 +123,7 @@ namespace ObjType {
         Buffer,
         Vst3Plugin,
         VstPlugin32,
+        ClapPlugin,
         MainWindow
     };
 }

@@ -16,6 +16,10 @@ CONFIG += dll
 CONFIG += precompile_header
 PRECOMPILED_HEADER = ../common/precomp.h
 
+CONFIG += clap
+INCLUDEPATH += ../../libs/clap/include
+INCLUDEPATH += ../../libs/clap-helpers/include
+
 
 
 LIBS += -L$$VST3SDK_LIB -lbase

@@ -377,7 +377,7 @@ void MainWindow::SetupBrowsersModels(const QString &vstPath, const QString &brow
     listVstPluginsModel = new QFileSystemModel(this);
     listVstPluginsModel->setReadOnly(true);
     listVstPluginsModel->setResolveSymlinks(true);
-    listVstPluginsModel->setNameFilters(QStringList()<< "*.dll" << ".vst" << "*.vst3" << "*.fxb" << "*.fxp");
+    listVstPluginsModel->setNameFilters(QStringList()<< "*.dll" << ".vst" << "*.vst3" << "*.fxb" << "*.fxp" << "*.clap");
     listVstPluginsModel->setNameFilterDisables(false);
     listVstPluginsModel->setRootPath(vstPath);
     ui->VstBrowser->setModel(listVstPluginsModel);

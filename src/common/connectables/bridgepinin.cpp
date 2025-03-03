@@ -43,6 +43,10 @@ void BridgePinIn::ReceivePinMsg(const PinMessage::Enum msgType,void *data)
         return;
     }
 
+    if(msgType==PinMessage::MidiMsg) {
+        midiMessages[msgCount] = *(int*)data;
+    }
+
     messagesData[msgCount]=data;
     messagesType[msgCount]=msgType;
     ++msgCount;
@@ -64,7 +68,13 @@ void BridgePinIn::SendMsgToOutput()
     info.direction=PinDirection::Output;
 
     for(unsigned int i=0; i<msgCount; i++) {
-        parent->GetPin(info)->SendMsg(messagesType[i],messagesData[i]);
+
+
+        if(messagesType[i] == PinMessage::MidiMsg) {
+            parent->GetPin(info)->SendMsg(messagesType[i],&midiMessages[i]);
+        } else {
+            parent->GetPin(info)->SendMsg(messagesType[i],messagesData[i]);
+        }
     }
 /*
  //is valueType used ?

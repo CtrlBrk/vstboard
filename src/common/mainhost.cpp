@@ -58,6 +58,7 @@ MainHost::MainHost(Settings *settings, QObject *parent) :
     ,winId(0)
     ,vst32Process(0)
     ,cptHost32try(0)
+    // ,clapHost(0)
 {
     LOG("mainhost " << this)
     QCoreApplication::setOrganizationName("CtrlBrk");
@@ -182,6 +183,11 @@ void MainHost::Close()
     //    delete vst3Host;
 #endif
 
+    // if(clapHost) {
+    //     delete clapHost;
+    //     clapHost=0;
+    // }
+
     //is a child of mainhost : autodelete
     //if(programManager) {
         //delete programManager;
@@ -230,6 +236,8 @@ void MainHost::Init()
     // connect(this,SIGNAL(SampleRateChanged(float)),
             // vst3Host,SLOT(SetSampleRate(float)));
 #endif
+
+    // clapHost = new ClapHost(this);
 
     solver = new Solver();
 

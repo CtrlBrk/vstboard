@@ -78,7 +78,7 @@ void ObjectDropZone::dragEnterEvent( QGraphicsSceneDragDropEvent *event)
                 acceptedFiles << SETUP_JSON_FILE_EXTENSION << SETUP_JSON_BINARY_FILE_EXTENSION;
                 acceptedFiles << PROJECT_JSON_FILE_EXTENSION << PROJECT_JSON_BINARY_FILE_EXTENSION;
  #ifdef VSTSDK
-                acceptedFiles << "dll" << "vst" << "vst3" << "fxb" << "fxp";
+                acceptedFiles << "dll" << "vst" << "vst3" << "fxb" << "fxp" << "clap";
 #endif
                 if( acceptedFiles.contains( info.suffix(), Qt::CaseInsensitive) ) {
                     event->setDropAction(Qt::CopyAction);
@@ -162,30 +162,37 @@ bool ObjectDropZone::TranslateMimeData( const QMimeData * data, MsgObject &msg )
             fInfo.setFile( url.toLocalFile() );
             QString fileType(fInfo.suffix().toLower());
 
+            ObjectInfo i;
+
 #ifdef VSTSDK
             //vst plugin
             if ( fileType=="dll" || fileType=="vst") {
-                ObjectInfo infoVst;
-                infoVst.nodeType = NodeType::object;
-                infoVst.objType = ObjType::VstPlugin;
-                infoVst.filename = url.toLocalFile();
-                infoVst.name = fInfo.baseName();
-                streamObj << infoVst;
+                i.nodeType = NodeType::object;
+                i.objType = ObjType::VstPlugin;
+                i.filename = url.toLocalFile();
+                i.name = fInfo.baseName();
+                streamObj << i;
                 continue;
             }
             //vst3 plugin
             if ( fileType=="vst3" ) {
-                ObjectInfo infoVst;
-                infoVst.id = FixedObjId::noContainer;
-                infoVst.nodeType = NodeType::object;
-                infoVst.objType = ObjType::Vst3Plugin;
-                infoVst.filename = url.toLocalFile();
-                infoVst.name = fInfo.baseName();
-                streamObj << infoVst;
+                i.id = FixedObjId::noContainer;
+                i.nodeType = NodeType::object;
+                i.objType = ObjType::Vst3Plugin;
+                i.filename = url.toLocalFile();
+                i.name = fInfo.baseName();
+                streamObj << i;
                 continue;
             }
 #endif
-
+            if ( fileType=="clap") {
+                i.nodeType = NodeType::object;
+                i.objType = ObjType::ClapPlugin;
+                i.filename = url.toLocalFile();
+                i.name = fInfo.baseName();
+                streamObj << i;
+                continue;
+            }
             lstFiles << url.toLocalFile();
         }
         if(!lstFiles.isEmpty())

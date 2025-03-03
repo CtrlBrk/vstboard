@@ -1305,6 +1305,11 @@ QVariant Container::AddObject(QString type, QString name/*=""*/, QString id/*=""
         i.filename = type;
         i.apiName = name;
     }
+    if ( fileType=="clap" ) {
+        i.objType = ObjType::ClapPlugin;
+        i.filename = type;
+        i.apiName = name;
+    }
     if(type == "AudioInterface") {
         i.objType = ObjType::AudioInterface;
         i.apiName = name;

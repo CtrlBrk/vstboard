@@ -15,6 +15,12 @@ LIBS += -L$$VST3SDK_LIB -lsdk_hosting
 
 LIBDEPS = common
 
+
+CONFIG += clap
+INCLUDEPATH += ../../libs/clap/include
+INCLUDEPATH += ../../libs/clap-helpers/include
+
+
 rtaudio {
 
     LIBS += -L$$RTMIDI_LIB -lrtmidi

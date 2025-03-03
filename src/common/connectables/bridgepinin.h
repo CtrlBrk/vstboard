@@ -38,6 +38,7 @@ namespace Connectables {
         PinType::Enum valueType;
         PinMessage::Enum messagesType[50];
         void* messagesData[50];
+        int midiMessages[50];
         unsigned int msgCount;
     };
 }

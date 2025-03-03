@@ -39,6 +39,8 @@
     #include "vst/vst3host.h"
 #endif
 
+// #include "claphost.h"
+
 #define MAX_NB_THREADS 500
 
 class MainWindow;
@@ -105,6 +107,8 @@ public:
     static int vstUsersCounter;
     Vst3Host *vst3Host;
 #endif
+
+    // ClapHost *clapHost;
 
     static quint32 currentFileVersion;
     bool doublePrecision;

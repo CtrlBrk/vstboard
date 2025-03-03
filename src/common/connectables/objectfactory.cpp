@@ -37,6 +37,8 @@
     #include "vst3plugin.h"
 #endif
 
+#include "clapplugin.h"
+
 #ifdef SCRIPTENGINE
     #include "script.h"
 #endif
@@ -246,7 +248,9 @@ QSharedPointer<Object> ObjectFactory::NewObject(const ObjectInfo &info, int cont
                         obj = new VstPlugin32(myHost,objId, info);
                         break;
             #endif
-
+                    case ObjType::ClapPlugin:
+                        obj = new ClapPlugin(myHost,objId, info);
+                        break;
                     case ObjType::dummy :
                         obj = new Object(myHost, objId, info);
                         obj->SetErrorMessage("Dummy object");

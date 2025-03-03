@@ -11,6 +11,12 @@ PRECOMPILED_HEADER = precomp.h
 
 INCLUDEPATH += ../../loaddll32
 
+
+CONFIG += clap
+INCLUDEPATH += ../../libs/clap/include
+INCLUDEPATH += ../../libs/clap-helpers/include
+
+
 vstsdk {
     HEADERS += vst/vst3host.h \
         connectables/vst3plugin.h \
@@ -55,8 +61,12 @@ vucharts {
     SOURCES += views/audiograph.cpp
 }
 
+ # claphost.cpp \
+
 SOURCES += \
     ../../loaddll32/ipc.cpp \
+    clappluginparam.cpp \
+    connectables/clapplugin.cpp \
     connectables/objectcontainerattribs.cpp \
     connectables/pinfactory.cpp \
     connectables/script.cpp \
@@ -170,7 +180,11 @@ SOURCES += \
     sceneview/connectablepinview.cpp \
     sceneview/bridgepinview.cpp
 
+# claphost.h \
+
 HEADERS += \
+    clappluginparam.h \
+    connectables/clapplugin.h \
     connectables/objectcontainerattribs.h \
     connectables/pinfactory.h \
     connectables/script.h \
