@@ -193,10 +193,20 @@ bool ClapPlugin::Open()
 
 
     //create all parameters pins
-    int nbParam = _params.size();
-    for(int i=0;i<nbParam;i++) {
-        listParameterPinIn->AddPin(i);
+    int cpt=0;
+    for (auto it = _params.begin(); it != _params.end();) {
+        Pin *p = listParameterPinIn->AddPin(cpt);
+        p->SetClapId(it->first);
+        ++it;
+        cpt++;
     }
+
+    // int nbParam = _params.size();
+    // for(int i=0;i<nbParam;i++) {
+        // Pin * p = listParameterPinIn->AddPin(i);
+    // }
+
+
 
     if (_plugin->canUseGui()) {
         //editor pin
@@ -308,7 +318,7 @@ Pin* ClapPlugin::CreatePin(const ConnectionInfo &info)
     args.doublePrecision = doublePrecision;
 
 
-    if(info.type == PinType::Parameter && info.direction == PinDirection::Input) {
+    if(info.type == PinType::Parameter) { // && info.direction == PinDirection::Input) {
 
         ParameterPin *pin=0;
 
@@ -339,6 +349,8 @@ Pin* ClapPlugin::CreatePin(const ConnectionInfo &info)
                 args.value = _params[info.pinNumber]->value();
             }
             args.visible = !hasEditor;
+            args.isRemoveable = true;//hasEditor;
+            args.nameCanChange = true;//hasEditor;
             return PinFactory::MakePin(args);
 
             return pin;
@@ -346,6 +358,32 @@ Pin* ClapPlugin::CreatePin(const ConnectionInfo &info)
     }
 
     return 0;
+}
+
+QString ClapPlugin::GetParameterName(ConnectionInfo pinInfo)
+{
+    if(closed)
+        return "";
+
+    auto it = _params.find(pinInfo.clapId);
+    if (it == _params.end()) {
+        LOG("parameter id out of range"<<pinInfo.clapId);
+        return "";
+    }
+
+    return it->second->info().name;
+
+
+    // if(pinInfo.pinNumber < _params.size()){
+
+        // ClapPluginParam para = _params[pinInfo.pinNumber];
+        // clap_param_info inf = _params[pinInfo.pinNumber]->info();
+        // QString na( inf.name );
+        // return QString::fromLatin1( _params[pinInfo.pinNumber]->info().name );
+        // args.value = _params[pinInfo.pinNumber]->value();
+    // }
+    // LOG("parameter id out of range"<<pinInfo.pinNumber);
+    // return "";
 }
 
 double ClapPlugin::getParamValue(const clap_param_info &info) {
@@ -362,6 +400,42 @@ double ClapPlugin::getParamValue(const clap_param_info &info) {
     msg << "failed to get the param value, id: " << info.id << ", name: " << info.name
         << ", module: " << info.module;
     throw std::logic_error(msg.str());
+}
+
+void ClapPlugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
+{
+    Object::OnParameterChanged(pinInfo,value);
+
+    if(closed)
+        return;
+
+    if(pinInfo.direction == PinDirection::Input) {
+        auto it = _params.find(pinInfo.clapId);
+        if (it == _params.end()) {
+            LOG("parameter id out of range"<<pinInfo.clapId);
+            return ;
+        }
+        // it->second->setValue(value);
+
+        clap_event_param_value ev;
+        ev.header.time = 0;
+        ev.header.type = CLAP_EVENT_PARAM_VALUE;
+        ev.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+        ev.header.flags = 0;
+        ev.header.size = sizeof(ev);
+        ev.param_id = it->first;
+        ev.cookie = nullptr;//_settings.shouldProvideCookie() ? value.cookie : nullptr;
+        ev.port_index = 0;
+        ev.key = -1;
+        ev.channel = -1;
+        ev.note_id = -1;
+        // ev.value = value;
+        double val = it->second->value();
+        double newval = value * (it->second->info().max_value - it->second->info().min_value) + it->second->info().min_value;
+
+        ev.value = newval; //it->second->value();
+        _evIn.push(&ev.header);
+    }
 }
 
 void ClapPlugin::paramsRescan(uint32_t flags) noexcept {

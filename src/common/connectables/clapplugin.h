@@ -60,6 +60,8 @@ public:
     Pin* CreatePin(const ConnectionInfo &info) override;
     void processNoteOn(int sampleOffset, int channel, int key, int velocity);
     void processNoteOff(int sampleOffset, int channel, int key, int velocity);
+    QString GetParameterName(ConnectionInfo pinInfo) override;
+    void OnParameterChanged(ConnectionInfo pinInfo, float value) override;
 
     void initThreadPool();
     void terminateThreadPool();

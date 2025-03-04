@@ -24,6 +24,8 @@
 #include "globals.h"
 #include "msgobject.h"
 
+#include "clap/ext/params.h"
+
 class MainHost;
 class ConnectionInfo
 {
@@ -64,6 +66,8 @@ public:
 
     /// pointer to the MainHost
     MainHost *myHost = 0;
+
+    clap_id clapId = 0;
 };
 
 Q_DECLARE_METATYPE(ConnectionInfo);

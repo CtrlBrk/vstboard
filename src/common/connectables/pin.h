@@ -124,6 +124,8 @@ namespace Connectables {
             cablesMutex.lock();listCables.removeAll(c);cablesMutex.unlock();
         }
 
+        void SetClapId(clap_id id) {connectInfo.clapId = id;}
+
     protected:
 
         QMutex cablesMutex;
