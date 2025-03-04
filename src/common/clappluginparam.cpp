@@ -11,7 +11,7 @@ void ClapPluginParam::setValue(double v) {
         return;
 
     _value = v;
-    valueChanged();
+    emit valueChanged();
 }
 
 void ClapPluginParam::setModulation(double v) {
@@ -19,7 +19,7 @@ void ClapPluginParam::setModulation(double v) {
         return;
 
     _modulation = v;
-    modulatedValueChanged();
+    emit modulatedValueChanged();
 }
 
 bool ClapPluginParam::isValueValid(const double v) const {

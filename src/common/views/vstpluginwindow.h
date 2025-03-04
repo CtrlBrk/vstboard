@@ -94,7 +94,7 @@ namespace View {
 
         QModelIndex modelIndex;
 
-    private:
+        private:
 
         Ui::VstPluginWindow *ui;
         bool canResize;

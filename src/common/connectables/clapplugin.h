@@ -29,7 +29,7 @@
 #include "object.h"
 // #include "claphost.h"
 #include "clappluginparam.h"
-
+#include <clap/helpers/reducing-param-queue.hh>
 
 constexpr auto PluginHost_MH = clap::helpers::MisbehaviourHandler::Terminate;
 constexpr auto PluginHost_CL = clap::helpers::CheckingLevel::Maximal;
@@ -41,6 +41,9 @@ using BaseHost = clap::helpers::Host<PluginHost_MH, PluginHost_CL>;
 using PluginProxy = clap::helpers::PluginProxy<PluginHost_MH, PluginHost_CL>;
 extern template class clap::helpers::PluginProxy<PluginHost_MH, PluginHost_CL>;
 
+namespace View {
+class ClapPluginWindow;
+}
 
 
 namespace Connectables {
@@ -67,8 +70,16 @@ public:
     void terminateThreadPool();
     void threadPoolEntry();
 
+    void setParentWindow(WId parentWindow);
+    void setPluginWindowVisibility(bool isVisible);
+
     static void checkForMainThread();
     static void checkForAudioThread();
+
+    void idle();
+
+    View::ClapPluginWindow *editorWnd;
+
 protected:
     // clap_host
     void requestRestart() noexcept override;
@@ -98,6 +109,10 @@ private:
     void paramsRescan(uint32_t flags) noexcept override;
     double getParamValue(const clap_param_info &info);
     void checkValidParamValue(const ClapPluginParam &param, double value);
+    void handlePluginOutputEvents();
+    void ParamChangedFromPlugin(int pinNum,float val);
+    void CreateEditorWindow();
+    void deactivate();
 
     static bool clapParamsRescanMayValueChange(uint32_t flags) {
         return flags & (CLAP_PARAM_RESCAN_ALL | CLAP_PARAM_RESCAN_VALUES);
@@ -114,14 +129,56 @@ private:
 
     QList<QVariant>listIsLearning;
 
+    static const char *getCurrentClapGuiApi();
+
     bool _scheduleProcess = false;
     bool _scheduleDeactivate = false;
 
+    const char *_guiApi = nullptr;
+    bool _isGuiCreated = false;
+    bool _isGuiVisible = false;
+    bool _isGuiFloating = false;
+
+    std::unordered_map<clap_id, bool> _isAdjustingParameter;
+
+    struct EngineToAppParamQueueValue {
+        void update(const EngineToAppParamQueueValue& v) noexcept {
+            if (v.has_value) {
+                has_value = true;
+                value = v.value;
+            }
+
+            if (v.has_gesture) {
+                has_gesture = true;
+                is_begin = v.is_begin;
+            }
+        }
+
+        bool has_value = false;
+        bool has_gesture = false;
+        bool is_begin = false;
+        double value = 0;
+    };
+
+    clap::helpers::ReducingParamQueue<clap_id, EngineToAppParamQueueValue> _engineToAppValueQueue;
+
+    QTimer _idleTimer;
+
 signals:
+    void WindowSizeChange(int newWidth, int newHeight);
     void paramsChanged();
+    void paramAdjusted(clap_id paramId);
+
 public slots:
     void SetBufferSize(qint32 size) override;
     void SetSampleRate(float rate=44100.0) override;
+    void EditorDestroyed();
+    void OnEditorClosed();
+    void OnShowEditor() override;
+    void OnHideEditor() override;
+    void UserAddPin(const ConnectionInfo &info) override;
+
+    // void paramValueChanged();
 };
 
 }

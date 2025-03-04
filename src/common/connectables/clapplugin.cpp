@@ -20,6 +20,7 @@
 
 #include "clapplugin.h"
 #include "mainhost.h"
+#include "views/clappluginwindow.h"
 
 #include <clap/helpers/host.hxx>
 #include <clap/helpers/plugin-proxy.hxx>
@@ -27,6 +28,11 @@
 
 #include <unordered_set>
 // #include "claphost.h"
+
+#include "commands/comaddpin.h"
+#include "commands/comremovepin.h"
+
+
 using namespace Connectables;
 
 template class clap::helpers::PluginProxy<PluginHost_MH, PluginHost_CL>;
@@ -49,7 +55,9 @@ ClapPlugin::ClapPlugin(MainHost *myHost,int index, const ObjectInfo & info) :
              "CtrlBrk",
              "0.0.0",
              "https://"
-             )
+             ),
+    editorWnd(0),
+    _idleTimer(this)
 {
     g_thread_type = ClapThreadType::MainThread;
     initThreadPool();
@@ -58,9 +66,6 @@ ClapPlugin::ClapPlugin(MainHost *myHost,int index, const ObjectInfo & info) :
 ClapPlugin::~ClapPlugin()
 {
     Close();
-
-    checkForMainThread();
-    terminateThreadPool();
 }
 
 void ClapPlugin::initThreadPool() {
@@ -118,7 +123,33 @@ bool ClapPlugin::threadCheckIsAudioThread() const noexcept {
 
 bool ClapPlugin::Close()
 {
+    checkForMainThread();
+
+    if (_isGuiCreated) {
+        _plugin->guiDestroy();
+        _isGuiCreated = false;
+        _isGuiVisible = false;
+
+
+    }
+
+    SetSleep(true);
+
+    if (_plugin.get())
+    {
+        _plugin->destroy();
+        // _plugin->reset();
+    }
+
+    _pluginEntry->deinit();
+    _pluginEntry = nullptr;
+
+    delete editorWnd;
     _library.unload();
+
+    checkForMainThread();
+    terminateThreadPool();
+
     return true;
 }
 
@@ -188,15 +219,20 @@ bool ClapPlugin::Open()
     paramsRescan(CLAP_PARAM_RESCAN_ALL);
     // scanParams();
     // scanQuickControls();
-
     // pluginLoadedChanged(true);
-
 
     //create all parameters pins
     int cpt=0;
     for (auto it = _params.begin(); it != _params.end();) {
         Pin *p = listParameterPinIn->AddPin(cpt);
         p->SetClapId(it->first);
+
+        //TODO : fix the double index of clapId and pinNumber
+        it->second->pinNumber=cpt;
+
+        // ClapPluginParam *param = it->second.get();
+        // connect(param, &ClapPluginParam::valueChanged, this, &ClapPlugin::paramValueChanged);
+
         ++it;
         cpt++;
     }
@@ -238,10 +274,17 @@ bool ClapPlugin::Open()
     listMidiPinIn->AddPin(0);
     listMidiPinOut->AddPin(0);
 
+    if(_plugin->canUseGui()) {
+        CreateEditorWindow();
+    }
+
+
+    connect(&_idleTimer, &QTimer::timeout, this, &ClapPlugin::idle);
+    _idleTimer.start(1000 / 30);
+
     closed=false;
     return true;
 }
-
 
 void ClapPlugin::SetSleep(bool sleeping)
 {
@@ -306,7 +349,7 @@ void ClapPlugin::SetSampleRate(float rate)
 Pin* ClapPlugin::CreatePin(const ConnectionInfo &info)
 {
 
-    bool hasEditor = false;// _plugin->canUseGui();
+    bool hasEditor = _plugin->canUseGui();
 
     Pin *newPin = Object::CreatePin(info);
     if(newPin)
@@ -344,21 +387,37 @@ Pin* ClapPlugin::CreatePin(const ConnectionInfo &info)
         //     return PinFactory::MakePin(args);
 
         default :
-            if(!closed) {
-                args.name = QString::fromLatin1( _params[info.pinNumber]->info().name );
-                args.value = _params[info.pinNumber]->value();
-            }
+            // if(!closed) {
+                // args.name = _params[info.pinNumber]->info().name;
+                // args.value = _params[info.pinNumber]->value();
+            // }
             args.visible = !hasEditor;
-            args.isRemoveable = true;//hasEditor;
-            args.nameCanChange = true;//hasEditor;
+            args.isRemoveable = hasEditor;
+            args.nameCanChange = hasEditor;
             return PinFactory::MakePin(args);
 
-            return pin;
         }
     }
 
     return 0;
 }
+
+// void ClapPlugin::paramValueChanged()
+// {
+//     ClapPluginParam* parm = static_cast<ClapPluginParam*>(sender());
+
+//     if(!parm){
+//         LOG("param not found")
+//         return;
+//     }
+
+//     ParameterPin *pin = static_cast<ParameterPin*>(listParameterPinIn->listPins.value(parm->pinNumber,0));
+//     if(!pin)
+//         return;
+
+//     pin->ChangeOutputValue(parm->value(),true);
+
+// }
 
 QString ClapPlugin::GetParameterName(ConnectionInfo pinInfo)
 {
@@ -429,11 +488,17 @@ void ClapPlugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
         ev.key = -1;
         ev.channel = -1;
         ev.note_id = -1;
-        // ev.value = value;
-        double val = it->second->value();
-        double newval = value * (it->second->info().max_value - it->second->info().min_value) + it->second->info().min_value;
 
-        ev.value = newval; //it->second->value();
+        ev.value = 0;
+
+        if(it->second) {
+            double newval = value * (it->second->info().max_value - it->second->info().min_value) + it->second->info().min_value;
+            ev.value = newval; //it->second->value();
+        } else {
+            LOG("param not found")
+        }
+
+
         _evIn.push(&ev.header);
     }
 }
@@ -710,8 +775,13 @@ void ClapPlugin::Render()
         // status =
         _plugin->process(&_process);
 
+
+    handlePluginOutputEvents();
+
     _evIn.clear();
     _evOut.clear();
+
+    _engineToAppValueQueue.producerDone();
 
     if(tmpBufOut!=tmpBufIn)
         delete[] tmpBufIn;
@@ -726,6 +796,133 @@ void ClapPlugin::Render()
     }
 }
 
+void ClapPlugin::UserAddPin(const ConnectionInfo &info)
+{
+    if(info.type!=PinType::Parameter)
+        return;
+
+    if(info.direction!=PinDirection::Input)
+        return;
+
+    if(listParameterPinIn->listPins.contains(info.pinNumber))
+        static_cast<ParameterPinIn*>(listParameterPinIn->listPins.value(info.pinNumber))->SetVisible(true);
+    OnProgramDirty();
+}
+
+void ClapPlugin::ParamChangedFromPlugin(int pinNum,float val)
+{
+
+    ParameterPin *pin = static_cast<ParameterPin*>(listParameterPinIn->listPins.value(pinNum,0));
+    if(!pin)
+        return;
+
+    switch(GetLearningMode()) {
+    case LearningMode::unlearn :
+        if(pin->GetVisible())
+            myHost->undoStack.push( new ComRemovePin(myHost, pin->GetConnectionInfo()) );
+        break;
+
+    case LearningMode::learn :
+        if(!pin->GetVisible())
+            myHost->undoStack.push( new ComAddPin(myHost, pin->GetConnectionInfo()) );
+
+    case LearningMode::off :
+        pin->ChangeOutputValue(val,true);
+    }
+}
+
+void ClapPlugin::idle() {
+    checkForMainThread();
+
+    // Try to send events to the audio engine
+    // _appToEngineValueQueue.producerDone();
+    // _appToEngineModQueue.producerDone();
+
+    _engineToAppValueQueue.consume(
+        [this](clap_id param_id, const EngineToAppParamQueueValue &value) {
+            auto it = _params.find(param_id);
+            if (it == _params.end()) {
+                std::ostringstream msg;
+                msg << "Plugin produced a CLAP_EVENT_PARAM_SET with an unknown param_id: " << param_id;
+                throw std::invalid_argument(msg.str());
+            }
+
+            if (value.has_value)
+                it->second->setValue(value.value);
+
+            if (value.has_gesture)
+                it->second->setIsAdjusting(value.is_begin);
+
+            int pinNum = it->second->pinNumber;
+            float val = (value.value - it->second->info().min_value) / (it->second->info().max_value - it->second->info().min_value);
+            val = std::min(val,1.f);
+            val = std::max(val,.0f);
+            LOG(it->second->info().max_value << it->second->info().min_value << value.value << val)
+            ParamChangedFromPlugin(pinNum,val);
+            // emit paramAdjusted(param_id);
+        });
+    /*
+    if (_scheduleParamFlush && !isPluginActive()) {
+        paramFlushOnMainThread();
+    }
+
+    if (_scheduleMainThreadCallback) {
+        _scheduleMainThreadCallback = false;
+        _plugin->onMainThread();
+    }
+
+    if (_scheduleRestart) {
+        deactivate();
+        _scheduleRestart = false;
+        activate(_engine._sampleRate, _engine._nframes);
+    }
+*/
+}
+
+void ClapPlugin::handlePluginOutputEvents() {
+    for (uint32_t i = 0; i < _evOut.size(); ++i) {
+        auto h = _evOut.get(i);
+        switch (h->type) {
+        case CLAP_EVENT_PARAM_GESTURE_BEGIN: {
+            auto ev = reinterpret_cast<const clap_event_param_gesture *>(h);
+            bool &isAdj = _isAdjustingParameter[ev->param_id];
+
+            if (isAdj)
+                throw std::logic_error("The plugin sent BEGIN_ADJUST twice");
+            isAdj = true;
+
+            EngineToAppParamQueueValue v;
+            v.has_gesture = true;
+            v.is_begin = true;
+            _engineToAppValueQueue.setOrUpdate(ev->param_id, v);
+            break;
+        }
+
+        case CLAP_EVENT_PARAM_GESTURE_END: {
+            auto ev = reinterpret_cast<const clap_event_param_gesture *>(h);
+            bool &isAdj = _isAdjustingParameter[ev->param_id];
+
+            if (!isAdj)
+                throw std::logic_error("The plugin sent END_ADJUST without a preceding BEGIN_ADJUST");
+            isAdj = false;
+            EngineToAppParamQueueValue v;
+            v.has_gesture = true;
+            v.is_begin = false;
+            _engineToAppValueQueue.setOrUpdate(ev->param_id, v);
+            break;
+        }
+
+        case CLAP_EVENT_PARAM_VALUE: {
+            auto ev = reinterpret_cast<const clap_event_param_value *>(h);
+            EngineToAppParamQueueValue v;
+            v.has_value = true;
+            v.value = ev->value;
+            _engineToAppValueQueue.setOrUpdate(ev->param_id, v);
+            break;
+        }
+        }
+    }
+}
 
 void ClapPlugin::MidiMsgFromInput(long msg)
 {
@@ -750,3 +947,187 @@ void ClapPlugin::MidiMsgFromInput(long msg)
         break;
     }
 }
+
+void ClapPlugin::CreateEditorWindow()
+{
+    //already done
+    if(editorWnd)
+        return;
+
+    // editorWnd = new View::ClapPluginWindow(myHost->GetMainWindow());
+    editorWnd = new View::ClapPluginWindow();
+    editorWnd->setWindowTitle(objectName());
+
+    connect(this,SIGNAL(HideEditorWindow()),
+            editorWnd,SLOT(hide()),
+            Qt::QueuedConnection);
+
+    connect(editorWnd, SIGNAL(Hide()),
+            this, SLOT(OnEditorClosed()));
+
+    connect(editorWnd,SIGNAL(destroyed()),
+            this,SLOT(EditorDestroyed()));
+
+    connect(this,SIGNAL(WindowSizeChange(int,int)),
+            editorWnd,SLOT(SetWindowSize(int,int)));
+
+    setParentWindow(editorWnd->GetWinId());
+
+}
+
+void ClapPlugin::OnEditorClosed()
+{
+    ToggleEditor(false);
+}
+
+void ClapPlugin::EditorDestroyed()
+{
+    editorWnd = 0;
+    listParameterPinIn->listPins.value(FixedPinNumber::editorVisible)->SetVisible(false);
+}
+
+static clap_window makeClapWindow(WId window) {
+    clap_window w;
+#if defined(Q_OS_LINUX)
+    w.api = CLAP_WINDOW_API_X11;
+    w.x11 = window;
+#elif defined(Q_OS_MACX)
+    w.api = CLAP_WINDOW_API_COCOA;
+    w.cocoa = reinterpret_cast<clap_nsview>(window);
+#elif defined(Q_OS_WIN)
+    w.api = CLAP_WINDOW_API_WIN32;
+    w.win32 = reinterpret_cast<clap_hwnd>(window);
+#endif
+
+    return w;
+}
+
+void ClapPlugin::setParentWindow(WId parentWindow) {
+    checkForMainThread();
+
+    if (!_plugin->canUseGui())
+        return;
+
+    if (_isGuiCreated) {
+        _plugin->guiDestroy();
+        _isGuiCreated = false;
+        _isGuiVisible = false;
+    }
+
+    _guiApi = getCurrentClapGuiApi();
+
+    _isGuiFloating = false;
+    if (!_plugin->guiIsApiSupported(_guiApi, false)) {
+        if (!_plugin->guiIsApiSupported(_guiApi, true)) {
+            qWarning() << "could find a suitable gui api";
+            return;
+        }
+        _isGuiFloating = true;
+    }
+
+    auto w = makeClapWindow(parentWindow);
+    if (!_plugin->guiCreate(w.api, _isGuiFloating)) {
+        qWarning() << "could not create the plugin gui";
+        return;
+    }
+
+    _isGuiCreated = true;
+    assert(_isGuiVisible == false);
+
+    if (_isGuiFloating) {
+        _plugin->guiSetTransient(&w);
+        _plugin->guiSuggestTitle("using clap-host suggested title");
+    } else {
+        uint32_t width = 0;
+        uint32_t height = 0;
+
+        if (!_plugin->guiGetSize(&width, &height)) {
+            qWarning() << "could not get the size of the plugin gui";
+            _isGuiCreated = false;
+            _plugin->guiDestroy();
+            return;
+        }
+
+        emit WindowSizeChange(width,height);
+        // Application::instance().mainWindow()->resizePluginView(width, height);
+
+        if (!_plugin->guiSetParent(&w)) {
+            qWarning() << "could embbed the plugin gui";
+            _isGuiCreated = false;
+            _plugin->guiDestroy();
+            return;
+        }
+    }
+
+    setPluginWindowVisibility(true);
+}
+
+void ClapPlugin::setPluginWindowVisibility(bool isVisible) {
+    checkForMainThread();
+
+    if (!_isGuiCreated)
+        return;
+
+    if (isVisible && !_isGuiVisible) {
+        _plugin->guiShow();
+        _isGuiVisible = true;
+    } else if (!isVisible && _isGuiVisible) {
+        _plugin->guiHide();
+        _isGuiVisible = false;
+    }
+}
+
+
+const char *ClapPlugin::getCurrentClapGuiApi() {
+#if defined(Q_OS_LINUX)
+    return CLAP_WINDOW_API_X11;
+#elif defined(Q_OS_WIN)
+    return CLAP_WINDOW_API_WIN32;
+#elif defined(Q_OS_MACOS)
+    return CLAP_WINDOW_API_COCOA;
+#else
+#   error "unsupported platform"
+#endif
+}
+
+void ClapPlugin::OnShowEditor()
+{
+    if(!editorWnd)
+        CreateEditorWindow();
+
+    if(!editorWnd)
+        return;
+
+    if(editorWnd->isVisible())
+        return;
+
+    editorWnd->show();
+    //    editorWnd->raise();
+    connect(myHost->updateViewTimer,SIGNAL(timeout()),
+            this,SLOT(EditIdle()));
+    // editorWnd->LoadAttribs(currentViewAttr);
+}
+
+void ClapPlugin::OnHideEditor()
+{
+    if(!editorWnd)
+        return;
+
+    // editorWnd->SaveAttribs(currentViewAttr);
+
+    if(myHost->settings->GetSetting("fastEditorsOpenClose",true).toBool()) {
+        disconnect(myHost->updateViewTimer,SIGNAL(timeout()),
+                   this,SLOT(EditIdle()));
+        emit HideEditorWindow();
+    } else {
+        editorWnd->disconnect();
+        // editorWnd->UnsetPlugin();
+        disconnect(editorWnd);
+        QTimer::singleShot(0,editorWnd,SLOT(close()));
+        editorWnd=0;
+        objMutex.lock();
+        // EffEditClose();
+        objMutex.unlock();
+    }
+}
+

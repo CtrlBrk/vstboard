@@ -56,6 +56,8 @@ public:
         emit isBeingAdjustedChanged();
     }
 
+    int pinNumber = 0;
+
 signals:
     void isBeingAdjustedChanged();
     void infoChanged();
@@ -68,6 +70,7 @@ private:
     double _value = 0;
     double _modulation = 0;
     std::unordered_map<int64_t, std::string> _enumEntries;
+
 };
 
 #endif // CLAPPLUGINPARAM_H
