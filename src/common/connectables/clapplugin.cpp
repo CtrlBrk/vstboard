@@ -18,6 +18,7 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 
+#include "mainwindow.h"
 #include "clapplugin.h"
 #include "mainhost.h"
 #include "views/clappluginwindow.h"
@@ -125,12 +126,13 @@ bool ClapPlugin::Close()
 {
     checkForMainThread();
 
+    if (!_library.isLoaded())
+        return true;
+
     if (_isGuiCreated) {
         _plugin->guiDestroy();
         _isGuiCreated = false;
         _isGuiVisible = false;
-
-
     }
 
     SetSleep(true);
@@ -145,10 +147,9 @@ bool ClapPlugin::Close()
     _pluginEntry = nullptr;
 
     delete editorWnd;
-    _library.unload();
 
-    checkForMainThread();
     terminateThreadPool();
+    _library.unload();
 
     return true;
 }
@@ -157,7 +158,7 @@ bool ClapPlugin::Open()
 {
     QMutexLocker lock(&objMutex);
 
-    // checkForMainThread();
+    checkForMainThread();
 
     if (_library.isLoaded())
         Close();
@@ -181,10 +182,33 @@ bool ClapPlugin::Open()
 
     _pluginFactory = static_cast<const clap_plugin_factory *>(_pluginEntry->get_factory(CLAP_PLUGIN_FACTORY_ID));
 
-    auto count = _pluginFactory->get_plugin_count(_pluginFactory);
-    if (objInfo.id > count) {
-        qWarning() << "plugin index greater than count :" << count;
-        return false;
+    if(objInfo.apiName.toInt()!=0) {
+        //shell has been selected
+        objInfo.id = objInfo.apiName.toInt();
+    } else {
+
+        auto count = _pluginFactory->get_plugin_count(_pluginFactory);
+        if (objInfo.id > count) {
+            qWarning() << "plugin index greater than count :" << count;
+            return false;
+        }
+
+        if(count>1) {
+
+            _MSGOBJ(msg,FixedObjId::shellselect);
+            msg.prop[MsgObject::Id] = GetIndex();
+            msg.prop[MsgObject::ObjInfo] = QVariant::fromValue(objInfo);
+            for(int i=0; i<count; i++) {
+                auto desc = _pluginFactory->get_plugin_descriptor(_pluginFactory, i);
+                _MSGOBJ(plug,FixedObjId::ND);
+                plug.prop[MsgObject::Name] = QString(desc->name);
+                plug.prop[MsgObject::Id] = i;
+                msg.children << plug;
+            }
+
+            msgCtrl->SendMsg(msg);
+            return false;
+        }
     }
 
     auto desc = _pluginFactory->get_plugin_descriptor(_pluginFactory, objInfo.id);
@@ -200,7 +224,6 @@ bool ClapPlugin::Open()
         return false;
     }
 
-    // const auto plugin = _pluginFactory->create_plugin(_pluginFactory, myHost->clapHost->clapHost() , desc->id);
     const auto plugin = _pluginFactory->create_plugin(_pluginFactory, clapHost() , desc->id);
 
     if (!plugin) {
@@ -208,7 +231,6 @@ bool ClapPlugin::Open()
         return false;
     }
 
-    // _plugin = std::make_unique<PluginProxy>(*plugin, *myHost->clapHost);
     _plugin = std::make_unique<PluginProxy>(*plugin, *this);
 
     if (!_plugin->init()) {
@@ -217,9 +239,9 @@ bool ClapPlugin::Open()
     }
 
     paramsRescan(CLAP_PARAM_RESCAN_ALL);
-    // scanParams();
     // scanQuickControls();
     // pluginLoadedChanged(true);
+
 
     //create all parameters pins
     int cpt=0;
@@ -245,6 +267,9 @@ bool ClapPlugin::Open()
 
 
     if (_plugin->canUseGui()) {
+
+        CreateEditorWindow();
+
         //editor pin
         listParameterPinIn->AddPin(FixedPinNumber::editorVisible);
 
@@ -274,9 +299,7 @@ bool ClapPlugin::Open()
     listMidiPinIn->AddPin(0);
     listMidiPinOut->AddPin(0);
 
-    if(_plugin->canUseGui()) {
-        CreateEditorWindow();
-    }
+
 
 
     connect(&_idleTimer, &QTimer::timeout, this, &ClapPlugin::idle);
@@ -284,6 +307,29 @@ bool ClapPlugin::Open()
 
     closed=false;
     return true;
+}
+
+void ClapPlugin::ReceiveMsg(const MsgObject &msg)
+{
+    //reload a shell plugin with the selected id
+    if(msg.prop.contains(MsgObject::ObjInfo) && objInfo.id==0) {
+        objInfo = msg.prop[MsgObject::ObjInfo].value<ObjectInfo>();
+        if(objInfo.id == 0) {
+            myHost->undoStack.undo();
+        } else {
+            SetMsgEnabled(false);
+            int lastProg = currentProgId;
+            Object::LoadProgram(TEMP_PROGRAM);
+            delete listPrograms.take(lastProg);
+            Open();
+            SetSleep(false);
+            Object::LoadProgram(lastProg);
+
+            SetMsgEnabled(true);
+            UpdateView();
+        }
+        return;
+    }
 }
 
 void ClapPlugin::SetSleep(bool sleeping)
@@ -297,7 +343,7 @@ void ClapPlugin::SetSleep(bool sleeping)
     if(sleeping) {
         // _plugin->stopProcessing();
         _plugin->deactivate();
-        _scheduleDeactivate=false;
+        // _scheduleDeactivate=false;
     } else {
         if(!_plugin->activate(sampleRate,bufferSize,bufferSize)) {
             LOG("err activ")
@@ -393,7 +439,7 @@ Pin* ClapPlugin::CreatePin(const ConnectionInfo &info)
             // }
             args.visible = !hasEditor;
             args.isRemoveable = hasEditor;
-            args.nameCanChange = hasEditor;
+            args.nameCanChange = true; //hasEditor;
             return PinFactory::MakePin(args);
 
         }
@@ -726,48 +772,65 @@ void ClapPlugin::Render()
 
     float **tmpBufOut = new float*[listAudioPinOut->listPins.size()];
 
-    int cpt=0;
-    foreach(Pin* pin,listAudioPinOut->listPins) {
-        if (pin) {
-            AudioPin *audioPin = static_cast<AudioPin*>(pin);
-            tmpBufOut[cpt] = (float*)audioPin->GetBuffer()->GetPointerWillBeFilled();
+    if(listAudioPinOut->listPins.isEmpty()) {
+        _audioOut.data32 = nullptr;
+        _audioOut.data64 = nullptr;
+        _audioOut.channel_count = 0;
+        _audioOut.constant_mask = 0;
+        _audioOut.latency = 0;
+        _process.audio_outputs_count = 0;
+    } else {
+        int cpt=0;
+        foreach(Pin* pin,listAudioPinOut->listPins) {
+            if (pin) {
+                AudioPin *audioPin = static_cast<AudioPin*>(pin);
+                tmpBufOut[cpt] = (float*)audioPin->GetBuffer()->GetPointerWillBeFilled();
+            }
+            else {
+                LOG("no out pin");
+            }
+            cpt++;
         }
-        else {
-            LOG("no out pin");
-        }
-        cpt++;
+        _audioOut.data32 = tmpBufOut;
+        _audioOut.data64 = nullptr;
+        _audioOut.channel_count = cpt;
+        _audioOut.constant_mask = 0;
+        _audioOut.latency = 0;
+        _process.audio_outputs_count = 1;
     }
-    _audioOut.data32 = tmpBufOut;
-    _audioOut.data64 = nullptr;
-    _audioOut.channel_count = cpt;
-    _audioOut.constant_mask = 0;
-    _audioOut.latency = 0;
 
     float **tmpBufIn;
     if(listAudioPinIn->listPins.isEmpty()) {
         //no input, don't know what we're supposed to do...
         tmpBufIn = tmpBufOut;
+
+        _audioIn.data32 = nullptr;
+        _audioIn.data64 = nullptr;
+        _audioIn.channel_count = 0;
+        _audioIn.constant_mask = 0;
+        _audioIn.latency = 0;
+        _process.audio_inputs_count = 0;
     } else {
         tmpBufIn = new float*[listAudioPinIn->listPins.size()];
 
-        cpt=0;
+        int cpt=0;
         foreach(Pin* pin,listAudioPinIn->listPins) {
             tmpBufIn[cpt] = (float*)static_cast<AudioPin*>(pin)->GetBuffer()->ConsumeStack();
             cpt++;
         }
+
+        _audioIn.data32 = tmpBufIn;
+        _audioIn.data64 = nullptr;
+        _audioIn.channel_count = cpt;
+        _audioIn.constant_mask = 0;
+        _audioIn.latency = 0;
+        _process.audio_inputs_count = 1;
     }
-    _audioIn.data32 = tmpBufIn;
-    _audioIn.data64 = nullptr;
-    _audioIn.channel_count = cpt;
-    _audioIn.constant_mask = 0;
-    _audioIn.latency = 0;
+
 
 
     _process.audio_inputs = &_audioIn;
-    _process.audio_inputs_count = 1;
     _process.audio_outputs = &_audioOut;
-    _process.audio_outputs_count = 1;
-
     _process.frames_count = bufferSize;
     _process.steady_time = 0;
 
@@ -954,8 +1017,8 @@ void ClapPlugin::CreateEditorWindow()
     if(editorWnd)
         return;
 
-    // editorWnd = new View::ClapPluginWindow(myHost->GetMainWindow());
-    editorWnd = new View::ClapPluginWindow();
+    editorWnd = new View::ClapPluginWindow( static_cast<QMainWindow*>(myHost->GetMainWindow()) );
+    //editorWnd = new View::ClapPluginWindow();
     editorWnd->setWindowTitle(objectName());
 
     connect(this,SIGNAL(HideEditorWindow()),
@@ -1049,7 +1112,6 @@ void ClapPlugin::setParentWindow(WId parentWindow) {
         }
 
         emit WindowSizeChange(width,height);
-        // Application::instance().mainWindow()->resizePluginView(width, height);
 
         if (!_plugin->guiSetParent(&w)) {
             qWarning() << "could embbed the plugin gui";
@@ -1058,6 +1120,8 @@ void ClapPlugin::setParentWindow(WId parentWindow) {
             return;
         }
     }
+
+
 
     setPluginWindowVisibility(true);
 }
@@ -1103,8 +1167,10 @@ void ClapPlugin::OnShowEditor()
 
     editorWnd->show();
     //    editorWnd->raise();
+
     connect(myHost->updateViewTimer,SIGNAL(timeout()),
             this,SLOT(EditIdle()));
+
     // editorWnd->LoadAttribs(currentViewAttr);
 }
 

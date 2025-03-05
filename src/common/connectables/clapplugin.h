@@ -77,7 +77,7 @@ public:
     static void checkForAudioThread();
 
     void idle();
-
+    void ReceiveMsg(const MsgObject &msg) override;
     View::ClapPluginWindow *editorWnd;
 
 protected:
