@@ -207,7 +207,7 @@ bool ClapPlugin::Open()
             }
 
             msgCtrl->SendMsg(msg);
-            return false;
+            return true;
         }
     }
 
@@ -246,8 +246,7 @@ bool ClapPlugin::Open()
     //create all parameters pins
     int cpt=0;
     for (auto it = _params.begin(); it != _params.end();) {
-        Pin *p = listParameterPinIn->AddPin(cpt);
-        p->SetClapId(it->first);
+        listParameterPinIn->AddPin(cpt,it->first);
 
         //TODO : fix the double index of clapId and pinNumber
         it->second->pinNumber=cpt;
@@ -263,8 +262,6 @@ bool ClapPlugin::Open()
     // for(int i=0;i<nbParam;i++) {
         // Pin * p = listParameterPinIn->AddPin(i);
     // }
-
-
 
     if (_plugin->canUseGui()) {
 
@@ -330,6 +327,8 @@ void ClapPlugin::ReceiveMsg(const MsgObject &msg)
         }
         return;
     }
+
+    Object::ReceiveMsg(msg);
 }
 
 void ClapPlugin::SetSleep(bool sleeping)
@@ -348,6 +347,9 @@ void ClapPlugin::SetSleep(bool sleeping)
         if(!_plugin->activate(sampleRate,bufferSize,bufferSize)) {
             LOG("err activ")
             return;
+        }
+        if(_plugin->canUseLatency()) {
+            SetInitDelay(_plugin->latencyGet());
         }
         _scheduleProcess=true;
     }
@@ -406,7 +408,6 @@ Pin* ClapPlugin::CreatePin(const ConnectionInfo &info)
     args.bufferSize = myHost->GetBufferSize();
     args.doublePrecision = doublePrecision;
 
-
     if(info.type == PinType::Parameter) { // && info.direction == PinDirection::Input) {
 
         ParameterPin *pin=0;
@@ -434,12 +435,18 @@ Pin* ClapPlugin::CreatePin(const ConnectionInfo &info)
 
         default :
             // if(!closed) {
-                // args.name = _params[info.pinNumber]->info().name;
-                // args.value = _params[info.pinNumber]->value();
-            // }
+
+            auto it = _params.find(info.clapId);
+            if (it == _params.end()) {
+                LOG("parameter id out of range"<<info.clapId);
+            } else {
+                args.value = it->second->value();
+                args.name = it->second->info().name;
+            }
+            args.clapId = it->first;
             args.visible = !hasEditor;
             args.isRemoveable = hasEditor;
-            args.nameCanChange = true; //hasEditor;
+            args.nameCanChange = false;//hasEditor;
             return PinFactory::MakePin(args);
 
         }
@@ -447,24 +454,24 @@ Pin* ClapPlugin::CreatePin(const ConnectionInfo &info)
 
     return 0;
 }
+/*
+void ClapPlugin::paramValueChanged()
+{
+    ClapPluginParam* parm = static_cast<ClapPluginParam*>(sender());
 
-// void ClapPlugin::paramValueChanged()
-// {
-//     ClapPluginParam* parm = static_cast<ClapPluginParam*>(sender());
+    if(!parm){
+        LOG("param not found")
+        return;
+    }
 
-//     if(!parm){
-//         LOG("param not found")
-//         return;
-//     }
+    ParameterPin *pin = static_cast<ParameterPin*>(listParameterPinIn->listPins.value(parm->pinNumber,0));
+    if(!pin)
+        return;
 
-//     ParameterPin *pin = static_cast<ParameterPin*>(listParameterPinIn->listPins.value(parm->pinNumber,0));
-//     if(!pin)
-//         return;
+    pin->ChangeOutputValue(parm->value(),true);
 
-//     pin->ChangeOutputValue(parm->value(),true);
-
-// }
-
+}
+*/
 QString ClapPlugin::GetParameterName(ConnectionInfo pinInfo)
 {
     if(closed)
@@ -920,7 +927,7 @@ void ClapPlugin::idle() {
             float val = (value.value - it->second->info().min_value) / (it->second->info().max_value - it->second->info().min_value);
             val = std::min(val,1.f);
             val = std::max(val,.0f);
-            LOG(it->second->info().max_value << it->second->info().min_value << value.value << val)
+            // LOG(it->second->info().max_value << it->second->info().min_value << value.value << val)
             ParamChangedFromPlugin(pinNum,val);
             // emit paramAdjusted(param_id);
         });

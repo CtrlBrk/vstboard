@@ -204,12 +204,13 @@ void PinsList::SetNbPins(int nb, QList<quint16> *listAdded,QList<quint16> *listR
     }
 }
 
-Pin * PinsList::AddPin(int nb)
+Pin * PinsList::AddPin(int nb, uint32_t clapId)
 {
     if(listPins.contains(nb))
         return listPins.value(nb);
 
     connInfo.pinNumber=nb;
+    connInfo.clapId=clapId;
     Pin *newPin = parent->CreatePin(connInfo);
 
     if(!newPin) {

@@ -88,7 +88,7 @@ namespace Connectables {
 
     public slots:
         void SetNbPins(int nb, QList<quint16> *listAdded=0,QList<quint16> *listRemoved=0);
-        Pin * AddPin(int nb);
+        Pin * AddPin(int nb, uint32_t clapId=0);
         void RemovePin(int nb);
     };
 }
