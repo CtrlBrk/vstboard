@@ -112,16 +112,6 @@ void ClapPlugin::requestProcess() noexcept { /*_scheduleProcess = true;*/ }
 
 void ClapPlugin::requestRestart() noexcept { /*_scheduleRestart = true;*/ }
 
-bool ClapPlugin::threadCheckIsMainThread() const noexcept {
-    return g_thread_type == ClapThreadType::MainThread;
-}
-
-bool ClapPlugin::threadCheckIsAudioThread() const noexcept {
-    return g_thread_type == ClapThreadType::AudioThread;
-}
-
-
-
 bool ClapPlugin::Close()
 {
     checkForMainThread();
@@ -135,7 +125,10 @@ bool ClapPlugin::Close()
         _isGuiVisible = false;
     }
 
-    SetSleep(true);
+    setPluginState(ActiveAndReadyToDeactivate);
+    deactivate();
+
+    // SetSleep(true);
 
     if (_plugin.get())
     {
@@ -160,8 +153,8 @@ bool ClapPlugin::Open()
 
     checkForMainThread();
 
-    if (_library.isLoaded())
-        Close();
+    // if (_library.isLoaded())
+        // Close();
 
     _library.setFileName( objInfo.filename );
     _library.setLoadHints(QLibrary::ResolveAllSymbolsHint | QLibrary::DeepBindHint);
@@ -340,18 +333,13 @@ void ClapPlugin::SetSleep(bool sleeping)
     QMutexLocker lock(&objMutex);
 
     if(sleeping) {
-        // _plugin->stopProcessing();
-        _plugin->deactivate();
-        // _scheduleDeactivate=false;
+        deactivate();
     } else {
-        if(!_plugin->activate(sampleRate,bufferSize,bufferSize)) {
-            LOG("err activ")
-            return;
-        }
+        activate(sampleRate,bufferSize);
+
         if(_plugin->canUseLatency()) {
             SetInitDelay(_plugin->latencyGet());
         }
-        _scheduleProcess=true;
     }
 
     Object::SetSleep(sleeping);
@@ -527,157 +515,13 @@ void ClapPlugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
             LOG("parameter id out of range"<<pinInfo.clapId);
             return ;
         }
-        // it->second->setValue(value);
 
-        clap_event_param_value ev;
-        ev.header.time = 0;
-        ev.header.type = CLAP_EVENT_PARAM_VALUE;
-        ev.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-        ev.header.flags = 0;
-        ev.header.size = sizeof(ev);
-        ev.param_id = it->first;
-        ev.cookie = nullptr;//_settings.shouldProvideCookie() ? value.cookie : nullptr;
-        ev.port_index = 0;
-        ev.key = -1;
-        ev.channel = -1;
-        ev.note_id = -1;
-
-        ev.value = 0;
-
-        if(it->second) {
-            double newval = value * (it->second->info().max_value - it->second->info().min_value) + it->second->info().min_value;
-            ev.value = newval; //it->second->value();
-        } else {
-            LOG("param not found")
-        }
-
-
-        _evIn.push(&ev.header);
+        auto &info = it->second->info();
+        auto param = it->second.get();
+        double newval = value * (info.max_value - info.min_value) + info.min_value;
+        // LOG("parm value " << newval)
+        setParamValueByHost(*param,newval);
     }
-}
-
-void ClapPlugin::paramsRescan(uint32_t flags) noexcept {
-    // checkForMainThread();
-
-    if (!_plugin->canUseParams())
-        return;
-
-    // 1. it is forbidden to use CLAP_PARAM_RESCAN_ALL if the plugin is active
-    // if (isPluginActive() && (flags & CLAP_PARAM_RESCAN_ALL)) {
-    //     throw std::logic_error(
-    //         "clap_host_params.recan(CLAP_PARAM_RESCAN_ALL) was called while the plugin is active!");
-    //     return;
-    // }
-
-    // 2. scan the params.
-    auto count = _plugin->paramsCount();
-    std::unordered_set<clap_id> paramIds(count * 2);
-
-    for (int32_t i = 0; i < count; ++i) {
-        clap_param_info info;
-        if (!_plugin->paramsGetInfo(i, &info))
-            throw std::logic_error("clap_plugin_params.get_info did return false!");
-
-        if (info.id == CLAP_INVALID_ID) {
-            std::ostringstream msg;
-            msg << "clap_plugin_params.get_info() reported a parameter with id = CLAP_INVALID_ID"
-                << std::endl
-                << " 2. name: " << info.name << ", module: " << info.module << std::endl;
-            throw std::logic_error(msg.str());
-        }
-
-        auto it = _params.find(info.id);
-
-        // check that the parameter is not declared twice
-        if (paramIds.count(info.id) > 0) {
-            Q_ASSERT(it != _params.end());
-
-            std::ostringstream msg;
-            msg << "the parameter with id: " << info.id << " was declared twice." << std::endl
-                << " 1. name: " << it->second->info().name << ", module: " << it->second->info().module
-                << std::endl
-                << " 2. name: " << info.name << ", module: " << info.module << std::endl;
-            throw std::logic_error(msg.str());
-        }
-        paramIds.insert(info.id);
-
-        if (it == _params.end()) {
-            if (!(flags & CLAP_PARAM_RESCAN_ALL)) {
-                std::ostringstream msg;
-                msg << "a new parameter was declared, but the flag CLAP_PARAM_RESCAN_ALL was not "
-                       "specified; id: "
-                    << info.id << ", name: " << info.name << ", module: " << info.module << std::endl;
-                throw std::logic_error(msg.str());
-            }
-
-            double value = getParamValue(info);
-            auto param = std::make_unique<ClapPluginParam>(*this, info, value);
-            checkValidParamValue(*param, value);
-            _params.insert_or_assign(info.id, std::move(param));
-        } else {
-            // update param info
-            if (!it->second->isInfoEqualTo(info)) {
-                if (!clapParamsRescanMayInfoChange(flags)) {
-                    std::ostringstream msg;
-                    msg << "a parameter's info did change, but the flag CLAP_PARAM_RESCAN_INFO "
-                           "was not specified; id: "
-                        << info.id << ", name: " << info.name << ", module: " << info.module
-                        << std::endl;
-                    throw std::logic_error(msg.str());
-                }
-
-                if (!(flags & CLAP_PARAM_RESCAN_ALL) &&
-                    !it->second->isInfoCriticallyDifferentTo(info)) {
-                    std::ostringstream msg;
-                    msg << "a parameter's info has critical changes, but the flag CLAP_PARAM_RESCAN_ALL "
-                           "was not specified; id: "
-                        << info.id << ", name: " << info.name << ", module: " << info.module
-                        << std::endl;
-                    throw std::logic_error(msg.str());
-                }
-
-                it->second->setInfo(info);
-            }
-
-            double value = getParamValue(info);
-            if (it->second->value() != value) {
-                if (!clapParamsRescanMayValueChange(flags)) {
-                    std::ostringstream msg;
-                    msg << "a parameter's value did change but, but the flag CLAP_PARAM_RESCAN_VALUES "
-                           "was not specified; id: "
-                        << info.id << ", name: " << info.name << ", module: " << info.module
-                        << std::endl;
-                    throw std::logic_error(msg.str());
-                }
-
-                // update param value
-                checkValidParamValue(*it->second, value);
-                it->second->setValue(value);
-                it->second->setModulation(value);
-            }
-        }
-    }
-
-    // remove parameters which are gone
-    for (auto it = _params.begin(); it != _params.end();) {
-        if (paramIds.find(it->first) != paramIds.end())
-            ++it;
-        else {
-            if (!(flags & CLAP_PARAM_RESCAN_ALL)) {
-                std::ostringstream msg;
-                auto &info = it->second->info();
-                msg << "a parameter was removed, but the flag CLAP_PARAM_RESCAN_ALL was not "
-                       "specified; id: "
-                    << info.id << ", name: " << info.name << ", module: " << info.module << std::endl;
-                throw std::logic_error(msg.str());
-            }
-            it = _params.erase(it);
-        }
-    }
-
-    //signal
-    if (flags & CLAP_PARAM_RESCAN_ALL)
-        paramsChanged();
 }
 
 
@@ -709,7 +553,7 @@ void ClapPlugin::checkForAudioThread() {
 }
 
 void ClapPlugin::processNoteOn(int sampleOffset, int channel, int key, int velocity) {
-    // checkForAudioThread();
+    checkForAudioThread();
 
     clap_event_note ev;
     ev.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
@@ -727,7 +571,7 @@ void ClapPlugin::processNoteOn(int sampleOffset, int channel, int key, int veloc
 }
 
 void ClapPlugin::processNoteOff(int sampleOffset, int channel, int key, int velocity) {
-    // checkForAudioThread();
+    checkForAudioThread();
 
     clap_event_note ev;
     ev.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
@@ -744,15 +588,88 @@ void ClapPlugin::processNoteOff(int sampleOffset, int channel, int key, int velo
     _evIn.push(&ev.header);
 }
 
+
+void ClapPlugin::processCC(int sampleOffset, int channel, int cc, int value) {
+    checkForAudioThread();
+
+    clap_event_midi ev;
+    ev.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    ev.header.type = CLAP_EVENT_MIDI;
+    ev.header.time = sampleOffset;
+    ev.header.flags = 0;
+    ev.header.size = sizeof(ev);
+    ev.port_index = 0;
+    ev.data[0] = 0xB0 | channel;
+    ev.data[1] = cc;
+    ev.data[2] = value;
+
+    _evIn.push(&ev.header);
+}
+
+void ClapPlugin::generatePluginInputEvents() {
+    _appToEngineValueQueue.consume(
+        [this](clap_id param_id, const AppToEngineParamQueueValue &value) {
+            clap_event_param_value ev;
+            ev.header.time = 0;
+            ev.header.type = CLAP_EVENT_PARAM_VALUE;
+            ev.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+            ev.header.flags = 0;
+            ev.header.size = sizeof(ev);
+            ev.param_id = param_id;
+            ev.cookie = value.cookie; // _settings.shouldProvideCookie() ? value.cookie : nullptr;
+            ev.port_index = 0;
+            ev.key = -1;
+            ev.channel = -1;
+            ev.note_id = -1;
+            ev.value = value.value;
+            _evIn.push(&ev.header);
+        });
+
+    _appToEngineModQueue.consume([this](clap_id param_id, const AppToEngineParamQueueValue &value) {
+        clap_event_param_mod ev;
+        ev.header.time = 0;
+        ev.header.type = CLAP_EVENT_PARAM_MOD;
+        ev.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+        ev.header.flags = 0;
+        ev.header.size = sizeof(ev);
+        ev.param_id = param_id;
+        ev.cookie = value.cookie; // _settings.shouldProvideCookie() ? value.cookie : nullptr;
+        ev.port_index = 0;
+        ev.key = -1;
+        ev.channel = -1;
+        ev.note_id = -1;
+        ev.amount = value.value;
+        _evIn.push(&ev.header);
+    });
+}
+
+
 void ClapPlugin::Render()
 {
-    QMutexLocker lock(&objMutex);
-
     // checkForAudioThread();
     g_thread_type = ClapThreadType::AudioThread; //fake it for now
 
     if (!_plugin.get())
         return;
+
+    // Can't process a plugin that is not active
+    if (!isPluginActive())
+        return;
+
+    // Do we want to deactivate the plugin?
+    if (_scheduleDeactivate) {
+        _scheduleDeactivate = false;
+        if (_state == ActiveAndProcessing)
+            _plugin->stopProcessing();
+        setPluginState(ActiveAndReadyToDeactivate);
+        return;
+    }
+
+    // We can't process a plugin which failed to start processing
+    if (_state == ActiveWithError)
+        return;
+
+    QMutexLocker lock(&objMutex);
 
     if(closed) // || GetSleep())
         return;
@@ -762,20 +679,26 @@ void ClapPlugin::Render()
     _process.in_events = _evIn.clapInputEvents();
     _process.out_events = _evOut.clapOutputEvents();
 
-    if (_scheduleDeactivate) {
-        _scheduleDeactivate = false;
-        _plugin->stopProcessing();
-        return;
-    }
 
-    if(_scheduleProcess) {
-        _scheduleProcess=false;
+    _evOut.clear();
+    generatePluginInputEvents();
+
+
+    if (isPluginSleeping()) {
+        if (!_scheduleProcess && _evIn.empty())
+            // The plugin is sleeping, there is no request to wake it up and there are no events to
+            // process
+            return;
+
+        _scheduleProcess = false;
         if (!_plugin->startProcessing()) {
-            LOG("err start")
+            // the plugin failed to start processing
+            setPluginState(ActiveWithError);
             return;
         }
-    }
 
+        setPluginState(ActiveAndProcessing);
+    }
 
     float **tmpBufOut = new float*[listAudioPinOut->listPins.size()];
 
@@ -834,17 +757,14 @@ void ClapPlugin::Render()
         _process.audio_inputs_count = 1;
     }
 
-
-
     _process.audio_inputs = &_audioIn;
     _process.audio_outputs = &_audioOut;
     _process.frames_count = bufferSize;
     _process.steady_time = 0;
 
-    // if (isPluginProcessing())
-        // status =
-        _plugin->process(&_process);
-
+    int32_t status = CLAP_PROCESS_SLEEP;
+    if (isPluginProcessing())
+        status = _plugin->process(&_process);
 
     handlePluginOutputEvents();
 
@@ -864,6 +784,43 @@ void ClapPlugin::Render()
         static_cast<AudioPin*>(pin)->GetBuffer()->ConsumeStack();
         static_cast<AudioPin*>(pin)->SendAudioBuffer();
     }
+
+    g_thread_type = ClapThreadType::Unknown;
+}
+
+
+void ClapPlugin::setPluginState(PluginState state) {
+    switch (state) {
+    case Inactive:
+        Q_ASSERT(_state == ActiveAndReadyToDeactivate);
+        break;
+
+    case InactiveWithError:
+        Q_ASSERT(_state == Inactive);
+        break;
+
+    case ActiveAndSleeping:
+        Q_ASSERT(_state == Inactive || _state == ActiveAndProcessing);
+        break;
+
+    case ActiveAndProcessing:
+        Q_ASSERT(_state == ActiveAndSleeping);
+        break;
+
+    case ActiveWithError:
+        Q_ASSERT(_state == ActiveAndProcessing);
+        break;
+
+    case ActiveAndReadyToDeactivate:
+        Q_ASSERT(_state == ActiveAndProcessing || _state == ActiveAndSleeping ||
+                 _state == ActiveWithError);
+        break;
+
+    default:
+        std::terminate();
+    }
+
+    _state = state;
 }
 
 void ClapPlugin::UserAddPin(const ConnectionInfo &info)
@@ -901,12 +858,99 @@ void ClapPlugin::ParamChangedFromPlugin(int pinNum,float val)
     }
 }
 
+void ClapPlugin::setParamValueByHost(ClapPluginParam &param, double value) {
+    checkForMainThread();
+
+    param.setValue(value);
+
+    _appToEngineValueQueue.set(param.info().id, {param.info().cookie, value});
+    _appToEngineValueQueue.producerDone();
+    paramsRequestFlush();
+}
+
+void ClapPlugin::setParamModulationByHost(ClapPluginParam &param, double value) {
+    checkForMainThread();
+
+    param.setModulation(value);
+
+    _appToEngineModQueue.set(param.info().id, {param.info().cookie, value});
+    _appToEngineModQueue.producerDone();
+    paramsRequestFlush();
+}
+
+bool ClapPlugin::isPluginActive() const {
+    switch (_state) {
+    case Inactive:
+    case InactiveWithError:
+        return false;
+    default:
+        return true;
+    }
+}
+
+bool ClapPlugin::isPluginProcessing() const { return _state == ActiveAndProcessing; }
+
+bool ClapPlugin::isPluginSleeping() const { return _state == ActiveAndSleeping; }
+
+
+void ClapPlugin::activate(int32_t sample_rate, int32_t blockSize) {
+    checkForMainThread();
+
+    if (!_plugin.get())
+        return;
+
+    assert(!isPluginActive());
+    if (!_plugin->activate(sample_rate, blockSize, blockSize)) {
+        setPluginState(InactiveWithError);
+        return;
+    }
+
+    _scheduleProcess = true;
+    setPluginState(ActiveAndSleeping);
+}
+
+void ClapPlugin::deactivate() {
+    checkForMainThread();
+
+    if (!isPluginActive())
+        return;
+
+    while (isPluginProcessing() || isPluginSleeping()) {
+        _scheduleDeactivate = true;
+        QThread::msleep(10);
+    }
+    _scheduleDeactivate = false;
+
+    _plugin->deactivate();
+    setPluginState(Inactive);
+}
+
+void ClapPlugin::paramFlushOnMainThread() {
+    checkForMainThread();
+
+    assert(!isPluginActive());
+
+    _scheduleParamFlush = false;
+
+    _evIn.clear();
+    _evOut.clear();
+
+    generatePluginInputEvents();
+
+    if (_plugin->canUseParams())
+        _plugin->paramsFlush(_evIn.clapInputEvents(), _evOut.clapOutputEvents());
+    handlePluginOutputEvents();
+
+    _evOut.clear();
+    _engineToAppValueQueue.producerDone();
+}
+
 void ClapPlugin::idle() {
     checkForMainThread();
 
     // Try to send events to the audio engine
-    // _appToEngineValueQueue.producerDone();
-    // _appToEngineModQueue.producerDone();
+    _appToEngineValueQueue.producerDone();
+    _appToEngineModQueue.producerDone();
 
     _engineToAppValueQueue.consume(
         [this](clap_id param_id, const EngineToAppParamQueueValue &value) {
@@ -917,24 +961,26 @@ void ClapPlugin::idle() {
                 throw std::invalid_argument(msg.str());
             }
 
-            if (value.has_value)
+            if (value.has_value) {
                 it->second->setValue(value.value);
+
+                int pinNum = it->second->pinNumber;
+                float val = (value.value - it->second->info().min_value) / (it->second->info().max_value - it->second->info().min_value);
+                val = std::min(val,1.f);
+                val = std::max(val,.0f);
+                ParamChangedFromPlugin(pinNum,val);
+            }
 
             if (value.has_gesture)
                 it->second->setIsAdjusting(value.is_begin);
 
-            int pinNum = it->second->pinNumber;
-            float val = (value.value - it->second->info().min_value) / (it->second->info().max_value - it->second->info().min_value);
-            val = std::min(val,1.f);
-            val = std::max(val,.0f);
-            // LOG(it->second->info().max_value << it->second->info().min_value << value.value << val)
-            ParamChangedFromPlugin(pinNum,val);
             // emit paramAdjusted(param_id);
         });
-    /*
+
     if (_scheduleParamFlush && !isPluginActive()) {
         paramFlushOnMainThread();
     }
+    /*
 
     if (_scheduleMainThreadCallback) {
         _scheduleMainThreadCallback = false;
@@ -996,6 +1042,8 @@ void ClapPlugin::handlePluginOutputEvents() {
 
 void ClapPlugin::MidiMsgFromInput(long msg)
 {
+    g_thread_type = ClapThreadType::AudioThread;
+
     QMutexLocker lock(&objMutex);
 
     int status = msg & 0xF0; // MidiStatus(msg);
@@ -1014,6 +1062,9 @@ void ClapPlugin::MidiMsgFromInput(long msg)
         break;
     case MidiConst::noteOff :
         processNoteOff(0,chan,d1,d2);
+        break;
+    case MidiConst::ctrl:
+        processCC(0,chan,d1,d2);
         break;
     }
 }
@@ -1204,3 +1255,258 @@ void ClapPlugin::OnHideEditor()
     }
 }
 
+
+// clap_host_gui
+//=====================
+
+void ClapPlugin::guiResizeHintsChanged() noexcept {
+    // TODO
+}
+
+bool ClapPlugin::guiRequestResize(uint32_t width, uint32_t height) noexcept {
+    if(!editorWnd)
+        return false;
+
+    editorWnd->SetWindowSize(width,height);
+
+    // QMetaObject::invokeMethod(
+    //     Application::instance().mainWindow(),
+    //     [width, height] { Application::instance().mainWindow()->resizePluginView(width, height); },
+    //     Qt::QueuedConnection);
+
+    return true;
+}
+
+
+bool ClapPlugin::guiRequestShow() noexcept {
+    if(!editorWnd)
+        return false;
+
+    editorWnd->show();
+
+    // QMetaObject::invokeMethod(
+    //     Application::instance().mainWindow(),
+    //     [] { Application::instance().mainWindow()->showPluginWindow(); },
+    //     Qt::QueuedConnection);
+
+    return true;
+}
+
+bool ClapPlugin::guiRequestHide() noexcept {
+    if(!editorWnd)
+        return false;
+
+    editorWnd->hide();
+
+    // QMetaObject::invokeMethod(
+    //     Application::instance().mainWindow(),
+    //     [] { Application::instance().mainWindow()->hidePluginWindow(); },
+    //     Qt::QueuedConnection);
+
+    return true;
+}
+
+void ClapPlugin::guiClosed(bool wasDestroyed) noexcept { checkForMainThread(); }
+
+
+
+// clap_host_params
+//=====================
+
+
+void ClapPlugin::paramsRescan(uint32_t flags) noexcept {
+    // checkForMainThread();
+
+    if (!_plugin->canUseParams())
+        return;
+
+    // 1. it is forbidden to use CLAP_PARAM_RESCAN_ALL if the plugin is active
+    // if (isPluginActive() && (flags & CLAP_PARAM_RESCAN_ALL)) {
+    //     throw std::logic_error(
+    //         "clap_host_params.recan(CLAP_PARAM_RESCAN_ALL) was called while the plugin is active!");
+    //     return;
+    // }
+
+    // 2. scan the params.
+    auto count = _plugin->paramsCount();
+    std::unordered_set<clap_id> paramIds(count * 2);
+
+    for (int32_t i = 0; i < count; ++i) {
+        clap_param_info info;
+        if (!_plugin->paramsGetInfo(i, &info))
+            throw std::logic_error("clap_plugin_params.get_info did return false!");
+
+        if (info.id == CLAP_INVALID_ID) {
+            std::ostringstream msg;
+            msg << "clap_plugin_params.get_info() reported a parameter with id = CLAP_INVALID_ID"
+                << std::endl
+                << " 2. name: " << info.name << ", module: " << info.module << std::endl;
+            throw std::logic_error(msg.str());
+        }
+
+        auto it = _params.find(info.id);
+
+        // check that the parameter is not declared twice
+        if (paramIds.count(info.id) > 0) {
+            Q_ASSERT(it != _params.end());
+
+            std::ostringstream msg;
+            msg << "the parameter with id: " << info.id << " was declared twice." << std::endl
+                << " 1. name: " << it->second->info().name << ", module: " << it->second->info().module
+                << std::endl
+                << " 2. name: " << info.name << ", module: " << info.module << std::endl;
+            throw std::logic_error(msg.str());
+        }
+        paramIds.insert(info.id);
+
+        if (it == _params.end()) {
+            if (!(flags & CLAP_PARAM_RESCAN_ALL)) {
+                std::ostringstream msg;
+                msg << "a new parameter was declared, but the flag CLAP_PARAM_RESCAN_ALL was not "
+                       "specified; id: "
+                    << info.id << ", name: " << info.name << ", module: " << info.module << std::endl;
+                throw std::logic_error(msg.str());
+            }
+
+            double value = getParamValue(info);
+            auto param = std::make_unique<ClapPluginParam>(*this, info, value);
+            checkValidParamValue(*param, value);
+            _params.insert_or_assign(info.id, std::move(param));
+        } else {
+            // update param info
+            if (!it->second->isInfoEqualTo(info)) {
+                if (!clapParamsRescanMayInfoChange(flags)) {
+                    std::ostringstream msg;
+                    msg << "a parameter's info did change, but the flag CLAP_PARAM_RESCAN_INFO "
+                           "was not specified; id: "
+                        << info.id << ", name: " << info.name << ", module: " << info.module
+                        << std::endl;
+                    throw std::logic_error(msg.str());
+                }
+
+                if (!(flags & CLAP_PARAM_RESCAN_ALL) &&
+                    !it->second->isInfoCriticallyDifferentTo(info)) {
+                    std::ostringstream msg;
+                    msg << "a parameter's info has critical changes, but the flag CLAP_PARAM_RESCAN_ALL "
+                           "was not specified; id: "
+                        << info.id << ", name: " << info.name << ", module: " << info.module
+                        << std::endl;
+                    throw std::logic_error(msg.str());
+                }
+
+                it->second->setInfo(info);
+            }
+
+            double value = getParamValue(info);
+            if (it->second->value() != value) {
+                if (!clapParamsRescanMayValueChange(flags)) {
+                    std::ostringstream msg;
+                    msg << "a parameter's value did change but, but the flag CLAP_PARAM_RESCAN_VALUES "
+                           "was not specified; id: "
+                        << info.id << ", name: " << info.name << ", module: " << info.module
+                        << std::endl;
+                    throw std::logic_error(msg.str());
+                }
+
+                // update param value
+                checkValidParamValue(*it->second, value);
+                it->second->setValue(value);
+                it->second->setModulation(value);
+            }
+        }
+    }
+
+    // remove parameters which are gone
+    for (auto it = _params.begin(); it != _params.end();) {
+        if (paramIds.find(it->first) != paramIds.end())
+            ++it;
+        else {
+            if (!(flags & CLAP_PARAM_RESCAN_ALL)) {
+                std::ostringstream msg;
+                auto &info = it->second->info();
+                msg << "a parameter was removed, but the flag CLAP_PARAM_RESCAN_ALL was not "
+                       "specified; id: "
+                    << info.id << ", name: " << info.name << ", module: " << info.module << std::endl;
+                throw std::logic_error(msg.str());
+            }
+            it = _params.erase(it);
+        }
+    }
+
+    //signal
+    if (flags & CLAP_PARAM_RESCAN_ALL)
+        paramsChanged();
+}
+
+
+void ClapPlugin::paramsClear(clap_id paramId, clap_param_clear_flags flags) noexcept
+{
+    checkForMainThread();
+}
+
+
+void ClapPlugin::paramsRequestFlush() noexcept {
+    if (!isPluginActive() && threadCheckIsMainThread()) {
+        // Perform the flush immediately
+        paramFlushOnMainThread();
+        return;
+    }
+
+    _scheduleParamFlush = true;
+    return;
+}
+
+// clap_host_state
+//================
+
+
+void ClapPlugin::stateMarkDirty() noexcept {
+    checkForMainThread();
+
+
+    if (!_plugin->canUseState())
+        throw std::logic_error("Plugin called clap_host_state.set_dirty() but the host does not "
+                               "provide a complete clap_plugin_state interface.");
+
+    _stateIsDirty = true;
+}
+
+
+// clap_host_thread_check
+// ======================
+
+bool ClapPlugin::threadCheckIsMainThread() const noexcept {
+    return g_thread_type == ClapThreadType::MainThread;
+}
+
+bool ClapPlugin::threadCheckIsAudioThread() const noexcept {
+    return g_thread_type == ClapThreadType::AudioThread;
+}
+
+
+// clap_host_thread_pool
+//========================
+
+bool ClapPlugin::threadPoolRequestExec(uint32_t num_tasks) noexcept {
+    checkForAudioThread();
+
+    if (!_plugin->canUseThreadPool())
+        throw std::logic_error("Called request_exec() without providing clap_plugin_thread_pool to "
+                               "execute the job.");
+
+    Q_ASSERT(!_threadPoolStop);
+    Q_ASSERT(!_threadPool.empty());
+
+    if (num_tasks == 0)
+        return true;
+
+    if (num_tasks == 1) {
+        _plugin->threadPoolExec(0);
+        return true;
+    }
+
+    _threadPoolTaskIndex = 0;
+    _threadPoolSemaphoreProd.release(num_tasks);
+    _threadPoolSemaphoreDone.acquire(num_tasks);
+    return true;
+}

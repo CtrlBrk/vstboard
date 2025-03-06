@@ -35,3 +35,16 @@ void ClapPluginWindow::SetWindowSize(int newWidth, int newHeight)
     }
     resize(newWidth,newHeight);
 }
+
+
+void ClapPluginWindow::closeEvent( QCloseEvent * event )
+{
+    // if(!plugin) {
+    //     event->accept();
+    //     return;
+    // }
+
+    hide();
+    emit Hide();
+    event->ignore();
+}

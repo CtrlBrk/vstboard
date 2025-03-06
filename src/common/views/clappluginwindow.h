@@ -23,8 +23,10 @@ public:
     WId GetWinId();
 
 private:
+    void closeEvent ( QCloseEvent * event ) override;
     Ui::VstPluginWindow *ui;
     bool canResize;
+
 signals:
     void Hide();
 

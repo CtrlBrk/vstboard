@@ -63,6 +63,7 @@ public:
     Pin* CreatePin(const ConnectionInfo &info) override;
     void processNoteOn(int sampleOffset, int channel, int key, int velocity);
     void processNoteOff(int sampleOffset, int channel, int key, int velocity);
+    void processCC(int sampleOffset, int channel, int cc, int value);
     QString GetParameterName(ConnectionInfo pinInfo) override;
     void OnParameterChanged(ConnectionInfo pinInfo, float value) override;
 
@@ -78,7 +79,15 @@ public:
 
     void idle();
     void ReceiveMsg(const MsgObject &msg) override;
+
+    void setParamValueByHost(ClapPluginParam &param, double value);
+    void setParamModulationByHost(ClapPluginParam &param, double value);
+
     View::ClapPluginWindow *editorWnd;
+
+    bool canActivate() const;
+    void activate(int32_t sample_rate, int32_t blockSize);
+    void deactivate();
 
 protected:
     // clap_host
@@ -86,9 +95,32 @@ protected:
     void requestProcess() noexcept override;
     void requestCallback() noexcept override;
 
+    // clap_host_gui
+    bool implementsGui() const noexcept override { return true; }
+    void guiResizeHintsChanged() noexcept override;
+    bool guiRequestResize(uint32_t width, uint32_t height) noexcept override;
+    bool guiRequestShow() noexcept override;
+    bool guiRequestHide() noexcept override;
+    void guiClosed(bool wasDestroyed) noexcept override;
+
+    // clap_host_params
+    bool implementsParams() const noexcept override { return true; }
+    void paramsRescan(clap_param_rescan_flags flags) noexcept override;
+    void paramsClear(clap_id paramId, clap_param_clear_flags flags) noexcept override;
+    void paramsRequestFlush() noexcept override;
+
+    // clap_host_state
+    bool implementsState() const noexcept override { return true; }
+    void stateMarkDirty() noexcept override;
+
     // clap_host_thread_check
     bool threadCheckIsMainThread() const noexcept override;
     bool threadCheckIsAudioThread() const noexcept override;
+
+    // clap_host_thread_pool
+    bool implementsThreadPool() const noexcept override { return true; }
+    bool threadPoolRequestExec(uint32_t numTasks) noexcept override;
+
 private:
     clap::helpers::EventList _evIn;
     clap::helpers::EventList _evOut;
@@ -106,13 +138,14 @@ private:
     qint32 bufferSize;
     float sampleRate;
 
-    void paramsRescan(uint32_t flags) noexcept override;
+    void paramFlushOnMainThread();
     double getParamValue(const clap_param_info &info);
     void checkValidParamValue(const ClapPluginParam &param, double value);
     void handlePluginOutputEvents();
     void ParamChangedFromPlugin(int pinNum,float val);
     void CreateEditorWindow();
-    void deactivate();
+    void generatePluginInputEvents();
+
 
     static bool clapParamsRescanMayValueChange(uint32_t flags) {
         return flags & (CLAP_PARAM_RESCAN_ALL | CLAP_PARAM_RESCAN_VALUES);
@@ -131,13 +164,44 @@ private:
 
     static const char *getCurrentClapGuiApi();
 
+    enum PluginState {
+        // The plugin is inactive, only the main thread uses it
+        Inactive,
+
+        // Activation failed
+        InactiveWithError,
+
+        // The plugin is active and sleeping, the audio engine can call set_processing()
+        ActiveAndSleeping,
+
+        // The plugin is processing
+        ActiveAndProcessing,
+
+        // The plugin did process but is in error
+        ActiveWithError,
+
+        // The plugin is not used anymore by the audio engine and can be deactivated on the main
+        // thread
+        ActiveAndReadyToDeactivate,
+    };
+
+    bool isPluginActive() const;
+    bool isPluginProcessing() const;
+    bool isPluginSleeping() const;
+    void setPluginState(PluginState state);
+    PluginState _state = Inactive;
+
     bool _scheduleProcess = false;
     bool _scheduleDeactivate = false;
+
+    bool _scheduleParamFlush = false;
 
     const char *_guiApi = nullptr;
     bool _isGuiCreated = false;
     bool _isGuiVisible = false;
     bool _isGuiFloating = false;
+
+    bool _stateIsDirty = false;
 
     std::unordered_map<clap_id, bool> _isAdjustingParameter;
 
@@ -160,6 +224,13 @@ private:
         double value = 0;
     };
 
+    struct AppToEngineParamQueueValue {
+        void *cookie;
+        double value;
+    };
+
+    clap::helpers::ReducingParamQueue<clap_id, AppToEngineParamQueueValue> _appToEngineValueQueue;
+    clap::helpers::ReducingParamQueue<clap_id, AppToEngineParamQueueValue> _appToEngineModQueue;
     clap::helpers::ReducingParamQueue<clap_id, EngineToAppParamQueueValue> _engineToAppValueQueue;
 
     QTimer _idleTimer;
