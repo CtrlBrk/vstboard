@@ -1510,3 +1510,15 @@ bool ClapPlugin::threadPoolRequestExec(uint32_t num_tasks) noexcept {
     _threadPoolSemaphoreDone.acquire(num_tasks);
     return true;
 }
+
+void ClapPlugin::SaveProgram()
+{
+    paramsRescan(CLAP_PARAM_RESCAN_VALUES);
+    for (auto it = _params.begin(); it != _params.end();) {
+        int pinNum = it->second->pinNumber;
+        ParameterPinIn *pin = static_cast<ParameterPinIn*>(listParameterPinIn->GetPin(pinNum,false));
+        pin->ChangeValue((float)it->second->value());
+        ++it;
+    }
+    Object::SaveProgram();
+}

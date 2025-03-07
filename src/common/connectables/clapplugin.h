@@ -248,6 +248,7 @@ public slots:
     void OnShowEditor() override;
     void OnHideEditor() override;
     void UserAddPin(const ConnectionInfo &info) override;
+    void SaveProgram() override;
 
     // void paramValueChanged();
 };
