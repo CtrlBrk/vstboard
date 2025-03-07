@@ -1511,9 +1511,56 @@ bool ClapPlugin::threadPoolRequestExec(uint32_t num_tasks) noexcept {
     return true;
 }
 
+void ClapPlugin::LoadProgram(int progId)
+{
+    Object::LoadProgram(progId);
+
+    if(_plugin && _plugin->canUseState()) {
+
+        QByteArray ba = currentProgram->listOtherValues.value(0, QByteArray()).toByteArray();
+
+        clap_istream istream;
+        istream.ctx = &ba;
+        istream.read = [] (const clap_istream *stream, void *buffer, uint64_t size) -> int64_t {
+            QByteArray *_ba = (QByteArray *)stream->ctx;
+            // buffer = _ba->data();
+            size = std::min(size,(uint64_t)_ba->size());
+            QByteArray b = _ba->first( size );
+            _ba->remove(0,size);
+            memcpy_s(buffer,size,b.data(),size);
+            return b.size();
+        };
+
+        if(ba.size()>0) {
+            _plugin->stateLoad(&istream);
+        }
+    }
+
+    currentProgram->Load(listParameterPinIn,listParameterPinOut);
+}
+
 void ClapPlugin::SaveProgram()
 {
-    paramsRescan(CLAP_PARAM_RESCAN_VALUES);
+    if(!currentProgram || !currentProgram->IsDirty())
+        return;
+
+    if(_plugin && _plugin->canUseState()) {
+        QByteArray ba;
+
+        clap_ostream ostream;
+        ostream.ctx = &ba;
+        ostream.write = [] (const clap_ostream *stream, const void *buffer, uint64_t size) -> int64_t {
+            QByteArray *_ba = (QByteArray *)stream->ctx;
+            _ba->append( QByteArray::fromRawData((char*)buffer, size) );
+            return size;
+        };
+
+        _plugin->stateSave(&ostream);
+
+        currentProgram->listOtherValues.insert(0,ba);
+    }
+
+    paramsRescan(CLAP_PARAM_RESCAN_ALL);
     for (auto it = _params.begin(); it != _params.end();) {
         int pinNum = it->second->pinNumber;
         ParameterPinIn *pin = static_cast<ParameterPinIn*>(listParameterPinIn->GetPin(pinNum,false));
@@ -1521,4 +1568,46 @@ void ClapPlugin::SaveProgram()
         ++it;
     }
     Object::SaveProgram();
+}
+
+
+void ClapPlugin::fromJson(QJsonObject &json)
+{
+    // Object::fromJson(json);
+
+    // if(savedChunk) {
+    //     delete savedChunk;
+    //     savedChunk=0;
+    //     savedChunkSize=0;
+    // }
+
+    // if(json.contains("chunk")) {
+    //     QByteArray ba = QByteArray::fromHex( json["chunk"].toString().toUtf8() );
+
+    //     savedChunkSize = ba.size();
+    //     savedChunk = new char[savedChunkSize];
+    //     std::memcpy(savedChunk,ba.constData(),savedChunkSize);
+
+    //     if(pEffect && (pEffect->flags & effFlagsProgramChunks)) {
+    //         EffSetChunk(savedChunk ,savedChunkSize);
+    //     }
+    // }
+
+}
+
+void ClapPlugin::toJson(QJsonObject &json)
+{
+    // QByteArray ba;
+
+    // clap_ostream ostream;
+    // ostream.ctx = &ba,
+    // ostream.write = [] (const clap_ostream *stream, const void *buffer, uint64_t size) -> int64_t {
+    //     QByteArray *_ba = (QByteArray *)stream->ctx;
+    //     _ba->append( QByteArray::fromRawData((char*)buffer, size) );
+    //     return size;
+    // };
+
+    // _plugin->stateSave(&ostream);
+    // json["chunk"] = QString(ba.toHex());
+
 }

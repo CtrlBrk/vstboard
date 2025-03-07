@@ -89,6 +89,9 @@ public:
     void activate(int32_t sample_rate, int32_t blockSize);
     void deactivate();
 
+    void fromJson(QJsonObject &json) override;
+    void toJson(QJsonObject &json)  override;
+
 protected:
     // clap_host
     void requestRestart() noexcept override;
@@ -248,6 +251,8 @@ public slots:
     void OnShowEditor() override;
     void OnHideEditor() override;
     void UserAddPin(const ConnectionInfo &info) override;
+
+    void LoadProgram(int progId) override;
     void SaveProgram() override;
 
     // void paramValueChanged();
