@@ -195,6 +195,7 @@ private:
     PluginState _state = Inactive;
 
     bool _scheduleProcess = false;
+    bool _scheduleRestart = false;
     bool _scheduleDeactivate = false;
 
     bool _scheduleParamFlush = false;
@@ -205,6 +206,7 @@ private:
     bool _isGuiFloating = false;
 
     bool _stateIsDirty = false;
+    bool _scheduleMainThreadCallback = false;
 
     std::unordered_map<clap_id, bool> _isAdjustingParameter;
 

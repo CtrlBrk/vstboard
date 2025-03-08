@@ -106,11 +106,11 @@ void ClapPlugin::threadPoolEntry() {
 }
 
 
-void ClapPlugin::requestCallback() noexcept { /*_scheduleMainThreadCallback = true;*/ }
+void ClapPlugin::requestCallback() noexcept { _scheduleMainThreadCallback = true; }
 
-void ClapPlugin::requestProcess() noexcept { /*_scheduleProcess = true;*/ }
+void ClapPlugin::requestProcess() noexcept { _scheduleProcess = true; }
 
-void ClapPlugin::requestRestart() noexcept { /*_scheduleRestart = true;*/ }
+void ClapPlugin::requestRestart() noexcept { _scheduleRestart = true; }
 
 bool ClapPlugin::Close()
 {
@@ -980,7 +980,6 @@ void ClapPlugin::idle() {
     if (_scheduleParamFlush && !isPluginActive()) {
         paramFlushOnMainThread();
     }
-    /*
 
     if (_scheduleMainThreadCallback) {
         _scheduleMainThreadCallback = false;
@@ -990,9 +989,9 @@ void ClapPlugin::idle() {
     if (_scheduleRestart) {
         deactivate();
         _scheduleRestart = false;
-        activate(_engine._sampleRate, _engine._nframes);
+        activate(sampleRate, bufferSize);
     }
-*/
+
 }
 
 void ClapPlugin::handlePluginOutputEvents() {
