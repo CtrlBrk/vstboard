@@ -115,6 +115,7 @@ namespace Connectables {
         inline void Unlock() { objMutex.unlock();}
 
         LearningMode::Enum GetLearningMode();
+        void SetLearningMode(LearningMode::Enum learn);
 
         /*!
           Get the current container id

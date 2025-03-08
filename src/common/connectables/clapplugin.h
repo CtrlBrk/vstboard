@@ -205,7 +205,6 @@ private:
     bool _isGuiVisible = false;
     bool _isGuiFloating = false;
 
-    bool _stateIsDirty = false;
     bool _scheduleMainThreadCallback = false;
 
     std::unordered_map<clap_id, bool> _isAdjustingParameter;

@@ -56,6 +56,8 @@ public:
         emit isBeingAdjustedChanged();
     }
 
+    float FloatFromValue() const;
+    double ValueFromFloat(float val) const;
     int pinNumber = 0;
 
 signals:

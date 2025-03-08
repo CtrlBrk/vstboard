@@ -845,11 +845,13 @@ intptr_t VstPlugin::OnMasterCallback(long opcode, long index, long value, void *
 
                 switch(GetLearningMode()) {
                 case LearningMode::unlearn :
+                    SetLearningMode(LearningMode::off);
                     if(pin->GetVisible())
                         myHost->undoStack.push( new ComRemovePin(myHost, pin->GetConnectionInfo()) );
                     break;
 
                 case LearningMode::learn :
+                    SetLearningMode(LearningMode::off);
                     if(!pin->GetVisible())
                         myHost->undoStack.push( new ComAddPin(myHost, pin->GetConnectionInfo()) );
 

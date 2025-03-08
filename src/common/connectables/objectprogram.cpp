@@ -62,7 +62,7 @@ void ObjectProgram::Load(PinsList *in, PinsList *out)
         //program is set when a connected pin send a signal, don't set it now
 		if (i.key() != FixedPinNumber::vstProgNumber) {
 
-			static_cast<ParameterPin*>(pin)->Load(i.value());
+            static_cast<ParameterPin*>(pin)->Load(i.value());
 		}
 
         ++i;

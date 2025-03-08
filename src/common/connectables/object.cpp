@@ -518,6 +518,17 @@ LearningMode::Enum Object::GetLearningMode()
     return (LearningMode::Enum)static_cast<ParameterPinIn*>(listParameterPinIn->listPins.value(FixedPinNumber::learningMode))->GetStepIndex();
 }
 
+void Object::SetLearningMode(LearningMode::Enum learn)
+{
+    if(!listParameterPinIn)
+        return;
+
+    if(!listParameterPinIn->listPins.contains(FixedPinNumber::learningMode))
+        return;
+
+    static_cast<ParameterPinIn*>(listParameterPinIn->listPins.value(FixedPinNumber::learningMode))->ChangeValue(learn);
+}
+
 /*!
   Set the object view status (position, size, ...) defined by the container
   \param[in] attr an ObjectContainerAttribs

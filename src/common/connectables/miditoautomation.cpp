@@ -116,11 +116,13 @@ void MidiToAutomation::ChangeValue(int ctrl, int value) {
     if(ctrl<128 || ctrl>=para_notes) {
         switch(GetLearningMode()) {
             case LearningMode::unlearn :
+                SetLearningMode(LearningMode::off);
                 if(listParameterPinOut->listPins.contains(ctrl)) {
                     myHost->undoStack.push( new ComRemovePin(myHost, listParameterPinOut->listPins.value(ctrl)->GetConnectionInfo()) );
                 }
                 break;
             case LearningMode::learn :
+                SetLearningMode(LearningMode::off);
                 if(!listParameterPinOut->listPins.contains(ctrl)) {
                     ConnectionInfo info = listParameterPinOut->connInfo;
                     info.pinNumber = ctrl;

@@ -499,7 +499,8 @@ double ClapPlugin::getParamValue(const clap_param_info &info) {
     std::ostringstream msg;
     msg << "failed to get the param value, id: " << info.id << ", name: " << info.name
         << ", module: " << info.module;
-    throw std::logic_error(msg.str());
+    LOG(msg.str());
+    return 0;
 }
 
 void ClapPlugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
@@ -509,6 +510,11 @@ void ClapPlugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
     if(closed)
         return;
 
+    if(pinInfo.clapId==0) {
+        // LOG("clapId0")
+        return;
+    }
+
     if(pinInfo.direction == PinDirection::Input) {
         auto it = _params.find(pinInfo.clapId);
         if (it == _params.end()) {
@@ -516,25 +522,24 @@ void ClapPlugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
             return ;
         }
 
-        auto &info = it->second->info();
         auto param = it->second.get();
-        double newval = value * (info.max_value - info.min_value) + info.min_value;
-        // LOG("parm value " << newval)
+        float newval = it->second->ValueFromFloat(value);
+
         setParamValueByHost(*param,newval);
     }
 }
 
 
 void ClapPlugin::checkValidParamValue(const ClapPluginParam &param, double value) {
-    // checkForMainThread();
+    checkForMainThread();
 
     if (!param.isValueValid(value)) {
         std::ostringstream msg;
         msg << "Invalid value for param. ";
         param.printInfo(msg);
         msg << "; value: " << value;
-        // std::cerr << msg.str() << std::endl;
-        throw std::invalid_argument(msg.str());
+        LOG(msg.str());
+        return;
     }
 }
 
@@ -845,11 +850,13 @@ void ClapPlugin::ParamChangedFromPlugin(int pinNum,float val)
 
     switch(GetLearningMode()) {
     case LearningMode::unlearn :
+        SetLearningMode(LearningMode::off);
         if(pin->GetVisible())
             myHost->undoStack.push( new ComRemovePin(myHost, pin->GetConnectionInfo()) );
         break;
 
     case LearningMode::learn :
+        SetLearningMode(LearningMode::off);
         if(!pin->GetVisible())
             myHost->undoStack.push( new ComAddPin(myHost, pin->GetConnectionInfo()) );
 
@@ -866,6 +873,8 @@ void ClapPlugin::setParamValueByHost(ClapPluginParam &param, double value) {
     _appToEngineValueQueue.set(param.info().id, {param.info().cookie, value});
     _appToEngineValueQueue.producerDone();
     paramsRequestFlush();
+
+    OnProgramDirty();
 }
 
 void ClapPlugin::setParamModulationByHost(ClapPluginParam &param, double value) {
@@ -876,6 +885,8 @@ void ClapPlugin::setParamModulationByHost(ClapPluginParam &param, double value) 
     _appToEngineModQueue.set(param.info().id, {param.info().cookie, value});
     _appToEngineModQueue.producerDone();
     paramsRequestFlush();
+
+    OnProgramDirty();
 }
 
 bool ClapPlugin::isPluginActive() const {
@@ -958,16 +969,15 @@ void ClapPlugin::idle() {
             if (it == _params.end()) {
                 std::ostringstream msg;
                 msg << "Plugin produced a CLAP_EVENT_PARAM_SET with an unknown param_id: " << param_id;
-                throw std::invalid_argument(msg.str());
+                LOG(msg.str());
+                return;
             }
 
             if (value.has_value) {
                 it->second->setValue(value.value);
 
                 int pinNum = it->second->pinNumber;
-                float val = (value.value - it->second->info().min_value) / (it->second->info().max_value - it->second->info().min_value);
-                val = std::min(val,1.f);
-                val = std::max(val,.0f);
+                float val = it->second->FloatFromValue();
                 ParamChangedFromPlugin(pinNum,val);
             }
 
@@ -1002,8 +1012,10 @@ void ClapPlugin::handlePluginOutputEvents() {
             auto ev = reinterpret_cast<const clap_event_param_gesture *>(h);
             bool &isAdj = _isAdjustingParameter[ev->param_id];
 
-            if (isAdj)
-                throw std::logic_error("The plugin sent BEGIN_ADJUST twice");
+            if (isAdj) {
+                LOG("The plugin sent BEGIN_ADJUST twice");
+                return;
+            }
             isAdj = true;
 
             EngineToAppParamQueueValue v;
@@ -1017,8 +1029,10 @@ void ClapPlugin::handlePluginOutputEvents() {
             auto ev = reinterpret_cast<const clap_event_param_gesture *>(h);
             bool &isAdj = _isAdjustingParameter[ev->param_id];
 
-            if (!isAdj)
-                throw std::logic_error("The plugin sent END_ADJUST without a preceding BEGIN_ADJUST");
+            if (!isAdj) {
+                LOG("The plugin sent END_ADJUST without a preceding BEGIN_ADJUST");
+                return;
+            }
             isAdj = false;
             EngineToAppParamQueueValue v;
             v.has_gesture = true;
@@ -1033,6 +1047,8 @@ void ClapPlugin::handlePluginOutputEvents() {
             v.has_value = true;
             v.value = ev->value;
             _engineToAppValueQueue.setOrUpdate(ev->param_id, v);
+
+            OnProgramDirty();
             break;
         }
         }
@@ -1225,8 +1241,8 @@ void ClapPlugin::OnShowEditor()
     editorWnd->show();
     //    editorWnd->raise();
 
-    connect(myHost->updateViewTimer,SIGNAL(timeout()),
-            this,SLOT(EditIdle()));
+    // connect(myHost->updateViewTimer,SIGNAL(timeout()),
+            // this,SLOT(EditIdle()));
 
     // editorWnd->LoadAttribs(currentViewAttr);
 }
@@ -1320,11 +1336,10 @@ void ClapPlugin::paramsRescan(uint32_t flags) noexcept {
         return;
 
     // 1. it is forbidden to use CLAP_PARAM_RESCAN_ALL if the plugin is active
-    // if (isPluginActive() && (flags & CLAP_PARAM_RESCAN_ALL)) {
-    //     throw std::logic_error(
-    //         "clap_host_params.recan(CLAP_PARAM_RESCAN_ALL) was called while the plugin is active!");
-    //     return;
-    // }
+    if (isPluginActive() && (flags & CLAP_PARAM_RESCAN_ALL)) {
+        LOG("clap_host_params.recan(CLAP_PARAM_RESCAN_ALL) was called while the plugin is active!");
+        return;
+    }
 
     // 2. scan the params.
     auto count = _plugin->paramsCount();
@@ -1332,15 +1347,18 @@ void ClapPlugin::paramsRescan(uint32_t flags) noexcept {
 
     for (int32_t i = 0; i < count; ++i) {
         clap_param_info info;
-        if (!_plugin->paramsGetInfo(i, &info))
-            throw std::logic_error("clap_plugin_params.get_info did return false!");
+        if (!_plugin->paramsGetInfo(i, &info)) {
+            LOG("clap_plugin_params.get_info did return false!");
+            return;
+        }
 
         if (info.id == CLAP_INVALID_ID) {
             std::ostringstream msg;
             msg << "clap_plugin_params.get_info() reported a parameter with id = CLAP_INVALID_ID"
                 << std::endl
                 << " 2. name: " << info.name << ", module: " << info.module << std::endl;
-            throw std::logic_error(msg.str());
+            LOG(msg.str());
+            return;
         }
 
         auto it = _params.find(info.id);
@@ -1354,7 +1372,8 @@ void ClapPlugin::paramsRescan(uint32_t flags) noexcept {
                 << " 1. name: " << it->second->info().name << ", module: " << it->second->info().module
                 << std::endl
                 << " 2. name: " << info.name << ", module: " << info.module << std::endl;
-            throw std::logic_error(msg.str());
+            LOG(msg.str());
+            return;
         }
         paramIds.insert(info.id);
 
@@ -1364,7 +1383,8 @@ void ClapPlugin::paramsRescan(uint32_t flags) noexcept {
                 msg << "a new parameter was declared, but the flag CLAP_PARAM_RESCAN_ALL was not "
                        "specified; id: "
                     << info.id << ", name: " << info.name << ", module: " << info.module << std::endl;
-                throw std::logic_error(msg.str());
+                LOG(msg.str());
+                return;
             }
 
             double value = getParamValue(info);
@@ -1380,7 +1400,8 @@ void ClapPlugin::paramsRescan(uint32_t flags) noexcept {
                            "was not specified; id: "
                         << info.id << ", name: " << info.name << ", module: " << info.module
                         << std::endl;
-                    throw std::logic_error(msg.str());
+                    LOG(msg.str());
+                    return;
                 }
 
                 if (!(flags & CLAP_PARAM_RESCAN_ALL) &&
@@ -1390,7 +1411,8 @@ void ClapPlugin::paramsRescan(uint32_t flags) noexcept {
                            "was not specified; id: "
                         << info.id << ", name: " << info.name << ", module: " << info.module
                         << std::endl;
-                    throw std::logic_error(msg.str());
+                    LOG(msg.str());
+                    return;
                 }
 
                 it->second->setInfo(info);
@@ -1404,7 +1426,8 @@ void ClapPlugin::paramsRescan(uint32_t flags) noexcept {
                            "was not specified; id: "
                         << info.id << ", name: " << info.name << ", module: " << info.module
                         << std::endl;
-                    throw std::logic_error(msg.str());
+                    LOG(msg.str());
+                    return;
                 }
 
                 // update param value
@@ -1426,7 +1449,8 @@ void ClapPlugin::paramsRescan(uint32_t flags) noexcept {
                 msg << "a parameter was removed, but the flag CLAP_PARAM_RESCAN_ALL was not "
                        "specified; id: "
                     << info.id << ", name: " << info.name << ", module: " << info.module << std::endl;
-                throw std::logic_error(msg.str());
+                LOG(msg.str());
+                return;
             }
             it = _params.erase(it);
         }
@@ -1462,14 +1486,12 @@ void ClapPlugin::paramsRequestFlush() noexcept {
 void ClapPlugin::stateMarkDirty() noexcept {
     checkForMainThread();
 
-
-    if (!_plugin->canUseState())
-        throw std::logic_error("Plugin called clap_host_state.set_dirty() but the host does not "
+    if (!_plugin->canUseState()) {
+        LOG("Plugin called clap_host_state.set_dirty() but the host does not "
                                "provide a complete clap_plugin_state interface.");
-
-    _stateIsDirty = true;
+    }
+    OnProgramDirty();
 }
-
 
 // clap_host_thread_check
 // ======================
@@ -1490,7 +1512,7 @@ bool ClapPlugin::threadPoolRequestExec(uint32_t num_tasks) noexcept {
     checkForAudioThread();
 
     if (!_plugin->canUseThreadPool())
-        throw std::logic_error("Called request_exec() without providing clap_plugin_thread_pool to "
+        LOG("Called request_exec() without providing clap_plugin_thread_pool to "
                                "execute the job.");
 
     Q_ASSERT(!_threadPoolStop);
@@ -1514,7 +1536,9 @@ void ClapPlugin::LoadProgram(int progId)
 {
     Object::LoadProgram(progId);
 
-    if(_plugin && _plugin->canUseState()) {
+    if(!_plugin) return;
+
+    if(_plugin->canUseState()) {
 
         QByteArray ba = currentProgram->listOtherValues.value(0, QByteArray()).toByteArray();
 
@@ -1533,17 +1557,28 @@ void ClapPlugin::LoadProgram(int progId)
         if(ba.size()>0) {
             _plugin->stateLoad(&istream);
         }
+    } else {
+        currentProgram->Load(listParameterPinIn,listParameterPinOut);
     }
 
-    currentProgram->Load(listParameterPinIn,listParameterPinOut);
+    //update pin values
+    paramsRescan(CLAP_PARAM_RESCAN_VALUES);
+    for (auto it = _params.begin(); it != _params.end();) {
+        int pinNum = it->second->pinNumber;
+        ParameterPinIn *pin = static_cast<ParameterPinIn*>(listParameterPinIn->GetPin(pinNum,false));
+        float val = it->second->FloatFromValue();
+        pin->ChangeValue(val);
+        ++it;
+    }
+
 }
 
 void ClapPlugin::SaveProgram()
 {
-    if(!currentProgram || !currentProgram->IsDirty())
+    if(!_plugin || !currentProgram || !currentProgram->IsDirty())
         return;
 
-    if(_plugin && _plugin->canUseState()) {
+    if(_plugin->canUseState()) {
         QByteArray ba;
 
         clap_ostream ostream;
@@ -1559,13 +1594,15 @@ void ClapPlugin::SaveProgram()
         currentProgram->listOtherValues.insert(0,ba);
     }
 
-    paramsRescan(CLAP_PARAM_RESCAN_ALL);
+    paramsRescan(CLAP_PARAM_RESCAN_VALUES);
     for (auto it = _params.begin(); it != _params.end();) {
         int pinNum = it->second->pinNumber;
         ParameterPinIn *pin = static_cast<ParameterPinIn*>(listParameterPinIn->GetPin(pinNum,false));
-        pin->ChangeValue((float)it->second->value());
+        float val = it->second->FloatFromValue();
+        pin->ChangeValue(val);
         ++it;
     }
+
     Object::SaveProgram();
 }
 

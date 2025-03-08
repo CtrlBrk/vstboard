@@ -81,6 +81,7 @@ void VstAutomation::ValueFromHost(int pinNum, float value)
     switch(GetLearningMode()) {
         case LearningMode::unlearn :
             {
+                SetLearningMode(LearningMode::off);
                 QUndoCommand *com = new QUndoCommand(tr("Remove pin"));
                 if(listParameterPinOut->listPins.contains(pinNum)) {
                     new ComRemovePin(myHost, listParameterPinOut->listPins.value(pinNum)->GetConnectionInfo(),com);
@@ -96,6 +97,7 @@ void VstAutomation::ValueFromHost(int pinNum, float value)
             break;
         case LearningMode::learn :
             {
+                SetLearningMode(LearningMode::off);
                 QUndoCommand *com = new QUndoCommand(tr("Add pin"));
                 if(!listParameterPinOut->listPins.contains(pinNum)) {
                     ConnectionInfo info = listParameterPinOut->connInfo;
