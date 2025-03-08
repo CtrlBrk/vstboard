@@ -254,9 +254,10 @@ bool ClapPlugin::Open()
 
     _pluginFactory = static_cast<const clap_plugin_factory *>(_pluginEntry->get_factory(CLAP_PLUGIN_FACTORY_ID));
 
+    //offset apiName +1 to avoid zero, zero is unset
     if(objInfo.apiName.toInt()!=0) {
         //shell has been selected
-        objInfo.id = objInfo.apiName.toInt();
+        objInfo.id = objInfo.apiName.toInt()-1;
     } else {
 
         auto count = _pluginFactory->get_plugin_count(_pluginFactory);
@@ -274,7 +275,7 @@ bool ClapPlugin::Open()
                 auto desc = _pluginFactory->get_plugin_descriptor(_pluginFactory, i);
                 _MSGOBJ(plug,FixedObjId::ND);
                 plug.prop[MsgObject::Name] = QString(desc->name);
-                plug.prop[MsgObject::Id] = i;
+                plug.prop[MsgObject::Id] = i+1;
                 msg.children << plug;
             }
 
