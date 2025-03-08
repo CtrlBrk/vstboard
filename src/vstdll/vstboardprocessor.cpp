@@ -345,6 +345,7 @@ tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
     if(data.processContext) {
         vst3Host->SetTimeInfo(data.processContext);
 //        vst3Host->GetTimeInfo(&vstHost->vstTimeInfo);
+        ClapTimeFromVst3(*data.processContext);
     }
 
     //param changes

@@ -33,6 +33,7 @@
 #include "commands/comaddpin.h"
 #include "commands/comremovepin.h"
 
+#include "vst/vst3host.h"
 
 using namespace Connectables;
 
@@ -49,6 +50,8 @@ enum class ClapThreadType {
 
 thread_local ClapThreadType g_thread_type = ClapThreadType::Unknown;
 
+clap_event_transport_t ClapPlugin::transport;
+double ClapPlugin::hosttime=0;
 
 ClapPlugin::ClapPlugin(MainHost *myHost,int index, const ObjectInfo & info) :
     Object(myHost,index, info),
@@ -67,6 +70,82 @@ ClapPlugin::ClapPlugin(MainHost *myHost,int index, const ObjectInfo & info) :
 ClapPlugin::~ClapPlugin()
 {
     Close();
+}
+
+void ClapPlugin::SetTempo(int tempo, int num, int denom)
+{
+    transport.tempo = tempo;
+    transport.tsig_num = num;
+    transport.tsig_denom = denom;
+}
+
+void ClapPlugin::UpdateTransport(long buffSize, float sampleRate) {
+
+    if(transport.tsig_denom == 0) return;
+
+    hosttime += buffSize / sampleRate;
+    transport.song_pos_seconds = round(CLAP_SECTIME_FACTOR * hosttime);
+    transport.song_pos_beats = round(transport.song_pos_seconds * transport.tempo / 60.L);
+
+    if(transport.song_pos_beats > transport.loop_end_beats) {
+        transport.song_pos_beats -= transport.loop_end_beats;
+        transport.song_pos_seconds = transport.song_pos_beats / transport.tempo * 60.L;
+        hosttime = transport.song_pos_seconds / CLAP_BEATTIME_FACTOR;
+    }
+
+    int barLength = (transport.tsig_num*4) /transport.tsig_denom;
+
+    transport.bar_start = floor(transport.song_pos_beats/ CLAP_BEATTIME_FACTOR / barLength);
+    transport.bar_number = floor(transport.song_pos_beats/ CLAP_BEATTIME_FACTOR / transport.tsig_num);
+
+}
+
+void ClapPlugin::InitTransport()
+{
+    hosttime = 0;
+
+    transport.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    transport.header.type = CLAP_EVENT_TRANSPORT;
+    transport.header.time = 0;
+    transport.header.flags = 0;
+    transport.header.size = sizeof(transport);
+
+    transport.flags = CLAP_TRANSPORT_HAS_TEMPO
+                      & CLAP_TRANSPORT_HAS_BEATS_TIMELINE
+                      & CLAP_TRANSPORT_HAS_SECONDS_TIMELINE
+                      & CLAP_TRANSPORT_HAS_TIME_SIGNATURE
+                      & CLAP_TRANSPORT_IS_PLAYING
+                      & CLAP_TRANSPORT_IS_LOOP_ACTIVE;
+
+    transport.song_pos_beats = 0;
+    transport.song_pos_seconds = 0;
+
+    transport.tempo = 120;
+    transport.tsig_num = 4;
+    transport.tsig_denom = 4;
+
+    transport.tempo_inc = 0; // tempo increment for each sample and until the next
+                            // time info event
+
+
+    //loop
+    int loopLength = 4;
+    int barLength = (transport.tsig_num*4) /transport.tsig_denom;
+
+    transport.loop_start_beats = 0;
+    transport.loop_end_beats = CLAP_BEATTIME_FACTOR * barLength * loopLength;
+
+    transport.loop_start_seconds = 0;
+    transport.loop_end_seconds = 0;
+
+    transport.bar_start = 0;  // start pos of the current bar
+    transport.bar_number = 0; // bar at song pos 0 has the number 0
+
+}
+
+void ClapPlugin::TransportFromHost(clap_event_transport_t const &t )
+{
+    memcpy(&transport,&t,sizeof(clap_event_transport_t));
 }
 
 void ClapPlugin::initThreadPool() {
@@ -684,7 +763,7 @@ void ClapPlugin::Render()
     if(closed) // || GetSleep())
         return;
 
-    _process.transport = nullptr;
+    _process.transport = &transport;
 
     _process.in_events = _evIn.clapInputEvents();
     _process.out_events = _evOut.clapOutputEvents();
@@ -932,11 +1011,14 @@ void ClapPlugin::deactivate() {
         return;
 
     int cpt=0;
-    while (cpt<50 && (isPluginProcessing() || isPluginSleeping()) ) {
+    while (cpt<100 && (isPluginProcessing() || isPluginSleeping()) ) {
         _scheduleDeactivate = true;
         QThread::msleep(10);
         cpt++;
     }
+    //force state
+    _state = ActiveAndReadyToDeactivate;
+
     _scheduleDeactivate = false;
 
     _plugin->deactivate();

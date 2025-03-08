@@ -29,6 +29,8 @@
 #include "connectables/objectfactoryhost.h"
 #include "mainwindow.h"
 
+#include "connectables/clapplugin.h"
+
 MainHostHost::MainHostHost(Settings *settings, QObject *parent) :
     MainHost(settings,parent),
 	audioDevices(0),
@@ -68,6 +70,8 @@ void MainHostHost::Render()
 #endif
         vst3Host->UpdateTime(GetBufferSize(), GetSampleRate());
     #endif
+
+    Connectables::ClapPlugin::UpdateTransport(GetBufferSize(), GetSampleRate());
 
     MainHost::Render();
 }

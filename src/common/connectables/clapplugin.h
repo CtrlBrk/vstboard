@@ -92,6 +92,12 @@ public:
     void fromJson(QJsonObject &json) override;
     void toJson(QJsonObject &json)  override;
 
+    static double hosttime;
+    static clap_event_transport_t transport;
+    static void SetTempo(int tempo, int sign1, int sign2);
+    static void InitTransport();
+    static void UpdateTransport(long buffSize, float sampleRate);
+    static void TransportFromHost(clap_event_transport_t const &t);
 protected:
     // clap_host
     void requestRestart() noexcept override;

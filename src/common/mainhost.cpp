@@ -34,6 +34,7 @@
 #include "views/configdialog.h"
 #include "msgobject.h"
 
+#include "connectables/clapplugin.h"
 
 quint32 MainHost::currentFileVersion=PROJECT_AND_SETUP_FILE_VERSION;
 
@@ -247,6 +248,9 @@ void MainHost::Init()
     currentTempo=120;
     currentTimeSig1=4;
     currentTimeSig2=4;
+
+    Connectables::ClapPlugin::InitTransport();
+    SetTempo(currentTempo,currentTimeSig1,currentTimeSig2);
 
     ChangeNbThreads(-1);
 
@@ -959,6 +963,65 @@ void MainHost::SetSampleRate(float rate)
     // emit SampleRateChanged(sampleRate);
 }
 
+
+void MainHost::Vst3TimeFromClap(clap_event_transport_t const &t)
+{
+    ProcessContext info;
+    info.state = 0;
+
+    if( (t.flags & CLAP_TRANSPORT_HAS_TEMPO)!=0 ) {
+        info.state |= ProcessContext::kTempoValid;
+        info.tempo = t.tempo;
+    }
+
+    if( (t.flags & CLAP_TRANSPORT_HAS_TIME_SIGNATURE)!=0 ) {
+        info.state |= ProcessContext::kTimeSigValid;
+        info.timeSigNumerator = t.tsig_num;
+        info.timeSigDenominator = t.tsig_denom;
+    }
+
+    if( (t.flags & CLAP_TRANSPORT_HAS_SECONDS_TIMELINE)!=0 ) {
+        info.state |= ProcessContext::kProjectTimeMusicValid;
+        info.projectTimeMusic = t.song_pos_beats / CLAP_SECTIME_FACTOR;
+    }
+
+    if( (t.flags & CLAP_TRANSPORT_HAS_BEATS_TIMELINE)!=0 ) {
+        info.state |= ProcessContext::kBarPositionValid;
+        info.barPositionMusic = t.song_pos_seconds / CLAP_BEATTIME_FACTOR;
+    }
+
+    vst3Host->SetTimeInfo(&info);
+}
+
+void MainHost::ClapTimeFromVst3(ProcessContext const &info)
+{
+    clap_event_transport_t t;
+    t.flags=0;
+
+    if( (info.state & ProcessContext::kTempoValid)!=0 ) {
+        t.flags |= CLAP_TRANSPORT_HAS_TEMPO;
+        t.tempo = info.tempo;
+    }
+
+    if( (info.state & ProcessContext::kTimeSigValid)!=0 ) {
+        t.flags |= CLAP_TRANSPORT_HAS_TIME_SIGNATURE;
+        t.tsig_num = info.timeSigNumerator;
+        t.tsig_denom = info.timeSigDenominator;
+    }
+
+    if( (info.state & ProcessContext::kProjectTimeMusicValid)!=0 ) {
+        t.flags |= CLAP_TRANSPORT_HAS_SECONDS_TIMELINE;
+        t.song_pos_beats = info.projectTimeMusic * CLAP_SECTIME_FACTOR;
+    }
+
+    if( (info.state & ProcessContext::kBarPositionValid)!=0 ) {
+        t.flags |= CLAP_TRANSPORT_HAS_BEATS_TIMELINE;
+        t.song_pos_seconds = info.barPositionMusic * CLAP_BEATTIME_FACTOR;
+    }
+
+    Connectables::ClapPlugin::TransportFromHost(t);
+}
+
 void MainHost::Render()
 {
 
@@ -1004,6 +1067,8 @@ void MainHost::SetTimeInfo(const VstTimeInfo *info)
 
 void MainHost::SetTempo(int tempo, int sign1, int sign2)
 {
+    Connectables::ClapPlugin::SetTempo(tempo,sign1,sign2);
+
 #ifdef VST2PLUGIN
     vstHost->SetTempo(tempo,sign1,sign2);
 #endif

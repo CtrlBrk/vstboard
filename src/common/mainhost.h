@@ -139,6 +139,9 @@ public:
 
 protected:
     void Close();
+    void Vst3TimeFromClap(clap_event_transport_t const &t);
+    void ClapTimeFromVst3(ProcessContext const &info);
+
     QElapsedTimer timeFromStart;
     Renderer2 *renderer;
     MainWindow *mainWindow;

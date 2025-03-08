@@ -36,6 +36,8 @@
 #include "projectfile/jsonwriter.h"
 #include "projectfile/jsonreader.h"
 
+#include "connectables/clapplugin.h"
+
 ClapMainHost::ClapMainHost(const clap_host *host) :
     MainHost(0,0),
     clap::helpers::Plugin<clap::helpers::MisbehaviourHandler::Terminate, clap::helpers::CheckingLevel::Maximal>(&desc, host),
@@ -222,6 +224,9 @@ bool ClapMainHost::stateLoad(const clap_istream *stream) noexcept
 clap_process_status ClapMainHost::process(const clap_process *process) noexcept
 {
     SetBufferSize( process->frames_count );
+
+    Connectables::ClapPlugin::TransportFromHost(*process->transport);
+    Vst3TimeFromClap(*process->transport);
 
     if (process->audio_outputs_count <= 0)
         return CLAP_PROCESS_SLEEP;
