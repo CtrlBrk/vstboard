@@ -333,6 +333,11 @@ void ClapPlugin::SetSleep(bool sleeping)
     QMutexLocker lock(&objMutex);
 
     if(sleeping) {
+        //TODO cleanup : about to process but not running yet : cancel
+        if(_scheduleProcess) {
+            _scheduleProcess=false;
+            _state = ActiveAndReadyToDeactivate;
+        }
         deactivate();
     } else {
         activate(sampleRate,bufferSize);
@@ -926,9 +931,11 @@ void ClapPlugin::deactivate() {
     if (!isPluginActive())
         return;
 
-    while (isPluginProcessing() || isPluginSleeping()) {
+    int cpt=0;
+    while (cpt<50 && (isPluginProcessing() || isPluginSleeping()) ) {
         _scheduleDeactivate = true;
         QThread::msleep(10);
+        cpt++;
     }
     _scheduleDeactivate = false;
 
@@ -1609,41 +1616,25 @@ void ClapPlugin::SaveProgram()
 
 void ClapPlugin::fromJson(QJsonObject &json)
 {
-    // Object::fromJson(json);
-
-    // if(savedChunk) {
-    //     delete savedChunk;
-    //     savedChunk=0;
-    //     savedChunkSize=0;
-    // }
-
-    // if(json.contains("chunk")) {
-    //     QByteArray ba = QByteArray::fromHex( json["chunk"].toString().toUtf8() );
-
-    //     savedChunkSize = ba.size();
-    //     savedChunk = new char[savedChunkSize];
-    //     std::memcpy(savedChunk,ba.constData(),savedChunkSize);
-
-    //     if(pEffect && (pEffect->flags & effFlagsProgramChunks)) {
-    //         EffSetChunk(savedChunk ,savedChunkSize);
-    //     }
-    // }
+    Object::fromJson(json);
 
 }
 
 void ClapPlugin::toJson(QJsonObject &json)
 {
-    // QByteArray ba;
+    /*
+    QByteArray ba;
 
-    // clap_ostream ostream;
-    // ostream.ctx = &ba,
-    // ostream.write = [] (const clap_ostream *stream, const void *buffer, uint64_t size) -> int64_t {
-    //     QByteArray *_ba = (QByteArray *)stream->ctx;
-    //     _ba->append( QByteArray::fromRawData((char*)buffer, size) );
-    //     return size;
-    // };
+    clap_ostream ostream;
+    ostream.ctx = &ba,
+    ostream.write = [] (const clap_ostream *stream, const void *buffer, uint64_t size) -> int64_t {
+        QByteArray *_ba = (QByteArray *)stream->ctx;
+        _ba->append( QByteArray::fromRawData((char*)buffer, size) );
+        return size;
+    };
 
-    // _plugin->stateSave(&ostream);
-    // json["chunk"] = QString(ba.toHex());
-
+    _plugin->stateSave(&ostream);
+    json["chunk"] = QString(ba.toHex());
+*/
+    Object::toJson(json);
 }

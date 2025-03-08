@@ -7,9 +7,6 @@ ClapPluginParam::ClapPluginParam(Connectables::ClapPlugin &pluginHost, const cla
     : QObject(&pluginHost), _info(info), _value(value) {}
 
 float ClapPluginParam::FloatFromValue() const {
-    if(pinNumber==0) {
-        LOG("pin0")
-    }
     float val = (_value - _info.min_value) / (_info.max_value - _info.min_value);
     val = std::min(val,1.f);
     val = std::max(val,.0f);
@@ -17,9 +14,6 @@ float ClapPluginParam::FloatFromValue() const {
 }
 
 double ClapPluginParam::ValueFromFloat(float val) const {
-    if(pinNumber==0) {
-        LOG("pin0")
-    }
     return val * (_info.max_value - _info.min_value) + _info.min_value;
 }
 
