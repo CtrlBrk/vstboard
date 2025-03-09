@@ -55,7 +55,7 @@ namespace Connectables {
         static QMap<AEffect*,VstPlugin*>mapPlugins;
         static VstPlugin *pluginLoading;
 
-        virtual void CreateEditorWindow();
+        virtual void CreateEditorWindow(QWidget *parent);
 
 //        static View::VstShellSelect *shellSelectView;
 
@@ -126,6 +126,8 @@ namespace Connectables {
         void UserRemovePin(const ConnectionInfo &info) override;
         void UserAddPin(const ConnectionInfo &info) override;
         void SaveProgram() override;
+
+        void SetParentWindow(QWidget *parent);
 
         friend class View::VstPluginWindow;
 //        friend class View::VstShellSelect;

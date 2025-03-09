@@ -73,6 +73,8 @@ public:
 
     void setParentWindow(WId parentWindow);
     void setPluginWindowVisibility(bool isVisible);
+    void SetContainerAttribs(const ObjectContainerAttribs &attr) override;
+    void GetContainerAttribs(ObjectContainerAttribs &attr) override;
 
     static void checkForMainThread();
     static void checkForAudioThread();
@@ -98,6 +100,7 @@ public:
     static void InitTransport();
     static void UpdateTransport(long buffSize, float sampleRate);
     static void TransportFromHost(clap_event_transport_t const &t);
+
 protected:
     // clap_host
     void requestRestart() noexcept override;
@@ -152,7 +155,7 @@ private:
     void checkValidParamValue(const ClapPluginParam &param, double value);
     void handlePluginOutputEvents();
     void ParamChangedFromPlugin(int pinNum,float val);
-    void CreateEditorWindow();
+    void CreateEditorWindow(QWidget *parent);
     void generatePluginInputEvents();
 
 
@@ -263,6 +266,7 @@ public slots:
     void SaveProgram() override;
 
     // void paramValueChanged();
+    void SetParentWindow(QWidget *parent);
 };
 
 }

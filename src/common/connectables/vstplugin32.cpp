@@ -143,7 +143,7 @@ long VstPlugin32::EffEditGetRect(VstRect **ptr)
 {
     return true;
 }
-void VstPlugin32::CreateEditorWindow()
+void VstPlugin32::CreateEditorWindow(QWidget *parent)
 {
     EffEditOpen(NULL);
 }

@@ -191,6 +191,7 @@ signals:
     void Rendered();
     void TempoChanged(int tempo=120, int sign1=4, int sign2=4);
     void DelayChanged(long samples);
+    void MainWindowChanged(QWidget *parent);
 
 public slots:
     virtual void Init();

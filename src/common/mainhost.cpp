@@ -1479,6 +1479,7 @@ void MainHost::ReceiveMsg(const MsgObject &msg)
                 QWidget * w = QWidget::find(winId);
                 mainWindow = (MainWindow*)w;
                 LOG("mainhost set mainwindow " << winId)
+                emit MainWindowChanged(mainWindow);
                 return;
             }
         }

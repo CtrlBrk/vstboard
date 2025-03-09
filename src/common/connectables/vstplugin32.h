@@ -21,7 +21,7 @@ public:
     bool Unload();
     long EffDispatch(int opCode, int index=0, intptr_t value=0, void *ptr=0, float opt=0., int size=0) override;
    // long EffEditOpen(void *ptr) override;
-    void CreateEditorWindow() override;
+    void CreateEditorWindow(QWidget *parent) override;
     long EffEditGetRect(VstRect **ptr) override;
     float EffGetParameter(long index) override;
     void EffSetParameter(long index, float parameter) override;

@@ -50,6 +50,7 @@ VstPlugin::VstPlugin(MainHost *myHost,int index, const ObjectInfo & info) :
     }
     listBypass << "On" << "Bypass" << "Mute";
 
+    connect(myHost,&MainHost::MainWindowChanged, this, &VstPlugin::SetParentWindow);
 }
 
 VstPlugin::~VstPlugin()
@@ -556,7 +557,7 @@ bool VstPlugin::initPlugin()
     Object::Open();
 
     if(myHost->settings->GetSetting("fastEditorsOpenClose",true).toBool()) {
-        CreateEditorWindow();
+        CreateEditorWindow(myHost->GetMainWindow());
     }
     AddPluginToDatabase();
 
@@ -607,7 +608,7 @@ void VstPlugin::RaiseEditor()
 //    modelNode->setData( QString::number( pEffect->uniqueID ), UserRoles::editorImage );
 //}
 
-void VstPlugin::CreateEditorWindow()
+void VstPlugin::CreateEditorWindow(QWidget *parent)
 {
     //already done
     if(editorWnd)
@@ -618,7 +619,7 @@ void VstPlugin::CreateEditorWindow()
         return;
 
     // editorWnd = new View::VstPluginWindow(myHost->GetMainWindow());
-    editorWnd = new View::VstPluginWindow();
+    editorWnd = new View::VstPluginWindow(parent);
     editorWnd->setWindowTitle(objectName());
 
     if(!editorWnd->SetPlugin(this)) {
@@ -656,7 +657,7 @@ void VstPlugin::OnEditorClosed()
 void VstPlugin::OnShowEditor()
 {
     if(!editorWnd)
-        CreateEditorWindow();
+        CreateEditorWindow(myHost->GetMainWindow());
 
     if(!editorWnd)
         return;
@@ -703,6 +704,28 @@ void VstPlugin::OnHideEditor()
 //    disconnect(myHost->updateViewTimer,SIGNAL(timeout()),
 //            this,SLOT(EditIdle()));
 //    emit HideEditorWindow();
+}
+
+void VstPlugin::SetParentWindow(QWidget *parent)
+{
+    if(!editorWnd)
+        return;
+
+    bool vis = editorWnd->isVisible();
+
+    editorWnd->SaveAttribs(currentViewAttr);
+    editorWnd->disconnect();
+    editorWnd->UnsetPlugin();
+    disconnect(editorWnd);
+    QTimer::singleShot(0,editorWnd,SLOT(close()));
+    editorWnd=0;
+
+    objMutex.lock();
+    EffEditClose();
+    objMutex.unlock();
+
+    CreateEditorWindow(parent);
+    if(vis) OnShowEditor();
 }
 
 void VstPlugin::SetContainerAttribs(const ObjectContainerAttribs &attr)

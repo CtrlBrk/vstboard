@@ -65,6 +65,7 @@ ClapPlugin::ClapPlugin(MainHost *myHost,int index, const ObjectInfo & info) :
 {
     g_thread_type = ClapThreadType::MainThread;
     initThreadPool();
+    connect(myHost,&MainHost::MainWindowChanged, this, &ClapPlugin::SetParentWindow);
 }
 
 ClapPlugin::~ClapPlugin()
@@ -218,7 +219,8 @@ bool ClapPlugin::Close()
     _pluginEntry->deinit();
     _pluginEntry = nullptr;
 
-    delete editorWnd;
+    if(editorWnd)
+        delete editorWnd;
 
     terminateThreadPool();
     _library.unload();
@@ -338,7 +340,7 @@ bool ClapPlugin::Open()
 
     if (_plugin->canUseGui()) {
 
-        CreateEditorWindow();
+        CreateEditorWindow( myHost->GetMainWindow() );
 
         //editor pin
         listParameterPinIn->AddPin(FixedPinNumber::editorVisible);
@@ -1174,14 +1176,39 @@ void ClapPlugin::MidiMsgFromInput(long msg)
     }
 }
 
-void ClapPlugin::CreateEditorWindow()
+void ClapPlugin::SetContainerAttribs(const ObjectContainerAttribs &attr)
+{
+    Object::SetContainerAttribs(attr);
+
+    if(editorWnd) {
+        if(currentViewAttr.editorVisible != editorWnd->isVisible()) {
+            editorWnd->setVisible(currentViewAttr.editorVisible);
+        }
+        if(currentViewAttr.editorVisible)
+            editorWnd->LoadAttribs(currentViewAttr);
+    }
+}
+
+void ClapPlugin::GetContainerAttribs(ObjectContainerAttribs &attr)
+{
+    currentViewAttr.editorVisible=false;
+    if(editorWnd) {
+        if(editorWnd->isVisible()) {
+            editorWnd->SaveAttribs(currentViewAttr);
+            currentViewAttr.editorVisible=true;
+        }
+    }
+
+    Object::GetContainerAttribs(attr);
+}
+
+void ClapPlugin::CreateEditorWindow(QWidget *parent)
 {
     //already done
     if(editorWnd)
         return;
 
-    editorWnd = new View::ClapPluginWindow( static_cast<QMainWindow*>(myHost->GetMainWindow()) );
-    //editorWnd = new View::ClapPluginWindow();
+    editorWnd = new View::ClapPluginWindow( parent );
     editorWnd->setWindowTitle(objectName());
 
     connect(this,SIGNAL(HideEditorWindow()),
@@ -1226,6 +1253,19 @@ static clap_window makeClapWindow(WId window) {
 #endif
 
     return w;
+}
+
+void ClapPlugin::SetParentWindow(QWidget *parent)
+{
+    if(!editorWnd) return;
+
+    editorWnd->disconnect();
+    disconnect(editorWnd);
+
+    QTimer::singleShot(0,editorWnd,SLOT(close()));
+    editorWnd=0;
+
+    CreateEditorWindow(parent);
 }
 
 void ClapPlugin::setParentWindow(WId parentWindow) {
@@ -1320,7 +1360,7 @@ const char *ClapPlugin::getCurrentClapGuiApi() {
 void ClapPlugin::OnShowEditor()
 {
     if(!editorWnd)
-        CreateEditorWindow();
+        CreateEditorWindow( myHost->GetMainWindow() );
 
     if(!editorWnd)
         return;
@@ -1334,7 +1374,7 @@ void ClapPlugin::OnShowEditor()
     // connect(myHost->updateViewTimer,SIGNAL(timeout()),
             // this,SLOT(EditIdle()));
 
-    // editorWnd->LoadAttribs(currentViewAttr);
+    editorWnd->LoadAttribs(currentViewAttr);
 }
 
 void ClapPlugin::OnHideEditor()
@@ -1342,7 +1382,7 @@ void ClapPlugin::OnHideEditor()
     if(!editorWnd)
         return;
 
-    // editorWnd->SaveAttribs(currentViewAttr);
+    editorWnd->SaveAttribs(currentViewAttr);
 
     if(myHost->settings->GetSetting("fastEditorsOpenClose",true).toBool()) {
         disconnect(myHost->updateViewTimer,SIGNAL(timeout()),
@@ -1354,9 +1394,9 @@ void ClapPlugin::OnHideEditor()
         disconnect(editorWnd);
         QTimer::singleShot(0,editorWnd,SLOT(close()));
         editorWnd=0;
-        objMutex.lock();
+        // objMutex.lock();
         // EffEditClose();
-        objMutex.unlock();
+        // objMutex.unlock();
     }
 }
 
@@ -1372,7 +1412,8 @@ bool ClapPlugin::guiRequestResize(uint32_t width, uint32_t height) noexcept {
     if(!editorWnd)
         return false;
 
-    editorWnd->SetWindowSize(width,height);
+    //disabled : window size is set by the user
+    // editorWnd->SetWindowSize(width,height);
 
     // QMetaObject::invokeMethod(
     //     Application::instance().mainWindow(),

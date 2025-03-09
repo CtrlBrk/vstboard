@@ -11,6 +11,8 @@ class ClapPlugin;
 
 }
 
+class ObjectContainerAttribs;
+
 namespace View {
 
 class ClapPluginWindow : public QFrame
@@ -22,7 +24,12 @@ public:
     ~ClapPluginWindow();
     WId GetWinId();
 
+    void LoadAttribs(const ObjectContainerAttribs &attr);
+    void SaveAttribs(ObjectContainerAttribs &attr);
+
+
 private:
+    void resizeEvent ( QResizeEvent * event ) override;
     void closeEvent ( QCloseEvent * event ) override;
     Ui::VstPluginWindow *ui;
     bool canResize;

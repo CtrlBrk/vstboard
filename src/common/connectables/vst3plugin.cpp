@@ -89,6 +89,7 @@ Vst3Plugin::Vst3Plugin(MainHost *host, int index, const ObjectInfo &info) :
     // gStandardPluginContext = myHost->vst3Host;
     // processData.outputParameterChanges = new ParameterChanges();
 
+    connect(myHost,&MainHost::MainWindowChanged, this, &Vst3Plugin::SetParentWindow);
 }
 
 Vst3Plugin::~Vst3Plugin()
@@ -535,7 +536,7 @@ bool Vst3Plugin::initController()
 
     //init editor window
     if (myHost->settings->GetSetting("fastEditorsOpenClose", true).toBool()) {
-        CreateEditorWindow();
+        CreateEditorWindow(myHost->GetMainWindow());
     }
     if (hasEditor) {
         listParameterPinIn->AddPin(FixedPinNumber::editorVisible);
@@ -662,7 +663,7 @@ void Vst3Plugin::LoadProgram(int prog)
         SetMsgEnabled(true);
 }
 
-bool Vst3Plugin::CreateEditorWindow()
+bool Vst3Plugin::CreateEditorWindow(QWidget *parent)
 {
     // QMutexLocker l(&objMutex);
 
@@ -705,7 +706,7 @@ bool Vst3Plugin::CreateEditorWindow()
 #endif
 
     // editorWnd = new View::VstPluginWindow(myHost->GetMainWindow());
-    editorWnd = new View::VstPluginWindow();
+    editorWnd = new View::VstPluginWindow(parent);
     editorWnd->SetPlugin(this);
     editorWnd->setWindowTitle(objectName());
 
@@ -753,7 +754,7 @@ bool Vst3Plugin::CreateEditorWindow()
 void Vst3Plugin::OnShowEditor()
 {
     if(!editorWnd)
-        CreateEditorWindow();
+        CreateEditorWindow(myHost->GetMainWindow());
 
     if(!editorWnd)
         return;
@@ -791,6 +792,19 @@ void Vst3Plugin::EditorDestroyed()
     editorWnd=0;
     RemoveGui();
     listParameterPinIn->listPins.value(FixedPinNumber::editorVisible)->SetVisible(false);
+}
+
+void Vst3Plugin::SetParentWindow(QWidget *parent)
+{
+    if(!editorWnd)
+        return;
+
+    editorWnd->SaveAttribs(currentViewAttr);
+    RemoveGui();
+    delete editorWnd;
+    editorWnd=0;
+
+    CreateEditorWindow(parent);
 }
 
 void Vst3Plugin::SetContainerAttribs(const ObjectContainerAttribs &attr)

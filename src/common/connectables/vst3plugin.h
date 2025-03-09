@@ -136,7 +136,7 @@ public:
 
 private:
     void Unload();
-    bool CreateEditorWindow();
+    bool CreateEditorWindow(QWidget *parent);
     void RemoveGui();
     bool initPlugin();
     bool initProcessor();
@@ -204,6 +204,8 @@ public slots:
     void OnHideEditor() override;
     void UserRemovePin(const ConnectionInfo &info) override;
     void UserAddPin(const ConnectionInfo &info) override;
+
+    void SetParentWindow(QWidget *parent);
 
     friend class View::VstPluginWindow;
 };
