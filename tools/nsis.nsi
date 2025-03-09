@@ -3,18 +3,18 @@ RequestExecutionLevel admin
 
 !include LogicLib.nsh
 
-OutFile "VstBoard_${VERSION}_${ARCH}.exe"
+OutFile "VstBoard_${VERSION}.exe"
 SetDateSave on
 SetDatablockOptimize on
 CRCCheck on
 XPStyle on
 SetCompressor lzma
 
-!define START_LINK_DIR "$SMPROGRAMS\VstBoard${ARCH}"
-!define START_LINK_RUN "$SMPROGRAMS\VstBoard${ARCH}\VstBoard ${ARCH}.lnk"
-!define START_LINK_UNINSTALLER "$SMPROGRAMS\VstBoard${ARCH}\Uninstall VstBoard ${ARCH}.lnk"
-!define REG_UNINSTALL "Software\Microsoft\Windows\CurrentVersion\Uninstall\VstBoard${ARCH}"
-!define REG_SETTINGS "Software\CtrlBrk\VstBoard\${ARCH}"
+!define START_LINK_DIR "$SMPROGRAMS\VstBoard"
+!define START_LINK_RUN "$SMPROGRAMS\VstBoard\VstBoard.lnk"
+!define START_LINK_UNINSTALLER "$SMPROGRAMS\VstBoard\Uninstall VstBoard.lnk"
+!define REG_UNINSTALL "Software\Microsoft\Windows\CurrentVersion\Uninstall\VstBoard"
+!define REG_SETTINGS "Software\CtrlBrk\VstBoard"
 !define UNINSTALLER_NAME "uninst.exe"
 !define WEBSITE_LINK "http://vstboard.blogspot.com/"
 
@@ -24,6 +24,7 @@ LicenseData "license.txt"
 Var InstFolder
 Var VstDir
 Var Vst3Dir
+Var ClapDir
 
 Page license
 Page components
@@ -34,13 +35,18 @@ PageEx directory
 PageExEnd
 
 PageEx directory
+    PageCallbacks defaultClapDir "" getClapDir
+    Caption ": CLAP 64bits Plugins Folder"
+PageExEnd
+
+PageEx directory
     PageCallbacks defaultVstDir "" getVstDir
-    Caption ": VST Plugins Folder"
+    Caption ": VST2.4 64bits Plugins Folder"
 PageExEnd
 
 PageEx directory
     PageCallbacks defaultVst3Dir "" getVst3Dir
-    Caption ": VST3 Plugins Folder"
+    Caption ": VST3 64bits Plugins Folder"
 PageExEnd
 
 Page instfiles
@@ -48,28 +54,31 @@ Page instfiles
 UninstPage uninstConfirm
 UninstPage instfiles
 
+
 Function defaultInstDir
-    StrCpy $INSTDIR "$LOCALAPPDATA\VstBoard${ARCH}\"
+    StrCpy $INSTDIR "$PROGRAMFILES64\VstBoard"
 FunctionEnd
 
 Function getInstDir
     StrCpy $InstFolder $INSTDIR
 FunctionEnd
 
+
+Function defaultClapDir
+	StrCpy $INSTDIR "$COMMONFILES64\CLAP"
+FunctionEnd
+
+Function getClapDir
+    StrCpy $ClapDir $INSTDIR
+FunctionEnd
+
+
 Function defaultVstDir
-    ${If} ${ARCH} == "x64"
-        SetRegView 64
-    ${Else}
-        SetRegView 32
-    ${EndIf}
+    SetRegView 64
 
     ReadRegStr $INSTDIR HKLM "SOFTWARE\VST" "VSTPluginsPath"
     ${If} $INSTDIR == ""
-        ${If} ${ARCH} == "x64"
-            StrCpy $INSTDIR "$PROGRAMFILES64\Vstplugins\"
-        ${Else}
-            StrCpy $INSTDIR "$PROGRAMFILES\Vstplugins\"
-        ${EndIf}
+		StrCpy $INSTDIR "$PROGRAMFILES64\Vstplugins"
     ${EndIf}
 FunctionEnd
 
@@ -78,57 +87,83 @@ Function getVstDir
     ReadRegStr $1 HKLM "SOFTWARE\VST" "VSTPluginsPath"
 FunctionEnd
 
+
 Function defaultVst3Dir
-    ${If} ${ARCH} == "x64"
-        StrCpy $INSTDIR "$COMMONFILES64\VST3"
-    ${Else}
-        StrCpy $INSTDIR "$COMMONFILES\VST3"
-    ${EndIf}
+	StrCpy $INSTDIR "$COMMONFILES64\VST3"
 FunctionEnd
 
 Function getVst3Dir
     StrCpy $Vst3Dir "$INSTDIR\"
 FunctionEnd
 
+
 Section "VstBoard (required)"
     SetShellVarContext current
     SectionIn RO
     SetOutPath $InstFolder
-    File "QtCore4.dll"
-    File "QtGui4.dll"
-    File "QtScript4.dll"
-    File "QtSolutions_MFCMigrationFramework-head.dll"
-    File "VstBoard.exe"
-    File "VstBoardPlugin.dll"
-    File "license.txt"
+		
+	File "VstBoard.exe"
+    File "loaddll32.exe"
+	File "VstBlib.dll"
+	File "ClapBlib.dllclap"
+		
+	File "license.txt"
     File "GPL.txt"
     File "LGPL.txt"
-
-    WriteRegStr HKCU "${REG_UNINSTALL}" "DisplayName" "VstBoard ${ARCH}"
-    WriteRegStr HKCU "${REG_UNINSTALL}" "DisplayIcon" "$\"$InstFolder\VstBoard.exe$\""
-    WriteRegStr HKCU "${REG_UNINSTALL}" "Publisher" "CtrlBrk"
-    WriteRegStr HKCU "${REG_UNINSTALL}" "DisplayVersion" "${VERSION} ${ARCH}"
-    WriteRegDWord HKCU "${REG_UNINSTALL}" "EstimatedSize" 15000 ;KB
-    WriteRegStr HKCU "${REG_UNINSTALL}" "HelpLink" "${WEBSITE_LINK}"
-    WriteRegStr HKCU "${REG_UNINSTALL}" "URLInfoAbout" "${WEBSITE_LINK}"
-    WriteRegStr HKCU "${REG_UNINSTALL}" "InstallLocation" "$\"$InstFolder$\""
-    WriteRegStr HKCU "${REG_UNINSTALL}" "InstallSource" "$\"$EXEDIR$\""
-    WriteRegDWord HKCU "${REG_UNINSTALL}" "NoModify" 1
-    WriteRegDWord HKCU "${REG_UNINSTALL}" "NoRepair" 1
-    WriteRegStr HKCU "${REG_UNINSTALL}" "UninstallString" "$\"$InstFolder\${UNINSTALLER_NAME}$\""
-    WriteRegStr HKCU "${REG_UNINSTALL}" "Comments" "Uninstalls VstBoard ${ARCH}."
-    WriteRegStr HKCU "${REG_SETTINGS}" "InstallLocation" "$\"$InstFolder$\""
-    WriteUninstaller $InstFolder\uninst.exe
+	
+	SetOutPath "$InstFolder\Qt"
+    File "Qt6Core.dll"
+    File "Qt6Gui.dll"
+    File "Qt6Svg.dll"
+	File "Qt6Widgets.dll"
+    File "QtSolutions_MFCMigrationFramework-head.dll"
+	
+	SetOutPath "$InstFolder\plugins\iconengines"
+	File "qsvgicon.dll"
+	SetOutPath "$InstFolder\plugins\imageformats"
+	File "qsvg.dll"
+	SetOutPath "$InstFolder\plugins\platforms"
+	File "qdirect2d.dll"
+	File "qminimal.dll"
+	File "qoffscreen.dll"
+	File "qwindows.dll"
+	SetOutPath "$InstFolder\plugins\styles"
+	File "qmodernwindowsstyle.dll"
+	
+   
+	SetOutPath $ClapDir
+	WriteRegStr HKLM "${REG_SETTINGS}" "clapInstallDir" $ClapDir
+	File "VstBoard.clap"
 
     SetOutPath $VstDir
-    WriteRegStr HKCU "${REG_SETTINGS}" "pluginInstallDir" $VstDir
+    WriteRegStr HKLM "${REG_SETTINGS}" "pluginInstallDir" $VstDir
     WriteRegStr HKCU "${REG_SETTINGS}" "lastVstPath" $VstDir
     WriteRegStr HKCU "${REG_SETTINGS}\plugin" "lastVstPath" $VstDir
-    File "VstBoardLoader.dll"
+	File "VstBoard.dll"
+	File "VstBoardInst.dll"
 
     SetOutPath $Vst3Dir
-    WriteRegStr HKCU "${REG_SETTINGS}" "pluginVst3InstallDir" $Vst3Dir
-    File "VstBoardLoader.vst3"
+    WriteRegStr HKLM "${REG_SETTINGS}" "pluginVst3InstallDir" $Vst3Dir
+    File "VstBoard.vst3"
+
+    WriteRegStr HKLM "${REG_UNINSTALL}" "DisplayName" "VstBoard"
+    WriteRegStr HKLM "${REG_UNINSTALL}" "DisplayIcon" "$\"$InstFolder\VstBoard.exe$\""
+    WriteRegStr HKLM "${REG_UNINSTALL}" "Publisher" "CtrlBrk"
+    WriteRegStr HKLM "${REG_UNINSTALL}" "DisplayVersion" "${VERSION}"
+    WriteRegDWord HKLM "${REG_UNINSTALL}" "EstimatedSize" 30000 ;KB
+    WriteRegStr HKLM "${REG_UNINSTALL}" "HelpLink" "${WEBSITE_LINK}"
+    WriteRegStr HKLM "${REG_UNINSTALL}" "URLInfoAbout" "${WEBSITE_LINK}"
+    WriteRegStr HKLM "${REG_UNINSTALL}" "InstallLocation" "$\"$InstFolder$\""
+    WriteRegStr HKLM "${REG_UNINSTALL}" "InstallSource" "$\"$EXEDIR$\""
+    WriteRegDWord HKLM "${REG_UNINSTALL}" "NoModify" 1
+    WriteRegDWord HKLM "${REG_UNINSTALL}" "NoRepair" 1
+    WriteRegStr HKLM "${REG_UNINSTALL}" "UninstallString" "$\"$InstFolder\${UNINSTALLER_NAME}$\""
+    WriteRegStr HKLM "${REG_UNINSTALL}" "Comments" "Uninstalls VstBoard"
+	
+	WriteRegStr HKLM "${REG_SETTINGS}" "Location" $InstFolder
+	
+    WriteUninstaller $InstFolder\uninstall.exe
+
 SectionEnd
 
 Section "Start Menu Shortcuts"
@@ -139,38 +174,60 @@ Section "Start Menu Shortcuts"
     CreateShortCut "${START_LINK_UNINSTALLER}" "$InstFolder\uninst.exe"
 SectionEnd
 
-Section "-VcRedist"
-    SetOutPath "$TEMP"
-    SetOverwrite on
-    File vcredist_${ARCH}.exe
-    ExecWait '"$TEMP\vcredist_${ARCH}.exe" /passive /showfinalerror'
-    Delete "$TEMP\vcredist_${ARCH}.exe"
-SectionEnd
-
 Section "Uninstall"
     SetShellVarContext current
 
-    ReadRegStr $VstDir HKCU "${REG_SETTINGS}" "pluginInstallDir"
-    Delete "$VstDir\VstBoardLoader.dll"
+    ReadRegStr $VstDir HKLM "${REG_SETTINGS}" "pluginInstallDir"
+    Delete "$VstDir\VstBoard.dll"
+	Delete "$VstDir\VstBoardInst.dll"
 
-    ReadRegStr $Vst3Dir HKCU "${REG_SETTINGS}" "pluginVst3InstallDir"
-    Delete "$Vst3Dir\VstBoardLoader.vst3"
+    ReadRegStr $Vst3Dir HKLM "${REG_SETTINGS}" "pluginVst3InstallDir"
+    Delete "$Vst3Dir\VstBoard.vst3"
 
-    DeleteRegKey HKCU "${REG_UNINSTALL}"
-    DeleteRegKey HKCU "${REG_SETTINGS}"
-    Delete "$INSTDIR\QtCore4.dll"
-    Delete "$INSTDIR\QtGui4.dll"
-    Delete "$INSTDIR\QtScript4.dll"
-    Delete "$INSTDIR\QtSolutions_MFCMigrationFramework-head.dll"
-    Delete "$INSTDIR\VstBoard.exe"
-    Delete "$INSTDIR\VstBoardPlugin.dll"
-    Delete "$INSTDIR\license.txt"
+	ReadRegStr $ClapDir HKLM "${REG_SETTINGS}" "clapInstallDir"
+    Delete "$ClapDir\VstBoard.clap"
+		
+	Delete "$INSTDIR\VstBoard.exe"
+    Delete "$INSTDIR\loaddll32.exe"
+	Delete "$INSTDIR\VstBlib.dll"
+	Delete "$INSTDIR\ClapBlib.dllclap"
+		
+	Delete "$INSTDIR\license.txt"
     Delete "$INSTDIR\GPL.txt"
     Delete "$INSTDIR\LGPL.txt"
+		
     Delete "$INSTDIR\uninst.exe"
+	
+	Delete "$INSTDIR\Qt\Qt6Core.dll"
+    Delete "$INSTDIR\Qt\Qt6Gui.dll"
+    Delete "$INSTDIR\Qt\Qt6Svg.dll"
+	Delete "$INSTDIR\Qt\Qt6Widgets.dll"
+    Delete "$INSTDIR\Qt\QtSolutions_MFCMigrationFramework-head.dll"
+
+	RMDir "$INSTDIR\Qt"	
+	
+	Delete "$INSTDIR\plugins\iconengines\qsvgicon.dll"
+	RMDir "$INSTDIR\plugins\iconengines"
+	
+	Delete "$INSTDIR\plugins\imageformats\qsvg.dll"
+	RMDir "$INSTDIR\plugins\imageformats"
+	
+	Delete "$INSTDIR\plugins\platforms\qdirect2d.dll"
+	Delete "$INSTDIR\plugins\platforms\qminimal.dll"
+	Delete "$INSTDIR\plugins\platforms\qoffscreen.dll"
+	Delete "$INSTDIR\plugins\platforms\qwindows.dll"
+	RMDir "$INSTDIR\plugins\platforms"
+	
+	Delete "$INSTDIR\plugins\styles\qmodernwindowsstyle.dll"
+	RMDir "$INSTDIR\plugins\styles"
+	
     RMDir "$INSTDIR"
     Delete "${START_LINK_RUN}"
     Delete "${START_LINK_UNINSTALLER}"
     RMDir "${START_LINK_DIR}"
+		
+    DeleteRegKey HKLM "${REG_UNINSTALL}"
+    DeleteRegKey HKLM "${REG_SETTINGS}"
+	
 SectionEnd
 

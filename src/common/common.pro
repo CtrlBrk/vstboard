@@ -191,7 +191,7 @@ HEADERS += \
     connectables/script.h \
     connectables/vstplugin32.h \
     globals.h \
-    ipc32.h \
+    ../../loaddll32/ipc32.h \
     mainhost.h \
     audiobuffer.h \
     mainwindow.h \

@@ -43,15 +43,10 @@ struct FileError {
 #ifndef QT_NO_DEBUG
 std::wstring installKey(L"DebugLocation");
 #else
-std::wstring installKey(L"InstallLocation");
+std::wstring installKey(L"Location");
 #endif
 
-#if defined(_M_X64) || defined(__amd64__)
-std::wstring regBaseKey(L"Software\\CtrlBrk\\VstBoard\\x64");
-#else
-std::wstring regBaseKey(L"Software\\CtrlBrk\\VstBoard\\x86");
-#endif
-
+std::wstring regBaseKey(L"Software\\CtrlBrk\\VstBoard");
 
  bool RegGetString(HKEY hKey, const std::wstring& subKey, const std::wstring& value, std::wstring& data) {
     DWORD dataSize{};
@@ -231,19 +226,20 @@ void AddDllPath()
     std::wstring path(newSearchPath);
     path += L";";
 
-    std::wstring curPath;
-    if(GetCurrentDllPath(curPath)) {
-        path += curPath + L"\\Qt;";
-        path += curPath + L";";
-    }
+    // std::wstring curPath;
+    // if(GetCurrentDllPath(curPath)) {
+    //    path += curPath + L"\\Qt;";
+        // path += curPath + L";";
+    // }
 
     std::wstring pathFromReg;
     if(RegGetString(HKEY_LOCAL_MACHINE, regBaseKey, installKey, pathFromReg)) {
-        path += pathFromReg;
+        path += pathFromReg + L";";
+        path += pathFromReg + L"\\Qt;";
     }
-    if(RegGetString(HKEY_CURRENT_USER, regBaseKey, installKey, pathFromReg)) {
-        path += pathFromReg;
-    }
+    // if(RegGetString(HKEY_CURRENT_USER, regBaseKey, installKey, pathFromReg)) {
+        // path += pathFromReg + L";";
+    // }
 
     ::SetEnvironmentVariable(L"Path", path.c_str());
     //::SetEnvironmentVariable(L"QT_QPA_PLATFORM_PLUGIN_PATH", GetPathFromRegistry().c_str());

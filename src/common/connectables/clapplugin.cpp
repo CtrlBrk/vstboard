@@ -415,6 +415,8 @@ void ClapPlugin::ReceiveMsg(const MsgObject &msg)
 
 void ClapPlugin::SetSleep(bool sleeping)
 {
+    g_thread_type = ClapThreadType::MainThread; //fake it for now
+
     if(closed) {
         return;
     }
@@ -441,6 +443,8 @@ void ClapPlugin::SetSleep(bool sleeping)
 
 void ClapPlugin::SetBufferSize(qint32 size)
 {
+
+
     if(closed)
         return;
 
@@ -1419,8 +1423,8 @@ bool ClapPlugin::guiRequestResize(uint32_t width, uint32_t height) noexcept {
     if(!editorWnd)
         return false;
 
-    //disabled : window size is set by the user
-    // editorWnd->SetWindowSize(width,height);
+    //TODO : load the window as it was, if resized by user
+    editorWnd->SetWindowSize(width,height);
 
     // QMetaObject::invokeMethod(
     //     Application::instance().mainWindow(),
