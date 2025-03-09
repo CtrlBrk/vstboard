@@ -75,6 +75,10 @@ ClapPlugin::~ClapPlugin()
 
 void ClapPlugin::SetTempo(int tempo, int num, int denom)
 {
+    if(num == 0 || denom == 0 || tempo == 0) {
+        LOG("tempo 0" << num << denom << tempo)
+        return;
+    }
     transport.tempo = tempo;
     transport.tsig_num = num;
     transport.tsig_denom = denom;
@@ -82,7 +86,7 @@ void ClapPlugin::SetTempo(int tempo, int num, int denom)
 
 void ClapPlugin::UpdateTransport(long buffSize, float sampleRate) {
 
-    if(transport.tsig_denom == 0) return;
+    if(transport.tsig_num == 0 || transport.tsig_denom == 0 || transport.tempo == 0) return;
 
     hosttime += buffSize / sampleRate;
     transport.song_pos_seconds = round(CLAP_SECTIME_FACTOR * hosttime);
@@ -94,11 +98,14 @@ void ClapPlugin::UpdateTransport(long buffSize, float sampleRate) {
         hosttime = transport.song_pos_seconds / CLAP_BEATTIME_FACTOR;
     }
 
-    int barLength = (transport.tsig_num*4) /transport.tsig_denom;
+    float barLength = (transport.tsig_num*4.0f) /transport.tsig_denom;
+    if(barLength!=0) {
+        transport.bar_start = floor(transport.song_pos_beats/ CLAP_BEATTIME_FACTOR / barLength);
+    } else {
+        LOG("barlength 0" << transport.tsig_num << transport.tsig_denom )
+    }
 
-    transport.bar_start = floor(transport.song_pos_beats/ CLAP_BEATTIME_FACTOR / barLength);
     transport.bar_number = floor(transport.song_pos_beats/ CLAP_BEATTIME_FACTOR / transport.tsig_num);
-
 }
 
 void ClapPlugin::InitTransport()
