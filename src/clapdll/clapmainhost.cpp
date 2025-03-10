@@ -38,9 +38,9 @@
 
 #include "connectables/clapplugin.h"
 
-ClapMainHost::ClapMainHost(const clap_host *host) :
+ClapMainHost::ClapMainHost(const clap_host *host, clap_plugin_descriptor &descc) :
     MainHost(0,0),
-    clap::helpers::Plugin<clap::helpers::MisbehaviourHandler::Terminate, clap::helpers::CheckingLevel::Maximal>(&desc, host),
+    clap::helpers::Plugin<clap::helpers::MisbehaviourHandler::Terminate, clap::helpers::CheckingLevel::Maximal>(&descc, host),
     guiWindow(0)
 
 {
@@ -80,7 +80,7 @@ void ClapMainHost::ReceiveMsgSignal(const MsgObject &msg)
 const char *features[] = {CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, CLAP_PLUGIN_FEATURE_MULTI_EFFECTS, nullptr};
 clap_plugin_descriptor ClapMainHost::desc = {CLAP_VERSION,
                                              "ctrlbrk.clapBoard",
-                                             "Clap Host Thing to be named",
+                                             "VstBoard",
                                              "CtrlBrk",
                                              "https://",
                                              "",
@@ -88,6 +88,18 @@ clap_plugin_descriptor ClapMainHost::desc = {CLAP_VERSION,
                                              "0.0.1",
                                              "Test one two, test.",
                                              features};
+
+const char *featuresInst[] = {CLAP_PLUGIN_FEATURE_INSTRUMENT, CLAP_PLUGIN_FEATURE_MULTI_EFFECTS, nullptr};
+clap_plugin_descriptor ClapMainHost::descInst = {CLAP_VERSION,
+                                             "ctrlbrk.clapBoardIsnt",
+                                             "VstBoardInst",
+                                             "CtrlBrk",
+                                             "https://",
+                                             "",
+                                             "",
+                                             "0.0.1",
+                                             "Test one two, test.",
+                                             featuresInst};
 
 bool ClapMainHost::activate(double sampleRate, uint32_t minFrameCount, uint32_t maxFrameCount) noexcept
 {
@@ -225,8 +237,10 @@ clap_process_status ClapMainHost::process(const clap_process *process) noexcept
 {
     SetBufferSize( process->frames_count );
 
-    Connectables::ClapPlugin::TransportFromHost(*process->transport);
-    Vst3TimeFromClap(*process->transport);
+    if(process->transport) {
+        Connectables::ClapPlugin::TransportFromHost(*process->transport);
+        Vst3TimeFromClap(*process->transport);
+    }
 
     if (process->audio_outputs_count <= 0)
         return CLAP_PROCESS_SLEEP;
@@ -346,6 +360,7 @@ bool ClapMainHost::guiSetScale(double scale) noexcept
 
 bool ClapMainHost::guiAdjustSize(uint32_t *width, uint32_t *height) noexcept
 {
+
     return true;
 }
 bool ClapMainHost::guiSetSize(uint32_t width, uint32_t height) noexcept
@@ -357,7 +372,10 @@ bool ClapMainHost::guiSetSize(uint32_t width, uint32_t height) noexcept
 }
 bool ClapMainHost::guiGetSize(uint32_t *width, uint32_t *height) noexcept
 {
-
+    if(!guiWindow) return false;
+    QSize qs = guiWindow->GetWindow()->size();
+    *width = qs.width();
+    *height = qs.height();
     return true;
 }
 

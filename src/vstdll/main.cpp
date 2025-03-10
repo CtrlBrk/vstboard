@@ -76,6 +76,18 @@ VST_EXPORT AEffect* VSTPluginMain (audioMasterCallback audioMaster)
     VestigeWrapper * myWrap = VestigeWrapper::create(GetPluginFactoryVst24(), VstBoardProcessorUID, audioMaster);
     return &myWrap->Effect;
 }
+
+VST_EXPORT AEffect* VSTPluginMainInst (audioMasterCallback audioMaster)
+{
+    if (!audioMaster (nullptr, audioMasterVersion, 0, 0, nullptr, 0))
+        return nullptr; // old version
+
+    if (InitModule () == false)
+        return nullptr;
+
+    VestigeWrapper * myWrap = VestigeWrapper::create(GetPluginFactoryVst24(), VstBoardInstProcessorUID, audioMaster);
+    return &myWrap->Effect;
+}
 }
 
 #endif

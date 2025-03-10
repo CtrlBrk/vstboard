@@ -93,13 +93,20 @@ bool InitModule()
 		}
 		
 	}
-	
-	//load the plugin dll
-    HpluginDll = LoadDll( L"VstBlib");
-	if (!HpluginDll) {
+
+    //load the plugin dll
+    //HpluginDll = LoadDll( L"VstBlib");
+    HpluginDll = LoadLibrary( L"VstBlib.dll" );
+    if (HpluginDll==NULL) {
+        auto err = GetLastError();
+        MessageBox(NULL, std::to_wstring(err).c_str(), L"VstBoard", MB_OK | MB_ICONERROR);
+        return false;
+    }
+
+    if (!HpluginDll) {
         MessageBox(NULL, L"VstBlib.dll : not loaded", L"VstBoard", MB_OK | MB_ICONERROR);
-		return false;
-	}
+        return false;
+    }
 
 	return true;
 }

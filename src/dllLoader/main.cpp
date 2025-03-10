@@ -180,7 +180,6 @@ extern "C" {
         if(!InitModule()) {
             return 0;
         }
-
         vstPluginFuncPtr entryPoint = (vstPluginFuncPtr)GetProcAddress(HpluginDll, "VSTPluginMain");
 
         if(!entryPoint) {

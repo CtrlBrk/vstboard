@@ -51,11 +51,12 @@ class ClapMainHost :
 {
     Q_OBJECT
 public:
-    ClapMainHost(const clap_host *host);
+    ClapMainHost(const clap_host *host, clap_plugin_descriptor &descc);
     ~ClapMainHost();
     void SendMsg(const MsgObject &msg) override;
 
     static clap_plugin_descriptor desc;
+    static clap_plugin_descriptor descInst;
 
     bool activate(double sampleRate, uint32_t minFrameCount, uint32_t maxFrameCount) noexcept override;
 

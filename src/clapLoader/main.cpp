@@ -78,12 +78,17 @@ bool DeinitModule()
     return true;
 }
 
-static const void *get_factory(const char *factory_id)
+static const void *get_factory(const char * /*factory_id*/)
 {
     auto entry = GetProcAddress(HpluginDll, "clap_entry");
+    if(!entry) return nullptr;
+
     clap_plugin_entry_t * clapentry = (clap_plugin_entry_t *)entry;
+    if(!clapentry) return nullptr;
+
     auto factory = clapentry->get_factory(CLAP_PLUGIN_FACTORY_ID);
     return factory;
+
     /*
     const struct clap_plugin_entry * _pluginEntry = reinterpret_cast<const struct clap_plugin_entry *>(::GetProcAddress (HpluginDll, "get_factory"));
     if (!_pluginEntry) {
@@ -98,7 +103,7 @@ static const void *get_factory(const char *factory_id)
 
 
 
-bool clap_init(const char *p) {
+bool clap_init(const char * /*p*/) {
     if(!InitModule()) {
         DeinitModule();
         return false;

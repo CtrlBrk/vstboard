@@ -226,11 +226,11 @@ void AddDllPath()
     std::wstring path(newSearchPath);
     path += L";";
 
-    // std::wstring curPath;
-    // if(GetCurrentDllPath(curPath)) {
-    //    path += curPath + L"\\Qt;";
-        // path += curPath + L";";
-    // }
+    std::wstring curPath;
+    if(GetCurrentDllPath(curPath)) {
+        path += curPath + L";";
+       path += curPath + L"\\Qt;";
+    }
 
     std::wstring pathFromReg;
     if(RegGetString(HKEY_LOCAL_MACHINE, regBaseKey, installKey, pathFromReg)) {
