@@ -37,7 +37,7 @@ VstPluginView::VstPluginView(ViewConfig *config,MsgController *msgCtrl,int objId
     pal.setColor(QPalette::Window, config->GetColor(ColorGroups::VstPlugin,Colors::Background) );
     setPalette( pal );
 }
-
+/*
 void VstPluginView::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color)
 {
     if(colorId==Colors::Background)  {
@@ -60,7 +60,7 @@ void VstPluginView::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId,
     }
     ConnectableObjectView::UpdateColor(groupId,colorId,color);
 }
-
+*/
 void VstPluginView::Init(const MsgObject &msg)
 {
     actSaveBank = new QAction( QIcon::fromTheme("document-save") ,tr("Save Bank"),this);

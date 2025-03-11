@@ -47,6 +47,9 @@ ViewConfig::ViewConfig(Settings *settings, QObject *parent) :
     colorGroupNames.insert( ColorGroups::Bridge, tr("Bridge") );
     colorGroupNames.insert( ColorGroups::Object, tr("Object") );
     colorGroupNames.insert( ColorGroups::VstPlugin, tr("Vst Plugin") );
+    colorGroupNames.insert( ColorGroups::VstPlugin32, tr("Vst32 Plugin") );
+    colorGroupNames.insert( ColorGroups::Vst3Plugin, tr("Vst3 Plugin") );
+    colorGroupNames.insert( ColorGroups::ClapPlugin, tr("Clap Plugin") );
     colorGroupNames.insert( ColorGroups::AudioPin, tr("Audio Pin") );
     colorGroupNames.insert( ColorGroups::MidiPin, tr("Midi Pin") );
     colorGroupNames.insert( ColorGroups::ParameterPin, tr("Parameter Pin") );
@@ -70,46 +73,55 @@ ViewConfig::ViewConfig(Settings *settings, QObject *parent) :
 //    colorsNames.insert( Colors::ToolTipText, tr("ToolTip Text") );
 //    colorsNames.insert( Colors::BrightText, tr("BrightText") );
 
-    InitPresets();
+    InitPresets("default");
 }
 
-void ViewConfig::InitPresets()
+void ViewConfig::InitPresets(const QString &preset)
 {
-    AddColor("Default",ColorGroups::Programs,Colors::HighlightBackground,QColor(170,255,100,255));
+    /*
+    AddColor(preset,ColorGroups::Programs,Colors::HighlightBackground,QColor(170,255,100,255));
 
-    AddColor("Default",ColorGroups::VstPlugin,Colors::Background,QColor(255,255,128,128));
+    AddColor(preset,ColorGroups::VstPlugin,Colors::Background,QColor(255,255,128,128));
+    AddColor(preset,ColorGroups::Vst3Plugin,Colors::Background,QColor(255,128,255,128));
+    AddColor(preset,ColorGroups::ClapPlugin,Colors::Background,QColor(128,255,255,128));
+    AddColor(preset,ColorGroups::VstPlugin32,Colors::Background,QColor(255,128,128,128));
 
-    AddColor("Default",ColorGroups::AudioPin,Colors::Background,QColor(200,170,160,255));
-    AddColor("Default",ColorGroups::AudioPin,Colors::VuMeter,QColor(210,210,100,255));
+    AddColor(preset,ColorGroups::AudioPin,Colors::Background,QColor(200,170,160,255));
+    AddColor(preset,ColorGroups::AudioPin,Colors::VuMeter,QColor(210,210,100,255));
 
-    AddColor("Default",ColorGroups::MidiPin,Colors::Background,QColor(190,230,230,255));
-    AddColor("Default",ColorGroups::MidiPin,Colors::VuMeter,QColor(210,210,100,255));
+    AddColor(preset,ColorGroups::MidiPin,Colors::Background,QColor(190,230,230,255));
+    AddColor(preset,ColorGroups::MidiPin,Colors::VuMeter,QColor(210,210,100,255));
 
-    AddColor("Default",ColorGroups::ParameterPin,Colors::Background,QColor(160,185,200,255));
-    AddColor("Default",ColorGroups::ParameterPin,Colors::VuMeter,QColor(210,210,100,255));
+    AddColor(preset,ColorGroups::ParameterPin,Colors::Background,QColor(160,185,200,255));
+    AddColor(preset,ColorGroups::ParameterPin,Colors::VuMeter,QColor(210,210,100,255));
 
-    AddColor("Default",ColorGroups::Cursor,Colors::Background,QColor(0,0,0,90));
-    AddColor("Default",ColorGroups::Cursor,Colors::HighlightBackground,QColor(0,0,0,255));
+    AddColor(preset,ColorGroups::Cursor,Colors::Background,QColor(0,0,0,90));
+    AddColor(preset,ColorGroups::Cursor,Colors::HighlightBackground,QColor(0,0,0,255));
 
-    AddColor("Default",ColorGroups::Bridge,Colors::Background,QColor(160,170,160,255));
-    AddColor("Default",ColorGroups::Bridge,Colors::Lines,QColor(0,0,0,255));
+    AddColor(preset,ColorGroups::Bridge,Colors::Background,QColor(160,170,160,255));
+    AddColor(preset,ColorGroups::Bridge,Colors::Lines,QColor(0,0,0,255));
 
-    AddColor("Default",ColorGroups::Object,Colors::Background,QColor(120,160,185,128));
-    AddColor("Default",ColorGroups::Object,Colors::Text,QColor(0,0,0,255));
-    AddColor("Default",ColorGroups::Object,Colors::HighlightBackground,QColor(255,255,0,127));
+    AddColor(preset,ColorGroups::Object,Colors::Background,QColor(120,160,185,128));
+    AddColor(preset,ColorGroups::Object,Colors::Text,QColor(0,0,0,255));
+    AddColor(preset,ColorGroups::Object,Colors::HighlightBackground,QColor(255,255,0,127));
 
-    AddColor("Default",ColorGroups::Panel,Colors::Lines,QColor(0,0,0,150));
-    AddColor("Default",ColorGroups::Panel,Colors::Background,QColor(0,0,0,0));
-    AddColor("Default",ColorGroups::Panel,Colors::HighlightBackground,QColor(180,180,180,255));
+    AddColor(preset,ColorGroups::Panel,Colors::Lines,QColor(0,0,0,150));
+    AddColor(preset,ColorGroups::Panel,Colors::Background,QColor(0,0,0,0));
+    AddColor(preset,ColorGroups::Panel,Colors::HighlightBackground,QColor(180,180,180,255));
 
-    AddColor("Default",ColorGroups::Window,Colors::Text,QColor(0,0,0,255));
-    AddColor("Default",ColorGroups::Window,Colors::Window,QColor(175,165,135,255));
-    AddColor("Default",ColorGroups::Window,Colors::WindowText,QColor(0,0,0,255));
-    AddColor("Default",ColorGroups::Window,Colors::Button,QColor(175,165,135,255));
-    AddColor("Default",ColorGroups::Window,Colors::ButtonText,QColor(0,0,0,255));
-    AddColor("Default",ColorGroups::Window,Colors::Base,QColor(190,190,190,255));
+    AddColor(preset,ColorGroups::Window,Colors::Text,QColor(0,0,0,255));
+    AddColor(preset,ColorGroups::Window,Colors::Window,QColor(175,165,135,255));
+    AddColor(preset,ColorGroups::Window,Colors::WindowText,QColor(0,0,0,255));
+    AddColor(preset,ColorGroups::Window,Colors::Button,QColor(175,165,135,255));
+    AddColor(preset,ColorGroups::Window,Colors::ButtonText,QColor(0,0,0,255));
+    AddColor(preset,ColorGroups::Window,Colors::Base,QColor(190,190,190,255));
 
-    listPresetsInSetup["Default"]=listPresets["Default"];
+    listPresetsInSetup[preset]=listPresets[preset];
+*/
+    QString data("{\"presets\":[{\"groups\":[{\"colors\":[{\"a\":255,\"b\":45,\"g\":43,\"id\":1,\"r\":44},{\"a\":255,\"b\":90,\"g\":87,\"id\":2,\"r\":88},{\"a\":255,\"b\":218,\"g\":218,\"id\":6,\"r\":218},{\"a\":255,\"b\":75,\"g\":75,\"id\":7,\"r\":77},{\"a\":255,\"b\":89,\"g\":89,\"id\":9,\"r\":90},{\"a\":255,\"b\":196,\"g\":196,\"id\":10,\"r\":197}],\"id\":1},{\"colors\":[{\"a\":50,\"b\":8,\"g\":8,\"id\":3,\"r\":8},{\"a\":197,\"b\":225,\"g\":225,\"id\":4,\"r\":225},{\"a\":179,\"b\":255,\"g\":255,\"id\":8,\"r\":255}],\"id\":2},{\"colors\":[{\"a\":0,\"b\":0,\"g\":0,\"id\":3,\"r\":0},{\"a\":255,\"b\":181,\"g\":181,\"id\":8,\"r\":181}],\"id\":3},{\"colors\":[{\"a\":200,\"b\":158,\"g\":158,\"id\":3,\"r\":158},{\"a\":127,\"b\":0,\"g\":255,\"id\":4,\"r\":255},{\"a\":255,\"b\":0,\"g\":0,\"id\":7,\"r\":0}],\"id\":4},{\"colors\":[{\"a\":205,\"b\":116,\"g\":234,\"id\":3,\"r\":180}],\"id\":5},{\"colors\":[{\"a\":253,\"b\":143,\"g\":183,\"id\":3,\"r\":210},{\"a\":255,\"b\":100,\"g\":210,\"id\":5,\"r\":210}],\"id\":6},{\"colors\":[{\"a\":255,\"b\":249,\"g\":215,\"id\":3,\"r\":195},{\"a\":255,\"b\":100,\"g\":210,\"id\":5,\"r\":210}],\"id\":7},{\"colors\":[{\"a\":255,\"b\":147,\"g\":244,\"id\":3,\"r\":142},{\"a\":255,\"b\":100,\"g\":210,\"id\":5,\"r\":210}],\"id\":8},{\"colors\":[{\"a\":90,\"b\":0,\"g\":0,\"id\":3,\"r\":0},{\"a\":255,\"b\":0,\"g\":0,\"id\":4,\"r\":0}],\"id\":9},{\"colors\":[{\"a\":255,\"b\":23,\"g\":123,\"id\":4,\"r\":42}],\"id\":10},{\"colors\":[{\"a\":255,\"b\":0,\"g\":0,\"id\":12,\"r\":0}],\"id\":11},{\"colors\":[{\"a\":128,\"b\":117,\"g\":63,\"id\":3,\"r\":117}],\"id\":12},{\"colors\":[{\"a\":128,\"b\":255,\"g\":255,\"id\":3,\"r\":128}],\"id\":13},{\"colors\":[{\"a\":128,\"b\":111,\"g\":111,\"id\":3,\"r\":181}],\"id\":14}],\"name\":\"Dark\"},{\"groups\":[{\"colors\":[{\"a\":255,\"b\":229,\"g\":229,\"id\":1,\"r\":231},{\"a\":255,\"b\":191,\"g\":191,\"id\":2,\"r\":191},{\"a\":255,\"b\":64,\"g\":64,\"id\":6,\"r\":64},{\"a\":255,\"b\":255,\"g\":255,\"id\":7,\"r\":255},{\"a\":255,\"b\":200,\"g\":200,\"id\":9,\"r\":200},{\"a\":255,\"b\":50,\"g\":50,\"id\":10,\"r\":50}],\"id\":1},{\"colors\":[{\"a\":78,\"b\":149,\"g\":149,\"id\":3,\"r\":149},{\"a\":197,\"b\":225,\"g\":225,\"id\":4,\"r\":225},{\"a\":179,\"b\":0,\"g\":0,\"id\":8,\"r\":0}],\"id\":2},{\"colors\":[{\"a\":0,\"b\":255,\"g\":255,\"id\":3,\"r\":255},{\"a\":255,\"b\":50,\"g\":50,\"id\":8,\"r\":50}],\"id\":3},{\"colors\":[{\"a\":200,\"b\":158,\"g\":158,\"id\":3,\"r\":158},{\"a\":127,\"b\":0,\"g\":255,\"id\":4,\"r\":255},{\"a\":255,\"b\":0,\"g\":0,\"id\":7,\"r\":0}],\"id\":4},{\"colors\":[{\"a\":205,\"b\":116,\"g\":234,\"id\":3,\"r\":180}],\"id\":5},{\"colors\":[{\"a\":253,\"b\":143,\"g\":183,\"id\":3,\"r\":210},{\"a\":255,\"b\":100,\"g\":210,\"id\":5,\"r\":210}],\"id\":6},{\"colors\":[{\"a\":255,\"b\":249,\"g\":215,\"id\":3,\"r\":195},{\"a\":255,\"b\":100,\"g\":210,\"id\":5,\"r\":210}],\"id\":7},{\"colors\":[{\"a\":255,\"b\":147,\"g\":244,\"id\":3,\"r\":142},{\"a\":255,\"b\":100,\"g\":210,\"id\":5,\"r\":210}],\"id\":8},{\"colors\":[{\"a\":90,\"b\":0,\"g\":0,\"id\":3,\"r\":0},{\"a\":255,\"b\":0,\"g\":0,\"id\":4,\"r\":0}],\"id\":9},{\"colors\":[{\"a\":255,\"b\":54,\"g\":255,\"id\":4,\"r\":91}],\"id\":10},{\"colors\":[{\"a\":255,\"b\":0,\"g\":0,\"id\":11,\"r\":0}],\"id\":11},{\"colors\":[{\"a\":128,\"b\":117,\"g\":63,\"id\":3,\"r\":117}],\"id\":12},{\"colors\":[{\"a\":128,\"b\":255,\"g\":255,\"id\":3,\"r\":128}],\"id\":13},{\"colors\":[{\"a\":128,\"b\":111,\"g\":111,\"id\":3,\"r\":181}],\"id\":14}],\"name\":\"Default\"}]}");
+    QJsonDocument doc = QJsonDocument::fromJson(data.toUtf8());
+    QJsonObject obj = doc.object();
+    fromJson(obj);
 }
 
 /*!
@@ -474,6 +486,10 @@ void ViewConfig::SaveInRegistry()
     QVariant lVar=QVariant::fromValue(tmpBa);
     settings->SetSetting("Colors",lVar);
     settings->SetSetting("ColorPreset",currentPresetName);
+
+    // QJsonObject json;
+    // toJson(json);
+    // LOG(json);
 }
 
 void ViewConfig::LoadFromRegistry()

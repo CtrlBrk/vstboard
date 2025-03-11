@@ -38,7 +38,10 @@ namespace ColorGroups {
         ParameterPin,
         Cursor,
         Programs,
-        Theme
+        Theme,
+        Vst3Plugin,
+        ClapPlugin,
+        VstPlugin32
     };
 }
 
@@ -148,7 +151,7 @@ namespace View {
         viewConfigPresetList listPresetsInSetup;
 
         bool savedInSetupFile;
-        void InitPresets();
+        void InitPresets(const QString &preset);
         void AddColor(const QString &preset, ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color);
         void UpdateAllWidgets();
 

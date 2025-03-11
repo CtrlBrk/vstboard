@@ -434,14 +434,15 @@ void View::ViewConfigDialog::on_addPreset_clicked()
 
     QListWidgetItem * item = ui->listPresets->currentItem();
     if(item) {
-        name=item->text();
-        conf->CopyPreset(name,name);
+        QString oldname=item->text();
+        conf->CopyPreset(oldname,name);
     } else {
         conf->AddPreset( name );
     }
     InitLists();
     LoadPreset(name);
 
+    modified=true;
     // if(ui->checkSavedInSetupFile->isChecked())
         // myHost->SetSetupDirtyFlag();
 }
@@ -458,6 +459,7 @@ void View::ViewConfigDialog::on_delPreset_clicked()
     InitLists();
     LoadPreset("Default");
 
+    modified=true;
     // if(ui->checkSavedInSetupFile->isChecked())
         // myHost->SetSetupDirtyFlag();
 }

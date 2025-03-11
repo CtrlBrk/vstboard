@@ -213,6 +213,17 @@ void ConnectableObjectView::ObjectDropped(QGraphicsSceneDragDropEvent *event, Ms
 
 void ConnectableObjectView::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color)
 {
+    if(colorId==Colors::Background)  {
+        if(groupId==myColorGroupId) {
+            if(!highlighted) {
+                QPalette pal(palette());
+                pal.setColor(QPalette::Window,color);
+                setPalette( pal );
+            }
+        }
+        return;
+    }
+
     if(groupId==ColorGroups::Object && colorId==Colors::HighlightBackground) {
         QPalette pal(palette());
         pal.setColor(QPalette::Window, color );

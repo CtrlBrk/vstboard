@@ -70,6 +70,8 @@ namespace View {
         void SetLearnPin(MinMaxPinView *pin, float value);
         void SetBypassPin(MinMaxPinView *pin, float value);
 
+        ColorGroups::Enum myColorGroupId = ColorGroups::Object;
+
     protected:
         void AddListPins(const MsgObject &msg);
 

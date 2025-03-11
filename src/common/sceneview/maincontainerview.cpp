@@ -151,6 +151,23 @@ void MainContainerView::AddObject(const MsgObject &msg)
     objView->objType = static_cast<ObjType::Enum>(msg.prop[MsgObject::Type].toInt());
     objView->Init(msg);
 
+
+    if(msg.prop[MsgObject::Type].toInt() == ObjType::VstPlugin) {
+        objView->myColorGroupId = ColorGroups::VstPlugin;
+    }
+    if(msg.prop[MsgObject::Type].toInt() == ObjType::Vst3Plugin) {
+        objView->myColorGroupId = ColorGroups::Vst3Plugin;
+    }
+    if(msg.prop[MsgObject::Type].toInt() == ObjType::ClapPlugin) {
+        objView->myColorGroupId = ColorGroups::ClapPlugin;
+    }
+    if(msg.prop[MsgObject::Type].toInt() == ObjType::VstPlugin32) {
+        objView->myColorGroupId = ColorGroups::VstPlugin32;
+    }
+
+
+
+
     if(msg.prop.contains(MsgObject::State)) {
         ObjectContainerAttribs attr = msg.prop[MsgObject::State].value<ObjectContainerAttribs>();
         objView->setPos(attr.position);
