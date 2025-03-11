@@ -23,4 +23,6 @@ vstsdk {
 SUBDIRS += clapLoader
 SUBDIRS += clapdll
 
+SUBDIRS += launcher
+
 CONFIG += ordered

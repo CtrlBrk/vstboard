@@ -41,7 +41,6 @@ rem %JOM_PATH% clean
 %JOM_PATH% release
 
 
-pause
 
 copy /y "loaddll32.exe" ".\installer\" 
 copy /y "VstBoardVst.dat" ".\installer\"
@@ -53,8 +52,8 @@ copy /y "VstBoard.dll" ".\installer\VstBoard.vst3"
 copy /y "VstBoardClap.clap" ".\installer\VstBoard.clap"
 copy /y "VstBoardClap.dat" ".\installer\"
 
-copy /y "VstBoardHost.exe" ".\installer\VstBoard.exe"
-
+copy /y "VstBoardHost.exe" ".\installer\"
+copy /y "VstBoard.exe" ".\installer\"
 
 copy /y "%QTDIR%\bin\Qt6Core.dll" ".\installer"
 copy /y "%QTDIR%\bin\Qt6Gui.dll" ".\installer"

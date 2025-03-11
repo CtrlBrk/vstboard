@@ -15,7 +15,7 @@ SetCompressor lzma
 !define START_LINK_UNINSTALLER "$SMPROGRAMS\VstBoard\Uninstall VstBoard.lnk"
 !define REG_UNINSTALL "Software\Microsoft\Windows\CurrentVersion\Uninstall\VstBoard"
 !define REG_SETTINGS "Software\CtrlBrk\VstBoard"
-!define UNINSTALLER_NAME "uninst.exe"
+!define UNINSTALLER_NAME "uninstall.exe"
 !define WEBSITE_LINK "http://vstboard.blogspot.com/"
 
 LicenseText "License Agreeemt. Please review the license terms before installing VstBoard. If you accept the term of the agreement, click I Agree to continue. You must accept the agreement to install VstBoard"
@@ -83,6 +83,8 @@ Function defaultVstDir
 FunctionEnd
 
 Function getVstDir
+	SetRegView 64
+	
     StrCpy $VstDir "$INSTDIR\"
     ReadRegStr $1 HKLM "SOFTWARE\VST" "VSTPluginsPath"
 FunctionEnd
@@ -98,11 +100,14 @@ FunctionEnd
 
 
 Section "VstBoard (required)"
-    SetShellVarContext current
+	SetRegView 64
+	
+    SetShellVarContext all
     SectionIn RO
     SetOutPath $InstFolder
 		
 	File "VstBoard.exe"
+	File "VstBoardHost.exe"
     File "loaddll32.exe"
 	File "VstBoardVst.dat"
 	File "VstBoardClap.dat"
@@ -167,15 +172,16 @@ Section "VstBoard (required)"
 SectionEnd
 
 Section "Start Menu Shortcuts"
-    SetShellVarContext current
+    SetShellVarContext all
     SetOutPath $InstFolder
     CreateDirectory "${START_LINK_DIR}"
     CreateShortCut "${START_LINK_RUN}" "$InstFolder\VstBoard.exe"
-    CreateShortCut "${START_LINK_UNINSTALLER}" "$InstFolder\uninst.exe"
+    CreateShortCut "${START_LINK_UNINSTALLER}" "$InstFolder\uninstall.exe"
 SectionEnd
 
 Section "Uninstall"
-    SetShellVarContext current
+    SetShellVarContext all
+	SetRegView 64
 
     ReadRegStr $VstDir HKLM "${REG_SETTINGS}" "pluginInstallDir"
     Delete "$VstDir\VstBoard.dll"
@@ -186,8 +192,9 @@ Section "Uninstall"
 
 	ReadRegStr $ClapDir HKLM "${REG_SETTINGS}" "clapInstallDir"
     Delete "$ClapDir\VstBoard.clap"
-		
+	
 	Delete "$INSTDIR\VstBoard.exe"
+	Delete "$INSTDIR\VstBoardHost.exe"
     Delete "$INSTDIR\loaddll32.exe"
 	Delete "$INSTDIR\VstBoardVst.dat"
 	Delete "$INSTDIR\VstBoardClap.dat"
@@ -196,7 +203,6 @@ Section "Uninstall"
     Delete "$INSTDIR\GPL.txt"
     Delete "$INSTDIR\LGPL.txt"
 		
-    Delete "$INSTDIR\uninst.exe"
 	
 	Delete "$INSTDIR\Qt\Qt6Core.dll"
     Delete "$INSTDIR\Qt\Qt6Gui.dll"
@@ -221,13 +227,19 @@ Section "Uninstall"
 	Delete "$INSTDIR\plugins\styles\qmodernwindowsstyle.dll"
 	RMDir "$INSTDIR\plugins\styles"
 	
-    RMDir "$INSTDIR"
+	RMDir "$INSTDIR\plugins"
+	
+    
     Delete "${START_LINK_RUN}"
     Delete "${START_LINK_UNINSTALLER}"
     RMDir "${START_LINK_DIR}"
 		
-    DeleteRegKey HKLM "${REG_UNINSTALL}"
-    DeleteRegKey HKLM "${REG_SETTINGS}"
+    
+    Delete "$INSTDIR\uninstall.exe"
+	RMDir "$INSTDIR"
 	
+	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VstBoard"
+    DeleteRegKey HKLM "${REG_SETTINGS}"
+
 SectionEnd
 
