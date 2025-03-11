@@ -8,8 +8,9 @@ win32 {
 QMAKE_LFLAGS+="/DEF:$${_PRO_FILE_PWD_}/vstboard.def"
 OTHER_FILES += vstboard.def
 }
-TARGET = "VstBlib"
+TARGET = "VstBoardVst"
 TEMPLATE = lib
+QMAKE_EXTENSION_SHLIB = dat
 
 CONFIG += dll
 

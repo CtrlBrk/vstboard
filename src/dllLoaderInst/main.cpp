@@ -95,8 +95,7 @@ bool InitModule()
 	}
 
     //load the plugin dll
-    //HpluginDll = LoadDll( L"VstBlib");
-    HpluginDll = LoadLibrary( L"VstBlib.dll" );
+    HpluginDll = LoadLibrary( L"VstBoardVst.dat" );
     if (HpluginDll==NULL) {
         auto err = GetLastError();
         MessageBox(NULL, std::to_wstring(err).c_str(), L"VstBoard", MB_OK | MB_ICONERROR);

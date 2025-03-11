@@ -26,7 +26,7 @@
 
 HMODULE HpluginDll = 0;
 #define DllExport __declspec( dllexport )
-#define DLLNAME L"ClapBlib.dllclap."
+#define DLLNAME L"VstBoardVst.dat."
 bool InitModule()
 {
 	//add install path

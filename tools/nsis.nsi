@@ -104,8 +104,8 @@ Section "VstBoard (required)"
 		
 	File "VstBoard.exe"
     File "loaddll32.exe"
-	File "VstBlib.dll"
-	File "ClapBlib.dllclap"
+	File "VstBoardVst.dat"
+	File "VstBoardClap.dat"
 		
 	File "license.txt"
     File "GPL.txt"
@@ -189,8 +189,8 @@ Section "Uninstall"
 		
 	Delete "$INSTDIR\VstBoard.exe"
     Delete "$INSTDIR\loaddll32.exe"
-	Delete "$INSTDIR\VstBlib.dll"
-	Delete "$INSTDIR\ClapBlib.dllclap"
+	Delete "$INSTDIR\VstBoardVst.dat"
+	Delete "$INSTDIR\VstBoardClap.dat"
 		
 	Delete "$INSTDIR\license.txt"
     Delete "$INSTDIR\GPL.txt"

@@ -44,14 +44,14 @@ rem %JOM_PATH% clean
 pause
 
 copy /y "loaddll32.exe" ".\installer\" 
-copy /y "VstBlib.dll" ".\installer\"
+copy /y "VstBoardVst.dat" ".\installer\"
 
 copy /y "VstBoardInst.dll" ".\installer\"
 copy /y "VstBoard.dll" ".\installer\"
 copy /y "VstBoard.dll" ".\installer\VstBoard.vst3"
 
 copy /y "VstBoardClap.clap" ".\installer\VstBoard.clap"
-copy /y "ClapBlib.dllclap" ".\installer\"
+copy /y "VstBoardClap.dat" ".\installer\"
 
 copy /y "VstBoardHost.exe" ".\installer\VstBoard.exe"
 

@@ -2,10 +2,10 @@ include(../config.pri)
 
 QT += core gui widgets
 
-TARGET = "ClapBlib"
+TARGET = "VstBoardClap"
 TEMPLATE = lib
 
-QMAKE_EXTENSION_SHLIB = dllclap
+QMAKE_EXTENSION_SHLIB = dat
 
 LIBS += -L$$VST3SDK_LIB -lbase
 LIBS += -L$$VST3SDK_LIB -lpluginterfaces
