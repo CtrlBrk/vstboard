@@ -90,19 +90,18 @@ void ViewConfigDialog::InitDialog()
     LoadPreset( conf->GetPresetName() );
 
     ui->fontProgFamily->addItem("Default");
-    QFontDatabase database;
-    foreach (const QString &family, database.families()) {
+    foreach (const QString &family, QFontDatabase::families()) {
         ui->fontProgFamily->addItem(family);
     }
-    ui->fontProgFamily->setCurrentIndex( ui->fontProgFamily->findText(myWindow->settings->GetSetting("fontProgFamily","Default").toString()) );
+    ui->fontProgFamily->setCurrentIndex( ui->fontProgFamily->findText(myWindow->settings->GetSetting("fontProgFamily","Courier New").toString()) );
 
-    int s = myWindow->settings->GetSetting("fontProgSize",10).toInt();
+    int s = myWindow->settings->GetSetting("fontProgSize",12).toInt();
     if(s<=0) s=8;
     ui->fontProgSize->setValue( s );
-    ui->fontProgBold->setChecked( myWindow->settings->GetSetting("fontProgbold",false).toBool() );
+    ui->fontProgBold->setChecked( myWindow->settings->GetSetting("fontProgbold",true).toBool() );
     ui->fontProgItalic->setChecked( myWindow->settings->GetSetting("fontProgItalic",false).toBool() );
 
-    s = myWindow->settings->GetSetting("fontProgStretch",100).toInt();
+    s = myWindow->settings->GetSetting("fontProgStretch",120).toInt();
     if(s<=0) s=100;
     ui->fontProgStretch->setValue( s );
     UpdateProgramsFont();
@@ -511,12 +510,12 @@ void View::ViewConfigDialog::on_fontProgSize_valueChanged(double /*arg1*/)
     UpdateProgramsFont();
 }
 
-void View::ViewConfigDialog::on_fontProgFamily_currentIndexChanged(const QString &/*arg1*/)
+void View::ViewConfigDialog::on_fontProgBold_clicked(bool /*checked*/)
 {
     UpdateProgramsFont();
 }
 
-void View::ViewConfigDialog::on_fontProgBold_clicked(bool /*checked*/)
+void ViewConfigDialog::on_fontProgFamily_currentIndexChanged(int index)
 {
     UpdateProgramsFont();
 }
@@ -526,4 +525,6 @@ void View::ViewConfigDialog::on_themeLight_toggled(bool checked)
     modified=true;
     conf->SetTheme(checked ? Colors::Light : Colors::Dark);
 }
+
+
 

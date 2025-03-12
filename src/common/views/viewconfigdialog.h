@@ -108,10 +108,10 @@ namespace View {
         void on_fontProgItalic_clicked(bool checked);
         void on_fontProgStretch_valueChanged(double arg1);
         void on_fontProgSize_valueChanged(double arg1);
-        void on_fontProgFamily_currentIndexChanged(const QString &arg1);
         void on_fontProgBold_clicked(bool checked);
         void on_themeLight_toggled(bool checked);
 
+        void on_fontProgFamily_currentIndexChanged(int index);
     };
 }
 #endif // VIEWCONFIGDIALOG_H

@@ -960,20 +960,20 @@ void MainWindow::LoadProgramsFont()
 {
     QFont f(ui->Programs->font());
 
-    QString fam( settings->GetSetting("fontProgFamily","Default").toString() );
+    QString fam( settings->GetSetting("fontProgFamily","Courier New").toString() );
     if(fam!="Default")
         f.setFamily( fam );
     else
         f.setFamily( ui->dockPrograms->font().family() );
 
-    int s = settings->GetSetting("fontProgSize",0).toInt();
+    int s = settings->GetSetting("fontProgSize",12).toInt();
     if(s>0)
         f.setPointSize( s );
     else
         f.setPointSize( ui->dockPrograms->font().pointSize() );
 
-    f.setStretch( settings->GetSetting("fontProgStretch",100).toInt() );
-    f.setBold( settings->GetSetting("fontProgBold",false).toBool() );
+    f.setStretch( settings->GetSetting("fontProgStretch",120).toInt() );
+    f.setBold( settings->GetSetting("fontProgBold",true).toBool() );
     f.setItalic( settings->GetSetting("fontProgItalic",false).toBool() );
     ui->Programs->setFont(f);
 }

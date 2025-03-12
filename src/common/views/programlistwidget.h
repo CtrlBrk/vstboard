@@ -43,6 +43,8 @@ public:
     void readSettings(Settings *settings);
     void resetSettings();
 
+    void setFont(const QFont &);
+
 private:
     Ui::ProgramListWidget *ui;
     GroupsProgramsModel *model;

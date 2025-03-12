@@ -38,6 +38,12 @@ ProgramListWidget::~ProgramListWidget()
     delete ui;
 }
 
+void ProgramListWidget::setFont(const QFont &f)
+{
+    ui->listProgs->setFont(f);
+    ui->listGrps->setFont(f);
+}
+
 void ProgramListWidget::SetModel(GroupsProgramsModel *mod)
 {
     if(!mod)
