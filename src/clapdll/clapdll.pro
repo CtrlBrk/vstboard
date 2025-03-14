@@ -58,7 +58,8 @@ SOURCES += \
     connectables/objectfactoryclap.cpp \
     main.cpp \
     gui.cpp \
-    mainwindowclap.cpp
+    mainwindowclap.cpp \
+    ../vstdll/resizehandle.cpp
 
 HEADERS  += \
     clapmainhost.h \
@@ -67,7 +68,8 @@ HEADERS  += \
     connectables/clapmididevice.h \
     connectables/objectfactoryclap.h \
     gui.h \
-    mainwindowclap.h
+    mainwindowclap.h \
+    ../vstdll/resizehandle.h
 
 
 RESOURCES += ../resources/resources.qrc

@@ -197,6 +197,9 @@ bool ClapMainHost::stateSave(const clap_ostream *stream) noexcept
 {
     QJsonObject jsonObj;
     jsonObj["proc"] = JsonWriter::writeProjectProcess(this, true, true);
+    jsonObj["width"] = QJsonValue::fromVariant(guiWidth);
+    jsonObj["height"] = QJsonValue::fromVariant(guiHeight);
+
     QJsonDocument saveDoc(jsonObj);
     // QByteArray bArray = qCompress(saveDoc.toBinaryData());
     QByteArray bArray = saveDoc.toJson(QJsonDocument::Indented);
@@ -229,6 +232,15 @@ bool ClapMainHost::stateLoad(const clap_istream *stream) noexcept
     if (json.contains("proc")) {
         JsonReader::readProjectProcess(json["proc"].toObject(), this);
     }
+    if (json.contains("width") && json.contains("height")) {
+        int width = json["width"].toInt(0);
+        int height = json["height"].toInt(0);
+        if(width>0 && height>0) {
+            guiSetSize(width, height);
+            AskHostToResize(QPoint(width, height));
+        }
+    }
+
 
     return true;
 }
@@ -308,7 +320,6 @@ bool ClapMainHost::startProcessing() noexcept
 
 void ClapMainHost::stopProcessing() noexcept
 {
-
 }
 
 bool ClapMainHost::guiIsApiSupported(const char *api, bool isFloating) noexcept
@@ -347,10 +358,21 @@ void ClapMainHost::guiDestroy() noexcept
 
 }
 
+void ClapMainHost::AskHostToResize(const QPoint &pt)
+{
+    if(pt.x()==0 || pt.y()==0) return;
+
+    guiWidth = pt.x();
+    guiHeight = pt.y();
+    _host.guiRequestResize(pt.x(),pt.y());
+}
+
 bool ClapMainHost::guiSetParent(const clap_window *window) noexcept
 {
     if(!guiWindow) return false;
-    return guiWindow->attached((void*)window->ptr);
+    guiWindow->attached((void*)window->ptr);
+    connect(guiWindow,&Gui::onUserResize,this,&ClapMainHost::AskHostToResize);
+    return true;
 }
 
 bool ClapMainHost::guiSetScale(double scale) noexcept

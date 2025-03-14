@@ -22,7 +22,7 @@
 #include "settings.h"
 #include "projectfile/jsonwriter.h"
 #include "projectfile/jsonreader.h"
-
+#include "clapmainhost.h"
 
 Gui::Gui(MainHost* ctrl) :
     widget(0),
@@ -73,14 +73,23 @@ void Gui::ReceiveMsg(const MsgObject &msg)
 
 void Gui::OnResizeHandleMove(const QPoint &pt)
 {
-    if(widget)
+    if(widget) {
         widget->resize( pt.x(), pt.y() );
+    }
 
-    if(myWindow)
+    if(myWindow) {
         myWindow->resize(pt.x(), pt.y());
+    }
+
+    emit(onUserResize(pt));
+
+    // if(!plugFrame)
+    //     return;
+
+    // ViewRect size(0,0,pt.x(),pt.y());
+    // plugFrame->resizeView(this,&size);
 
 }
-
 
 bool Gui::attached (void* parent)
 {
@@ -99,14 +108,14 @@ bool Gui::attached (void* parent)
     widget->resize( myWindow->size() );
     widget->setPalette( myWindow->palette() );
 
-    // resizeH = new ResizeHandle(widget);
-    // QPoint pos( widget->geometry().bottomRight() );
-    // pos.rx()-=resizeH->width();
-    // pos.ry()-=resizeH->height();
-    // resizeH->move(pos);
-    // resizeH->show();
-    // connect(resizeH, SIGNAL(Moved(QPoint)),
-            // this, SLOT(OnResizeHandleMove(QPoint)));
+    resizeH = new ResizeHandle(widget);
+    QPoint pos( widget->geometry().bottomRight() );
+    pos.rx()-=resizeH->width();
+    pos.ry()-=resizeH->height();
+    resizeH->move(pos);
+    resizeH->show();
+    connect(resizeH, SIGNAL(Moved(QPoint)),
+            this, SLOT(OnResizeHandleMove(QPoint)));
 
     widget->show();
 
@@ -160,7 +169,7 @@ tresult PLUGIN_API Gui::onSize (ViewRect* newSize)
 
     return kResultTrue;
 }
-
+/*
 tresult PLUGIN_API Gui::setFrame (IPlugFrame* frame)
 {
     plugFrame = frame;

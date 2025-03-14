@@ -29,7 +29,6 @@
 #include "resizehandle.h"
 #ifdef WIN32
     #include <qwinwidget.h>
-//"../../libs/qtwinmigrate/src/qwinwidget.h"
 #endif
 #include "pluginterfaces/gui/iplugview.h"
 //#include "public.sdk/source/vst/vsteditcontroller.h"

@@ -143,13 +143,15 @@ protected:
 private:
     double paramTest1{1}, paramTest2{1};
     std::unordered_map<clap_id, double *> paramToValue;
-
+    uint32_t guiWidth = 0;
+    uint32_t guiHeight = 0;
 
 signals:
     void SendMsgSignal(const MsgObject &msg);
 
 public slots:
     void ReceiveMsgSignal(const MsgObject &msg);
+    void AskHostToResize(const QPoint &pt);
 };
 
 #endif // CLAPMAINHOST_H

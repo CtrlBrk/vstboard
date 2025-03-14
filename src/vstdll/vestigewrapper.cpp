@@ -495,7 +495,7 @@ intptr_t VestigeWrapper::__dispatcher( int opCode, int index, intptr_t value, vo
     case effEndSetProgram: //68
         return 0;
     case effGetProductString: //48
-        strProdName.copyTo16 ((char16*)ptr, 0, 127);
+        strProdName.copyTo8((char8*)ptr, 0, 127);
         return 1;
     case effStartProcess: //71
         BaseWrapper::_startProcess ();

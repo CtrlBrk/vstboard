@@ -25,7 +25,7 @@
 #include <QObject>
 
 #include "mainwindowclap.h"
-// #include "../vstdll/resizehandle.h"
+#include "../vstdll/resizehandle.h"
 #ifdef WIN32
     #include <qwinwidget.h>
 #endif
@@ -61,10 +61,11 @@ protected:
 #endif
 
     MainWindowClap *myWindow;
-    // ResizeHandle *resizeH;
+    ResizeHandle *resizeH;
 
 signals:
     void update(float value);
+    void onUserResize(const QPoint &pt);
 
 public slots:
     void UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId, const QColor &color);
