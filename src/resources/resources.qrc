@@ -77,5 +77,6 @@
         <file>dark/svg/gtk-stop.svg</file>
         <file>light/svg/games-hint.svg</file>
         <file>light/svg/gtk-stop.svg</file>
+        <file>CLAP Full Logo.svg</file>
     </qresource>
 </RCC>

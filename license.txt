@@ -1,7 +1,7 @@
 COPYRIGHT
 ---------
 
-Copyright (C) 2010-2012 Raphaël François
+Copyright (C) 2010-2025 Raphaël François
 More detailed copyright information can be found in the individual source code files.
 
 APPLICABLE LICENSES
@@ -9,12 +9,13 @@ APPLICABLE LICENSES
 
 * All VstBoard source code, header files and documentation are licensed under the GNU LGPL v3 license.
 
-* VstHost Copyright (c) 2006 Hermann Seib. released under LGPL.
-* Qt Copyright (c) 2010 Nokia Corporation and/or its subsidiary(-ies). released under LGPL.
-* PortAudio Portable Real-Time Audio Library Copyright (c) 1999-2000 Ross Bencina and Phil Burk
-* PortMidi Copyright (c) 1999-2000 Ross Bencina and Phil Burk, Copyright (c) 2001-2009 Roger B. Dannenberg.
-* The Crystal Project Copyright (c) Everaldo Coelho, released under LGPL.
+* VstHost Copyright © 2006 Hermann Seib
+* Qt Copyright © 2018 The Qt Company Ltd.
+* CLAP Copyright © 2021 Alexandre BIQUE
 * VST Plug-In Technology by Steinberg.
 * ASIO Interface Technology by Steinberg Media Technologies GmbH.
-* VST and ASIO are trademarks of Steinberg Media Technologies GmbH.
-https://github.com/StrataSource/QtWinMigrate-Qt6
+* VST and ASIO are trademarks of Steinberg Media Technologies GmbH
+* Vestige Copyright © 2006 Javier Serrano Polo
+* PortAudio Portable Real-Time Audio Library Copyright © 1999-2011 Ross Bencina and Phil Burk
+* PortMidi Copyright © 1999-2000 Ross Bencina and Phil Burk, Copyright © 2001-2009 Roger B. Dannenberg.
+* Antü icon theme Copyright ©  Fabián Alexis
