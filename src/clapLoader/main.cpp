@@ -26,7 +26,7 @@
 
 HMODULE HpluginDll = 0;
 #define DllExport __declspec( dllexport )
-#define DLLNAME L"VstBoardVst.dat."
+#define DLLNAME L"VstBoardClap.dat."
 bool InitModule()
 {
 	//add install path
@@ -67,14 +67,10 @@ bool InitModule()
 
 bool DeinitModule()
 {
-	if(HpluginDll) FreeLibrary(HpluginDll);
-    HpluginDll=0;
-//    FreeLibrary(HwinMigrate);
-//    HwinMigrate=0;
-//    FreeLibrary(Hgui);
-//    Hgui=0;
-//    FreeLibrary(Hcore);
-//    Hcore=0;
+    //don't unload, avoid vrash maybe related to winmigrate
+    // if(HpluginDll) FreeLibrary(HpluginDll);
+    // HpluginDll=0;
+
     return true;
 }
 

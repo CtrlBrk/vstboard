@@ -103,7 +103,7 @@ bool InitModule()
     }
 
     if (!HpluginDll) {
-        MessageBox(NULL, L"VstBlib.dll : not loaded", L"VstBoard", MB_OK | MB_ICONERROR);
+        MessageBox(NULL, L"VstBoardVst.dat : not loaded", L"VstBoard", MB_OK | MB_ICONERROR);
         return false;
     }
 
@@ -112,14 +112,10 @@ bool InitModule()
 
 bool DeinitModule()
 {
-	if(HpluginDll) FreeLibrary(HpluginDll);
-    HpluginDll=0;
-//    FreeLibrary(HwinMigrate);
-//    HwinMigrate=0;
-//    FreeLibrary(Hgui);
-//    Hgui=0;
-//    FreeLibrary(Hcore);
-//    Hcore=0;
+    //don't unload, avoid vrash maybe related to winmigrate
+    // if(HpluginDll) FreeLibrary(HpluginDll);
+    // HpluginDll=0;
+
     return true;
 }
 
@@ -156,7 +152,7 @@ EXPORT_FACTORY IPluginFactory* PLUGIN_API GetPluginFactory ()
     GetFactoryProc entryPoint = (GetFactoryProc)::GetProcAddress (HpluginDll, "GetPluginFactoryInst");
 
     if(!entryPoint) {
-        MessageBox(NULL,L"VstBlib.dll is not valid",L"VstBoard", MB_OK | MB_ICONERROR);
+        MessageBox(NULL,L"VstBoardVst.dat is not valid",L"VstBoard", MB_OK | MB_ICONERROR);
         //DeinitModule();
         return 0;
     }
@@ -182,7 +178,7 @@ extern "C" {
         vstPluginFuncPtr entryPoint = (vstPluginFuncPtr)GetProcAddress(HpluginDll, "VSTPluginMainInst");
 
         if(!entryPoint) {
-            MessageBox(NULL,L"VstBlib.dll is not valid",L"VstBoard", MB_OK | MB_ICONERROR);
+            MessageBox(NULL,L"VstBoardVst.dat is not valid",L"VstBoard", MB_OK | MB_ICONERROR);
             return 0;
         }
         return entryPoint(audioMaster);
