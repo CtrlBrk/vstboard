@@ -341,6 +341,12 @@ tresult PLUGIN_API VstBoardProcessor::setActive (TBool state)
 
 tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
 {
+    //if our buffersize is wrong ?
+    int32 bSize = data.numSamples;
+    if(bSize>0 && GetBufferSize() != bSize) {
+        SetBufferSize(bSize);
+    }
+
     //timer
     if(data.processContext) {
         vst3Host->SetTimeInfo(data.processContext);
@@ -407,12 +413,6 @@ tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
             }
         }
     }
-/*
-    int32 bSize = data.numSamples;
-    if(bSize>0 && GetBufferSize() != bSize) {
-        SetBufferSize(bSize);
-    }
-*/
 
  //   uint32 sampleFramesSize = getSampleFramesSizeInBytes (processSetup, data.numSamples);
 
