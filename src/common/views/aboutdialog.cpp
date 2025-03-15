@@ -18,6 +18,7 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 
+#include "globals.h"
 #include "aboutdialog.h"
 #include "ui_aboutdialog.h"
 
@@ -25,15 +26,11 @@ AboutDialog::AboutDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AboutDialog)
 {
-//    QString ver(APP_VERSION_MAJOR);
-
     ui->setupUi(this);
-    ui->labelApp->setText("VstBoard");
-    ui->labelVersion->setText( QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD) );
-//    ui->labelBuild->setText(ver.section("-",2,2));
+    ui->labelApp->setText(APP_NAME);
+    ui->labelVersion->setText( APP_VERSION_STR );
 
-    setWindowTitle("About VstBoard");
-
+    setWindowTitle( QString("About %s").arg(APP_NAME) );
     setFixedSize(size());
 }
 

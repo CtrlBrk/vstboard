@@ -18,6 +18,7 @@
 #    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 **************************************************************************/
 
+#include "globals.h"
 #include "splash.h"
 #include "ui_splash.h"
 
@@ -26,13 +27,12 @@ Splash::Splash(QWidget *parent) :
     ui(new Ui::Splash)
 {
     setAttribute(Qt::WA_DeleteOnClose);
-//    QString ver(APP_VERSION);
 
     ui->setupUi(this);
-    ui->labelApp->setText("VstBoard");
-    ui->labelVersion->setText( QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD) );
+    ui->labelApp->setText(APP_NAME);
+    ui->labelVersion->setText( APP_VERSION_STR );
 
-    setWindowTitle("VstBoard");
+    setWindowTitle(APP_NAME);
 
     setFixedSize(size());
 
@@ -41,6 +41,8 @@ Splash::Splash(QWidget *parent) :
 Splash::~Splash()
 {
     QSettings settings;
-    settings.setValue("splashHide",ui->checkHideIt->isChecked());
+    if(ui->checkHideIt->isChecked()) {
+        settings.setValue("splashHide", APP_VERSION_STR);
+    }
     delete ui;
 }

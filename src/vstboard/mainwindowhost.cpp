@@ -119,7 +119,8 @@ void MainWindowHost::readSettings()
     MainWindow::readSettings();
 
     QSettings settings;
-    if( !settings.value("splashHide",false).toBool() ) {
+    QString s = settings.value("splashHide",false).toString();
+    if( s!= APP_VERSION_STR ) {
         Splash *spl = new Splash(this);
         spl->show();
     }
