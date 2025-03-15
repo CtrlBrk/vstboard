@@ -63,6 +63,7 @@ void VstPluginView::UpdateColor(ColorGroups::Enum groupId, Colors::Enum colorId,
 */
 void VstPluginView::Init(const MsgObject &msg)
 {
+    /*
     actSaveBank = new QAction( QIcon::fromTheme("document-save") ,tr("Save Bank"),this);
     actSaveBank->setShortcutContext(Qt::WidgetShortcut);
     connect(actSaveBank,SIGNAL(triggered()),
@@ -88,7 +89,7 @@ void VstPluginView::Init(const MsgObject &msg)
             this,SLOT(SaveProgramAs()));
     actSaveProgramAs->setEnabled(false);
     addAction(actSaveProgramAs);
-
+*/
     ObjectView::Init(msg);
 }
 
