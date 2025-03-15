@@ -177,8 +177,10 @@ void Cable::Render(const PinMessage::Enum msgType,void *data)
         return;
 
     QMutexLocker l(&mutexDelay);
+
+    pin->ReceivePinMsg(msgType,data);
+
     if(buffer==0) {
-        pin->ReceivePinMsg(msgType,data);
         return;
     }
 
