@@ -1,6 +1,5 @@
 Disclaimer:
-If it's not obvious, if you're currently learning to code and don't know better yet : please don't use my code as a reference
-I am not a developer; this is a hobby project and I don't know what I am doing.
+I am not a developer; this is a hobby project and I don't know what I am doing. Please don't use my code as a reference.
 
 
 As a standalone application, VstBoard can host 64-bit CLAP, VST3, VST and 32-bit VST.

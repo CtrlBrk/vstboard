@@ -47,7 +47,13 @@ class Gui;
 
 class ClapMainHost :
     public MainHost,
+#ifdef QT_NO_DEBUG
+    public clap::helpers::Plugin <clap::helpers::MisbehaviourHandler::Ignore, clap::helpers::CheckingLevel::Maximal>
+#else
     public clap::helpers::Plugin <clap::helpers::MisbehaviourHandler::Terminate, clap::helpers::CheckingLevel::Maximal>
+#endif
+
+
 {
     Q_OBJECT
 public:

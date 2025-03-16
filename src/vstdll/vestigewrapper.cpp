@@ -55,6 +55,7 @@
 //#    along with VstBoard.  If not, see <http://www.gnu.org/licenses/>.
 //**************************************************************************/
 
+#include "../common/globals.h"
 #include "base/thread/include/fcondition.h"
 #include "pluginterfaces/base/funknownimpl.h"
 #include "VestigeWrapper.h"
@@ -62,6 +63,8 @@
 #include "pluginterfaces/vst/ivstmidicontrollers.h"
 
 #include "gui.h"
+
+#include "ids.h"
 
 using namespace Steinberg;
 using namespace Steinberg::Vst;
@@ -146,8 +149,6 @@ tresult PLUGIN_API VestigeWrapper::getName (String128 name)
 
 void VestigeWrapper::setupProcessTimeInfo ()
 {
-    mProcessContext.state = 0;
-    mProcessContext.sampleRate = mSampleRate;
     mProcessData.processContext = &mProcessContext;
 /*
     if (AAX_ITransport* transport = mAAXParams->Transport ())
@@ -266,12 +267,17 @@ void VestigeWrapper::setupProcessTimeInfo ()
 VestigeWrapper::VestigeWrapper(Steinberg::Vst::BaseWrapper::SVST3Config config, audioMasterCallback audioMaster)
 : BaseWrapper (config)
 {
+
+
     Effect.magic=kEffectMagic;
     Effect.numPrograms=0;
     Effect.numParams=0;
     Effect.numInputs=2;
     Effect.numOutputs=2;
-    Effect.flags= effFlagsHasEditor | effFlagsCanReplacing | effFlagsProgramChunks ; //effFlagsIsSynth
+    Effect.flags= effFlagsHasEditor | effFlagsCanReplacing | effFlagsProgramChunks;
+    if(mVst3EffectClassID == VstBoardInstProcessorUID) {
+        Effect.flags |= effFlagsIsSynth;
+    }
     Effect.ptr1=0;
     Effect.ptr2=0;
     Effect.initialDelay=0;
@@ -288,6 +294,8 @@ VestigeWrapper::VestigeWrapper(Steinberg::Vst::BaseWrapper::SVST3Config config, 
     Effect.getParameter = static_getParameter;
     Effect.process = static_process;
     Effect.processReplacing = static_processReplacing;
+
+    masterCallback = audioMaster;
 }
 
 //from aaxwrapper
@@ -460,7 +468,8 @@ bool VestigeWrapper::init ()
 
 
 
-String strProdName("VstBoard");
+// String strProdName(APP_NAME);
+// String strProdVendor(APP_VENDOR);
 
 
 intptr_t VestigeWrapper::__dispatcher( int opCode, int index, intptr_t value, void* ptr, float opt)
@@ -469,8 +478,11 @@ intptr_t VestigeWrapper::__dispatcher( int opCode, int index, intptr_t value, vo
 
     switch(opCode) {
     case effGetPlugCategory: //35
+        if( memcmp(mSubCategories,"Instrument",10) == 0 ) {
+            return kPlugCategSynth;
+        }
         return kPlugCategEffect;
-        // return kPlugCategSynth;
+
     case effGetVstVersion: //58
         return 1;
     case effSetSampleRate: //10
@@ -494,8 +506,13 @@ intptr_t VestigeWrapper::__dispatcher( int opCode, int index, intptr_t value, vo
         return 0;
     case effEndSetProgram: //68
         return 0;
+    case effGetVendorString:
+        strcpy_s((char*)ptr,127,mVendor);
+        // strProdVendor.copyTo8((char8*)ptr, 0, 127);
+        return 1;
     case effGetProductString: //48
-        strProdName.copyTo8((char8*)ptr, 0, 127);
+        strcpy_s((char*)ptr,127,mName);
+        // strProdName.copyTo8((char8*)ptr, 0, 127);
         return 1;
     case effStartProcess: //71
         BaseWrapper::_startProcess ();
@@ -521,12 +538,50 @@ intptr_t VestigeWrapper::__dispatcher( int opCode, int index, intptr_t value, vo
     case effEditTop: //20
         return 0;
     case effProcessEvents: //25
+        UpdateTime();
         return processEvents( (VstEvents*)ptr );
+    case effIdle: //53
+        return 0;
     }
 
     LOG("opcode:" << opCode)
 
     return 0;
+}
+
+void VestigeWrapper::UpdateTime()
+{
+    intptr_t ret = masterCallback(&Effect, audioMasterGetTime, 0, (kVstTransportPlaying | kVstTempoValid | kVstPpqPosValid) ,NULL, 0.0f);
+    VstTimeInfo* time = (VstTimeInfo*)ret;
+
+    mProcessContext.sampleRate = time->sampleRate;
+    mProcessContext.projectTimeSamples = time->samplePos;
+
+    mProcessContext.tempo = time->tempo;
+    mProcessContext.state = ProcessContext::kTempoValid;
+
+    if(time->timeSigNumerator==0 || time->timeSigDenominator==0) {
+        mProcessContext.timeSigNumerator = 4;
+        mProcessContext.timeSigDenominator = 4;
+    } else {
+        mProcessContext.timeSigNumerator = time->timeSigNumerator;
+        mProcessContext.timeSigDenominator = time->timeSigDenominator;
+    }
+    mProcessContext.state |= ProcessContext::kTimeSigValid;
+
+    // double nbSec = mProcessContext.projectTimeSamples / mProcessContext.sampleRate;
+    // mProcessContext.projectTimeMusic = nbSec / 60 * mProcessContext.tempo;
+    // mProcessContext.state |= ProcessContext::kProjectTimeMusicValid;
+    mProcessContext.projectTimeMusic = time->ppqPos;
+
+    float barLengthq = (float)(4*mProcessContext.timeSigNumerator)/mProcessContext.timeSigDenominator;
+    int32 nbBars = mProcessContext.projectTimeMusic/barLengthq;
+    mProcessContext.barPositionMusic = (TQuarterNotes)barLengthq*(TQuarterNotes)nbBars;
+    mProcessContext.state |= ProcessContext::kBarPositionValid;
+
+    // VstBoardProcessor * proc = static_cast<VstBoardProcessor*>(mProcessor.get());
+    // proc->SetTempo( time->tempo, time->timeSigNumerator, time->timeSigDenominator );
+    // proc->SetSampleRate( time->sampleRate );
 }
 
 float VestigeWrapper::__getParameter(int index)

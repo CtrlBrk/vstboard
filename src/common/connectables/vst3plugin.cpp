@@ -705,7 +705,6 @@ bool Vst3Plugin::CreateEditorWindow(QWidget *parent)
         #endif
 #endif
 
-    // editorWnd = new View::VstPluginWindow(myHost->GetMainWindow());
     editorWnd = new View::VstPluginWindow(parent);
     editorWnd->SetPlugin(this);
     editorWnd->setWindowTitle(objectName());
@@ -754,7 +753,8 @@ bool Vst3Plugin::CreateEditorWindow(QWidget *parent)
 void Vst3Plugin::OnShowEditor()
 {
     if(!editorWnd)
-        CreateEditorWindow(myHost->GetMainWindow());
+        CreateEditorWindow(nullptr);
+        // CreateEditorWindow(myHost->GetMainWindow());
 
     if(!editorWnd)
         return;
@@ -791,7 +791,7 @@ void Vst3Plugin::EditorDestroyed()
 {
     editorWnd=0;
     RemoveGui();
-    listParameterPinIn->listPins.value(FixedPinNumber::editorVisible)->SetVisible(false);
+    // listParameterPinIn->listPins.value(FixedPinNumber::editorVisible)->SetVisible(false);
 }
 
 void Vst3Plugin::SetParentWindow(QWidget *parent)

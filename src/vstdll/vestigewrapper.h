@@ -105,14 +105,12 @@ public:
     Steinberg::int32 _getChunk (void** data, bool isPreset) SMTG_OVERRIDE;
     Steinberg::int32 _setChunk (void* data, Steinberg::int32 byteSize, bool isPreset) SMTG_OVERRIDE;
 
-
-    char mSubCategories[PClassInfo2::kSubCategoriesSize];
-    char mName[PClassInfo::kNameSize];
-    char mVendor[PFactoryInfo::kNameSize];
-    int32 mVersion = 0;
+    audioMasterCallback masterCallback;
 
     AEffect Effect;
 private:
+    void UpdateTime();
+
     struct GetChunkMessage;
 
 };

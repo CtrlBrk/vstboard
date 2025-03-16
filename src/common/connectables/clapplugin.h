@@ -31,7 +31,12 @@
 #include "clappluginparam.h"
 #include <clap/helpers/reducing-param-queue.hh>
 
-constexpr auto PluginHost_MH = clap::helpers::MisbehaviourHandler::Terminate;
+#ifdef QT_NO_DEBUG
+    constexpr auto PluginHost_MH = clap::helpers::MisbehaviourHandler::Ignore;
+#else
+    constexpr auto PluginHost_MH = clap::helpers::MisbehaviourHandler::Terminate;
+#endif
+
 constexpr auto PluginHost_CL = clap::helpers::CheckingLevel::Maximal;
 
 using BaseHost = clap::helpers::Host<PluginHost_MH, PluginHost_CL>;

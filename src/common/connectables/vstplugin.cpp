@@ -610,6 +610,9 @@ void VstPlugin::RaiseEditor()
 
 void VstPlugin::CreateEditorWindow(QWidget *parent)
 {
+    if(!parent)
+        return;
+
     //already done
     if(editorWnd)
         return;
@@ -618,7 +621,6 @@ void VstPlugin::CreateEditorWindow(QWidget *parent)
     if((pEffect->flags & effFlagsHasEditor) == 0)
         return;
 
-    // editorWnd = new View::VstPluginWindow(myHost->GetMainWindow());
     editorWnd = new View::VstPluginWindow(parent);
     editorWnd->setWindowTitle(objectName());
 

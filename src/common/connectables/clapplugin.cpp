@@ -33,7 +33,7 @@
 #include "commands/comaddpin.h"
 #include "commands/comremovepin.h"
 
-#include "vst/vst3host.h"
+// #include "vst/vst3host.h"
 
 using namespace Connectables;
 
@@ -788,12 +788,14 @@ void ClapPlugin::Render()
 
 
     if (isPluginSleeping()) {
-        if (!_scheduleProcess && _evIn.empty())
+        if (!_scheduleProcess && _evIn.empty()) {
             // The plugin is sleeping, there is no request to wake it up and there are no events to
             // process
             return;
+        }
 
         _scheduleProcess = false;
+
         if (!_plugin->startProcessing()) {
             // the plugin failed to start processing
             setPluginState(ActiveWithError);

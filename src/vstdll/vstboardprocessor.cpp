@@ -174,6 +174,9 @@ tresult PLUGIN_API VstBoardProcessor::initialize (FUnknown* context)
 
     Open();
 
+    LoadDefaultFiles();
+
+    /*
     //load default setup file
     QString currentSetupFile = ConfigDialog::defaultSetupFile(settings);
     if(!currentSetupFile.isEmpty()) {
@@ -189,7 +192,7 @@ tresult PLUGIN_API VstBoardProcessor::initialize (FUnknown* context)
             currentProjectFile = "";
         }
     }
-
+*/
     for(int i=0; i<NB_MAIN_BUSES_IN; i++) {
         addAudioInput((char16*)QString("AudioIn%1").arg(i+1).utf16(), Vst::SpeakerArr::kStereo, Vst::kMain);
     }
@@ -220,7 +223,7 @@ tresult PLUGIN_API VstBoardProcessor::setState (IBStream* state)
 	state->read(&size, sizeof(int));
 	//don't know how to write directly to a bytearray
 	char* buf = new char[size];
-	state->read(buf, size);
+    state->read(buf, size);
 	
 	QByteArray bArray(QByteArray::fromRawData(buf, size));
 	
