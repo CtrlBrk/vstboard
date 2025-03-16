@@ -185,6 +185,8 @@ void Container::ConnectObjects(QSharedPointer<Object> fromObjOutputs, QSharedPoi
 
 bool Container::Close()
 {
+    Object::Close();
+
     if(closed)
         return false;
 
