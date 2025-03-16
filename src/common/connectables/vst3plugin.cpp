@@ -1197,8 +1197,11 @@ void Vst3Plugin::Render()
         //send result
         //=========================
         foreach(Pin* pin, listAudioPinOut->listPins) {
-            static_cast<AudioPin*>(pin)->GetBuffer()->ConsumeStack();
-            static_cast<AudioPin*>(pin)->SendAudioBuffer();
+            AudioPin* p = static_cast<AudioPin*>(pin);
+            if(p) {
+                static_cast<AudioPin*>(p)->GetBuffer()->ConsumeStack();
+                static_cast<AudioPin*>(p)->SendAudioBuffer();
+            }
         }
     }
 }

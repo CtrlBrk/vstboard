@@ -23,6 +23,7 @@
 
 //#include "precomp.h"
 
+#define APP_VENDOR "CtrlBrk"
 #define APP_NAME "VstBoard"
 #define APP_VERSION_MAJOR 0
 #define APP_VERSION_MINOR 6

@@ -43,7 +43,6 @@ MainHost::MainHost(Settings *settings, QObject *parent) :
     ,updateViewTimer(0)
     ,programManager(0)
     ,objFactory(0)
-    ,mainWindow(0)
 #ifdef VST2PLUGIN
         , vstHost(0)
 #endif
@@ -51,14 +50,15 @@ MainHost::MainHost(Settings *settings, QObject *parent) :
         , vst3Host(0)
 #endif
     ,settings(settings)
+    ,mainWindow(0)
+    ,winId(0)
+    ,vst32Process(0)
     ,solverNeedAnUpdate(false)
     ,solverUpdateEnabled(true)
+    ,cptHost32try(0)
     ,undoProgramChangesEnabled(false)
     ,globalDelay(0L)
     ,nbThreads(1)
-    ,winId(0)
-    ,vst32Process(0)
-    ,cptHost32try(0)
     // ,clapHost(0)
 {
     LOG("mainhost " << this)
@@ -196,10 +196,10 @@ void MainHost::Close()
     //}
 }
 
-void MainHost::Kill()
-{
-    delete this;
-}
+// void MainHost::Kill()
+// {
+//     delete this;
+// }
 
 void MainHost::Init()
 {
@@ -293,7 +293,7 @@ void MainHost::SetupMainContainer()
     info.forcedObjId = FixedObjId::mainContainer;
 
     if(mainContainer) {
-        mainContainer->destroyed();
+        emit mainContainer->destroyed();
     }
     mainContainer = objFactory->NewObject(info).staticCast< Connectables::Container >();
     if(!mainContainer)
@@ -1152,9 +1152,9 @@ bool MainHost::LoadSetupFile(const QString &filename)
         QString lastDir = settings->GetSetting("lastSetupDir").toString();
         name = QFileDialog::getOpenFileName(mainWindow, tr("Open a Setup file"), lastDir,
                                             tr("Supported formats (*.%1 *.%2 *.%3)")
-                                                .arg(SETUP_JSON_BINARY_FILE_EXTENSION)
-                                                .arg(SETUP_JSON_FILE_EXTENSION)
-                                                .arg(SETUP_FILE_EXTENSION)
+                                                .arg(SETUP_JSON_BINARY_FILE_EXTENSION,
+                                                SETUP_JSON_FILE_EXTENSION,
+                                                SETUP_FILE_EXTENSION)
                                             + ";;" +
                                             tr("Binary Json (*.%1)").arg(SETUP_JSON_BINARY_FILE_EXTENSION)
                                             + ";;" +
@@ -1222,9 +1222,9 @@ bool MainHost::LoadProjectFile(const QString &filename)
         QString lastDir = settings->GetSetting("lastProjectDir").toString();
         name = QFileDialog::getOpenFileName(mainWindow, tr("Open a Project file"), lastDir,
                                             tr("Supported formats (*.%1 *.%2 *.%3)")
-                                                .arg(PROJECT_JSON_BINARY_FILE_EXTENSION)
-                                                .arg(PROJECT_JSON_FILE_EXTENSION)
-                                                .arg(SETUP_FILE_EXTENSION)
+                                                .arg(PROJECT_JSON_BINARY_FILE_EXTENSION,
+                                                PROJECT_JSON_FILE_EXTENSION,
+                                                SETUP_FILE_EXTENSION)
                                             + ";;" +
                                             tr("Binary Json (*.%1)").arg(PROJECT_JSON_BINARY_FILE_EXTENSION)
                                             + ";;" +

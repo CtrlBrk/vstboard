@@ -168,9 +168,13 @@ void MainWindow::Init()
     SendMsg(msg);
     LOG("mainwindow id " << winId())
 
+}
 
-
-
+//update view, called after window attached
+//only the programs needs an update ?
+void MainWindow::UpdateView()
+{
+    progModel->Update();
 }
 
 #ifdef DEBUG_MESSAGES

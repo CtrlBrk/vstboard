@@ -104,6 +104,19 @@ void VstBoardProcessor::Close()
 
 void VstBoardProcessor::Init()
 {
+    processContextRequirements.needSystemTime ();
+    processContextRequirements.needContinousTimeSamples ();
+    processContextRequirements.needProjectTimeMusic ();
+    processContextRequirements.needBarPositionMusic ();
+    processContextRequirements.needCycleMusic ();
+    processContextRequirements.needSamplesToNextClock ();
+    processContextRequirements.needTempo ();
+    processContextRequirements.needTimeSignature ();
+    processContextRequirements.needChord ();
+    processContextRequirements.needFrameRate ();
+    processContextRequirements.needTransportState ();
+
+
     MainHost::Init();
     QObject::connect(this, SIGNAL(ChangeProg(quint16)),
             programManager, SLOT(UserChangeProg(quint16)));
@@ -111,24 +124,8 @@ void VstBoardProcessor::Init()
             programManager, SLOT(UserChangeGroup(quint16)));
     QObject::connect(this, SIGNAL(SetBypass(bool)),
             programManager, SLOT(UserSetBypass(bool)));
+
 }
-
-// uint32 PLUGIN_API VstBoardProcessor::getProcessContextRequirements ()
-// {
-//     processContextRequirements.needSystemTime ();
-//     processContextRequirements.needContinousTimeSamples ();
-//     processContextRequirements.needProjectTimeMusic ();
-//     processContextRequirements.needBarPositionMusic ();
-//     processContextRequirements.needCycleMusic ();
-//     processContextRequirements.needSamplesToNextClock ();
-//     processContextRequirements.needTempo ();
-//     processContextRequirements.needTimeSignature ();
-//     processContextRequirements.needChord ();
-//     processContextRequirements.needFrameRate ();
-//     processContextRequirements.needTransportState ();
-
-//     return AudioEffect::getProcessContextRequirements ();
-// }
 
 tresult PLUGIN_API VstBoardProcessor::setIoMode (Vst::IoMode /*mode*/)
 {

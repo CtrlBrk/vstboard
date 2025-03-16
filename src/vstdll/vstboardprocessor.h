@@ -75,8 +75,6 @@ public:
         tresult PLUGIN_API process (Vst::ProcessData& data) SMTG_OVERRIDE;
         tresult PLUGIN_API setupProcessing (Vst::ProcessSetup& setup) SMTG_OVERRIDE;
 
-        // uint32 PLUGIN_API getProcessContextRequirements () SMTG_OVERRIDE;
-
         static FUnknown* createInstance (void*) {
             return (Vst::IAudioProcessor*)new VstBoardProcessor ();
         }
@@ -130,7 +128,7 @@ signals:
         void SetBypass(bool bypass);
 
 public slots:
-        void Init() override;
+        void Init();
 };
 
 #endif // VSTBOARDPROCESSOR_H

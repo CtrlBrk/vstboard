@@ -181,6 +181,7 @@ tresult PLUGIN_API Gui::attached (void* parent, FIDString /*type*/)
     widget->show();
 
     Vst::EditorView::attachedToParent();
+    myWindow->UpdateView();
     return kResultOk;
 }
 

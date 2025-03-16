@@ -194,8 +194,8 @@ signals:
     void MainWindowChanged(QWidget *parent);
 
 public slots:
-    virtual void Init();
-    virtual void Kill();
+    void Init();
+    // virtual void Kill();
     void SetTempo(int tempo=120, int sign1=0, int sign2=0);
     virtual void Render();
 //    bool LoadFile(const QString &filename);
