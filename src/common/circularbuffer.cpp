@@ -285,6 +285,15 @@ bool CircularBuffer::Get(float *buf, qint32 size)
     while(readPos>bufEnd)
         readPos-=buffSize;
 
+    //limiter
+    float* myBuff = buf;
+    for(qint32 i =0; i<size; i++) {
+        *myBuff = std::max(-1.f,*myBuff);
+        *myBuff = std::min(1.f,*myBuff);
+        myBuff++;
+    }
+
+
     return true;
 }
 
@@ -312,6 +321,15 @@ bool CircularBuffer::Get(double *buf, qint32 size)
     }
 
     filledSize-=size;
+
+    //limiter
+    double* myBuff = buf;
+    for(qint32 i =0; i<size; i++) {
+        *myBuff = std::max(-1.,*myBuff);
+        *myBuff = std::min(1.,*myBuff);
+        myBuff++;
+    }
+
     return true;
 }
 

@@ -210,6 +210,15 @@ void AudioBuffer::AddToStack(const AudioBuffer * buff)
                 long i=bufferSize;
                 while(i>0) {
                     *myBuff += *buffToAdd;
+
+                    //allow saturaiton internally
+                    *myBuff = std::max(-10.f,*myBuff);
+                    *myBuff = std::min(10.f,*myBuff);
+
+                    if(*myBuff<-5.f || *myBuff>5.f) {
+                        LOG("buffer saturation ? " << *myBuff)
+                    }
+
                     ++myBuff;
                     ++buffToAdd;
                     --i;
