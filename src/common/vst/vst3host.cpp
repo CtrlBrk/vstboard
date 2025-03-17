@@ -191,17 +191,10 @@ float Vst3Host::GetCurrentBarTic()
     float barLengthq = (float)(4*processContext.timeSigNumerator)/processContext.timeSigDenominator;
     float step = floor((processContext.projectTimeMusic-processContext.barPositionMusic)*processContext.timeSigDenominator/4);
     float total = ((barLengthq*processContext.timeSigDenominator/4)-1);
+
+    barTic.store(step / total);
     return step / total;
 
-//    if(processContext.state & ProcessContext::kTimeSigValid) {
-
-//        if(processContext.state & ProcessContext::kProjectTimeMusicValid) {
-//            int s = processContext.projectTimeMusic*processContext.timeSigDenominator/4;
-//            float r = s % processContext.timeSigNumerator;
-//            return r/(processContext.timeSigNumerator-1);
-//        }
-//    }
-//    return .0f;
 }
 
 void Vst3Host::SetTimeInfo(const ProcessContext *info) {
@@ -235,6 +228,8 @@ void Vst3Host::SetTimeInfo(const ProcessContext *info) {
     }
 
     processContext = newCxt;
+
+    GetCurrentBarTic();
 }
 
 //void Vst3Host::GetTimeInfo(VstTimeInfo *vst2timeInfo) {

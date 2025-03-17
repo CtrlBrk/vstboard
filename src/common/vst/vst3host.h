@@ -77,6 +77,7 @@ public:
     void addPlugInterfaceSupported (const TUID _iid);
     bool removePlugInterfaceSupported (const TUID _iid);
 
+    std::atomic<float> barTic{0};
 private:
     IPtr<PlugInterfaceSupport> mPlugInterfaceSupport;
     std::vector<FUID> mFUIDArray;

@@ -63,7 +63,6 @@
 #include "pluginterfaces/vst/ivstmidicontrollers.h"
 
 #include "gui.h"
-
 #include "ids.h"
 
 using namespace Steinberg;
@@ -150,6 +149,7 @@ tresult PLUGIN_API VestigeWrapper::getName (String128 name)
 void VestigeWrapper::setupProcessTimeInfo ()
 {
     mProcessData.processContext = &mProcessContext;
+
 /*
     if (AAX_ITransport* transport = mAAXParams->Transport ())
     {
@@ -275,9 +275,6 @@ VestigeWrapper::VestigeWrapper(Steinberg::Vst::BaseWrapper::SVST3Config config, 
     Effect.numInputs=2;
     Effect.numOutputs=2;
     Effect.flags= effFlagsHasEditor | effFlagsCanReplacing | effFlagsProgramChunks;
-    if(mVst3EffectClassID == VstBoardInstProcessorUID) {
-        Effect.flags |= effFlagsIsSynth;
-    }
     Effect.ptr1=0;
     Effect.ptr2=0;
     Effect.initialDelay=0;
@@ -286,7 +283,7 @@ VestigeWrapper::VestigeWrapper(Steinberg::Vst::BaseWrapper::SVST3Config config, 
     Effect.unkown_float=.0f;
     Effect.ptr3=this;
     Effect.user=0;
-    Effect.uniqueID=0;
+    Effect.uniqueID=uniqueIDEffect;
     Effect.version=0;
 
     Effect.dispatcher = static_dispatcher;
@@ -294,6 +291,11 @@ VestigeWrapper::VestigeWrapper(Steinberg::Vst::BaseWrapper::SVST3Config config, 
     Effect.getParameter = static_getParameter;
     Effect.process = static_process;
     Effect.processReplacing = static_processReplacing;
+
+    if(mVst3EffectClassID == VstBoardInstProcessorUID) {
+        Effect.flags |= effFlagsIsSynth;
+        Effect.uniqueID=uniqueIDInstrument;
+    }
 
     masterCallback = audioMaster;
 }
@@ -492,6 +494,9 @@ intptr_t VestigeWrapper::__dispatcher( int opCode, int index, intptr_t value, vo
         _setBlockSize(value);
         return 1;
     case effCanDo: //51
+        if( memcmp(ptr,"receiveVstMidiEvent",19) == 0 ) {
+            return true;
+        }
         return 0;
     case effMainsChanged: //12
         if(value) {
@@ -538,7 +543,6 @@ intptr_t VestigeWrapper::__dispatcher( int opCode, int index, intptr_t value, vo
     case effEditTop: //20
         return 0;
     case effProcessEvents: //25
-        UpdateTime();
         return processEvents( (VstEvents*)ptr );
     case effIdle: //53
         return 0;
@@ -552,36 +556,12 @@ intptr_t VestigeWrapper::__dispatcher( int opCode, int index, intptr_t value, vo
 void VestigeWrapper::UpdateTime()
 {
     intptr_t ret = masterCallback(&Effect, audioMasterGetTime, 0, (kVstTransportPlaying | kVstTempoValid | kVstPpqPosValid) ,NULL, 0.0f);
-    VstTimeInfo* time = (VstTimeInfo*)ret;
-
-    mProcessContext.sampleRate = time->sampleRate;
-    mProcessContext.projectTimeSamples = time->samplePos;
-
-    mProcessContext.tempo = time->tempo;
-    mProcessContext.state = ProcessContext::kTempoValid;
-
-    if(time->timeSigNumerator==0 || time->timeSigDenominator==0) {
-        mProcessContext.timeSigNumerator = 4;
-        mProcessContext.timeSigDenominator = 4;
-    } else {
-        mProcessContext.timeSigNumerator = time->timeSigNumerator;
-        mProcessContext.timeSigDenominator = time->timeSigDenominator;
+    VstBoardProcessor* host = static_cast<VstBoardProcessor*>(mProcessor.get());
+    if(host) {
+        host->SetVestigeTimeinfo(*(VstTimeInfo*)ret);
+        host->GetVst3Timeinfo(mProcessContext);
     }
-    mProcessContext.state |= ProcessContext::kTimeSigValid;
 
-    // double nbSec = mProcessContext.projectTimeSamples / mProcessContext.sampleRate;
-    // mProcessContext.projectTimeMusic = nbSec / 60 * mProcessContext.tempo;
-    // mProcessContext.state |= ProcessContext::kProjectTimeMusicValid;
-    mProcessContext.projectTimeMusic = time->ppqPos;
-
-    float barLengthq = (float)(4*mProcessContext.timeSigNumerator)/mProcessContext.timeSigDenominator;
-    int32 nbBars = mProcessContext.projectTimeMusic/barLengthq;
-    mProcessContext.barPositionMusic = (TQuarterNotes)barLengthq*(TQuarterNotes)nbBars;
-    mProcessContext.state |= ProcessContext::kBarPositionValid;
-
-    // VstBoardProcessor * proc = static_cast<VstBoardProcessor*>(mProcessor.get());
-    // proc->SetTempo( time->tempo, time->timeSigNumerator, time->timeSigDenominator );
-    // proc->SetSampleRate( time->sampleRate );
 }
 
 float VestigeWrapper::__getParameter(int index)
@@ -617,6 +597,7 @@ int VestigeWrapper::stopProcess ()
 
 void VestigeWrapper::__processReplacing (float** inputs, float** outputs, int sampleFrames)
 {
+    UpdateTime();
     _processReplacing (inputs, outputs, sampleFrames);
 }
 

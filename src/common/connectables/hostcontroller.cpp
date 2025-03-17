@@ -198,7 +198,7 @@ void HostController::Render()
 #ifdef VSTSDK
     pin=static_cast<ParameterPin*>(listParameterPinOut->listPins.value(Param_Bar));
     if(pin)
-        pin->ChangeValue( myHost->vst3Host->GetCurrentBarTic() );
+        pin->ChangeValue( myHost->vst3Host->barTic.load() );
 #endif
 }
 

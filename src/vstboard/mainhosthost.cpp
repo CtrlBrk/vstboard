@@ -65,13 +65,16 @@ void MainHostHost::Close()
 void MainHostHost::Render()
 {
     #ifdef VSTSDK
-#ifdef VST2PLUGIN
-        vstHost->UpdateTimeInfo(timeFromStart.elapsed(), GetBufferSize(), GetSampleRate());
-#endif
+// #ifdef VST2PLUGIN
+//         vstHost->UpdateTimeInfo(timeFromStart.elapsed(), GetBufferSize(), GetSampleRate());
+// #endif
         vst3Host->UpdateTime(GetBufferSize(), GetSampleRate());
     #endif
+    SetVst3Timeinfo(vst3Host->processContext);
 
-    Connectables::ClapPlugin::UpdateTransport(GetBufferSize(), GetSampleRate());
+    // Connectables::ClapPlugin::UpdateTransport(GetBufferSize(), GetSampleRate());
+
+
 
     MainHost::Render();
 }

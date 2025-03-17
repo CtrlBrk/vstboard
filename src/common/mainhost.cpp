@@ -963,10 +963,152 @@ void MainHost::SetSampleRate(float rate)
     // emit SampleRateChanged(sampleRate);
 }
 
+void MainHost::SetVst3Timeinfo(ProcessContext const &info)
+{
+    if( GetSampleRate() != info.sampleRate) {
+        SetSampleRate(info.sampleRate);
+    }
 
-void MainHost::Vst3TimeFromClap(clap_event_transport_t const &t)
+    vst3Host->SetTimeInfo(&info);
+
+    clap_event_transport_t t;
+    ZeroMemory(&t,sizeof(clap_event_transport_t));
+    ClapTimeFromVst3(info, t);
+    Connectables::ClapPlugin::TransportFromHost(t);
+
+    VstTimeInfo time;
+    ZeroMemory(&time,sizeof(VstTimeInfo));
+    VestigeTimeFromVst3(info, time);
+    vstHost->SetTimeInfo(&time);
+}
+
+void MainHost::SetClapTimeinfo(clap_event_transport_t const &t)
 {
     ProcessContext info;
+    ZeroMemory(&info,sizeof(ProcessContext));
+    Vst3TimeFromClap(t, info);
+    vst3Host->SetTimeInfo(&info);
+
+    Connectables::ClapPlugin::TransportFromHost(t);
+
+    VstTimeInfo time;
+    ZeroMemory(&time,sizeof(VstTimeInfo));
+    VestigeTimeFromVst3(info, time);
+    vstHost->SetTimeInfo(&time);
+}
+
+void MainHost::SetVestigeTimeinfo(VstTimeInfo const &time)
+{
+    ProcessContext info;
+    ZeroMemory(&info,sizeof(ProcessContext));
+    Vst3TimeFromVestige(time,info);
+    vst3Host->SetTimeInfo(&info);
+
+    clap_event_transport_t t;
+    ZeroMemory(&t,sizeof(clap_event_transport_t));
+    ClapTimeFromVst3(info,t);
+    Connectables::ClapPlugin::TransportFromHost(t);
+
+    vstHost->SetTimeInfo(&time);
+}
+
+void MainHost::GetVst3Timeinfo(ProcessContext &info) const
+{
+    info = vst3Host->processContext;
+}
+
+void MainHost::Vst3TimeFromVestige(VstTimeInfo const &time, ProcessContext &info)
+{
+    // ProcessContext info;
+    info.state = 0;
+
+    info.tempo = time.tempo;
+    info.state = ProcessContext::kTempoValid;
+
+    info.sampleRate = time.sampleRate;
+    info.projectTimeSamples = time.samplePos;
+
+    if( (time.flags & kVstTransportPlaying)!=0 ) {
+        info.state |= ProcessContext::kPlaying;
+    }
+
+    if( (time.flags & kVstTransportCycleActive)!=0 ) {
+        info.state |= ProcessContext::kCycleActive;
+    }
+
+    if(time.timeSigNumerator==0 || time.timeSigDenominator==0) {
+        info.timeSigNumerator = 4;
+        info.timeSigDenominator = 4;
+    } else {
+        info.timeSigNumerator = time.timeSigNumerator;
+        info.timeSigDenominator = time.timeSigDenominator;
+    }
+    info.state |= ProcessContext::kTimeSigValid;
+    float barLengthq = (float)(4*info.timeSigNumerator)/info.timeSigDenominator;
+
+    if( (time.flags & kVstPpqPosValid)!=0 ) {
+        info.state |= ProcessContext::kProjectTimeMusicValid;
+        info.projectTimeMusic = time.ppqPos;
+
+        int32 nbBars = info.projectTimeMusic/barLengthq;
+        info.barPositionMusic = (TQuarterNotes)barLengthq*(TQuarterNotes)nbBars;
+        info.state |= ProcessContext::kBarPositionValid;
+    }
+
+}
+
+void MainHost::VestigeTimeFromVst3(ProcessContext const &info, VstTimeInfo &time)
+{
+    time.flags = 0;
+
+    time.sampleRate = info.sampleRate;
+    time.samplePos = info.projectTimeSamples;
+
+    time.flags |= kVstTransportChanged;
+
+    if( (info.state & ProcessContext::kPlaying)!=0 ) {
+        time.flags |= kVstTransportPlaying;
+    }
+
+    if( (info.state & ProcessContext::kCycleActive)!=0 ) {
+        time.flags |= kVstTransportCycleActive;
+    }
+
+    if( (info.state & ProcessContext::kTempoValid)!=0 ) {
+        time.flags |= kVstTempoValid;
+        time.tempo = info.tempo;
+    }
+
+    if( (info.state & ProcessContext::kTimeSigValid)!=0 ) {
+        time.flags |= kVstTimeSigValid;
+        time.timeSigNumerator = info.timeSigNumerator;
+        time.timeSigDenominator = info.timeSigDenominator;
+    }
+
+    if( (info.state & ProcessContext::kProjectTimeMusicValid)!=0 ) {
+        time.flags |= kVstNanosValid;
+        time.nanoSeconds  = info.projectTimeMusic;
+    }
+
+    if( (info.state & ProcessContext::kBarPositionValid)!=0 ) {
+        time.flags |= kVstBarsValid;
+        time.barStartPos = info.barPositionMusic;
+    }
+
+    if( (info.state & ProcessContext::kCycleValid)!=0 ) {
+        time.flags |= kVstCyclePosValid;
+        time.cycleStartPos = info.cycleStartMusic;
+        time.cycleEndPos = info.cycleEndMusic;
+    }
+
+    if( (info.state & ProcessContext::kProjectTimeMusicValid)!=0 ) {
+        time.ppqPos = info.projectTimeMusic;
+        time.flags |= kVstPpqPosValid;
+    }
+}
+
+void MainHost::Vst3TimeFromClap(clap_event_transport_t const &t, ProcessContext &info)
+{
     info.state = 0;
 
     if( (t.flags & CLAP_TRANSPORT_HAS_TEMPO)!=0 ) {
@@ -990,12 +1132,10 @@ void MainHost::Vst3TimeFromClap(clap_event_transport_t const &t)
         info.barPositionMusic = t.song_pos_seconds / CLAP_BEATTIME_FACTOR;
     }
 
-    vst3Host->SetTimeInfo(&info);
 }
 
-void MainHost::ClapTimeFromVst3(ProcessContext const &info)
+void MainHost::ClapTimeFromVst3(ProcessContext const &info, clap_event_transport_t &t)
 {
-    clap_event_transport_t t;
     t.flags=0;
 
     if( (info.state & ProcessContext::kTempoValid)!=0 ) {
@@ -1058,12 +1198,12 @@ void MainHost::OnRenderTimeout() {
     SetSolverUpdateNeeded();
 }
 
-#ifdef VST2PLUGIN
-void MainHost::SetTimeInfo(const VstTimeInfo *info)
-{
-    vstHost->SetTimeInfo(info);
-}
-#endif
+// #ifdef VST2PLUGIN
+// void MainHost::SetTimeInfo(const VstTimeInfo *info)
+// {
+//     vstHost->SetTimeInfo(info);
+// }
+// #endif
 
 void MainHost::SetTempo(int tempo, int sign1, int sign2)
 {

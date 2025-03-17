@@ -77,22 +77,22 @@ IPluginFactory* PLUGIN_API GetPluginFactoryVst24() {
 		static PFactoryInfo factoryInfo("CtrlBrk", "http://vstboard.blogspot.com", "mailto:ctrlbrk76@gmail.com", Vst::kDefaultFactoryFlags);
 		gPluginFactory = new CPluginFactory(factoryInfo);
 
-        DEF_CLASS2 (INLINE_UID_FROM_FUID(VstBoardInstProcessorUID),
-                   PClassInfo::kManyInstances,
-                   kVstAudioEffectClass,
-                   "VstBoardInst",
-                   Vst::kDistributable,
-                   Vst::PlugType::kInstrument,
-                   QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toLatin1(),
-                   kVstVersionString,
-                   VstBoardProcessor::createInstance)
-
         DEF_CLASS2 (INLINE_UID_FROM_FUID(VstBoardProcessorUID),
                    PClassInfo::kManyInstances,
                    kVstAudioEffectClass,
                    "VstBoard",
                    Vst::kDistributable,
                    Vst::PlugType::kFx,
+                   QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toLatin1(),
+                   kVstVersionString,
+                   VstBoardProcessor::createInstance)
+
+        DEF_CLASS2 (INLINE_UID_FROM_FUID(VstBoardInstProcessorUID),
+                   PClassInfo::kManyInstances,
+                   kVstAudioEffectClass,
+                   "VstBoardInst",
+                   Vst::kDistributable,
+                   Vst::PlugType::kInstrument,
                    QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD).toLatin1(),
                    kVstVersionString,
                    VstBoardProcessor::createInstance)

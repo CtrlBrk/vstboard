@@ -62,11 +62,11 @@ public:
 
     void Open();
 
-#ifdef VSTSDK
-    #ifdef VST2PLUGIN
-        void SetTimeInfo(const VstTimeInfo *info);
-    #endif
-#endif
+// #ifdef VSTSDK
+//     #ifdef VST2PLUGIN
+//         void SetTimeInfo(const VstTimeInfo *info);
+//     #endif
+// #endif
 
     Renderer2 * GetRenderer() { return renderer; }
 
@@ -137,10 +137,19 @@ public:
         return mainWindow;
     }
 
+    void SetVst3Timeinfo(ProcessContext const &info);
+    void SetClapTimeinfo(clap_event_transport_t const &t);
+    void SetVestigeTimeinfo(VstTimeInfo const &time);
+
+    void GetVst3Timeinfo(ProcessContext &info) const;
+
 protected:
     void Close();
-    void Vst3TimeFromClap(clap_event_transport_t const &t);
-    void ClapTimeFromVst3(ProcessContext const &info);
+
+    void Vst3TimeFromVestige(VstTimeInfo const &time, ProcessContext &info);
+    void VestigeTimeFromVst3(ProcessContext const &info, VstTimeInfo &time);
+    void Vst3TimeFromClap(clap_event_transport_t const &t, ProcessContext &info);
+    void ClapTimeFromVst3(ProcessContext const &info, clap_event_transport_t &t);
 
     QElapsedTimer timeFromStart;
     Renderer2 *renderer;

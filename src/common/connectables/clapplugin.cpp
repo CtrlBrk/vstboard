@@ -432,7 +432,9 @@ void ClapPlugin::SetSleep(bool sleeping)
         deactivate();
     } else {
         activate(sampleRate,bufferSize);
-
+        if(_state != ActiveAndSleeping) {
+            return;
+        }
         if(_plugin->canUseLatency()) {
             SetInitDelay(_plugin->latencyGet());
         }
@@ -1012,6 +1014,7 @@ void ClapPlugin::activate(int32_t sample_rate, int32_t blockSize) {
 
     assert(!isPluginActive());
     if (!_plugin->activate(sample_rate, blockSize, blockSize)) {
+        LOG("error while activating " << objInfo.filename)
         setPluginState(InactiveWithError);
         return;
     }

@@ -91,6 +91,9 @@ void CVSTHost::SetTimeInfo(const VstTimeInfo *info) {
 
     //todo : recalculate values depending on the given info
 
+    vstTimeInfo.sampleRate = info->sampleRate;
+    vstTimeInfo.samplePos = info->samplePos;
+
     if(info->flags & kVstNanosValid)
         vstTimeInfo.nanoSeconds = info->nanoSeconds;
     if(info->flags & kVstPpqPosValid)
@@ -141,7 +144,7 @@ void CVSTHost::GetTempo(int &tempo, int &sign1, int &sign2)
         sign2=vstTimeInfo.timeSigDenominator;
     }
 }
-
+/*
 void CVSTHost::UpdateTimeInfo(double timer, int addSamples, double sampleRate)
 {
     vstTimeInfo.sampleRate = sampleRate;
@@ -179,7 +182,7 @@ void CVSTHost::UpdateTimeInfo(double timer, int addSamples, double sampleRate)
 
     }
 
-    /* offset in fractions of a second   */
+    // offset in fractions of a second
     // double dOffsetInSecond = dPos - floor(dPos);
     // vstTimeInfo.smpteOffset = (VstInt32)(dOffsetInSecond * fSmpteDiv[vstTimeInfo.smpteFrameRate] * 80.L);
 
@@ -187,6 +190,7 @@ void CVSTHost::UpdateTimeInfo(double timer, int addSamples, double sampleRate)
     currentBar = floor(vstTimeInfo.ppqPos/barLengthq);
     vstTimeInfo.barStartPos = barLengthq*(double)currentBar;
 }
+*/
 
 /*****************************************************************************/
 /* AudioMasterCallback : callback to be called by plugins                    */

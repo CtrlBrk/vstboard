@@ -250,8 +250,7 @@ clap_process_status ClapMainHost::process(const clap_process *process) noexcept
     SetBufferSize( process->frames_count );
 
     if(process->transport) {
-        Connectables::ClapPlugin::TransportFromHost(*process->transport);
-        Vst3TimeFromClap(*process->transport);
+        SetClapTimeinfo(*process->transport);
     }
 
     if (process->audio_outputs_count <= 0)

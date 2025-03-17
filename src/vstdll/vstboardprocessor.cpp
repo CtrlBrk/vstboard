@@ -258,7 +258,7 @@ tresult PLUGIN_API VstBoardProcessor::setupProcessing (Vst::ProcessSetup& newSet
         SetBufferSize(bSize);
     }
     float sRate = static_cast<float>(newSetup.sampleRate);
-    if(GetSampleRate() != sRate) {
+    if(sRate!=0 && GetSampleRate() != sRate) {
         SetSampleRate(sRate);
     }
 
@@ -349,9 +349,7 @@ tresult PLUGIN_API VstBoardProcessor::process (Vst::ProcessData& data)
 
     //timer
     if(data.processContext) {
-        vst3Host->SetTimeInfo(data.processContext);
-//        vst3Host->GetTimeInfo(&vstHost->vstTimeInfo);
-        ClapTimeFromVst3(*data.processContext);
+        SetVst3Timeinfo(*data.processContext);
     }
 
     //param changes
