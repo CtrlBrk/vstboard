@@ -32,12 +32,6 @@ MainWindowClap::MainWindowClap(MainHost* ctrl,Settings *settings, QWidget *paren
                  Qt::QueuedConnection);
 }
 
-MainWindowClap::~MainWindowClap()
-{
-
-}
-
-
 void MainWindowClap::SendMsg(const MsgObject &msg)
 {
     emit SendMsgSignal(msg);

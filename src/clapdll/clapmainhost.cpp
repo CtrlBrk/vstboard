@@ -27,10 +27,17 @@
 #include "clapmainhost.h"
 #include "mainwindow.h"
 
+
+#ifdef _MSC_VER
+#pragma warning( push, 1 )
+#endif
 #include <clap/helpers/plugin.hh>
 #include <clap/helpers/plugin.hxx>
-#include "connectables/objectfactoryclap.h"
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
+#include "connectables/objectfactoryclap.h"
 #include "gui.h"
 
 #include "projectfile/jsonwriter.h"
@@ -40,7 +47,12 @@
 
 ClapMainHost::ClapMainHost(const clap_host *host, clap_plugin_descriptor &descc) :
     MainHost(0,0),
+#ifdef QT_NO_DEBUG
+    clap::helpers::Plugin<clap::helpers::MisbehaviourHandler::Ignore, clap::helpers::CheckingLevel::Maximal>(&descc, host),
+#else
     clap::helpers::Plugin<clap::helpers::MisbehaviourHandler::Terminate, clap::helpers::CheckingLevel::Maximal>(&descc, host),
+#endif
+
     guiWindow(0)
 
 {

@@ -23,9 +23,15 @@
 #include "mainhost.h"
 #include "views/clappluginwindow.h"
 
+#ifdef _MSC_VER
+#pragma warning( push, 1 )
+#endif
 #include <clap/helpers/host.hxx>
 #include <clap/helpers/plugin-proxy.hxx>
 #include <clap/helpers/reducing-param-queue.hxx>
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
 #include <unordered_set>
 // #include "claphost.h"
@@ -83,7 +89,7 @@ void ClapPlugin::SetTempo(int tempo, int num, int denom)
     transport.tsig_num = num;
     transport.tsig_denom = denom;
 }
-
+/*
 void ClapPlugin::UpdateTransport(long buffSize, float sampleRate) {
 
     if(transport.tsig_num == 0 || transport.tsig_denom == 0 || transport.tempo == 0) return;
@@ -107,7 +113,7 @@ void ClapPlugin::UpdateTransport(long buffSize, float sampleRate) {
 
     transport.bar_number = floor(transport.song_pos_beats/ CLAP_BEATTIME_FACTOR / transport.tsig_num);
 }
-
+*/
 void ClapPlugin::InitTransport()
 {
     hosttime = 0;

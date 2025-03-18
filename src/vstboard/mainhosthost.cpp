@@ -82,7 +82,6 @@ void MainHostHost::Render()
 void MainHostHost::SendMsg(const MsgObject &msg)
 {
     emit SendMsgSignal(msg);
-//    mainWindow->ReceiveMsg(msg);
 }
 
 void MainHostHost::ReceiveMsgSignal(const MsgObject &msg)

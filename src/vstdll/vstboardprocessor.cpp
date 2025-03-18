@@ -54,6 +54,11 @@ VstBoardProcessor::VstBoardProcessor () :
     currentGroup(0),
     currentBypass(false)
 {
+    //send msg on the gui thread
+    QObject::connect(this,&VstBoardProcessor::MsgDelay,
+                     this,&VstBoardProcessor::SendMsgDelay,
+                     Qt::QueuedConnection);
+
 	objFactory = new Connectables::ObjectFactoryVst(this);
 
 #if defined(_M_X64) || defined(__amd64__)
@@ -543,7 +548,7 @@ tresult PLUGIN_API VstBoardProcessor::notify (Vst::IMessage* message) {
     return AudioEffect::notify(message);
 }
 
-void VstBoardProcessor::SendMsg(const MsgObject &msg)
+void VstBoardProcessor::SendMsgDelay(const MsgObject &msg)
 {
     Steinberg::OPtr<Steinberg::Vst::IMessage> message = allocateMessage();
     if (message)
@@ -551,11 +556,15 @@ void VstBoardProcessor::SendMsg(const MsgObject &msg)
         message->setMessageID("msg");
         QByteArray br;
         QDataStream str(&br, QIODevice::WriteOnly);
-//        LOG(msg.prop)
         str << msg;
         message->getAttributes ()->setBinary ("data", br.data(), br.size());
         sendMessage(message);
     }
+}
+
+void VstBoardProcessor::SendMsg(const MsgObject &msg)
+{
+    emit MsgDelay(msg);
 }
 
 bool VstBoardProcessor::addMidiIn(Connectables::VstMidiDevice *dev)

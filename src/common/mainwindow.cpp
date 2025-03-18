@@ -255,6 +255,11 @@ void MainWindow::ReceiveMsg(const MsgObject &msg)
                 return;
             }
         }
+
+        if(msg.prop.contains(MsgObject::Message)) {
+            statusBar()->showMessage( msg.prop[MsgObject::Message].toString());
+            return;
+        }
         return;
     }
 

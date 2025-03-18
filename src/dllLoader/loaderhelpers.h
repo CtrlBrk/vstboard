@@ -262,7 +262,7 @@ bool LoadRequiredDlls()
         // L"qsvg",
         // L"QtSolutions_MFCMigrationFramework-head",
         //add a ref to prevent module unloading (avoid a crash)
-        L"VstBlib"
+        // L"VstBoardVst"
     };
 
     for (auto const& dllName : dlls) {

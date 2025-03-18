@@ -126,9 +126,11 @@ signals:
         void ChangeProg(quint16 prog);
         void ChangeGroup(quint16 group);
         void SetBypass(bool bypass);
+        void MsgDelay(const MsgObject &msg);
 
 public slots:
         void Init();
+        void SendMsgDelay(const MsgObject &msg);
 };
 
 #endif // VSTBOARDPROCESSOR_H

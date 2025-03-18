@@ -27,7 +27,13 @@
 #ifndef CLAPMAINHOST_H
 #define CLAPMAINHOST_H
 
+#ifdef _MSC_VER
+#pragma warning( push, 1 )
+#endif
 #include <clap/helpers/plugin.hh>
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 #include <QObject>
 #include <mainhost.h>
 

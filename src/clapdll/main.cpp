@@ -61,8 +61,8 @@ BOOL WINAPI DllMain (HINSTANCE /*hInst*/, DWORD dwReason, LPVOID /*lpvReserved*/
 namespace sst::clap_board::pluginentry
 {
 
-uint32_t clap_get_plugin_count(const clap_plugin_factory *f) { return 2; }
-const clap_plugin_descriptor *clap_get_plugin_descriptor(const clap_plugin_factory *f, uint32_t w)
+uint32_t clap_get_plugin_count(const clap_plugin_factory * /*f*/) { return 2; }
+const clap_plugin_descriptor *clap_get_plugin_descriptor(const clap_plugin_factory * /*f*/, uint32_t w)
 {
     if(w==1)
         return &ClapMainHost::descInst;
@@ -70,7 +70,7 @@ const clap_plugin_descriptor *clap_get_plugin_descriptor(const clap_plugin_facto
     return &ClapMainHost::desc;
 }
 
-static const clap_plugin *clap_create_plugin(const clap_plugin_factory *f, const clap_host *host, const char *plugin_id)
+static const clap_plugin *clap_create_plugin(const clap_plugin_factory * /*f*/, const clap_host *host, const char *plugin_id)
 {
     if (!strcmp(plugin_id, ClapMainHost::desc.id))
     {
@@ -102,7 +102,7 @@ static const void *get_factory(const char *factory_id)
 }
 
 // clap_init and clap_deinit are required to be fast, but we have nothing we need to do here
-bool clap_init(const char *p) { return true; }
+bool clap_init(const char * /*p*/) { return true; }
 void clap_deinit() {}
 
 } // namespace sst::clap_board::pluginentry

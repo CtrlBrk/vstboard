@@ -52,7 +52,7 @@ public:
     virtual void Init();
     virtual void readSettings();
     void writeSettings();
-    virtual void ReceiveMsg(const MsgObject &msg);
+    void ReceiveMsg(const MsgObject &msg);
 //    void ReceiveMsg(const QString &type, const QVariant &data);
 //    void ProcessMsg(const ListMsgObj &lstMsg);
 
@@ -107,6 +107,7 @@ protected:
     QPixmap debugPix;
 
     QWindow *testwin;
+
 signals:
     void PauseOutput(bool);
 

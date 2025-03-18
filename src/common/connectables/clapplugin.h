@@ -21,15 +21,20 @@
 #ifndef CLAPPLUGIN_H
 #define CLAPPLUGIN_H
 
+#ifdef _MSC_VER
+#pragma warning( push, 1 )
+#endif
 #include <clap/clap.h>
 #include <clap/helpers/event-list.hh>
-// #include <clap/helpers/reducing-param-queue.hh>
+#include <clap/helpers/reducing-param-queue.hh>
 #include <clap/helpers/plugin-proxy.hh>
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
 #include "object.h"
 // #include "claphost.h"
 #include "clappluginparam.h"
-#include <clap/helpers/reducing-param-queue.hh>
 
 #ifdef QT_NO_DEBUG
     constexpr auto PluginHost_MH = clap::helpers::MisbehaviourHandler::Ignore;
@@ -103,7 +108,7 @@ public:
     static clap_event_transport_t transport;
     static void SetTempo(int tempo, int sign1, int sign2);
     static void InitTransport();
-    static void UpdateTransport(long buffSize, float sampleRate);
+    // static void UpdateTransport(long buffSize, float sampleRate);
     static void TransportFromHost(clap_event_transport_t const &t);
 
 protected:
