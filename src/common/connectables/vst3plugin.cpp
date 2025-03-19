@@ -1536,7 +1536,6 @@ Pin* Vst3Plugin::CreatePin(const ConnectionInfo &info)
 
             args.value = (float)paramInfo.defaultNormalizedValue;
             args.name = QString::fromUtf16((char16_t*)paramInfo.title);
-            args.name += args.pinNumber;
             args.isRemoveable = hasEditor;
             args.nameCanChange = hasEditor;
             args.visible = !hasEditor;
