@@ -663,12 +663,12 @@ void VstPlugin::MsgLoop()
             }
 
             //set size to 0 when the returned data is not used
-            switch (dataIn->opCode) {
 #ifdef VSTSDK
+            switch (dataIn->opCode) {
             case effSetChunk:
                 dataIn->dataSize = 0;
-#endif
             }
+#endif
             
     }
     dataIn->function = IpcFunction::None;

@@ -42,7 +42,7 @@ namespace Connectables {
         VstPlugin(MainHost *myHost,int index, const ObjectInfo & info);
         virtual ~VstPlugin();
         bool Open() override;
-        bool Close();
+        bool Close() override;
         void Render() override;
         intptr_t OnMasterCallback(long opcode, long index, long value, void *ptr, float opt, long currentReturnCode) override;
         void SetSleep(bool sleeping) override;

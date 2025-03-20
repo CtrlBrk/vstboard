@@ -33,7 +33,8 @@ enum class IpcFunction
     GetChunkSegment,
     SetChunk,
     SetChunkSegment,
-    DeleteChunk
+    DeleteChunk,
+    CloseHost
 
 };
 

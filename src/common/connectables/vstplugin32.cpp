@@ -36,6 +36,12 @@ structFrom32* VstPlugin32::dataFrom32 = 0;
 Ipc VstPlugin32::st_ipcTo32(L"to32",(void**)&st_dataTo32,sizeof(structPilot)) ;
 Ipc VstPlugin32::ipcFrom32(L"from32",(void**)&dataFrom32,sizeof(structFrom32)) ;
 
+void VstPlugin32::Close32host()
+{
+    st_ipcTo32.LockData();
+    st_dataTo32->function=IpcFunction::CloseHost;
+    st_ipcTo32.SignalStartAndRelease();
+}
 
 VstPlugin32::VstPlugin32(MainHost *myHost,int index, const ObjectInfo & info) :
     VstPlugin(myHost,index,info),

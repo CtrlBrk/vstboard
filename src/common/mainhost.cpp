@@ -35,6 +35,7 @@
 #include "msgobject.h"
 
 #include "connectables/clapplugin.h"
+#include "connectables/vstplugin32.h"
 
 quint32 MainHost::currentFileVersion=PROJECT_AND_SETUP_FILE_VERSION;
 
@@ -86,7 +87,8 @@ MainHost::~MainHost()
     Close();
 
     if(vst32Process) {
-        vst32Process->close();
+        Connectables::VstPlugin32::Close32host();
+        // vst32Process->close();
         vst32Process=0;
     }
 }

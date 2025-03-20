@@ -53,7 +53,7 @@ void IpcVst::Loop() {
 			case IpcFunction::LoadDll:
 				cout << "load " << dataIn->pluginId << endl;
 				p = new VstPlugin(this, dataIn->pluginId);
-				p->Load(dataIn->name,dataIn->value,dataIn->index);
+				p->Load(dataIn->name,(float)dataIn->value,dataIn->index);
 				plugins.insert({ dataIn->pluginId, p });
 				break;
 
@@ -65,6 +65,8 @@ void IpcVst::Loop() {
 				}
 				break;
 			
+			case IpcFunction::CloseHost:
+				return;
 			}
 				
 			dataIn->function = IpcFunction::None;

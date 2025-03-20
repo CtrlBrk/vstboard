@@ -224,6 +224,7 @@ void VstPlugin::Render()
 
     QMutexLocker lock(&objMutex);
 
+     if(!pEffect) return;
     ProcessMidi();
 
 /*

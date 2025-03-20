@@ -1,11 +1,7 @@
 #include <windows.h>
 #include "ipcvst.h"
 
-IpcVst* ipc=0;
-
-void Loop() {
-	ipc->Loop();
-}
+IpcVst ipc;
 
 int main() {
 
@@ -15,14 +11,9 @@ int main() {
 		return FALSE;
 	}
 
-
-	ipc = new IpcVst();
-	ipc->Loop();
-	//std::thread vstloop(Loop);
-
-	
-	
-	
-	delete ipc;
+	//ipc = new IpcVst();
+	//ipc->Loop();
+	//delete ipc;
+	ipc.Loop();
 	return 0;
 }

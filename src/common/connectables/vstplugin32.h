@@ -49,6 +49,8 @@ public:
     void EffProcessDoubleReplacing(double **inputs, double **outputs, long sampleFrames) override;
     long EffGetChunk(void **ptr, bool isPreset = false)  override;
 
+    static void Close32host();
+
 protected:
     void ProcessMidi() override;
     bool initPlugin() override;

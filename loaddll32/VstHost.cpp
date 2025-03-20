@@ -108,7 +108,7 @@ void CVSTHost::SetTempo(int tempo, int sign1, int sign2)
 void CVSTHost::GetTempo(int& tempo, int& sign1, int& sign2)
 {
     if (vstTimeInfo.flags & kVstTempoValid)
-        tempo = vstTimeInfo.tempo;
+        tempo = (int)vstTimeInfo.tempo;
 
     if (vstTimeInfo.flags & kVstTimeSigValid) {
         sign1 = vstTimeInfo.timeSigNumerator;
@@ -161,7 +161,7 @@ void CVSTHost::UpdateTimeInfo(double timer, int addSamples, double sampleRate)
 #endif
 
     //start of last bar
-    currentBar = floor(vstTimeInfo.ppqPos / barLengthq);
+    currentBar = (int)floor(vstTimeInfo.ppqPos / barLengthq);
     vstTimeInfo.barStartPos = barLengthq * (double)currentBar;
 }
 
@@ -187,7 +187,7 @@ int __cdecl CVSTHost::AudioMasterCallback(AEffect* effect, int opcode, int  inde
         return 1L;
 
     case audioMasterTempoAt: //10
-        return 1000L * pHost->vstTimeInfo.tempo;
+        return (int)(1000L * pHost->vstTimeInfo.tempo);
 
     case audioMasterGetCurrentProcessLevel: //23
         return 2L;

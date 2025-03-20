@@ -118,6 +118,7 @@ bool CEffect::Load(const std::wstring &name)
         }
         return false;
     }
+
     sName = name;
     return true;
 }
