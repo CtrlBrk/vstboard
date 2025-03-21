@@ -55,7 +55,7 @@ VstPlugin::VstPlugin(MainHost *myHost,int index, const ObjectInfo & info) :
 
 VstPlugin::~VstPlugin()
 {
-    Close();
+    VstPlugin::Close();
     if(savedChunk)
         delete savedChunk;
 }
@@ -155,19 +155,30 @@ void VstPlugin::ProcessMidi()
 
         size_t size = sizeof(VstEvents) + sizeof(VstEvent*)*(nbEvents-2);
         VstEvents *listEvnts = (VstEvents*)malloc(size);
-        listEvnts->numEvents = nbEvents;
         listEvnts->reserved = 0;
 
-        int cpt=0;
-        foreach(VstMidiEvent *evnt, listVstMidiEvents) {
-            listEvnts->events[cpt] = (VstEvent*)evnt;
-            cpt++;
-        }
+        int notes[256]={0};
 
-        int sizeF = sizeof(VstEvents) + sizeof(VstEvent*)*(nbEvents-2) + sizeof(VstEvent)*nbEvents;
+        int cpt=0;
+        foreach(VstMidiEvent *midiEvnt, listVstMidiEvents) {
+
+            if(notes[(uchar)midiEvnt->midiData[1]]!=0) {
+                // std::cout << "double note removed " << (int)midiEvnt->midiData[0] << " " << (int)midiEvnt->midiData[1] << " " << (int)midiEvnt->midiData[2] << std::endl;
+                int n = notes[(uchar)midiEvnt->midiData[1]]-1;
+                listEvnts->events[n] = (VstEvent*)midiEvnt;
+            } else {
+                notes[(uchar)midiEvnt->midiData[1]]=cpt+1; //offset because zero means unset
+                listEvnts->events[cpt] = (VstEvent*)midiEvnt;
+                cpt++;
+            }
+        }
+        listEvnts->numEvents = cpt;
+        int sizeF = sizeof(VstEvents) + sizeof(VstEvent*)*(cpt-2) + sizeof(VstEvent)*cpt;
         EffProcessEvents(listEvnts,sizeF );
 
         listVstMidiEvents.clear();
+
+        //freed by the plugin ?
         // free(listEvnts);
     }
 }
