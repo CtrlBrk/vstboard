@@ -178,9 +178,8 @@ void Cable::Render(const PinMessage::Enum msgType,void *data)
 
     QMutexLocker l(&mutexDelay);
 
-    pin->ReceivePinMsg(msgType,data);
-
     if(buffer==0) {
+        pin->ReceivePinMsg(msgType,data);
         return;
     }
 
@@ -194,8 +193,13 @@ void Cable::Render(const PinMessage::Enum msgType,void *data)
     if(buffer->filledSize >= delay+myHost->GetBufferSize()) {
         buffer->Get( (float*)tmpBuf->GetPointerWillBeFilled(),tmpBuf->GetSize() );
         tmpBuf->ConsumeStack();
-        pin->ReceivePinMsg(msgType,(void*)tmpBuf);
-//        static_cast<AudioPin*>(pin)->GetBuffer()->AddToStack(tmpBuf);
+        AudioPin* p = static_cast<AudioPin*>(pin);
+        if(p) {
+            AudioBuffer * b = p->GetBuffer();
+            if(b) {
+                b->AddToStack(tmpBuf);
+            }
+        }
     }
 
 }

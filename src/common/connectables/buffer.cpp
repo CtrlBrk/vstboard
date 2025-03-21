@@ -60,7 +60,7 @@ Pin* Buffer::CreatePin(const ConnectionInfo &info)
 
     if(info.type == PinType::Parameter) {
         args.name = "Delay";
-        args.value = (float)delaySize/50000;
+        args.value = (float)delaySize/100;
         return PinFactory::MakePin(args);
     }
 
@@ -79,7 +79,7 @@ void Buffer::SetDelay(long d)
     QMutexLocker l(&mutexBuffer);
     desiredSize=d;
     delayChanged=10;
-    static_cast<ParameterPin*>(listParameterPinIn->GetPin(0))->ChangeValue((float)d/50000, true);
+    static_cast<ParameterPin*>(listParameterPinIn->GetPin(0))->ChangeValue((float)d/100, true);
 }
 
 void Buffer::Resize()
@@ -154,7 +154,8 @@ void Buffer::OnParameterChanged(ConnectionInfo pinInfo, float value)
     QMutexLocker l(&mutexBuffer);
 
     Object::OnParameterChanged(pinInfo,value);
-    desiredSize = listParameterPinIn->listPins.value(0)->GetValue()*50000;
+    desiredSize = listParameterPinIn->listPins.value(0)->GetValue()*100;
+    desiredSize *= desiredSize;
     delayChanged=10;
 }
 }
