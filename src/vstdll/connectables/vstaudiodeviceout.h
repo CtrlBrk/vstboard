@@ -39,8 +39,8 @@ namespace Connectables {
         VstAudioDeviceOut(MainHost *myHost, int index, const ObjectInfo &info);
         ~VstAudioDeviceOut();
 
-        bool Open();
-        bool Close();
+        bool Open() override;
+        bool Close() override;
 
         void GetBuffers(float **buf, int sampleFrames);
         void GetBuffersD(double **buf, int sampleFrames);
@@ -49,7 +49,7 @@ namespace Connectables {
         // View::AudioGraph *audiograph;
 
     public slots:
-        void SetBufferSize(qint32 size);
+        void SetBufferSize(qint32 size) override;
     };
 
 }

@@ -35,7 +35,7 @@ public:
     VstPlugin32(MainHost *myHost,int index, const ObjectInfo & info);
     virtual ~VstPlugin32();
 
-    bool Close();
+    bool Close() override;
     bool Load(const std::wstring &name) override;
     bool Unload();
     long EffDispatch(int opCode, int index=0, intptr_t value=0, void *ptr=0, float opt=0., int size=0) override;

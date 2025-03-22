@@ -35,10 +35,10 @@ namespace Connectables {
     public:
         MidiDevice(MainHost *myHost,int index, const ObjectInfo &info);
         ~MidiDevice();
-        bool Open();
-        bool Close();
-        void Render();
-        void MidiMsgFromInput(long msg);
+        bool Open() override;
+        bool Close() override;
+        void Render() override;
+        void MidiMsgFromInput(long msg) override;
 
         RtMidiIn *deviceIn;
         RtMidiOut *deviceOut;

@@ -37,15 +37,15 @@ namespace Connectables {
         VstAudioDeviceIn(MainHost *myHost,int index, const ObjectInfo &info);
         ~VstAudioDeviceIn();
 
-        bool Open();
-        bool Close();
-        void Render();
+        bool Open() override;
+        bool Close() override;
+        void Render() override
 
         void SetBuffers(float **buf, int sampleFrames);
         void SetBuffersD(double **buf, int sampleFrames);
 
     public slots:
-        void SetBufferSize(qint32 size);
+        void SetBufferSize(qint32 size) override;
 
     };
 }

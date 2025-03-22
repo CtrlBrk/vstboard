@@ -86,7 +86,7 @@ public:
     explicit Vst3Plugin(MainHost *host, int index, const ObjectInfo &info);
     ~Vst3Plugin();
     bool Open() override;
-    bool Close();
+    bool Close() override;
     void Render() override;
     Pin* CreatePin(const ConnectionInfo &info) override;
     void SetSleep(bool sleeping) override;

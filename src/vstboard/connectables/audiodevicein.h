@@ -39,17 +39,17 @@ namespace Connectables {
     public:
         AudioDeviceIn(MainHost *myHost,int index, const ObjectInfo &info);
         ~AudioDeviceIn();
-        bool Open();
-        bool Close();
-        void Render();
-        Pin* CreatePin(const ConnectionInfo &info);
+        bool Open() override;
+        bool Close() override;
+        void Render() override;
+        Pin* CreatePin(const ConnectionInfo &info) override;
         void SetParentDevice( AudioDevice *device );
 #ifdef CIRCULAR_BUFFER
         void SetBufferFromRingBuffer(QList<CircularBuffer*>listCircularBuffers);
 #endif
-        void NewRenderLoop() {}
+        void NewRenderLoop() override {}
         void NewRenderLoop2() {Object::NewRenderLoop();}
-        void SetSleep(bool sleeping);
+        void SetSleep(bool sleeping) override;
 
     protected:
         /// pointer to the linked AudioDevice

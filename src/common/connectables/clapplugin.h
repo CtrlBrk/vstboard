@@ -66,7 +66,7 @@ public:
     ClapPlugin(MainHost *myHost,int index, const ObjectInfo & info);
     ~ClapPlugin();
     bool Open() override;
-    bool Close();
+    bool Close() override;
     void Render() override;
     void SetSleep(bool sleeping) override;
     void MidiMsgFromInput(long msg) override;

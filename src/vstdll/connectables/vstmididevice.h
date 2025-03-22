@@ -46,10 +46,10 @@ namespace Connectables {
     public:
         VstMidiDevice(MainHost *myHost, int index, const ObjectInfo &info);
         ~VstMidiDevice();
-        bool Open();
-        bool Close();
-        void Render();
-        void MidiMsgFromInput(long msg);
+        bool Open() override;
+        bool Close() override;
+        void Render() override;
+        void MidiMsgFromInput(long msg) override;
 		void EventFromInput(const Vst::Event &event);
 
         QList<long>midiQueue;

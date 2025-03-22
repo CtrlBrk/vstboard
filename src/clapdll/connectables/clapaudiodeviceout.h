@@ -35,8 +35,8 @@ public:
     ClapAudioDeviceOut(MainHost *myHost, int index, const ObjectInfo &info);
     ~ClapAudioDeviceOut();
 
-    bool Open();
-    bool Close();
+    bool Open() override;
+    bool Close() override;
 
     void GetBuffers(float **buf, int sampleFrames);
     void GetBuffersD(double **buf, int sampleFrames);
@@ -45,7 +45,7 @@ protected:
            // View::AudioGraph *audiograph;
 
 public slots:
-    void SetBufferSize(qint32 size);
+    void SetBufferSize(qint32 size) override;
 };
 
 }

@@ -35,9 +35,9 @@ namespace Connectables {
     public:
         Script(MainHost *host, int index, const ObjectInfo &info);
         virtual ~Script();
-        bool Open();
-        bool Close();
-        void Render();
+        bool Open() override;
+        bool Close() override;
+        void Render() override;
         Pin* CreatePin(const ConnectionInfo &info);
         void MidiMsgFromInput(long msg);
 

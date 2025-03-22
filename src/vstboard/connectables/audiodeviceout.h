@@ -38,16 +38,16 @@ namespace Connectables {
     Q_OBJECT
     public:
         AudioDeviceOut(MainHost *myHost,int index, const ObjectInfo &info);
-        ~AudioDeviceOut();    
-        bool Open();
-        bool Close();
+        ~AudioDeviceOut();
+        bool Open() override;
+        bool Close() override;
         void SetParentDevice( AudioDevice *device );
-        void Render();
+        void Render() override;
 
 #ifdef CIRCULAR_BUFFER
         void SetRingBufferFromPins(QList<CircularBuffer*>listCircularBuffers);
 #endif
-        void NewRenderLoop() {}
+        void NewRenderLoop() override {}
         void NewRenderLoop2() {Object::NewRenderLoop();}
     protected:
         /// pointer to the linked AudioDevice

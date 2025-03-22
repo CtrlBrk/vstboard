@@ -35,11 +35,11 @@ namespace Connectables {
     public:
         explicit VstAutomation(MainHost *myHost,int index);
         ~VstAutomation();
-        bool Open();
-        bool Close();
-        void Render();
+        bool Open() override;
+        bool Close() override;
+        void Render() override;
         void ValueFromHost(int pinNum, float value);
-        Pin* CreatePin(const ConnectionInfo &info);
+        Pin* CreatePin(const ConnectionInfo &info) override;
     protected:
         /// list of values used by the learn pin (off, learn, unlearn)
         QList<QVariant>listIsLearning;
@@ -49,7 +49,7 @@ namespace Connectables {
         //int progChanged;
 
     public slots:
-        void OnParameterChanged(ConnectionInfo pinInfo, float value);
+        void OnParameterChanged(ConnectionInfo pinInfo, float value) override;
         void OnHostChangedProg(int prog);
     };
 }
