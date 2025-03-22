@@ -192,14 +192,8 @@ void Cable::Render(const PinMessage::Enum msgType,void *data)
     //buffer is full, send data
     if(buffer->filledSize >= delay+myHost->GetBufferSize()) {
         buffer->Get( (float*)tmpBuf->GetPointerWillBeFilled(),tmpBuf->GetSize() );
-        tmpBuf->ConsumeStack();
-        AudioPin* p = static_cast<AudioPin*>(pin);
-        if(p) {
-            AudioBuffer * b = p->GetBuffer();
-            if(b) {
-                b->AddToStack(tmpBuf);
-            }
-        }
+        pin->ReceivePinMsg(PinMessage::AudioBuffer,tmpBuf);
+        // tmpBuf->ConsumeStack();
     }
 
 }

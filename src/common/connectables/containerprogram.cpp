@@ -256,7 +256,8 @@ void ContainerProgram::LoadRendererState()
         }
     } else {
         LOG("update everything for delays");
-        myHost->SetSolverUpdateNeeded();
+        //TODO something's wrong here
+        // myHost->SetSolverUpdateNeeded();
     }
 }
 

@@ -39,7 +39,7 @@ namespace Connectables {
 
         bool Open() override;
         bool Close() override;
-        void Render() override
+        void Render() override;
 
         void SetBuffers(float **buf, int sampleFrames);
         void SetBuffersD(double **buf, int sampleFrames);

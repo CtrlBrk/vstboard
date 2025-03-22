@@ -1,4 +1,4 @@
-set VERSION="0.6.2"
+set VERSION="0.6.3"
 
 set SRC_PATH=%CD%
 set NSIS_PATH="C:\Program Files (x86)\NSIS\makensis.exe"
