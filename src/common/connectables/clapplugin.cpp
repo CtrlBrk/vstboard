@@ -1762,6 +1762,32 @@ void ClapPlugin::SaveProgram()
 
 void ClapPlugin::fromJson(QJsonObject &json)
 {
+    /*
+    if(_plugin->canUseState()) {
+
+        if(json.contains("chunk")) {
+            QByteArray ba;
+            ba.fromHex(json["chunk"].toString().toLatin1());
+
+
+            clap_istream istream;
+            istream.ctx = &ba;
+            istream.read = [] (const clap_istream *stream, void *buffer, uint64_t size) -> int64_t {
+                QByteArray *_ba = (QByteArray *)stream->ctx;
+                // buffer = _ba->data();
+                size = std::min(size,(uint64_t)_ba->size());
+                QByteArray b = _ba->first( size );
+                _ba->remove(0,size);
+                memcpy_s(buffer,size,b.data(),size);
+                return b.size();
+            };
+
+            if(ba.size()>0) {
+                _plugin->stateLoad(&istream);
+            }
+        }
+    }
+*/
     Object::fromJson(json);
 
 }
@@ -1769,18 +1795,21 @@ void ClapPlugin::fromJson(QJsonObject &json)
 void ClapPlugin::toJson(QJsonObject &json)
 {
     /*
-    QByteArray ba;
+    if(_plugin->canUseState()) {
+        QByteArray ba;
 
-    clap_ostream ostream;
-    ostream.ctx = &ba,
-    ostream.write = [] (const clap_ostream *stream, const void *buffer, uint64_t size) -> int64_t {
-        QByteArray *_ba = (QByteArray *)stream->ctx;
-        _ba->append( QByteArray::fromRawData((char*)buffer, size) );
-        return size;
-    };
+        clap_ostream ostream;
+        ostream.ctx = &ba;
+        ostream.write = [] (const clap_ostream *stream, const void *buffer, uint64_t size) -> int64_t {
+            QByteArray *_ba = (QByteArray *)stream->ctx;
+            _ba->append( QByteArray::fromRawData((char*)buffer, size) );
+            return size;
+        };
 
-    _plugin->stateSave(&ostream);
-    json["chunk"] = QString(ba.toHex());
+        _plugin->stateSave(&ostream);
+
+        json["chunk"] = QString(ba.toHex());
+    }
 */
     Object::toJson(json);
 }

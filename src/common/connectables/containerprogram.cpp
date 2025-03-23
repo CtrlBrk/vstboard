@@ -255,9 +255,9 @@ void ContainerProgram::LoadRendererState()
 //            myHost->GetRenderer()->LoadNodes( listOfRendererNodes );
         }
     } else {
-        LOG("update everything for delays");
+        // LOG("update everything for delays");
         //TODO something's wrong here
-        // myHost->SetSolverUpdateNeeded();
+        myHost->SetSolverUpdateNeeded();
     }
 }
 

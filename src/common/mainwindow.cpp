@@ -267,7 +267,7 @@ void MainWindow::ReceiveMsg(const MsgObject &msg)
 //        objectsTreeModel->ReceiveMsg(msg);
 
     if(!listObj.contains(msg.objIndex)) {
-        LOG("obj not found id:"<<msg.objIndex<<" prop:"<<msg.prop<<" from:"<<msg.sender)
+        // LOG("obj not found id:"<<msg.objIndex<<" prop:"<<msg.prop<<" from:"<<msg.sender)
         return;
     }
 
