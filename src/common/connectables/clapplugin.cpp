@@ -621,6 +621,8 @@ void ClapPlugin::OnParameterChanged(ConnectionInfo pinInfo, float value)
         return;
     }
 
+    g_thread_type = ClapThreadType::MainThread; //fake it for now
+
     if(pinInfo.direction == PinDirection::Input) {
         auto it = _params.find(pinInfo.clapId);
         if (it == _params.end()) {
@@ -1751,8 +1753,10 @@ void ClapPlugin::SaveProgram()
     for (auto it = _params.begin(); it != _params.end();) {
         int pinNum = it->second->pinNumber;
         ParameterPinIn *pin = static_cast<ParameterPinIn*>(listParameterPinIn->GetPin(pinNum,false));
-        float val = it->second->FloatFromValue();
-        pin->ChangeValue(val);
+        if(pin) {
+            float val = it->second->FloatFromValue();
+            pin->ChangeValue(val);
+        }
         ++it;
     }
 
