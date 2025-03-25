@@ -235,17 +235,15 @@ void MainHost::Init()
 #endif
 #ifdef VSTSDK
     vst3Host = new Vst3Host(this);
-    //PluginContextFactory::instance ().setPluginContext (vst3Host);
-    // connect(this,SIGNAL(SampleRateChanged(float)),
-            // vst3Host,SLOT(SetSampleRate(float)));
 #endif
-
-    // clapHost = new ClapHost(this);
 
     solver = new Solver();
 
-    sampleRate = 44100.0;
-    bufferSize = 100;
+    sampleRate = settings->GetSetting("sampleRate",44100.0).toFloat();
+    bufferSize = settings->GetSetting("bufferSize").toInt();
+    doublePrecision = settings->GetSetting("doublePrecision",false).toBool();
+    // sampleRate = 44100.0;
+    // bufferSize = 100;
 
     currentTempo=120;
     currentTimeSig1=4;
@@ -942,6 +940,10 @@ void MainHost::SetBufferSize(qint32 size)
         groupContainer->SetBufferSize(size);
     if(programContainer)
         programContainer->SetBufferSize(size);
+
+    _MSGOBJ(msg,FixedObjId::mainWindow);
+    msg.prop[MsgObject::Message] = QString("%1 %2").arg(sampleRate).arg(bufferSize);
+    SendMsg(msg);
 }
 
 void MainHost::SetSampleRate(float rate)
@@ -950,6 +952,8 @@ void MainHost::SetSampleRate(float rate)
         return;
 
     sampleRate = rate;
+
+    SetSleep(true);
 
     if(mainContainer)
         mainContainer->SetSampleRate(rate);
@@ -962,7 +966,31 @@ void MainHost::SetSampleRate(float rate)
     if(programContainer)
         programContainer->SetSampleRate(rate);
 
+    vstHost->SetSampleRate(rate);
+    vst3Host->SetSampleRate(rate);
+
     // emit SampleRateChanged(sampleRate);
+
+    SetSolverUpdateNeeded();
+    SetSleep(false);
+
+    _MSGOBJ(msg,FixedObjId::mainWindow);
+    msg.prop[MsgObject::Message] = QString("%1 %2").arg(sampleRate).arg(bufferSize);
+    SendMsg(msg);
+}
+
+void MainHost::SetSleep(bool sleep)
+{
+    if(mainContainer)
+        mainContainer->SetSleep(sleep);
+    if(hostContainer)
+        hostContainer->SetSleep(sleep);
+    if(projectContainer)
+        projectContainer->SetSleep(sleep);
+    if(groupContainer)
+        groupContainer->SetSleep(sleep);
+    if(programContainer)
+        programContainer->SetSleep(sleep);
 }
 
 void MainHost::SetVst3Timeinfo(ProcessContext const &info)
@@ -983,9 +1011,9 @@ void MainHost::SetVst3Timeinfo(ProcessContext const &info)
     VestigeTimeFromVst3(info, time);
     vstHost->SetTimeInfo(&time);
 
-    _MSGOBJ(msg,FixedObjId::mainWindow);
-    msg.prop[MsgObject::Message] = QString("from vst3 time:%1 pos:%2 %3").arg(info.projectTimeMusic).arg(info.barPositionMusic).arg(vst3Host->barTic.load());
-    SendMsg(msg);
+    // _MSGOBJ(msg,FixedObjId::mainWindow);
+    // msg.prop[MsgObject::Message] = QString("from vst3 time:%1 pos:%2 %3").arg(info.projectTimeMusic).arg(info.barPositionMusic).arg(vst3Host->barTic.load());
+    // SendMsg(msg);
 
 }
 
@@ -1003,9 +1031,9 @@ void MainHost::SetClapTimeinfo(clap_event_transport_t const &t)
     VestigeTimeFromVst3(info, time);
     vstHost->SetTimeInfo(&time);
 
-    _MSGOBJ(msg,FixedObjId::mainWindow);
-    msg.prop[MsgObject::Message] = QString("from clap time:%1 pos:%2 %3").arg(info.projectTimeMusic).arg(info.barPositionMusic).arg(vst3Host->barTic.load());
-    SendMsg(msg);
+    // _MSGOBJ(msg,FixedObjId::mainWindow);
+    // msg.prop[MsgObject::Message] = QString("from clap time:%1 pos:%2 %3").arg(info.projectTimeMusic).arg(info.barPositionMusic).arg(vst3Host->barTic.load());
+    // SendMsg(msg);
 }
 
 void MainHost::SetVestigeTimeinfo(VstTimeInfo const &time)
@@ -1022,9 +1050,9 @@ void MainHost::SetVestigeTimeinfo(VstTimeInfo const &time)
 
     vstHost->SetTimeInfo(&time);
 
-    _MSGOBJ(msg,FixedObjId::mainWindow);
-    msg.prop[MsgObject::Message] = QString("from vestige time:%1 pos:%2 %3").arg(info.projectTimeMusic).arg(info.barPositionMusic).arg(vst3Host->barTic.load());
-    SendMsg(msg);
+    // _MSGOBJ(msg,FixedObjId::mainWindow);
+    // msg.prop[MsgObject::Message] = QString("from vestige time:%1 pos:%2 %3").arg(info.projectTimeMusic).arg(info.barPositionMusic).arg(vst3Host->barTic.load());
+    // SendMsg(msg);
 }
 
 void MainHost::GetVst3Timeinfo(ProcessContext &info) const

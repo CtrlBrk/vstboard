@@ -72,10 +72,10 @@ AudioDevice::AudioDevice(MainHostHost *myHost,const ObjectInfo &info,QObject *pa
 
     devOutClosing=false;
     setObjectName(objInfo.name);
-/*
-    connect(myHost,SIGNAL(SampleRateChanged(float)),
-            this,SLOT(SetSampleRate(float)));
-*/
+
+    // connect(myHost,SIGNAL(SampleRateChanged(float)),
+            // this,SLOT(SetSampleRate(float)));
+
     connect(this,SIGNAL(InUseChanged(PaHostApiIndex,PaDeviceIndex,bool,PaTime,PaTime,double)),
            myHost->audioDevices,SLOT(OnToggleDeviceInUse(PaHostApiIndex,PaDeviceIndex,bool,PaTime,PaTime,double)));
 /*
@@ -601,18 +601,20 @@ void AudioDevice::DeleteCircularBuffers()
   */
 bool AudioDevice::SetSleep(bool sleeping)
 {
+    devOutClosing=true;
+
     if(!sleeping)
         return Open();
 
-//    mutexDevicesInOut.lock();
-//    if(devIn)
-//        devIn->SetSleep( (!opened || sleeping) );
-//    if(devOut)
-//        devOut->SetSleep( (!opened || sleeping) );
-//    mutexDevicesInOut.unlock();
+   // mutexDevicesInOut.lock();
+   // if(devIn)
+   //     devIn->SetSleep( (!opened || sleeping) );
+   // if(devOut)
+   //     devOut->SetSleep( (!opened || sleeping) );
+   // mutexDevicesInOut.unlock();
 
-    else
-        return Close();
+
+    return Close();
 }
 
 /*!
@@ -920,7 +922,7 @@ int AudioDevice::paCallback( const void *inputBuffer, void *outputBuffer,
    }
 
    //all devices are ready : render
-   mutexCountOpenedDevicesReady.lock();
+   QMutexLocker l(&mutexCountOpenedDevicesReady);
 #ifdef DEBUG_DEVICES
 //    LOG(QString("%1 ready: %2/%3")
 //        .arg( device->devInfo.name )
@@ -939,12 +941,9 @@ int AudioDevice::paCallback( const void *inputBuffer, void *outputBuffer,
 //            .arg("RENDER")
 //            );
 #endif
-       mutexCountOpenedDevicesReady.unlock();
-
        device->myHost->Render();
        device->myHost->audioDevices->PutPinsBuffersInRingBuffers();
    } else {
-       mutexCountOpenedDevicesReady.unlock();
        return paContinue;
    }
 

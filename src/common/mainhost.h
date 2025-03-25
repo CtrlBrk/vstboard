@@ -54,6 +54,7 @@ public:
     void SetBufferSizeMs(qint32 ms);
     void SetBufferSize(qint32 size);
     void SetSampleRate(float rate=44100.0);
+    void SetSleep(bool sleep);
     qint32 GetBufferSize() {return bufferSize;}
     float GetSampleRate() {return sampleRate;}
 

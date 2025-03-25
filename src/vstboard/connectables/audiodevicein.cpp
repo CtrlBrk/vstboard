@@ -200,3 +200,11 @@ void AudioDeviceIn::SetBufferFromRingBuffer(QList<CircularBuffer*>listCircularBu
     }
 }
 #endif
+
+
+void AudioDeviceIn::SetSampleRate(float rate)
+{
+    if(parentDevice) {
+        parentDevice->SetSampleRate(rate);
+    }
+}

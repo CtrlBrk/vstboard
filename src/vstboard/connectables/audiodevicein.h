@@ -56,6 +56,8 @@ namespace Connectables {
         AudioDevice *parentDevice;
 
 //    friend class AudioDevice;
+    public slots:
+        void SetSampleRate(float rate) override;
     };
 }
 

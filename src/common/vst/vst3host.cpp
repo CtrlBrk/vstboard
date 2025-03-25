@@ -69,6 +69,8 @@ Vst3Host::Vst3Host(QObject *parent) :
 //    processContext.samplesToNextClock
 
 
+    connect(parent,SIGNAL(SampleRateChanged(float)),
+            this,SLOT(SetSampleRate(float)));
 }
 
 tresult PLUGIN_API Vst3Host::getName (String128 name)

@@ -60,6 +60,8 @@ namespace vst
         int currentBar;
         double barLengthq;
 
+        void SetSampleRate(float rate);
+
     protected:
         static CVSTHost * pHost;
         static __int64 __cdecl AudioMasterCallback(AEffect *effect, int opcode, int index, __int64  value, void *ptr, float opt);

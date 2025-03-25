@@ -89,31 +89,7 @@ void ClapPlugin::SetTempo(int tempo, int num, int denom)
     transport.tsig_num = num;
     transport.tsig_denom = denom;
 }
-/*
-void ClapPlugin::UpdateTransport(long buffSize, float sampleRate) {
 
-    if(transport.tsig_num == 0 || transport.tsig_denom == 0 || transport.tempo == 0) return;
-
-    hosttime += buffSize / sampleRate;
-    transport.song_pos_seconds = round(CLAP_SECTIME_FACTOR * hosttime);
-    transport.song_pos_beats = round(transport.song_pos_seconds * transport.tempo / 60.L);
-
-    if(transport.song_pos_beats > transport.loop_end_beats) {
-        transport.song_pos_beats -= transport.loop_end_beats;
-        transport.song_pos_seconds = transport.song_pos_beats / transport.tempo * 60.L;
-        hosttime = transport.song_pos_seconds / CLAP_BEATTIME_FACTOR;
-    }
-
-    float barLength = (transport.tsig_num*4.0f) /transport.tsig_denom;
-    if(barLength!=0) {
-        transport.bar_start = floor(transport.song_pos_beats/ CLAP_BEATTIME_FACTOR / barLength);
-    } else {
-        LOG("barlength 0" << transport.tsig_num << transport.tsig_denom )
-    }
-
-    transport.bar_number = floor(transport.song_pos_beats/ CLAP_BEATTIME_FACTOR / transport.tsig_num);
-}
-*/
 void ClapPlugin::InitTransport()
 {
     hosttime = 0;
@@ -437,6 +413,9 @@ void ClapPlugin::SetSleep(bool sleeping)
         }
         deactivate();
     } else {
+        if (isPluginActive()) {
+            deactivate();
+        }
         activate(sampleRate,bufferSize);
         if(_state != ActiveAndSleeping) {
             return;

@@ -187,3 +187,11 @@ void AudioDeviceOut::Render()
 //    }
 #endif
 }
+
+
+void AudioDeviceOut::SetSampleRate(float rate)
+{
+    if(parentDevice) {
+        parentDevice->SetSampleRate(rate);
+    }
+}

@@ -85,6 +85,11 @@ CVSTHost::~CVSTHost()
         pHost = NULL;                         /* remove ourselves from pointer     */
 }
 
+void CVSTHost::SetSampleRate(float rate)
+{
+    vstTimeInfo.sampleRate = rate;
+}
+
 void CVSTHost::SetTimeInfo(const VstTimeInfo *info) {
     if (!info)
         return;
