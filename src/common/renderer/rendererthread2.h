@@ -37,14 +37,14 @@ public:
     void ResetNodes();
     void LockAllSteps();
     void Stop();
-    bool IsStopped();
+    // bool IsStopped();
     ThreadNodes currentNodes;
 
 private:
 
     QMutex mutexNewNodes;
-    bool stop;
-    QMutex mutexStop;
+    std::atomic<bool> stop;
+    std::atomic<bool> stopped;
     Renderer2 *renderer;
     int id;
 

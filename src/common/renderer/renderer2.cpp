@@ -136,7 +136,7 @@ void Renderer2::ChangeNbOfThreads(int newNbThreads)
     //remove crashed threads
     for(int i=threads.count()-1; i>=0; i--) {
         RendererThread2* th = threads[i];
-        if(!th->isRunning() && !th->IsStopped()) {
+        if(!th->isRunning()) { // && !th->IsStopped()
 #ifdef DEBUG_RENDERER
             LOG("remove crashed thread"<<i)
 #endif

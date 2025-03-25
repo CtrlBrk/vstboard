@@ -31,6 +31,7 @@
 RendererThread2::RendererThread2(Renderer2 *renderer, int id) :
     QThread(renderer),
     stop(false),
+    stopped(false),
     renderer(renderer),
     id(id)
 #ifdef WIN32
@@ -62,7 +63,7 @@ RendererThread2::~RendererThread2()
 {
     Stop();
 
-    while(isRunning()) {
+    while(!stopped) {
 #ifdef WIN32
         Sleep(50);
 #else
@@ -72,7 +73,6 @@ RendererThread2::~RendererThread2()
         nanosleep(&r,&m);
 #endif
     }
-
 
 #ifdef WIN32
     if (hMmTask != NULL) {
@@ -89,18 +89,16 @@ RendererThread2::~RendererThread2()
 
 void RendererThread2::Stop()
 {
-    QMutexLocker locker(&mutexStop);
     stop=true;
 #ifdef DEBUG_RENDERER
 //    LOG("thread"<<id<<"stopped")
 #endif
 }
 
-bool RendererThread2::IsStopped()
-{
-    QMutexLocker locker(&mutexStop);
-    return stop;
-}
+// bool RendererThread2::IsStopped()
+// {
+//     return stop;
+// }
 
 void RendererThread2::run()
 {
@@ -123,10 +121,7 @@ void RendererThread2::run()
     }
 #endif
 
-    {
-        QMutexLocker locker(&mutexStop);
-        stop=false;
-    }
+    stop=false;
 
     forever {
 
@@ -139,15 +134,14 @@ void RendererThread2::run()
 //            emit Timeout();
 //            return;
         }
-        {
-            QMutexLocker locker(&mutexStop);
-            if(stop) {
+
+        if(stop) {
 //                renderer->nbThreads--;
-                renderer->stepCanStart.first()->Unlock();
-                renderer->waitThreadReady.RemoveClient();
-                renderer->waitThreadEnd.RemoveClient();
-                return;
-            }
+            renderer->stepCanStart.first()->Unlock();
+            renderer->waitThreadReady.RemoveClient();
+            renderer->waitThreadEnd.RemoveClient();
+            stopped=true;
+            return;
         }
 
         {
@@ -195,6 +189,8 @@ void RendererThread2::run()
 //            emit Timeout();
         }
     }
+
+    stopped=true;
 }
 
 void RendererThread2::LockAllSteps()
