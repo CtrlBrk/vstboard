@@ -86,7 +86,11 @@ LRESULT VstWin::_WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg)
 	{
 	case WM_CLOSE: //16
-		DestroyWindow(hwnd);
+		if (plugin) {
+			plugin->EditClose();
+		} else {
+			DestroyWindow(hwnd);
+		}
 		return 0;
 
 	case WM_DESTROY: //2

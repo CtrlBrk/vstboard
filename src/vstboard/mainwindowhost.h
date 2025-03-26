@@ -34,6 +34,7 @@ class MainWindowHost : public MainWindow {
 
 public:
     MainWindowHost(Settings *settings, MainHostHost * myHost, QWidget *parent = 0);
+    ~MainWindowHost();
     void Init();
     void readSettings();
     void SendMsg(const MsgObject &msg);

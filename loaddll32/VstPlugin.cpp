@@ -39,7 +39,7 @@ VstPlugin::~VstPlugin()
 {
     closing = true;
 
-    processThread->join();
+//    processThread->join();
  //   guiThread->join();
 
     if (listEvnts) {
@@ -460,11 +460,11 @@ void VstPlugin::CrtVstWin() {
     if (win) {
         return;
     }
+    cout << "crt window " << pluginId << endl;
     win = new VstWin(this);
 
-    //win->hWin = win->CrtWindow(parentWindow);
     win->hWin = win->CrtWindow();
-    SetParent(win->hWin, parentWindow);
+    //SetParent(win->hWin, parentWindow);
     
     
     //ShowWindow(win->hWin, SW_SHOW);
@@ -497,6 +497,7 @@ bool VstPlugin::EditOpen() {
 
 bool VstPlugin::EditClose() {
     if (!win) return false;
+    cout << "del window " << pluginId << endl;
     delete(win);
     win = 0;
     return true;
@@ -576,6 +577,10 @@ void VstPlugin::MsgLoop()
             break;
         case IpcFunction::EditorShow:
             if (win) {
+                //if (dataIn->mainWin) {
+                //    parentWindow = (HWND)dataIn->mainWin;
+                //    SetParent(win->hWin, parentWindow);
+                //}
                 ShowWindow(win->hWin, SW_SHOW);
                 //BringWindowToTop(win->hWin);
                 //SetForegroundWindow(win->hWin);
@@ -583,6 +588,10 @@ void VstPlugin::MsgLoop()
             break;
         case IpcFunction::EditorHide:
             if (win) {
+                //if (dataIn->mainWin) {
+                //    parentWindow = (HWND)dataIn->mainWin;
+                //    SetParent(win->hWin, parentWindow);
+                //}
                 ShowWindow(win->hWin, SW_HIDE);
             }
             break;

@@ -26,11 +26,13 @@ void IpcVst::Loop() {
 		{
 			if (msg.message == WM_QUIT)
 			{
-				break;
+			//	break;
 			}
+			else {
 
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
 		}
 		
 		map<int, VstPlugin*>::iterator it;

@@ -41,6 +41,13 @@ MainWindowHost::MainWindowHost(Settings *settings, MainHostHost * myHost, QWidge
     setWindowTitle("VstBoard");
 }
 
+MainWindowHost::~MainWindowHost()
+{
+    _MSGOBJ(msg,FixedObjId::mainHost);
+    msg.prop[MsgObject::Object]=FixedObjId::mainWindow;
+    msg.prop[MsgObject::Id]=0;
+    MainWindowHost::SendMsg(msg);
+}
 void MainWindowHost::Kill()
 {
     delete this;

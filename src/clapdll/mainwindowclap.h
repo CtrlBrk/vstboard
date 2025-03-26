@@ -29,6 +29,7 @@ class MainWindowClap : public MainWindow {
 
 public:
     MainWindowClap(MainHost* ctrl, Settings *settings, QWidget *parent = 0);
+    ~MainWindowClap();
     void Init() override;
     void readSettings() override;
     void SendMsg(const MsgObject &msg) override;

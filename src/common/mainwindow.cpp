@@ -405,10 +405,7 @@ void MainWindow::SetupBrowsersModels(const QString &vstPath, const QString &brow
 MainWindow::~MainWindow()
 {
     LOG("mainwindowclose " << this)
-    _MSGOBJ(msg,FixedObjId::mainHost);
-    msg.prop[MsgObject::Object]=FixedObjId::mainWindow;
-    msg.prop[MsgObject::Id]=0;
-    SendMsg(msg);
+
 
     if(mySceneView) {
         delete mySceneView;

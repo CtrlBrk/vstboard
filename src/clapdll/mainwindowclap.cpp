@@ -32,6 +32,14 @@ MainWindowClap::MainWindowClap(MainHost* ctrl,Settings *settings, QWidget *paren
                  Qt::QueuedConnection);
 }
 
+MainWindowClap::~MainWindowClap()
+{
+    _MSGOBJ(msg,FixedObjId::mainHost);
+    msg.prop[MsgObject::Object]=FixedObjId::mainWindow;
+    msg.prop[MsgObject::Id]=0;
+    MainWindowClap::SendMsg(msg);
+}
+
 void MainWindowClap::SendMsg(const MsgObject &msg)
 {
     emit SendMsgSignal(msg);

@@ -31,7 +31,10 @@ MainWindowVst::MainWindowVst(Vst::EditController *controller,Settings *settings,
 
 MainWindowVst::~MainWindowVst()
 {
-
+    _MSGOBJ(msg,FixedObjId::mainHost);
+    msg.prop[MsgObject::Object]=FixedObjId::mainWindow;
+    msg.prop[MsgObject::Id]=0;
+    MainWindowVst::SendMsg(msg);
 }
 
 void MainWindowVst::Init()
