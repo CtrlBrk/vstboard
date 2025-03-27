@@ -150,7 +150,7 @@ std::wstring openfilename(HWND owner = NULL) {
     ZeroMemory(&ofn, sizeof(ofn));
     ofn.lStructSize = sizeof(OPENFILENAME);
     ofn.hwndOwner = owner;
-    ofn.lpstrFilter = L"Libraries (.dll)\0*.dll\0Programs (.exe)\0*.exe\0All Files\0*.*\0\0";
+    ofn.lpstrFilter = L".dat\0*.dat\0Libraries (.dll)\0*.dll\0Programs (.exe)\0*.exe\0All Files\0*.*\0\0";
     ofn.lpstrFile = fileName;
     ofn.nMaxFile = MAX_PATH;
     ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
@@ -237,9 +237,10 @@ void AddDllPath()
         path += pathFromReg + L";";
         path += pathFromReg + L"\\Qt;";
     }
-    // if(RegGetString(HKEY_CURRENT_USER, regBaseKey, installKey, pathFromReg)) {
-        // path += pathFromReg + L";";
-    // }
+    if(RegGetString(HKEY_CURRENT_USER, regBaseKey, installKey, pathFromReg)) {
+        path += pathFromReg + L";";
+        path += pathFromReg + L"\\Qt;";
+    }
 
     ::SetEnvironmentVariable(L"Path", path.c_str());
     //::SetEnvironmentVariable(L"QT_QPA_PLATFORM_PLUGIN_PATH", GetPathFromRegistry().c_str());
