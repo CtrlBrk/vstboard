@@ -61,6 +61,7 @@ Object::Object(MainHost *host, qint32 index, const ObjectInfo &info) :
     currentProgId(TEMP_PROGRAM),
     closed(true),
     objInfo(info),
+    parentWnd(0),
     containerId(FixedObjId::noContainer),
     initialDelay(0L),
     sleep(true)
@@ -162,6 +163,7 @@ Object::Object(MainHost *host, qint32 index, const ObjectInfo &info) :
     updateViewDelay.setInterval(100);
     connect(&updateViewDelay, SIGNAL(timeout()),
             this, SLOT(UpdateViewNow()));
+
 }
 
 /*!
@@ -1047,4 +1049,13 @@ QStandardItem * Object::GetModel()
     }
 
     return i;
+}
+
+bool Object::EditorIsVisible()
+{
+    if(!listParameterPinIn || !listParameterPinIn->listPins.value(FixedPinNumber::editorVisible))
+        return false;
+
+    int val = static_cast<ParameterPinIn*>(listParameterPinIn->listPins.value(FixedPinNumber::editorVisible))->GetStepIndex();
+    return val>0 ;
 }

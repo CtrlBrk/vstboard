@@ -671,7 +671,7 @@ void VstPlugin::OnEditorClosed()
 void VstPlugin::OnShowEditor()
 {
     if(!editorWnd)
-        CreateEditorWindow(myHost->GetMainWindow());
+        CreateEditorWindow(parentWnd);
 
     if(!editorWnd)
         return;
@@ -722,24 +722,24 @@ void VstPlugin::OnHideEditor()
 
 void VstPlugin::SetParentWindow(QWidget *parent)
 {
-    if(!editorWnd)
-        return;
+    parentWnd = parent;
 
-    bool vis = editorWnd->isVisible();
+    if(editorWnd) {
+        editorWnd->SaveAttribs(currentViewAttr);
+        editorWnd->disconnect();
+        editorWnd->UnsetPlugin();
+        disconnect(editorWnd);
+        QTimer::singleShot(0,editorWnd,SLOT(close()));
+        editorWnd=0;
 
-    editorWnd->SaveAttribs(currentViewAttr);
-    editorWnd->disconnect();
-    editorWnd->UnsetPlugin();
-    disconnect(editorWnd);
-    QTimer::singleShot(0,editorWnd,SLOT(close()));
-    editorWnd=0;
+        objMutex.lock();
+        EffEditClose();
+        objMutex.unlock();
+    }
 
-    objMutex.lock();
-    EffEditClose();
-    objMutex.unlock();
-
-    CreateEditorWindow(parent);
-    if(vis) OnShowEditor();
+    if(parent && EditorIsVisible()) {
+        OnShowEditor();
+    }
 }
 
 void VstPlugin::SetContainerAttribs(const ObjectContainerAttribs &attr)

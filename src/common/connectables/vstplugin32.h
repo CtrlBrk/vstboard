@@ -90,7 +90,7 @@ public slots:
 
     void OnShowEditor() override;
     void OnHideEditor() override;
-    void MainWindowChanged(QWidget *parent);
+    void SetParentWindow(QWidget *parent);
 };
 
 }

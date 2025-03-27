@@ -50,7 +50,7 @@ VstPlugin32::VstPlugin32(MainHost *myHost,int index, const ObjectInfo & info) :
     dataBuffers(0),
     ipcBuffers(L"buff" + std::to_wstring(GetIndex()), (void**)&dataBuffers, sizeof(structBuffers))
 {
-    connect(myHost,&MainHost::MainWindowChanged, this, &VstPlugin32::MainWindowChanged);
+    connect(myHost,&MainHost::MainWindowChanged, this, &VstPlugin32::SetParentWindow);
 }
 
 VstPlugin32::~VstPlugin32()
@@ -66,14 +66,19 @@ VstPlugin32::~VstPlugin32()
     }
 }
 
-void VstPlugin32::MainWindowChanged(QWidget *parent)
+void VstPlugin32::SetParentWindow(QWidget *parent)
 {
+    parentWnd = parent;
+
     if(parent) {
+        if(!EditorIsVisible()) return;
+
         ipcTo32.LockData();
         dataTo32->function=IpcFunction::EditorShow;
         dataTo32->pluginId = GetIndex();
         // dataTo32->mainWin = (int)parent->winId();
         ipcTo32.SignalStartAndRelease();
+
     } else {
         ipcTo32.LockData();
         dataTo32->function=IpcFunction::EditorHide;

@@ -195,6 +195,8 @@ namespace Connectables {
 //#ifdef SCRIPTENGINE
         QString scriptName;
 //#endif
+
+        bool EditorIsVisible();
     protected:
 
         void SetInitDelay(long d) {initialDelay=d;}
@@ -263,6 +265,7 @@ namespace Connectables {
 
         ObjectContainerAttribs currentViewAttr;
 
+        QWidget *parentWnd;
     private:
         /// the current container id if not parked
         qint32 containerId;
@@ -309,6 +312,7 @@ namespace Connectables {
         bool IsInError() { return (objInfo.objType == ObjType::dummy || !errorMessage.isEmpty()); }
         void UpdateView();
         void UpdateViewNow();
+
     };
 }
 

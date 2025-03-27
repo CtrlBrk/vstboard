@@ -71,7 +71,7 @@ ClapPlugin::ClapPlugin(MainHost *myHost,int index, const ObjectInfo & info) :
 {
     g_thread_type = ClapThreadType::MainThread;
     initThreadPool();
-    connect(myHost,&MainHost::MainWindowChanged, this, &ClapPlugin::SetParentWindow);
+   connect(myHost,&MainHost::MainWindowChanged, this, &ClapPlugin::SetParentWindow);
 }
 
 ClapPlugin::~ClapPlugin()
@@ -1260,15 +1260,19 @@ static clap_window makeClapWindow(WId window) {
 
 void ClapPlugin::SetParentWindow(QWidget *parent)
 {
-    if(!editorWnd) return;
+    parentWnd = parent;
 
-    editorWnd->disconnect();
-    disconnect(editorWnd);
+    if(editorWnd) {
+        editorWnd->SaveAttribs(currentViewAttr);
+        editorWnd->disconnect();
+        disconnect(editorWnd);
+        QTimer::singleShot(0,editorWnd,SLOT(close()));
+        editorWnd=0;
+    }
 
-    QTimer::singleShot(0,editorWnd,SLOT(close()));
-    editorWnd=0;
-
-    CreateEditorWindow(parent);
+    if(parent && EditorIsVisible()) {
+        OnShowEditor();
+    }
 }
 
 void ClapPlugin::setParentWindow(WId parentWindow) {
@@ -1363,7 +1367,7 @@ const char *ClapPlugin::getCurrentClapGuiApi() {
 void ClapPlugin::OnShowEditor()
 {
     if(!editorWnd)
-        CreateEditorWindow( myHost->GetMainWindow() );
+        CreateEditorWindow(parentWnd);
 
     if(!editorWnd)
         return;

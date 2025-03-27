@@ -366,7 +366,7 @@ bool ClapMainHost::guiCreate(const char *api, bool isFloating) noexcept
 
 void ClapMainHost::guiDestroy() noexcept
 {
-
+    emit MainWindowChanged(nullptr);
 }
 
 void ClapMainHost::AskHostToResize(const QPoint &pt)

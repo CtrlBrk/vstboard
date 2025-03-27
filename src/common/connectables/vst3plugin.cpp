@@ -753,7 +753,7 @@ bool Vst3Plugin::CreateEditorWindow(QWidget *parent)
 void Vst3Plugin::OnShowEditor()
 {
     if(!editorWnd)
-        CreateEditorWindow(nullptr);
+        CreateEditorWindow(parentWnd);
         // CreateEditorWindow(myHost->GetMainWindow());
 
     if(!editorWnd)
@@ -796,15 +796,20 @@ void Vst3Plugin::EditorDestroyed()
 
 void Vst3Plugin::SetParentWindow(QWidget *parent)
 {
-    if(!editorWnd)
-        return;
+    parentWnd = parent;
 
-    editorWnd->SaveAttribs(currentViewAttr);
-    RemoveGui();
-    delete editorWnd;
-    editorWnd=0;
+    if(editorWnd) {
+        editorWnd->SaveAttribs(currentViewAttr);
+        RemoveGui();
+        delete editorWnd;
+        editorWnd=0;
+    }
 
-    CreateEditorWindow(parent);
+    if(parent && EditorIsVisible()) {
+        OnShowEditor();
+        // if(editorWnd)
+            // editorWnd->setParent(parent);
+    }
 }
 
 void Vst3Plugin::SetContainerAttribs(const ObjectContainerAttribs &attr)
