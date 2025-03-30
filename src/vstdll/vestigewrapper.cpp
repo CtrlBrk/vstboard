@@ -75,6 +75,8 @@ public:
     VestigeEditorWrapper (VestigeWrapper* wrapper, IEditController* controller);
     bool getVstRect (VstRect** rect) ;
     void open(HWND w);
+    tresult PLUGIN_API resizeView (IPlugView* view, ViewRect* newSize);
+
     VstRect mRect;
     VestigeWrapper* mWrapper;
 };
@@ -107,6 +109,19 @@ bool VestigeEditorWrapper::getVstRect (VstRect** rect)
     }
     *rect = nullptr;
     return false;
+}
+
+tresult PLUGIN_API VestigeEditorWrapper::resizeView (IPlugView* view, ViewRect* newSize)
+{
+    tresult result = kResultFalse;
+    if (view && newSize)
+    {
+        result = view->onSize (newSize);
+    }
+
+    mWrapper->_sizeWindow(newSize->getWidth(),newSize->getHeight());
+
+    return result;
 }
 
 intptr_t static_dispatcher(AEffect* pEffect, int opCode, int index, intptr_t value, void* ptr, float opt)
@@ -384,6 +399,9 @@ bool VestigeWrapper::_sizeWindow (int32 width, int32 height)
     AAX_Point size (height, width);
     return mAAXGUI->setWindowSize (size);
     */
+
+    masterCallback(&Effect, audioMasterSizeWindow, width, height  ,NULL, 0.0f);
+
     return true;
 }
 
