@@ -558,16 +558,18 @@ bool Vst3Plugin::initController()
             } else {
                 if(paramInfo.flags & Vst::ParameterInfo::kIsProgramChange) {
                     progChangeParameter = i;
-                }
+                    listParameterPinIn->AddPin(i);
+                } else {
 
-                //create output parameters for readonly values (but values are not updating correctly)
-                if (paramInfo.flags & Vst::ParameterInfo::kIsReadOnly) {
-                    listParameterPinOut->AddPin(i);
-                }
-                else {
-                    //create all parameters pins if no gui
-                    if (!hasEditor)
-                        listParameterPinIn->AddPin(i);
+                    //create output parameters for readonly values (but values are not updating correctly)
+                    if (paramInfo.flags & Vst::ParameterInfo::kIsReadOnly) {
+                        listParameterPinOut->AddPin(i);
+                    }
+                    else {
+                        //create all parameters pins if no gui
+                        if (!hasEditor)
+                            listParameterPinIn->AddPin(i);
+                    }
                 }
 
             }
