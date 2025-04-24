@@ -153,7 +153,7 @@ void VstPlugin::ProcessMidi()
     if(listVstMidiEvents.size()!=0) {
         int nbEvents = listVstMidiEvents.size();
 
-        size_t size = sizeof(VstEvents) + sizeof(VstEvent*)*(nbEvents-2);
+        size_t size = sizeof(VstEvents) + sizeof(VstEvent*)*(nbEvents-2) + sizeof(VstEvent)*nbEvents;
         VstEvents *listEvnts = (VstEvents*)malloc(size);
         listEvnts->reserved = 0;
 
@@ -177,9 +177,7 @@ void VstPlugin::ProcessMidi()
         EffProcessEvents(listEvnts,sizeF );
 
         listVstMidiEvents.clear();
-
-        //freed by the plugin ?
-        // free(listEvnts);
+        free(listEvnts);
     }
 }
 
