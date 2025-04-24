@@ -484,11 +484,11 @@ bool Vst3Plugin::initAudioBuffers(Vst::BusDirection dir, bool unassign)
 //			listAudioPinOut->SetNbPins(0);
 //		}
 //	}
-    component->activateBus (kAudio, dir, 0, !unassign);
 
     qint32 cpt=0;
     qint32 numBusIn = component->getBusCount(Vst::kAudio, dir);
     for (qint32 i = 0; i < numBusIn; i++) {
+        component->activateBus (kAudio, dir, i, !unassign);
         Vst::BusInfo busInfo = {0};
         if(component->getBusInfo(Vst::kAudio, dir, i, busInfo) == kResultTrue) {
             for(qint32 j=0; j<busInfo.channelCount; j++) {
