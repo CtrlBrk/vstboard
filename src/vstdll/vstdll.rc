@@ -1,6 +1,7 @@
 #include <winver.h>
 #include <verrsrc.h>
 #include "../common/globals.h"
+#include "../common/version.h"
 
 VS_VERSION_INFO VERSIONINFO
 FILEVERSION APP_VERSION_MAJOR,APP_VERSION_MINOR,APP_VERSION_BUILD //,APP_VERSION_PATCH

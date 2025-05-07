@@ -25,11 +25,6 @@
 
 #define APP_VENDOR "CtrlBrk"
 #define APP_NAME "VstBoard"
-#define APP_VERSION_MAJOR 0
-#define APP_VERSION_MINOR 6
-#define APP_VERSION_BUILD 4
-#define APP_VERSION_PATCH 0
-#define APP_VERSION_STR QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_BUILD)
 
 #define EMPTY_PROGRAM 0xffff
 #define TEMP_PROGRAM 0xfffe

@@ -259,6 +259,7 @@ HEADERS += \
     commands/comaddpin.h \
     commands/comprogramstate.h \
     renderer/pathsolver.h \
+    version.h \
     views/clappluginwindow.h \
     views/filebrowsertree.h \
     views/keypressedwidget.h \

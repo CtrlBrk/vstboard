@@ -123,6 +123,9 @@ Section "VstBoard (required)"
 	File "Qt6Widgets.dll"
     File "QtSolutions_MFCMigrationFramework-head.dll"
 	
+	File "Qt6Qml.dll"
+	File "Qt6Network.dll"
+	
 	SetOutPath "$InstFolder\plugins\iconengines"
 	File "qsvgicon.dll"
 	SetOutPath "$InstFolder\plugins\imageformats"
@@ -134,7 +137,7 @@ Section "VstBoard (required)"
 	File "qwindows.dll"
 	SetOutPath "$InstFolder\plugins\styles"
 	File "qmodernwindowsstyle.dll"
-	
+	File "qwindowsvistastyle.dll"
    
 	SetOutPath $ClapDir
 	WriteRegStr HKLM "${REG_SETTINGS}" "clapInstallDir" $ClapDir
@@ -210,6 +213,9 @@ Section "Uninstall"
 	Delete "$INSTDIR\Qt\Qt6Widgets.dll"
     Delete "$INSTDIR\Qt\QtSolutions_MFCMigrationFramework-head.dll"
 
+	Delete "$INSTDIR\Qt\Qt6Qml.dll"
+	Delete "$INSTDIR\Qt\Qt6Network.dll"
+	
 	RMDir "$INSTDIR\Qt"	
 	
 	Delete "$INSTDIR\plugins\iconengines\qsvgicon.dll"
@@ -225,6 +231,7 @@ Section "Uninstall"
 	RMDir "$INSTDIR\plugins\platforms"
 	
 	Delete "$INSTDIR\plugins\styles\qmodernwindowsstyle.dll"
+	Delete "$INSTDIR\plugins\styles\qwindowsvistastyle.dll"
 	RMDir "$INSTDIR\plugins\styles"
 	
 	RMDir "$INSTDIR\plugins"

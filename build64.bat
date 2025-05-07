@@ -1,10 +1,10 @@
-set VERSION="0.6.3"
+set VERSION="0.6.5"
 
 set SRC_PATH=%CD%
 set NSIS_PATH="C:\Program Files (x86)\NSIS\makensis.exe"
 set BUILD_PATH=src\build\64bit-Release
 set JOM_PATH="C:\Qt\Tools\QtCreator\bin\jom\jom.exe"
-set QTDIR=C:\Qt\6.8.2\msvc2022_64
+set QTDIR=C:\Qt\6.6.3\msvc2019_64
 set QMAKESPEC=win32-msvc
 
 rem set PATH=%QTDIR%\bin;%PATH%
@@ -61,6 +61,11 @@ copy /y "%QTDIR%\bin\Qt6Svg.dll" ".\installer"
 copy /y "%QTDIR%\bin\Qt6Widgets.dll" ".\installer"
 copy /y "..\..\..\libs\qtwinmigrate\lib\QtSolutions_MFCMigrationFramework-head.dll" ".\installer"
 
+rem == for jscript
+copy /y "%QTDIR%\bin\Qt6Qml.dll" ".\installer"
+copy /y "%QTDIR%\bin\Qt6Network.dll" ".\installer"
+rem ==
+
 copy /y "%QTDIR%\plugins\iconengines\qsvgicon.dll" ".\installer"
 copy /y "%QTDIR%\plugins\imageformats\qsvg.dll" ".\installer"
 copy /y "%QTDIR%\plugins\platforms\qdirect2d.dll" ".\installer"
@@ -68,6 +73,10 @@ copy /y "%QTDIR%\plugins\platforms\qminimal.dll" ".\installer"
 copy /y "%QTDIR%\plugins\platforms\qoffscreen.dll" ".\installer"
 copy /y "%QTDIR%\plugins\platforms\qwindows.dll" ".\installer"
 copy /y "%QTDIR%\plugins\styles\qmodernwindowsstyle.dll" ".\installer"
+rem == until 6.6.3 ?
+copy /y "%QTDIR%\plugins\styles\qwindowsvistastyle.dll" ".\installer"
+
+
 
 cd "installer"
 %NSIS_PATH% /DARCH=x64 /DVERSION="%VERSION%" nsis.nsi

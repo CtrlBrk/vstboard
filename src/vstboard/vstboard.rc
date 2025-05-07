@@ -1,6 +1,7 @@
 #include <winver.h>
 #include <verrsrc.h>
 #include "../common/globals.h"
+#include "../common/version.h"
 
 ICON_1 ICON DISCARDABLE "../../vstboard.ico"
 VS_VERSION_INFO VERSIONINFO

@@ -19,6 +19,7 @@
 **************************************************************************/
 
 #include "globals.h"
+#include "version.h"
 #include "splash.h"
 #include "ui_splash.h"
 
